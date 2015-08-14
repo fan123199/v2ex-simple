@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">V2ex</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title">title</string>
+    <string name="it_is_avatar">这是头像</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

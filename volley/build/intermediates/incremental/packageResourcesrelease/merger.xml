@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="/home/a708/AndroidStudioProjects/V2ex/volley/src/main/res"/><source path="/home/a708/AndroidStudioProjects/V2ex/volley/build/generated/res/rs/release"/><source path="/home/a708/AndroidStudioProjects/V2ex/volley/build/generated/res/resValues/release"/></dataSet><dataSet config="release"><source path="/home/a708/AndroidStudioProjects/V2ex/volley/src/release/res"/></dataSet><mergedItems/></merger>
