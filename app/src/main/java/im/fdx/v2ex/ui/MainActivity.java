@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
 
-        V2exJsonManager.
+
         //找出recyclerview,并赋予变量
         mRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
 

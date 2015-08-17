@@ -59,6 +59,7 @@ public class V2exJsonManager extends Activity {
                 System.out.println("请求失败:" + error);
             }
         });
+        jsV2exHot.setTag("JSON");
         requestQueue.add(jsV2exHot);
     }
 
