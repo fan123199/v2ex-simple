@@ -26,7 +26,7 @@ public class MySingleton {
         mCtx = context;
 //        mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
 //        以上参数是没有传入context的构造函数的
-        mRequestQueue = getmRequestQueue();
+        mRequestQueue = getRequestQueue();
         mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
 
             private final LruCache<String, Bitmap>
@@ -44,7 +44,7 @@ public class MySingleton {
         });
     }
 
-    public static synchronized MySingleton getmInstance(Context context) {
+    public static synchronized MySingleton getInstance(Context context) {
         if(mInstance ==  null){
             mInstance = new MySingleton(context);
         }
@@ -52,7 +52,7 @@ public class MySingleton {
         return mInstance;
     }
 
-    public RequestQueue getmRequestQueue() {
+    public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
@@ -62,10 +62,10 @@ public class MySingleton {
     }
 
     public <T> void addToRequestQueue(Request<T> req) {
-        getmRequestQueue().add(req);
+        getRequestQueue().add(req);
     }
 
-    public ImageLoader getmImageLoader() {
+    public ImageLoader getImageLoader() {
         return mImageLoader;
     }
 }
