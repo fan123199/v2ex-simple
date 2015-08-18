@@ -22,6 +22,8 @@ public class MySingleton {
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private Context mCtx;
+
+    //带参数context, 与ytb教程不同
     private MySingleton(Context context) {
         mCtx = context;
 //        mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
@@ -44,6 +46,7 @@ public class MySingleton {
         });
     }
 
+    //带参数context, 与ytb教程不同
     public static synchronized MySingleton getInstance(Context context) {
         if(mInstance ==  null){
             mInstance = new MySingleton(context);
@@ -56,7 +59,7 @@ public class MySingleton {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
-            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+            mRequestQueue = Volley.newRequestQueue(mCtx);
         }
         return mRequestQueue;
     }
