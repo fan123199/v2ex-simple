@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:background="#ffff44"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/main_text_view"
-    android:paddingBottom="14dp"
+    android:paddingBottom="6dp"
     android:layout_margin="8dp"
     android:weightSum="1"
     android:elevation="3dp"
@@ -52,7 +53,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="属于节点"
+        android:text="节点"
         android:id="@+id/tvNode"
         android:layout_alignTop="@+id/tvPushTime"
         android:layout_alignEnd="@+id/tvContent" />
