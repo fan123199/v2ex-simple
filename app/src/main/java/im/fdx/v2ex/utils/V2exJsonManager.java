@@ -1,4 +1,4 @@
-package im.fdx.v2ex;
+package im.fdx.v2ex.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -29,7 +29,12 @@ import im.fdx.v2ex.network.MySingleton;
 public class V2exJsonManager{
 
     public static final String V2EX_API = "http://www.v2ex.com/api";
-    public static final String HOT_JSON = "/topics/hot.json";
-    public static final String LATEST_JSON = "/topics/latest.json";
-    public static final String V2EX_LATEST = V2EX_API+LATEST_JSON;
+    public static final String HOT_JSON = "http://www.v2ex.com/api/topics/hot.json";
+    public static final String LATEST_JSON = "http://www.v2ex.com/api/topics/latest.json";
+    //以下,接受参数： name: 节点名
+    public static final String NODE_JSON = "https://www.v2ex.com/api/nodes/show.json";
+    //以下,接受以下参数之一：
+    //    username: 用户名
+    //    id: 用户在 V2EX 的数字 ID
+    public static final String USER_JSON = "https://www.v2ex.com/api/members/show.json";
 }

@@ -8,20 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-
-import org.json.JSONArray;
-
 import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
-import im.fdx.v2ex.network.MySingleton;
 
 /**
  * Created by a708 on 15-8-14.
  */
-public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerViewAdapter.MainViewholder> {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewholder> {
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -29,14 +24,14 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
 
 
         //这是构造器
-    public MainRecyclerViewAdapter(Context context) {
+    public MainAdapter(Context context) {
         this.mContext = context;
         mInflater = LayoutInflater.from(context);
     }
 
 
 
-    //Done onCreateViewHolder这一般就是这样了.除了layoutInflater,没有什么变动
+    //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
     @Override
     public MainViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
         //这叫布局解释器,用来解释
@@ -69,6 +64,11 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         return Top10.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
+
     //Done
     //这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来
     public static class MainViewholder extends RecyclerView.ViewHolder{
@@ -94,4 +94,5 @@ public class MainRecyclerViewAdapter extends RecyclerView.Adapter<MainRecyclerVi
         }
 
     }
+
 }

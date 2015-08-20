@@ -29,6 +29,8 @@ public class MySingleton {
 //        mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
 //        以上参数是没有传入context的构造函数的
         mRequestQueue = getRequestQueue();
+
+
         mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
 
             private final LruCache<String, Bitmap>
@@ -59,7 +61,8 @@ public class MySingleton {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
-            mRequestQueue = Volley.newRequestQueue(mCtx);
+            //防止mCtx只是activity的context
+            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
         }
         return mRequestQueue;
     }
