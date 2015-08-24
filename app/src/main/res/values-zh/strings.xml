@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">V2ex</string>
+    <string name="hello_world">你好世界</string>
+    <string name="it_is_avatar">这是头像</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="title">标题</string>
+    <string name="title_activity_main2"></string>
+</resources>

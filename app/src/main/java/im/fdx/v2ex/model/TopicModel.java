@@ -15,7 +15,7 @@ import im.fdx.v2ex.utils.L;
  */
 public class TopicModel implements Parcelable {
 
-    public int id;
+    public long id;
     public String title;
     public String url;
     public String content;
@@ -51,7 +51,7 @@ public class TopicModel implements Parcelable {
 
     //yaoyumeng 喜欢用array,也就是id和replies都是int的话,他就会用readIntArray.我认为不好.我采用vivz.
     protected TopicModel(Parcel in) {
-        id = in.readInt();
+        id = in.readLong();
         replies = in.readInt();
         title = in.readString();
         url = in.readString();
@@ -90,7 +90,7 @@ public class TopicModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
+        dest.writeLong(id);
         dest.writeInt(replies);
         dest.writeString(title);
         dest.writeString(url);
@@ -106,7 +106,7 @@ public class TopicModel implements Parcelable {
 //        dest.writeValue(node);
     }
 
-    public TopicModel(int id,String title,String author,String content,int replies,String node_title){
+    public TopicModel(long id,String title,String author,String content,int replies,String node_title){
         this.author = author;
         this.id = id;
         this.title = title;
@@ -115,7 +115,8 @@ public class TopicModel implements Parcelable {
         this.nodeTitle = node_title;
     }
 
-    public TopicModel(){
-
+    public long getId() {
+        return id;
     }
+
 }

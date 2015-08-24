@@ -16,7 +16,7 @@ import im.fdx.v2ex.model.TopicModel;
 /**
  * Created by a708 on 15-8-14.
  */
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewholder> {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
 
     private Context mContext;
     private LayoutInflater mInflater;
@@ -26,26 +26,26 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewholder
         //这是构造器
     public MainAdapter(Context context) {
         this.mContext = context;
-        mInflater = LayoutInflater.from(context);
+        mInflater = LayoutInflater.from(mContext);
     }
 
 
 
     //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
     @Override
-    public MainViewholder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //这叫布局解释器,用来解释
 //        LayoutInflater lyInflater = LayoutInflater.from(parent.getContext());
         //找到需要显示的xml文件,主要靠inflate
          View view = mInflater.inflate(R.layout.my_text_view, parent, false);
 
-        return new MainViewholder(view);
+        return new MainViewHolder(view);
 
     }
 
     //Done 对TextView进行赋值, 也就是操作
     @Override
-    public void onBindViewHolder(MainViewholder holder, int position) {
+    public void onBindViewHolder(MainViewHolder holder, int position) {
         TopicModel currentTopic = Top10.get(position);
         holder.tvTitle.setText(currentTopic.title);
         holder.tvContent.setText(currentTopic.content);
@@ -71,7 +71,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewholder
 
     //Done
     //这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来
-    public static class MainViewholder extends RecyclerView.ViewHolder{
+    public static class MainViewHolder extends RecyclerView.ViewHolder{
 
         public TextView tvTitle;
         public TextView tvContent;
@@ -81,7 +81,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewholder
         public ImageView ivAvatar;
         public TextView tvNode;
 
-        public MainViewholder(View root) {
+        public MainViewHolder(View root) {
             super(root);
 
             tvTitle = (TextView) root.findViewById(R.id.tvTitle);

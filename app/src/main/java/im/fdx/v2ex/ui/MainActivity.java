@@ -2,9 +2,12 @@ package im.fdx.v2ex.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,8 +30,6 @@ import im.fdx.v2ex.ui.adapter.MainAdapter;
 
 public class MainActivity extends Activity {
 
-
-    public Boolean TAG_REFRESH = false;
     RecyclerView mRecyclerView;
     MainAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;
@@ -40,6 +41,7 @@ public class MainActivity extends Activity {
     private ArrayList<TopicModel> Top10 = new ArrayList<>();
 
 
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -48,12 +50,13 @@ public class MainActivity extends Activity {
 
         queue = MySingleton.getInstance(this.getApplicationContext()).getRequestQueue();
         mSingleton = MySingleton.getInstance(this);
-        GetJson(TAG_REFRESH);
+        GetJson();
 
         //找出recyclerview,并赋予变量
         mRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));//这里用线性显示 类似于listview
         mAdapter = new MainAdapter(this);
+        mAdapter.setTopic(Top10);
         mRecyclerView.setAdapter(mAdapter); //大工告成
         L.m("显示成功");
 
@@ -64,17 +67,20 @@ public class MainActivity extends Activity {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                TAG_REFRESH = true;
-                GetJson(TAG_REFRESH);
-                L.m("success");
-                mSwipeLayout.setRefreshing(false);
-                TAG_REFRESH = false;
+                new Handler().post(new Runnable() {
+                    @Override
+                    public void run() {
+                        GetJson();
+                        L.m("Thread done");
+                    }
+                });
+
             }
 
         });
     }
 
-    public void GetJson(boolean tag) {
+    public void GetJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
                 V2exJsonManager.LATEST_JSON, null, new Response.Listener<JSONArray>() {
@@ -88,6 +94,7 @@ public class MainActivity extends Activity {
                 handleVolleyError();
             }
         });
+
         MySingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
 
     }
@@ -100,25 +107,59 @@ public class MainActivity extends Activity {
         if(response == null || response.length() == 0) {
             return;
         }
+        long id;
+        String title;
+        String author;
+        String content;
+        int replies;
+        String node_title;
         try {
             for(int i = 0; i< response.length();i++) {
-            JSONObject responseJSONObject = response.getJSONObject(i);
+                JSONObject responseJSONObject = response.getJSONObject(i);
 
-                int id = responseJSONObject.optInt("id");
-                String title = responseJSONObject.optString("title");
-                String author = responseJSONObject.optJSONObject("member").optString("username");
-                String content = responseJSONObject.optString("content");
-                int replies = responseJSONObject.optInt("replies");
-                String node_title = responseJSONObject.optJSONObject("node").optString("title");
 
-                Top10.add(new TopicModel(id,title,author,content,replies,node_title));
+                id = responseJSONObject.optInt("id");
+
+                title = responseJSONObject.optString("title");
+
+                author = responseJSONObject.optJSONObject("member").optString("username");
+
+                content = responseJSONObject.optString("content");
+
+                replies = responseJSONObject.optInt("replies");
+
+                node_title = responseJSONObject.optJSONObject("node").optString("title");
+                if(Top10.size()!=0) {
+                    if (id == Top10.get(0).id) break;
+                }
+                Top10.add(new TopicModel(id, title, author, content, replies, node_title));
             }
-            mAdapter.setTopic(Top10);
-            L.m("parse success");
 
         } catch (JSONException e) {
             L.m("parse false");
             e.printStackTrace();
         }
+        L.m(String.valueOf(Top10));
+        mAdapter.notifyDataSetChanged();
+        mSwipeLayout.setRefreshing(false);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                mSwipeLayout.setRefreshing(true);
+                GetJson();
+                return true;
+            case R.id.menu_settings:
+                L.t(this.getApplicationContext(), "choose settings");
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
