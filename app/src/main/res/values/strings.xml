@@ -6,4 +6,11 @@
     <string name="title">title</string>
     <string name="it_is_avatar">It is avatar</string>
     <string name="menu_refresh">Refresh</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="error_timeout">error timeout</string>
+    <string name="error_auth_failure">auth failure</string>
+    <string name="error_network">error network</string>
+    <string name="error_parser">error parse</string>
 </resources>
