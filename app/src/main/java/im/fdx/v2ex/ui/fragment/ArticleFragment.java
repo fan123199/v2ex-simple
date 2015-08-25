@@ -167,10 +167,15 @@ public class ArticleFragment extends Fragment {
                 replies = responseJSONObject.optInt("replies");
 
                 node_title = responseJSONObject.optJSONObject("node").optString("title");
-                if(Top10.size()!=0) {
-                    if (id == Top10.get(0).id) break;
+
+                if(!Top10.isEmpty()) {
+                    if (id == Top10.get(0).id) {
+                        break;
+                    }
+
+                Top10.add(i,new TopicModel(id, title, author, content, replies, node_title));
+
                 }
-                Top10.add(new TopicModel(id, title, author, content, replies, node_title));
             }
 
         } catch (JSONException e) {
