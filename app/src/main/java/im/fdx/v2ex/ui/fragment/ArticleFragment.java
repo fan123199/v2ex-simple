@@ -151,6 +151,11 @@ public class ArticleFragment extends Fragment {
         String content;
         int replies;
         String node_title;
+
+        boolean flag = false;
+        if(Top10.isEmpty()) {
+            flag = true;
+        }
         try {
             for(int i = 0; i< response.length();i++) {
                 JSONObject responseJSONObject = response.getJSONObject(i);
@@ -168,8 +173,8 @@ public class ArticleFragment extends Fragment {
 
                 node_title = responseJSONObject.optJSONObject("node").optString("title");
 
-                if(!Top10.isEmpty()) {
-                    if (id == Top10.get(0).id) {
+                if(flag) {
+                    if (id == Top10.get(i).id) {
                         break;
                     }
 
@@ -182,6 +187,7 @@ public class ArticleFragment extends Fragment {
             L.m("parse false");
             e.printStackTrace();
         }
+
         L.m(String.valueOf(Top10));
         mAdapter.notifyDataSetChanged();
         mSwipeLayout.setRefreshing(false);
