@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.ui.DetailsActivity;
 
 /**
  * Created by a708 on 15-8-14.
@@ -23,7 +25,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     private ArrayList<TopicModel> Top10 = new ArrayList<>();
 
 
-        //这是构造器
+    //这是构造器
     public MainAdapter(Context context) {
         this.mContext = context;
         mInflater = LayoutInflater.from(mContext);
@@ -52,7 +54,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies));
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);
-
     }
 
     public void setTopic(ArrayList<TopicModel> top10){
@@ -71,7 +72,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
     //Done
     //这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来
-    public static class MainViewHolder extends RecyclerView.ViewHolder{
+    public static class MainViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvTitle;
         public TextView tvContent;
@@ -84,6 +85,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         public MainViewHolder(View root) {
             super(root);
 
+
             tvTitle = (TextView) root.findViewById(R.id.tvTitle);
             tvContent = (TextView) root.findViewById(R.id.tvContent);
             tvReplyNumber = (TextView) root.findViewById(R.id.tvReplyNumber);
@@ -92,6 +94,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             ivAvatar = (ImageView) root.findViewById(R.id.ivAvatar);
             tvNode = (TextView) root.findViewById(R.id.tvNode);
         }
+
 
     }
 

@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.fragment;
 
 import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Fragment;
@@ -34,7 +33,9 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.MainAdapter;
+import im.fdx.v2ex.utils.ClickListener;
 import im.fdx.v2ex.utils.L;
+import im.fdx.v2ex.utils.RecyclerTouchListener;
 import im.fdx.v2ex.utils.V2exJsonManager;
 
 
@@ -76,6 +77,20 @@ public class ArticleFragment extends Fragment {
         //找出recyclerview,并赋予变量
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));//这里用线性显示 类似于listview
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),mRecyclerView, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+//                startActivity(new Intent(getActivity(), DetailsActivity.class));
+                L.t(getActivity(), "短按");
+                L.m("短按");
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+                L.t(getActivity(), "长按");
+                L.m("长按");
+            }
+        }));
         mAdapter = new MainAdapter(this.getActivity());
         mAdapter.setTopic(Top10);
         mRecyclerView.setAdapter(mAdapter); //大工告成
@@ -92,7 +107,6 @@ public class ArticleFragment extends Fragment {
                     @Override
                     public void run() {
                         GetJson();
-                        L.m("Thread done");
                     }
                 });
 
@@ -152,35 +166,33 @@ public class ArticleFragment extends Fragment {
         int replies;
         String node_title;
 
-        boolean flag = false;
+        boolean flag = true;
+
         if(Top10.isEmpty()) {
-            flag = true;
+            flag = false;
         }
+
+        L.m(String.valueOf(flag));
+
         try {
             for(int i = 0; i< response.length();i++) {
+
                 JSONObject responseJSONObject = response.getJSONObject(i);
 
-
                 id = responseJSONObject.optInt("id");
-
                 title = responseJSONObject.optString("title");
-
                 author = responseJSONObject.optJSONObject("member").optString("username");
-
                 content = responseJSONObject.optString("content");
-
                 replies = responseJSONObject.optInt("replies");
-
                 node_title = responseJSONObject.optJSONObject("node").optString("title");
 
                 if(flag) {
                     if (id == Top10.get(i).id) {
                         break;
                     }
-
-                Top10.add(i,new TopicModel(id, title, author, content, replies, node_title));
-
                 }
+
+                Top10.add(i, new TopicModel(id, title, author, content, replies, node_title));
             }
 
         } catch (JSONException e) {
@@ -194,43 +206,16 @@ public class ArticleFragment extends Fragment {
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-//        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        public void onFragmentInteraction(Uri uri);
-//    }
 
 }

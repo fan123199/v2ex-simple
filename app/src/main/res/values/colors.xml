@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--from http://www.google.com/design/spec/style/color.html-->
+
     <!--Cyan 500-->
     <color name = "primary">#00BCD4</color>
     <!--Cyan 700-->
@@ -8,5 +9,8 @@
     <!--red 600-->
     <color name = "accent">#E53935</color>
 
+    <!--use for background-->
     <color name="list_ground">#e8e8e8</color>
+    <color name="colorDivider">#B6B6B6</color>
+
 </resources>

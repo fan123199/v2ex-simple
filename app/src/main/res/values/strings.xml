@@ -13,4 +13,5 @@
     <string name="error_auth_failure">auth failure</string>
     <string name="error_network">error network</string>
     <string name="error_parser">error parse</string>
+    <string name="title_activity_details">DetailsActivity</string>
 </resources>
