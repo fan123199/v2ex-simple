@@ -27,6 +27,6 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:22.0.+'
 //    compile 'com.android.support:appcompat-v7:22.0.+'
     compile 'com.android.support:support-v13:22.+'
-
-    compile project(':volley')
+    compile 'com.mcxiaoke.volley:library:1.0.18'
+//    compile project(':volley')
 }
