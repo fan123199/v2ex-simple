@@ -3,6 +3,7 @@ package im.fdx.v2ex.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies));
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);
+
+        long created = currentTopic.created * 1000;
+        long now = System.currentTimeMillis();
+        long difference = now - created;
+        CharSequence text = (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS) ?
+                "刚刚" :
+                DateUtils.getRelativeTimeSpanString(
+                        created,
+                        now,
+                        DateUtils.MINUTE_IN_MILLIS,
+                        DateUtils.FORMAT_ABBREV_RELATIVE);
+
+        holder.tvPushTime.setText(text.toString());
     }
 
     public void setTopic(ArrayList<TopicModel> top10){

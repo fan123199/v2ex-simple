@@ -30,24 +30,6 @@ public class TopicModel implements Parcelable {
     public String nodeTitle;
 
     //暂时不知道如何传递数据到Model,先用vivz的方法,在activty中设置解析方法
-//    public void parse(JSONObject jsonObject) throws JSONException {
-//        id = jsonObject.optInt("id");
-//        title = jsonObject.optString("title");
-//        url = jsonObject.optString("url");
-//        content = jsonObject.optString("content");
-//        contentRendered = ContentUtils.formatContent(jsonObject.getString("content_rendered"));
-//        replies = jsonObject.optInt("replies");
-//
-//        created = jsonObject.optLong("created");
-//        lastModified = jsonObject.optLong("last_modified");
-//        lastTouched = jsonObject.optLong("last_touched");
-//        //author学devliu
-//        author = jsonObject.optJSONObject("member").optString("author");
-////        member = new MemberModel();
-////        member.parse(jsonObject.getJSONObject("member"));
-////        node = new NodeModel();
-////        node.parse(jsonObject.getJSONObject("node"));
-//    }
 
     //yaoyumeng 喜欢用array,也就是id和replies都是int的话,他就会用readIntArray.我认为不好.我采用vivz.
     protected TopicModel(Parcel in) {
@@ -106,13 +88,14 @@ public class TopicModel implements Parcelable {
 //        dest.writeValue(node);
     }
 
-    public TopicModel(long id,String title,String author,String content,int replies,String node_title){
+    public TopicModel(long id,String title,String author,String content,int replies,String node_title,long created){
         this.author = author;
         this.id = id;
         this.title = title;
         this.content = content;
         this.replies = replies;
         this.nodeTitle = node_title;
+        this.created = created;
     }
 
     public long getId() {

@@ -120,7 +120,7 @@ public class ArticleFragment extends Fragment {
     public void GetJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                V2exJsonManager.LATEST_JSON, null, new Response.Listener<JSONArray>() {
+                V2exJsonManager.LATEST_JSON, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 parseJsonArray(response);
@@ -165,6 +165,7 @@ public class ArticleFragment extends Fragment {
         String content;
         int replies;
         String node_title;
+        long created;
 
         boolean flag = true;
 
@@ -185,14 +186,14 @@ public class ArticleFragment extends Fragment {
                 content = responseJSONObject.optString("content");
                 replies = responseJSONObject.optInt("replies");
                 node_title = responseJSONObject.optJSONObject("node").optString("title");
-
+                created = responseJSONObject.optLong("created");
                 if(flag) {
                     if (id == Top10.get(i).id) {
                         break;
                     }
                 }
 
-                Top10.add(i, new TopicModel(id, title, author, content, replies, node_title));
+                Top10.add(i, new TopicModel(id, title, author, content, replies, node_title,created));
             }
 
         } catch (JSONException e) {
