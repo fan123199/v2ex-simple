@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
-import im.fdx.v2ex.ui.DetailsActivity;
 
 /**
  * Created by a708 on 15-8-14.
@@ -40,7 +38,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         //这叫布局解释器,用来解释
 //        LayoutInflater lyInflater = LayoutInflater.from(parent.getContext());
         //找到需要显示的xml文件,主要靠inflate
-         View view = mInflater.inflate(R.layout.my_text_view, parent, false);
+         View view = mInflater.inflate(R.layout.main_row_view, parent, false);
 
         return new MainViewHolder(view);
 
@@ -52,7 +50,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         TopicModel currentTopic = Top10.get(position);
         holder.tvTitle.setText(currentTopic.title);
         holder.tvContent.setText(currentTopic.content);
-        holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies));
+        holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies)+"个回复");
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);
 
@@ -104,7 +102,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             tvContent = (TextView) root.findViewById(R.id.tvContent);
             tvReplyNumber = (TextView) root.findViewById(R.id.tvReplyNumber);
             tvPushTime = (TextView) root.findViewById(R.id.tvPushTime);
-            tvAuthor = (TextView) root.findViewById(R.id.tvAuthor);
+            tvAuthor = (TextView) root.findViewById(R.id.tvReplier);
             ivAvatar = (ImageView) root.findViewById(R.id.ivAvatar);
             tvNode = (TextView) root.findViewById(R.id.tvNode);
         }

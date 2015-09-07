@@ -2,6 +2,8 @@ package im.fdx.v2ex.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -9,10 +11,19 @@ import im.fdx.v2ex.R;
 
 public class DetailsActivity extends Activity {
 
+    public RecyclerView detailRecyclerView;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        detailRecyclerView = (RecyclerView) findViewById(R.id.detail_recycler_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
+
+
+
     }
 
     @Override

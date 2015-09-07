@@ -14,4 +14,7 @@
     <string name="error_network">error network</string>
     <string name="error_parser">error parse</string>
     <string name="title_activity_details">DetailsActivity</string>
+    <string name="author">Author</string>
+    <string name="content">Content , For change line I have to do a lot of things, please hurt me</string>
+    <string name="node">Node</string>
 </resources>

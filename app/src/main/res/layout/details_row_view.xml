@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#DDEEFF"
+    android:elevation="3dp">
+
+
+    <ImageView
+        android:layout_width="@dimen/md_avatar"
+        android:layout_height="@dimen/md_avatar"
+        android:id="@+id/imageView"
+        android:layout_marginTop="6dp"
+        android:layout_marginStart="@dimen/md_left_margin" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="content"
+        android:id="@+id/replyContent"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="9dp"
+        android:layout_below="@+id/tvReplier"
+        android:layout_alignStart="@+id/tvReplier" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Author"
+        android:id="@+id/tvReplier"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_marginStart="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:id="@+id/textView3"
+        android:layout_marginStart="@dimen/md_left_margin"
+        android:layout_alignBaseline="@+id/tvReplier"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_toEndOf="@+id/tvReplier" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="n row"
+        android:id="@+id/tvRow"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_alignEnd="@+id/replyContent" />
+
+</RelativeLayout>

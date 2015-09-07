@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#FFFFFF"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/main_text_view"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:layout_marginStart="0dp"
+    android:layout_marginEnd="0dp"
+    android:layout_marginTop="6dp"
+    android:elevation="3dp"
+    >
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/title_font_size"
+        android:text="@string/title"
+        android:id="@+id/tvTitle"
+        android:textColor="@color/title_color"
+        android:layout_marginStart="@dimen/md_left_margin"
+        android:layout_marginEnd="@dimen/md_left_margin"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvContent"
+        android:text="@string/content"
+        android:maxLines="10"
+        android:textSize="@dimen/content_font_size"
+        android:ellipsize="end"
+        android:textColor="#333333"
+        android:layout_below="@+id/tvTitle"
+        android:layout_alignStart="@+id/tvTitle"
+        android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_marginTop="6dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="发布时间"
+        android:id="@+id/tvPushTime"
+        android:layout_marginStart="29dp"
+        android:layout_alignBottom="@+id/ivAvatar"
+        android:layout_toEndOf="@+id/tvReplyNumber" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="回复数"
+        android:id="@+id/tvReplyNumber"
+        android:layout_alignBottom="@+id/ivAvatar"
+        android:layout_alignStart="@+id/tvReplier" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/node"
+        android:id="@+id/tvNode"
+        android:layout_alignBottom="@+id/ivAvatar"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/md_left_margin"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/author"
+        android:id="@+id/tvReplier"
+        android:layout_toEndOf="@+id/ivAvatar"
+        android:layout_marginStart="15dp"
+        android:layout_alignTop="@+id/ivAvatar" />
+
+    <ImageView
+        android:layout_width="@dimen/md_avatar"
+        android:layout_height="@dimen/md_avatar"
+        android:id="@+id/ivAvatar"
+        android:layout_marginTop="4dp"
+        android:layout_below="@+id/tvContent"
+        android:layout_alignStart="@+id/tvTitle"
+        android:contentDescription="@string/it_is_avatar" />
+
+</RelativeLayout>

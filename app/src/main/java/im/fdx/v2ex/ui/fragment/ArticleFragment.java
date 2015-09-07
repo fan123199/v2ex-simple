@@ -42,11 +42,11 @@ import im.fdx.v2ex.utils.V2exJsonManager;
 public class ArticleFragment extends Fragment {
 
 
-    private ArrayList<TopicModel> Top10 = new ArrayList<>();
+    private ArrayList<TopicModel> Latest = new ArrayList<>();
 
     RecyclerView mRecyclerView;
     MainAdapter mAdapter;
-    RecyclerView.LayoutManager mLayoutManger;
+    RecyclerView.LayoutManager mLayoutManger;//TODO
     SwipeRefreshLayout mSwipeLayout;
 
     MySingleton mSingleton;//暂时不用,调试context
@@ -58,8 +58,7 @@ public class ArticleFragment extends Fragment {
     }
 
     public static ArticleFragment newInstance() {
-        ArticleFragment fragment = new ArticleFragment();
-        return fragment;
+        return new ArticleFragment();
 
     }
 
@@ -92,7 +91,7 @@ public class ArticleFragment extends Fragment {
             }
         }));
         mAdapter = new MainAdapter(this.getActivity());
-        mAdapter.setTopic(Top10);
+        mAdapter.setTopic(Latest);
         mRecyclerView.setAdapter(mAdapter); //大工告成
         L.m("显示成功");
 
@@ -139,19 +138,19 @@ public class ArticleFragment extends Fragment {
     private void handleVolleyError(VolleyError error) {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
             L.m(getString(R.string.error_timeout));
-
+            //TODO
         } else if (error instanceof AuthFailureError) {
             L.m(getString(R.string.error_auth_failure));
-            //TODO
+
         } else if (error instanceof ServerError) {
             L.m(getString(R.string.error_auth_failure));
-            //TODO
+
         } else if (error instanceof NetworkError) {
             L.m(getString(R.string.error_network));
-            //TODO
+
         } else if (error instanceof ParseError) {
             L.m(getString(R.string.error_parser));
-            //TODO
+
         }
     }
 
@@ -169,7 +168,7 @@ public class ArticleFragment extends Fragment {
 
         boolean flag = true;
 
-        if(Top10.isEmpty()) {
+        if(Latest.isEmpty()) {
             flag = false;
         }
 
@@ -188,12 +187,12 @@ public class ArticleFragment extends Fragment {
                 node_title = responseJSONObject.optJSONObject("node").optString("title");
                 created = responseJSONObject.optLong("created");
                 if(flag) {
-                    if (id == Top10.get(i).id) {
+                    if (id == Latest.get(i).id) {
                         break;
                     }
                 }
 
-                Top10.add(i, new TopicModel(id, title, author, content, replies, node_title,created));
+                Latest.add(i, new TopicModel(id, title, author, content, replies, node_title, created));
             }
 
         } catch (JSONException e) {
@@ -201,7 +200,7 @@ public class ArticleFragment extends Fragment {
             e.printStackTrace();
         }
 
-        L.m(String.valueOf(Top10));
+        L.m(String.valueOf(Latest));
         mAdapter.notifyDataSetChanged();
         mSwipeLayout.setRefreshing(false);
     }

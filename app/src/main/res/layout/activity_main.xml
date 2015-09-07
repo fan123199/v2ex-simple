@@ -1,21 +1,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="fill_parent"
-android:layout_height="fill_parent"
-android:background="#ffffff"
-android:orientation="vertical"
-tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
 
-<android.support.v4.view.ViewPager
-    android:id="@+id/ViewPager"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center">
-
-    <android.support.v4.view.PagerTabStrip
-        android:id="@+id/PagerTab"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/ViewPager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"/>
-</android.support.v4.view.ViewPager>
+        android:layout_gravity="center">
+
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/PagerTab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
+    </android.support.v4.view.ViewPager>
 </LinearLayout>

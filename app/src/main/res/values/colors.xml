@@ -12,5 +12,6 @@
     <!--use for background-->
     <color name="list_ground">#e8e8e8</color>
     <color name="colorDivider">#B6B6B6</color>
+    <color name="title_color">#00BCD4</color>
 
 </resources>
