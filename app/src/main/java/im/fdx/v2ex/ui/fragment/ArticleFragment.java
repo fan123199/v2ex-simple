@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.fragment;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Fragment;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.ui.DetailsActivity;
 import im.fdx.v2ex.ui.adapter.MainAdapter;
 import im.fdx.v2ex.utils.ClickListener;
 import im.fdx.v2ex.utils.L;
@@ -49,7 +52,8 @@ public class ArticleFragment extends Fragment {
     RecyclerView.LayoutManager mLayoutManger;//TODO
     SwipeRefreshLayout mSwipeLayout;
 
-    MySingleton mSingleton;//暂时不用,调试context
+
+//    MySingleton mSingleton;//暂时不用,调试context
     public RequestQueue queue;
 //    private OnFragmentInteractionListener mListener;
 
@@ -67,10 +71,10 @@ public class ArticleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View layout = inflater.inflate(R.layout.fragment_article, container, false);
+        final View layout = inflater.inflate(R.layout.fragment_article, container, false);
 
-        queue = MySingleton.getInstance(this.getActivity().getApplicationContext()).getRequestQueue();
-        mSingleton = MySingleton.getInstance(this.getActivity());
+        queue = MySingleton.getInstance(this.getActivity()).getRequestQueue();
+//        mSingleton = MySingleton.getInstance(this.getActivity());
         GetJson();
 
         //找出recyclerview,并赋予变量
@@ -79,15 +83,21 @@ public class ArticleFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),mRecyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                startActivity(new Intent(getActivity(), DetailsActivity.class));
+//                view.setTransitionName("header");
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                intent.putExtra("topic_id", Latest.get(position).getTopicId());
+                intent.putExtra("model",Latest.get(position));
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view,"header");
+
+                getActivity().startActivity(intent, options.toBundle());
                 L.t(getActivity(), "短按");
-                L.m("短按");
+//                L.m("短按");
             }
 
             @Override
             public void onLongClick(View view, int position) {
                 L.t(getActivity(), "长按");
-                L.m("长按");
+//                L.m("长按");
             }
         }));
         mAdapter = new MainAdapter(this.getActivity());
@@ -122,7 +132,13 @@ public class ArticleFragment extends Fragment {
                 V2exJsonManager.LATEST_JSON, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+
                 parseJsonArray(response);
+
+                L.m(String.valueOf(Latest));
+                mAdapter.notifyDataSetChanged();
+                mSwipeLayout.setRefreshing(false);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -199,10 +215,6 @@ public class ArticleFragment extends Fragment {
             L.m("parse false");
             e.printStackTrace();
         }
-
-        L.m(String.valueOf(Latest));
-        mAdapter.notifyDataSetChanged();
-        mSwipeLayout.setRefreshing(false);
     }
 
 

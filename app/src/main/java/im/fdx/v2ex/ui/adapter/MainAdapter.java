@@ -49,10 +49,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     public void onBindViewHolder(MainViewHolder holder, int position) {
         TopicModel currentTopic = Top10.get(position);
         holder.tvTitle.setText(currentTopic.title);
+        holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.content);
+
         holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies)+"个回复");
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);
+
+
 
         long created = currentTopic.created * 1000;
         long now = System.currentTimeMillis();

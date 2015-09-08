@@ -17,7 +17,6 @@ import im.fdx.v2ex.utils.L;
 
 
 public class MainActivity extends Activity {
-    private ViewPagerAdapter mAdapter;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +24,7 @@ public class MainActivity extends Activity {
 
         ActionBar toolbar = getActionBar();
         ViewPager viewPager = (ViewPager) findViewById(R.id.ViewPager);
-        mAdapter = new ViewPagerAdapter(getFragmentManager());
+        ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager());
         viewPager.setAdapter(mAdapter);
 
 
@@ -45,11 +44,9 @@ public class MainActivity extends Activity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    ArticleFragment articleFragment =  new ArticleFragment();
-                    return articleFragment;
+                    return new ArticleFragment();
                 case 1:
-                    AboutFragment aboutFragment =new AboutFragment();
-                    return aboutFragment;
+                    return new AboutFragment();
 
             }
             return null;

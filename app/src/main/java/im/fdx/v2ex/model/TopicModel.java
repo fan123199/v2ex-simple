@@ -53,7 +53,6 @@ public class TopicModel implements Parcelable {
     public static final Creator<TopicModel> CREATOR = new Creator<TopicModel>() {
         @Override
         public TopicModel createFromParcel(Parcel in) {
-            L.m("Create from parcel : TopicModel");
             return new TopicModel(in);
         }
 
@@ -98,7 +97,7 @@ public class TopicModel implements Parcelable {
         this.created = created;
     }
 
-    public long getId() {
+    public long getTopicId() {
         return id;
     }
 
