@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 /**
  * Created by a708 on 15-9-8.
+ * 评论模型，用于传递从JSON获取到的数据。
+ * 以后将加入添加评论功能。
  */
 public class ReplyModel implements Parcelable {
 

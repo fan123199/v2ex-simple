@@ -2,7 +2,6 @@ package im.fdx.v2ex.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,21 +12,21 @@ import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.utils.TimeHelper;
 
 /**
  * Created by a708 on 15-8-14.
+ * 主页的Adapter，就一个普通的RecyclerView
  */
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
 
-    private Context mContext;
     private LayoutInflater mInflater;
-    private ArrayList<TopicModel> Top10 = new ArrayList<>();
+    private ArrayList<TopicModel> TopicList = new ArrayList<>();
 
 
     //这是构造器
     public MainAdapter(Context context) {
-        this.mContext = context;
-        mInflater = LayoutInflater.from(mContext);
+        mInflater = LayoutInflater.from(context);
     }
 
 
@@ -38,7 +37,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         //这叫布局解释器,用来解释
 //        LayoutInflater lyInflater = LayoutInflater.from(parent.getContext());
         //找到需要显示的xml文件,主要靠inflate
-         View view = mInflater.inflate(R.layout.main_row_view, parent, false);
+        View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
 
         return new MainViewHolder(view);
 
@@ -47,38 +46,23 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     //Done 对TextView进行赋值, 也就是操作
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
-        TopicModel currentTopic = Top10.get(position);
+        TopicModel currentTopic = TopicList.get(position);
         holder.tvTitle.setText(currentTopic.title);
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.content);
-
         holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies)+"个回复");
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);
-
-
-
-        long created = currentTopic.created * 1000;
-        long now = System.currentTimeMillis();
-        long difference = now - created;
-        CharSequence text = (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS) ?
-                "刚刚" :
-                DateUtils.getRelativeTimeSpanString(
-                        created,
-                        now,
-                        DateUtils.MINUTE_IN_MILLIS,
-                        DateUtils.FORMAT_ABBREV_RELATIVE);
-
-        holder.tvPushTime.setText(text.toString());
+        holder.tvPushTime.setText(TimeHelper.RelativeTime(currentTopic.created));
     }
 
     public void setTopic(ArrayList<TopicModel> top10){
-        this.Top10 = top10;
+        this.TopicList = top10;
     }
     //Done
     @Override
     public int getItemCount() {
-        return Top10.size();
+        return TopicList.size();
     }
 
     @Override
@@ -100,7 +84,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
         public MainViewHolder(View root) {
             super(root);
-
 
             tvTitle = (TextView) root.findViewById(R.id.tvTitle);
             tvContent = (TextView) root.findViewById(R.id.tvContent);

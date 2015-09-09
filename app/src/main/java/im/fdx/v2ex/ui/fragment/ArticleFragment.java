@@ -61,11 +61,6 @@ public class ArticleFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ArticleFragment newInstance() {
-        return new ArticleFragment();
-
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -83,7 +78,7 @@ public class ArticleFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),mRecyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-//                view.setTransitionName("header");
+                view.setTransitionName("header");
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("topic_id", Latest.get(position).getTopicId());
                 intent.putExtra("model",Latest.get(position));
@@ -91,13 +86,13 @@ public class ArticleFragment extends Fragment {
 
                 getActivity().startActivity(intent, options.toBundle());
                 L.t(getActivity(), "短按");
-//                L.m("短按");
+                view.setTransitionName("");
             }
 
             @Override
             public void onLongClick(View view, int position) {
                 L.t(getActivity(), "长按");
-//                L.m("长按");
+
             }
         }));
         mAdapter = new MainAdapter(this.getActivity());
@@ -188,7 +183,7 @@ public class ArticleFragment extends Fragment {
             flag = false;
         }
 
-        L.m(String.valueOf(flag));
+//        L.m(String.valueOf(flag));
 
         try {
             for(int i = 0; i< response.length();i++) {
