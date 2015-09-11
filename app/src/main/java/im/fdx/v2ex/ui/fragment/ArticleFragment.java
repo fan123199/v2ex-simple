@@ -78,11 +78,10 @@ public class ArticleFragment extends Fragment {
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),mRecyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                view.setTransitionName("header");
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("topic_id", Latest.get(position).getTopicId());
                 intent.putExtra("model",Latest.get(position));
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view,"header");
+                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view.findViewById(R.id.tvContent),"header");
 
                 getActivity().startActivity(intent, options.toBundle());
                 L.t(getActivity(), "短按");

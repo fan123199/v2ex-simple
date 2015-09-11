@@ -17,6 +17,7 @@ import im.fdx.v2ex.utils.TimeHelper;
 
 /**
  * Created by a708 on 15-9-7.
+ * 注意<>中的参数是默认的
  */
 public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -58,7 +59,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             TopicModel currentTopic = header;
             MVHolder.tvTitle.setText(currentTopic.title);
             MVHolder.tvContent.setText(currentTopic.content);
-
+            MVHolder.tvContent.setTransitionName("header"+position);
             MVHolder.tvReplyNumber.setText(String.valueOf(currentTopic.replies)+"个回复");
             MVHolder.tvAuthor.setText(currentTopic.author);
             MVHolder.tvNode.setText(currentTopic.nodeTitle);

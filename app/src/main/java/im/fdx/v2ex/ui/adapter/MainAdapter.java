@@ -35,8 +35,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //这叫布局解释器,用来解释
-//        LayoutInflater lyInflater = LayoutInflater.from(parent.getContext());
-        //找到需要显示的xml文件,主要靠inflate
+//        另一种方式，LayoutInflater lyInflater = LayoutInflater.from(parent.getContext());
+        //找到需要显示的xml文件,是通过inflate
         View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
 
         return new MainViewHolder(view);
@@ -50,6 +50,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         holder.tvTitle.setText(currentTopic.title);
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.content);
+        holder.tvContent.setTransitionName("header"+position);
         holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies)+"个回复");
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);

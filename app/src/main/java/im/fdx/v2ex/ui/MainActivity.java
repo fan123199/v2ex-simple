@@ -22,7 +22,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActionBar toolbar = getActionBar();
         ViewPager viewPager = (ViewPager) findViewById(R.id.ViewPager);
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager());
         viewPager.setAdapter(mAdapter);
