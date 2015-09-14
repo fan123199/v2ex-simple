@@ -7,3 +7,7 @@ An V2ex simple android client
 + 使用Material Design
 + 获取热门主题到主Activity
 + 一步步完善到所有功能
+
+##开源协议
+
+GPL v2
