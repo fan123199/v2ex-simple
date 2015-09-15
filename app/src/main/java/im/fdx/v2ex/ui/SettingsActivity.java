@@ -20,10 +20,9 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-//        if(savedInstanceState ==null)
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new SettingsFragment())
-                    .commit();
+        getFragmentManager().beginTransaction()
+                .add(R.id.container, new SettingsFragment())
+                .commit();
 
     }
 

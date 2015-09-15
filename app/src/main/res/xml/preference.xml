@@ -12,6 +12,7 @@
             android:defaultValue="false"/>
     </PreferenceCategory>
 
+
     <PreferenceCategory
         android:title="其他">
         <Preference

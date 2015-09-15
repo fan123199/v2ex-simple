@@ -26,7 +26,6 @@ public class MainActivity extends Activity {
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager());
         viewPager.setAdapter(mAdapter);
 
-
     }
 
 

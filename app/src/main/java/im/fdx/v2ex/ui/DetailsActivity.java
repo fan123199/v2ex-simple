@@ -168,7 +168,7 @@ public class DetailsActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //SimplifiableIfStatement
         switch (id) {
             case R.id.action_settings:
                 startActivity(new Intent(DetailsActivity.this,SettingsActivity.class));
