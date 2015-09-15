@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="pref_communication"
+        android:title="流量耗用">
+        <CheckBoxPreference
+
+            android:key="pref_wifi"
+            android:summary="移动网络下不加载图片"
+            android:title="节省流量"
+            android:defaultValue="false"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="其他">
+        <Preference
+            android:key="pref_about"
+            android:title="关于" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

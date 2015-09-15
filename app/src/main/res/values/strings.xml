@@ -16,4 +16,5 @@
     <string name="content">Content , For change line I have to do a lot of things, please hurt me</string>
     <string name="node">Node</string>
     <string name="menu_share">Share</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 </resources>

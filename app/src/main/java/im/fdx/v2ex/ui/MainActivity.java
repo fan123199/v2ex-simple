@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -81,6 +82,7 @@ public class MainActivity extends Activity {
                 break;
             case R.id.menu_settings:
                 L.t(this.getApplicationContext(), "choose Settings");
+                startActivity(new Intent(MainActivity.this,SettingsActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

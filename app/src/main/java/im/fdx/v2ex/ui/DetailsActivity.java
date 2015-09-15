@@ -171,6 +171,7 @@ public class DetailsActivity extends Activity {
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.action_settings:
+                startActivity(new Intent(DetailsActivity.this,SettingsActivity.class));
                 break;
             case R.id.menu_refresh:
                 GetReplyJson();
