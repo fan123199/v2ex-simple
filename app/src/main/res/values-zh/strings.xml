@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">V2ex</string>
     <string name="hello_world">你好世界</string>
     <string name="it_is_avatar">这是头像</string>
     <string name="menu_refresh">刷新</string>
     <string name="title">标题</string>
     <string name="content">这是内容，来吧来吧 相约98。来吧来吧 相约98来吧来吧 相约98</string>
+    <string name="menu_share">分享</string>
+    <string name="node">节点</string>
+    <string name="title_activity_details">主题详情</string>
+    <string name="action_settings">设置</string>
+    <string name="author">作者</string>
 </resources>

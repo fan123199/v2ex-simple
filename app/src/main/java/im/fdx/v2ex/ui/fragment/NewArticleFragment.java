@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.fragment;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,21 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -39,10 +30,10 @@ import im.fdx.v2ex.ui.adapter.MainAdapter;
 import im.fdx.v2ex.utils.ClickListener;
 import im.fdx.v2ex.utils.L;
 import im.fdx.v2ex.utils.RecyclerTouchListener;
-import im.fdx.v2ex.utils.V2exJsonManager;
+import im.fdx.v2ex.utils.JsonManager;
 
 
-public class ArticleFragment extends Fragment {
+public class NewArticleFragment extends Fragment {
 
 
     private ArrayList<TopicModel> Latest = new ArrayList<>();
@@ -57,7 +48,7 @@ public class ArticleFragment extends Fragment {
     public RequestQueue queue;
 //    private OnFragmentInteractionListener mListener;
 
-    public ArticleFragment() {
+    public NewArticleFragment() {
         // Required empty public constructor
     }
 
@@ -66,7 +57,7 @@ public class ArticleFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View layout = inflater.inflate(R.layout.fragment_article, container, false);
+        final View layout = inflater.inflate(R.layout.fragment_latest_article, container, false);
 
         queue = MySingleton.getInstance(this.getActivity()).getRequestQueue();
 //        mSingleton = MySingleton.getInstance(this.getActivity());
@@ -80,12 +71,12 @@ public class ArticleFragment extends Fragment {
             public void onClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("topic_id", Latest.get(position).getTopicId());
-                intent.putExtra("model",Latest.get(position));
-                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view.findViewById(R.id.tvContent),"header");
+                intent.putExtra("model", Latest.get(position));
+                //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
+//                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view.findViewById(R.id.tvContent),"header");
 
-                getActivity().startActivity(intent, options.toBundle());
-                L.t(getActivity(), "短按");
-                view.setTransitionName("");
+                getActivity().startActivity(intent);
+//                L.t(getActivity(), "短按");
             }
 
             @Override
@@ -97,7 +88,7 @@ public class ArticleFragment extends Fragment {
         mAdapter = new MainAdapter(this.getActivity());
         mAdapter.setTopic(Latest);
         mRecyclerView.setAdapter(mAdapter); //大工告成
-        L.m("显示成功");
+        L.m("显示Latest成功");
 
         mSwipeLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipe_container);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -123,13 +114,11 @@ public class ArticleFragment extends Fragment {
     public void GetJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                V2exJsonManager.LATEST_JSON, new Response.Listener<JSONArray>() {
+                JsonManager.LATEST_JSON, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
-                parseJsonArray(response);
-
-                L.m(String.valueOf(Latest));
+                JsonManager.handleJson(response, Latest);
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
 
@@ -137,78 +126,12 @@ public class ArticleFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                handleVolleyError(error);
+                JsonManager.handleVolleyError(getActivity(), error);
             }
         });
 
         MySingleton.getInstance(this.getActivity()).addToRequestQueue(jsonArrayRequest);
 
-    }
-
-    private void handleVolleyError(VolleyError error) {
-        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-            L.m(getString(R.string.error_timeout));
-            //TODO
-        } else if (error instanceof AuthFailureError) {
-            L.m(getString(R.string.error_auth_failure));
-
-        } else if (error instanceof ServerError) {
-            L.m(getString(R.string.error_auth_failure));
-
-        } else if (error instanceof NetworkError) {
-            L.m(getString(R.string.error_network));
-
-        } else if (error instanceof ParseError) {
-            L.m(getString(R.string.error_parser));
-
-        }
-    }
-
-    public void parseJsonArray(JSONArray response) {
-        if(response == null || response.length() == 0) {
-            return;
-        }
-        long id;
-        String title;
-        String author;
-        String content;
-        int replies;
-        String node_title;
-        long created;
-
-        boolean flag = true;
-
-        if(Latest.isEmpty()) {
-            flag = false;
-        }
-
-//        L.m(String.valueOf(flag));
-
-        try {
-            for(int i = 0; i< response.length();i++) {
-
-                JSONObject responseJSONObject = response.getJSONObject(i);
-
-                id = responseJSONObject.optInt("id");
-                title = responseJSONObject.optString("title");
-                author = responseJSONObject.optJSONObject("member").optString("username");
-                content = responseJSONObject.optString("content");
-                replies = responseJSONObject.optInt("replies");
-                node_title = responseJSONObject.optJSONObject("node").optString("title");
-                created = responseJSONObject.optLong("created");
-                if(flag) {
-                    if (id == Latest.get(i).id) {
-                        break;
-                    }
-                }
-
-                Latest.add(i, new TopicModel(id, title, author, content, replies, node_title, created));
-            }
-
-        } catch (JSONException e) {
-            L.m("parse false");
-            e.printStackTrace();
-        }
     }
 
 

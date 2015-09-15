@@ -16,6 +16,7 @@ public class ReplyModel implements Parcelable {
     public int thanks;
     public long created;
     public String author;
+    public String avatarString;
 
     protected ReplyModel(Parcel in) {
         id = in.readLong();
@@ -24,6 +25,7 @@ public class ReplyModel implements Parcelable {
         thanks = in.readInt();
         created = in.readLong();
         author = in.readString();
+        avatarString = in.readString();
     }
     public ReplyModel() {}
 
@@ -53,14 +55,16 @@ public class ReplyModel implements Parcelable {
         dest.writeInt(thanks);
         dest.writeLong(created);
         dest.writeString(author);
+        dest.writeString(avatarString);
 
     }
 
-    public ReplyModel(long id,String content,int thanks,long created, String author) {
+    public ReplyModel(long id,String content,int thanks,long created, String author, String avatarString) {
         this.id = id;
         this.content = content;
         this.thanks = thanks;
         this.created = created;
         this.author = author;
+        this.avatarString = avatarString;
     }
 }

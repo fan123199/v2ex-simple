@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ShareActionProvider;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -27,7 +28,7 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.DetailsAdapter;
 import im.fdx.v2ex.utils.L;
-import im.fdx.v2ex.utils.V2exJsonManager;
+import im.fdx.v2ex.utils.JsonManager;
 
 public class DetailsActivity extends Activity {
 
@@ -39,6 +40,7 @@ public class DetailsActivity extends Activity {
     ArrayList<ReplyModel> replyLists = new ArrayList<>();
 
     private String TopicId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,7 @@ public class DetailsActivity extends Activity {
     public void GetReplyJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                V2exJsonManager.API_REPLIES+"?topic_id="+ TopicId, new Response.Listener<JSONArray>() {
+                JsonManager.API_REPLIES+"?topic_id="+ TopicId, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
@@ -97,7 +99,7 @@ public class DetailsActivity extends Activity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-//                handleVolleyError(error);//// TODO: 15-9-8 重构volleyerror.
+                JsonManager.handleVolleyError(DetailsActivity.this,error); // DONE: 15-9-8 重构volleyerror.
 
             }
         });
@@ -117,6 +119,7 @@ public class DetailsActivity extends Activity {
         String content;
         long created;
         int thanks;
+        String avatarString;
 
         if(replyLists.size() == response.length()){
             L.m("no new reply");
@@ -135,9 +138,10 @@ public class DetailsActivity extends Activity {
                 content = responseJSONObject.optString("content");
                 thanks = responseJSONObject.optInt("thanks");
                 created = responseJSONObject.optLong("created");
-                L.m(content+i);
+                avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
+//                L.m(content+i);
 
-                replyLists.add(new ReplyModel(id, content, thanks, created, author));
+                replyLists.add(new ReplyModel(id, content, thanks, created, author,avatarString));
             }
 
         } catch (JSONException e) {
@@ -150,8 +154,12 @@ public class DetailsActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_details, menu);
+
+
+
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -161,8 +169,21 @@ public class DetailsActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                break;
+            case R.id.menu_refresh:
+                GetReplyJson();
+                break;
+            case R.id.menu_item_share:
+                L.t(this,"分享到");
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的文章： " + Header.title + "   " + JsonManager.HTTP_V2EX_BASE + "/t/" + TopicId);
+                sendIntent.setType("text/plain");
+                // createChooser 中有三大好处，
+                startActivity(Intent.createChooser(sendIntent,"分享到"));
+                break;
         }
 
         return super.onOptionsItemSelected(item);

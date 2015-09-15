@@ -1,18 +1,17 @@
 package im.fdx.v2ex.ui;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.fragment.AboutFragment;
-import im.fdx.v2ex.ui.fragment.ArticleFragment;
+import im.fdx.v2ex.ui.fragment.NewArticleFragment;
+import im.fdx.v2ex.ui.fragment.TopArticleFragment;
 import im.fdx.v2ex.utils.L;
 
 
@@ -32,8 +31,8 @@ public class MainActivity extends Activity {
 
     public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-        private static final int PAGE_COUNT = 2;
-        public String tabtitles[] = new String[]{"主题", "关于"};
+        private static final int PAGE_COUNT = 3;
+        public String tabTitles[] = new String[]{"最新","热门","关于"};
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -43,8 +42,10 @@ public class MainActivity extends Activity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new ArticleFragment();
+                    return new NewArticleFragment();
                 case 1:
+                    return new TopArticleFragment();
+                case 2:
                     return new AboutFragment();
 
             }
@@ -58,7 +59,7 @@ public class MainActivity extends Activity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return tabtitles[position];
+            return tabTitles[position];
         }
     }
 
@@ -77,8 +78,10 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 L.t(this.getApplicationContext(), "choose Refresh");
+                break;
             case R.id.menu_settings:
                 L.t(this.getApplicationContext(), "choose Settings");
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

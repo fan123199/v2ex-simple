@@ -28,6 +28,7 @@ public class TopicModel implements Parcelable {
     public long lastTouched;
     public String author;
     public String nodeTitle;
+    public String avatarString;
 
     //暂时不知道如何传递数据到Model,先用vivz的方法,在activty中设置解析方法
 
@@ -46,6 +47,7 @@ public class TopicModel implements Parcelable {
 //        member = (MemberModel) in.readValue(MemberModel.class.getClassLoader());
 //        node = (NodeModel) in.readValue(NodeModel.class.getClassLoader());
         nodeTitle = in.readString();
+        avatarString = in.readString();
 
 
     }
@@ -82,12 +84,13 @@ public class TopicModel implements Parcelable {
         dest.writeLong(lastTouched);
         dest.writeString(author);//学devliu
         dest.writeString(nodeTitle);
+        dest.writeString(avatarString);
 
 //        dest.writeValue(member);
 //        dest.writeValue(node);
     }
 
-    public TopicModel(long id,String title,String author,String content,int replies,String node_title,long created){
+    public TopicModel(long id,String title,String author,String content,int replies,String node_title,long created,String avatarString){
         this.author = author;
         this.id = id;
         this.title = title;
@@ -95,6 +98,7 @@ public class TopicModel implements Parcelable {
         this.replies = replies;
         this.nodeTitle = node_title;
         this.created = created;
+        this.avatarString = avatarString;
     }
 
     public long getTopicId() {

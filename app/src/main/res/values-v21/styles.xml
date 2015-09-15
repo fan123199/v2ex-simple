@@ -12,10 +12,10 @@
         <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->
         <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
         <!--&lt;!&ndash; specify shared element transitions &ndash;&gt;-->
-        <item name="android:windowSharedElementEnterTransition">
-            @transition/explode</item>
-        <item name="android:windowSharedElementExitTransition">
-            @transition/explode</item>
+        <!--<item name="android:windowSharedElementEnterTransition">-->
+            <!--@transition/explode</item>-->
+        <!--<item name="android:windowSharedElementExitTransition">-->
+            <!--@transition/explode</item>-->
 
         <!-- Main theme colors -->
         <!--   your app branding color for the app bar -->

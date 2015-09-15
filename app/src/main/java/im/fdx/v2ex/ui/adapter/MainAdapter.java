@@ -5,13 +5,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.utils.L;
 import im.fdx.v2ex.utils.TimeHelper;
 
 /**
@@ -22,11 +26,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
     private LayoutInflater mInflater;
     private ArrayList<TopicModel> TopicList = new ArrayList<>();
+    private ImageLoader mImageLoader;
+//    private Context mContext;
 
 
     //这是构造器
     public MainAdapter(Context context) {
+//        mContext = context;
         mInflater = LayoutInflater.from(context);
+        mImageLoader = MySingleton.getInstance(context).getImageLoader();
     }
 
 
@@ -50,11 +58,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         holder.tvTitle.setText(currentTopic.title);
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.content);
-        holder.tvContent.setTransitionName("header"+position);
-        holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies)+"个回复");
+        holder.tvContent.setTransitionName("header" + position);
+        holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies) + "个回复");
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);
         holder.tvPushTime.setText(TimeHelper.RelativeTime(currentTopic.created));
+        holder.ivAvatar.setImageUrl(currentTopic.avatarString, mImageLoader);
+
     }
 
     public void setTopic(ArrayList<TopicModel> top10){
@@ -80,7 +90,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         public TextView tvReplyNumber;
         public TextView tvPushTime;
         public TextView tvAuthor;
-        public ImageView ivAvatar;
+        public NetworkImageView ivAvatar;
         public TextView tvNode;
 
         public MainViewHolder(View root) {
@@ -91,7 +101,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             tvReplyNumber = (TextView) root.findViewById(R.id.tvReplyNumber);
             tvPushTime = (TextView) root.findViewById(R.id.tvPushTime);
             tvAuthor = (TextView) root.findViewById(R.id.tvReplier);
-            ivAvatar = (ImageView) root.findViewById(R.id.ivAvatar);
+            ivAvatar = (NetworkImageView) root.findViewById(R.id.ivAvatar);
             tvNode = (TextView) root.findViewById(R.id.tvNode);
         }
 
