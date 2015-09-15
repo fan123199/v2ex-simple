@@ -6,6 +6,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -31,13 +32,15 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     TopicModel header;
     private ArrayList<ReplyModel> replyList = new ArrayList<>();
     private LayoutInflater mInflater;
-    private ImageLoader mImageloader;
+    private ImageLoader mImageLoader;
+    private Context mContext;
 
     public DetailsAdapter(Context context, TopicModel header, ArrayList<ReplyModel> replyList) {
+        mContext = context;
         mInflater = LayoutInflater.from(context);
         this.header = header;
         this.replyList = replyList;
-        mImageloader = MySingleton.getInstance(context).getImageLoader();
+        mImageLoader = MySingleton.getInstance(context).getImageLoader();
     }
 
     @Override
@@ -45,6 +48,13 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         if (viewType == TYPE_HEADER) {
             View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
+            //// TODO: 2015/9/15 first try
+            // set the view's size, margins, paddings and layout parameters
+//            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//            lp.bottomMargin =30;
+            ////lp.setMargins(0,0,0,20);
+//            view.setLayoutParams(lp);
+            view.setPadding(0,0,0,20);
             return new MainAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
             View view = mInflater.inflate(R.layout.reply_row_view, parent, false);
@@ -66,14 +76,13 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             MVHolder.tvContent.setAutoLinkMask(Linkify.ALL);
             MVHolder.tvContent.setText(currentTopic.content);
-
             MVHolder.tvContent.setTransitionName("header" + position);
             MVHolder.tvReplyNumber.setText(String.valueOf(currentTopic.replies) + "个回复");
             MVHolder.tvAuthor.setText(currentTopic.author);
             MVHolder.tvNode.setText(currentTopic.nodeTitle);
             MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(currentTopic.created));
 
-            MVHolder.ivAvatar.setImageUrl(currentTopic.avatarString,mImageloader);
+            MVHolder.ivAvatar.setImageUrl(currentTopic.avatarString, mImageLoader);
 
         }
 //        if(holder instanceof ViewHolderItem) {
@@ -92,7 +101,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             VHItem.content.setText(replyModel.content);
 
             VHItem.row.setText(String.valueOf(position));
-            VHItem.avatar.setImageUrl(replyModel.avatarString, mImageloader);
+            VHItem.avatar.setImageUrl(replyModel.avatarString, mImageLoader);
 
         }
 

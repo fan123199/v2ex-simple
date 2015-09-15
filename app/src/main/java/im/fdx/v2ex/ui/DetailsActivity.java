@@ -56,15 +56,25 @@ public class DetailsActivity extends Activity {
         GetReplyJson();
         mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+//        // TODO: 2015/9/15  I want space!!
+//
+//        RecyclerView.LayoutParams params =
+//                new RecyclerView.LayoutParams(
+//                        RecyclerView.LayoutParams.WRAP_CONTENT,
+//                        RecyclerView.LayoutParams.WRAP_CONTENT);
+//        params.setMargins(0,0,0,30);
+//        mLayoutManager.findViewByPosition(0).setLayoutParams();
         mRCView.setLayoutManager(mLayoutManager);
 
         mDetailsAdapter = new DetailsAdapter(this,Header, replyLists);
+
 
         mRCView.setAdapter(mDetailsAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
         mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light, android.R.color.holo_orange_light,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -91,7 +101,7 @@ public class DetailsActivity extends Activity {
             public void onResponse(JSONArray response) {
 
                 parseDetailJsonArray(response);
-                L.m(String.valueOf(replyLists));
+//                L.m(String.valueOf(replyLists));
                 mDetailsAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
 
@@ -122,7 +132,7 @@ public class DetailsActivity extends Activity {
         String avatarString;
 
         if(replyLists.size() == response.length()){
-            L.m("no new reply");
+//            L.m("no new reply");
             return;
         }
         replyLists.clear();
@@ -145,7 +155,7 @@ public class DetailsActivity extends Activity {
             }
 
         } catch (JSONException e) {
-            L.m("parse false");
+//            L.m("parse false");
             e.printStackTrace();
         }
     }
@@ -177,12 +187,12 @@ public class DetailsActivity extends Activity {
                 GetReplyJson();
                 break;
             case R.id.menu_item_share:
-                L.t(this,"分享到");
+//                L.t(this,"分享到");
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的文章： " + Header.title + "   " + JsonManager.HTTP_V2EX_BASE + "/t/" + TopicId);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + Header.title + "   " + JsonManager.HTTP_V2EX_BASE + "/t/" + TopicId);
                 sendIntent.setType("text/plain");
-                // createChooser 中有三大好处，
+                // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent,"分享到"));
                 break;
         }

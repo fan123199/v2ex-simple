@@ -81,14 +81,14 @@ public class TopArticleFragment extends Fragment {
 
             @Override
             public void onLongClick(View view, int position) {
-                L.t(getActivity(), "长按");
+//                L.t(getActivity(), "长按");
 
             }
         }));
         mAdapter = new MainAdapter(this.getActivity());
         mAdapter.setTopic(TOP10);
         mRecyclerView.setAdapter(mAdapter); //大工告成
-        L.m("显示Top成功");
+//        L.m("显示Top成功");
 
         mSwipeLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipe_container);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -119,7 +119,7 @@ public class TopArticleFragment extends Fragment {
 
                 JsonManager.handleJson(response, TOP10);
 
-                L.m(String.valueOf(TOP10));
+//                L.m(String.valueOf(TOP10));
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
 

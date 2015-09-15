@@ -8,6 +8,7 @@ import android.view.View;
 
 /**
  * Created by a708 on 15-8-28.
+ * RecyclerView 的 按钮监听类，不用OnclickListener，而是用OnItemTouchListener
  */
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
@@ -21,7 +22,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-                L.m("single tap up");
+//                L.m("single tap up");
                 return true;
             }
 
@@ -31,7 +32,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
                 View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (childView != null && mListener != null) {
                     mListener.onLongClick(childView, recyclerView.getChildAdapterPosition(childView));
-                    L.m("on Long Press");
+//                    L.m("on Long Press");
                 }
             }
         });
@@ -45,7 +46,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
         if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
             mListener.onClick(childView, rv.getChildAdapterPosition(childView));
-            L.m("why do onIntercept");
+//            L.m("why do onIntercept");
         }
 
         return false;

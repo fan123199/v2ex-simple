@@ -40,6 +40,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
 
     //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
+    // 20150916,可以对View进行Layout的设置。
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //这叫布局解释器,用来解释

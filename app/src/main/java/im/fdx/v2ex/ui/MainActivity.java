@@ -31,8 +31,8 @@ public class MainActivity extends Activity {
 
     public class ViewPagerAdapter extends FragmentPagerAdapter {
 
-        private static final int PAGE_COUNT = 3;
-        public String tabTitles[] = new String[]{"最新","热门","关于"};
+        private static final int PAGE_COUNT = 2;
+        public String tabTitles[] = new String[]{"最新","热门"};
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -45,8 +45,8 @@ public class MainActivity extends Activity {
                     return new NewArticleFragment();
                 case 1:
                     return new TopArticleFragment();
-                case 2:
-                    return new AboutFragment();
+//                case 2:
+//                    return new AboutFragment();
 
             }
             return null;
@@ -77,10 +77,10 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
-                L.t(this.getApplicationContext(), "choose Refresh");
+//                L.t(this.getApplicationContext(), "choose Refresh");
                 break;
             case R.id.menu_settings:
-                L.t(this.getApplicationContext(), "choose Settings");
+//                L.t(this.getApplicationContext(), "choose Settings");
                 startActivity(new Intent(MainActivity.this,SettingsActivity.class));
                 break;
         }

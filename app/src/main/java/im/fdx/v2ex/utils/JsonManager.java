@@ -21,6 +21,7 @@ import im.fdx.v2ex.model.TopicModel;
 
 /**
  * Created by a708 on 15-8-13.
+ * 用于对Json处理的类
  */
 
 public class JsonManager {
@@ -107,7 +108,7 @@ public class JsonManager {
             }
 
         } catch (JSONException e) {
-            L.m("parse false");
+//            L.m("parse false");
             e.printStackTrace();
         }
     }
