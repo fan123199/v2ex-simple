@@ -22,7 +22,7 @@
         android:text="Reply content"
         android:id="@+id/tvReplyContent"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="9dp"
+        android:layout_marginEnd="@dimen/md_left_margin"
         android:layout_below="@+id/tvReplier"
         android:layout_alignStart="@+id/tvReplier" />
 
@@ -33,7 +33,7 @@
         android:id="@+id/tvReplier"
         android:layout_alignTop="@+id/reply_avatar"
         android:layout_toEndOf="@+id/reply_avatar"
-        android:layout_marginStart="10dp" />
+        android:layout_marginStart="@dimen/md_left_margin" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
-        android:layout_toEndOf="@+id/reply_avatar"
+        android:layout_alignStart="@+id/tvReplier"
         android:layout_alignParentEnd="true"
         android:layout_below="@id/tvReplyContent"
         android:layout_marginTop="6dp"/>
