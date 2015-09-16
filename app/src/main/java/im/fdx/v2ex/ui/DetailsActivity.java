@@ -54,6 +54,7 @@ public class DetailsActivity extends Activity {
         setActionBar(toolbar);
         //noinspection ConstantConditions
         getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
