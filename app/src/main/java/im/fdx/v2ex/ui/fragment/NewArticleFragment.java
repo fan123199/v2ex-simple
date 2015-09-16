@@ -127,6 +127,7 @@ public class NewArticleFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 JsonManager.handleVolleyError(getActivity(), error);
+                mSwipeLayout.setRefreshing(false);
             }
         });
 
@@ -134,12 +135,6 @@ public class NewArticleFragment extends Fragment {
 
     }
 
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-    }
 
     @Override
     public void onDetach() {

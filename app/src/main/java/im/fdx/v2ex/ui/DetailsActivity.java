@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +10,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ShareActionProvider;
+import android.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -47,11 +50,23 @@ public class DetailsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setActionBar(toolbar);
+        //noinspection ConstantConditions
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                finish();
+                onBackPressed();
+            }
+        });
+
         //处理传递过来的Intent，共两个数据
         Intent mGetIntent = getIntent();
         Header = mGetIntent.getParcelableExtra("model");
         TopicId = String.valueOf(mGetIntent.getLongExtra("topic_id", 1L));
-        L.m(TopicId);
+//        L.m(TopicId);
 
         GetReplyJson();
         mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
@@ -110,6 +125,7 @@ public class DetailsActivity extends Activity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 JsonManager.handleVolleyError(DetailsActivity.this,error); // DONE: 15-9-8 重构volleyerror.
+                mSwipeRefreshLayout.setRefreshing(false);
 
             }
         });

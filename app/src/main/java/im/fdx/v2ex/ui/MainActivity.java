@@ -10,6 +10,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toolbar;
 
 import im.fdx.v2ex.R;
@@ -24,11 +25,17 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
 
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setActionBar(toolbar);
+
+
+
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager());
         viewPager.setAdapter(mAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setBackgroundResource(R.color.primary);
         tabLayout.setupWithViewPager(viewPager);
     }
 

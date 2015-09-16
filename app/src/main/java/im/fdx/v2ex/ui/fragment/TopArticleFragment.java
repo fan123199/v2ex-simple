@@ -128,6 +128,7 @@ public class TopArticleFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 JsonManager.handleVolleyError(getActivity(), error);
+                mSwipeLayout.setRefreshing(false);
             }
         });
 
