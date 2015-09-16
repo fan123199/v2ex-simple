@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "22.0.1"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "im.fdx.v2ex"
         minSdkVersion 21
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -23,10 +23,14 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 //    compile 'com.belerweb:pinyin4j:2.5.0'
 //    compile 'com.android.support:support-v4:22.+'
-    compile 'com.android.support:cardview-v7:22.0.+'
-    compile 'com.android.support:recyclerview-v7:22.0.+'
-//    compile 'com.android.support:appcompat-v7:22.0.+'
-    compile 'com.android.support:support-v13:22.+'
+
     compile 'com.mcxiaoke.volley:library:1.0.18'
+    compile 'com.android.support:design:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+//    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:support-v13:23.0.1'
+
+
 //    compile project(':volley')
 }

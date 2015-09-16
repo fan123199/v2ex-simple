@@ -46,7 +46,7 @@ public class SettingsActivity extends Activity {
             addPreferencesFromResource(R.xml.preference);
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-            findPreference("pref_about").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            findPreference("pref_rates").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     try {
                         Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());

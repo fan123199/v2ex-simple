@@ -5,15 +5,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toolbar;
+
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.ui.fragment.AboutFragment;
 import im.fdx.v2ex.ui.fragment.NewArticleFragment;
 import im.fdx.v2ex.ui.fragment.TopArticleFragment;
-import im.fdx.v2ex.utils.L;
 
 
 public class MainActivity extends Activity {
@@ -22,10 +23,13 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.ViewPager);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager());
         viewPager.setAdapter(mAdapter);
 
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
 

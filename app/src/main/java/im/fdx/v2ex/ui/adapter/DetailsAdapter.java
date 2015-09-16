@@ -50,11 +50,11 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
             //// TODO: 2015/9/15 first try
             // set the view's size, margins, paddings and layout parameters
-//            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 //            lp.bottomMargin =30;
-            ////lp.setMargins(0,0,0,20);
-//            view.setLayoutParams(lp);
-            view.setPadding(0,0,0,20);
+            lp.setMargins(0,0,0,30);
+            view.setLayoutParams(lp);
+
             return new MainAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
             View view = mInflater.inflate(R.layout.reply_row_view, parent, false);

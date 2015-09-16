@@ -26,4 +26,11 @@
         <item name="android:colorAccent">@color/accent</item>
 
     </style>
+
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/accent</item>
+
+        <item name="tabPaddingStart">24dp</item>
+        <item name="tabPaddingEnd">24dp</item>
+    </style>
 </resources>
