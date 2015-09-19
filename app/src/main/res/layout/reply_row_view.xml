@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFF"
     android:elevation="1dp"
     >
 
@@ -19,7 +18,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Reply content"
+        android:text="@string/content"
         android:id="@+id/tvReplyContent"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="@dimen/md_left_margin"
@@ -29,8 +28,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Author"
+        android:text="@string/author"
+        android:textStyle="bold"
         android:id="@+id/tvReplier"
+        android:textColor="#333333"
         android:layout_alignTop="@+id/reply_avatar"
         android:layout_toEndOf="@+id/reply_avatar"
         android:layout_marginStart="@dimen/md_left_margin" />
@@ -38,7 +39,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time"
+        android:text="@string/reply_time"
         android:id="@+id/tvReplyTime"
         android:layout_marginStart="@dimen/md_left_margin"
         android:layout_alignBaseline="@+id/tvReplier"
@@ -48,7 +49,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="n row"
+        android:text="@string/row"
         android:id="@+id/tvRow"
         android:layout_alignTop="@+id/reply_avatar"
         android:layout_alignEnd="@+id/tvReplyContent" />
