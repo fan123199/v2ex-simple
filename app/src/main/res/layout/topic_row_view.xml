@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="发布时间"
+        android:text="@string/reply_time"
         android:id="@+id/tvPushTime"
         android:layout_marginStart="29dp"
         android:layout_alignBottom="@+id/ivAvatar"
@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="回复数"
+        android:text="@string/reply"
         android:id="@+id/tvReplyNumber"
         android:layout_alignBottom="@+id/ivAvatar"
         android:layout_alignStart="@+id/tvReplier" />

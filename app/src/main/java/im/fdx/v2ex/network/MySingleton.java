@@ -11,10 +11,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-import im.fdx.v2ex.MyApplication;
-
 /**
  * Created by fdx on 2015/8/14.
+ * Volley网络库的请求队列。使用单例，增加资源利用
  */
 public class MySingleton {
 
@@ -34,7 +33,7 @@ public class MySingleton {
         mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
 
             private final LruCache<String, Bitmap>
-                    cache = new LruCache<String, Bitmap>(20);
+                    cache = new LruCache<>(20);
 
             @Override
             public Bitmap getBitmap(String url) {

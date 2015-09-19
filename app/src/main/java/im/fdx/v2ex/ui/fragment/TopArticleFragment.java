@@ -39,14 +39,14 @@ public class TopArticleFragment extends Fragment {
 
     private ArrayList<TopicModel> TOP10 = new ArrayList<>();
 
-    RecyclerView mRecyclerView;
-    MainAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+    private MainAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;//TODO
-    SwipeRefreshLayout mSwipeLayout;
+    private SwipeRefreshLayout mSwipeLayout;
 
 
     //    MySingleton mSingleton;//暂时不用,调试context
-    public RequestQueue queue;
+    private RequestQueue queue;
 
 
     public TopArticleFragment() {
@@ -110,7 +110,7 @@ public class TopArticleFragment extends Fragment {
         // Inflate the layout for this fragment
         return layout;
     }
-    public void GetJson() {
+    private void GetJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
                 JsonManager.HOT_JSON, new Response.Listener<JSONArray>() {

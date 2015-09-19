@@ -2,8 +2,9 @@ package im.fdx.v2ex.utils;
 
 /**
  * Created by a708 on 15-8-18.
+ * 来自yaoyumeng的开源
  */
-//来自yaoyumeng的开源
+
 public class ContentUtils {
 
     public static String formatContent(String content){

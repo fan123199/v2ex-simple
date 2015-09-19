@@ -38,14 +38,13 @@ public class NewArticleFragment extends Fragment {
 
     private ArrayList<TopicModel> Latest = new ArrayList<>();
 
-    RecyclerView mRecyclerView;
-    MainAdapter mAdapter;
+    private MainAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;//TODO
-    SwipeRefreshLayout mSwipeLayout;
+    private SwipeRefreshLayout mSwipeLayout;
 
 
 //    MySingleton mSingleton;//暂时不用,调试context
-    public RequestQueue queue;
+private RequestQueue queue;
 //    private OnFragmentInteractionListener mListener;
 
     public NewArticleFragment() {
@@ -64,9 +63,9 @@ public class NewArticleFragment extends Fragment {
         GetJson();
 
         //找出recyclerview,并赋予变量
-        mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));//这里用线性显示 类似于listview
-        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),mRecyclerView, new ClickListener() {
+        RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));//这里用线性显示 类似于listView
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
@@ -111,7 +110,7 @@ public class NewArticleFragment extends Fragment {
         return layout;
     }
 
-    public void GetJson() {
+    private void GetJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
                 JsonManager.LATEST_JSON, new Response.Listener<JSONArray>() {

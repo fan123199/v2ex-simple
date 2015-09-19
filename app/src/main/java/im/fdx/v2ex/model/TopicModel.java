@@ -3,15 +3,12 @@ package im.fdx.v2ex.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.L;
 
 /**
  * Created by a708 on 15-8-18.
+ * 主题模型
  */
 public class TopicModel implements Parcelable {
 

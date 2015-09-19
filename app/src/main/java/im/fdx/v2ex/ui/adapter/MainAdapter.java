@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
-import im.fdx.v2ex.utils.L;
 import im.fdx.v2ex.utils.TimeHelper;
 
 /**

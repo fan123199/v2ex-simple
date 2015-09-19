@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by a708 on 15-8-20.
+ * 数据库帮助类
  */
 public class VDbHelper extends SQLiteOpenHelper{
 

@@ -2,6 +2,7 @@ package im.fdx.v2ex.utils;
 
 /**
  * Created by a708 on 15-8-18.
+ * 用于全局静态常量，用接口的好处不清楚。
  */
 public interface Keys {
 

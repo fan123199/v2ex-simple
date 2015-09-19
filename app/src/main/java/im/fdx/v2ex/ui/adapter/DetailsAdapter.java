@@ -29,7 +29,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    TopicModel header;
+    private TopicModel header;
     private ArrayList<ReplyModel> replyList = new ArrayList<>();
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;

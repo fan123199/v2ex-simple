@@ -17,5 +17,8 @@
     <string name="node">Node</string>
     <string name="menu_share">Share</string>
     <string name="title_activity_settings">SettingsActivity</string>
+    <string name="reply_time">Time</string>
+    <string name="row">n row</string>
+    <string name="reply">reply</string>
 
 </resources>

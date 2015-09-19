@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ShareActionProvider;
 import android.widget.Toolbar;
 
 import com.android.volley.Request;
@@ -30,17 +28,15 @@ import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.DetailsAdapter;
-import im.fdx.v2ex.utils.L;
 import im.fdx.v2ex.utils.JsonManager;
 
 public class DetailsActivity extends Activity {
 
-    public RecyclerView mRCView;
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    DetailsAdapter mDetailsAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private DetailsAdapter mDetailsAdapter;
 
-    TopicModel Header;
-    ArrayList<ReplyModel> replyLists = new ArrayList<>();
+    private TopicModel Header;
+    private ArrayList<ReplyModel> replyLists = new ArrayList<>();
 
     private String TopicId;
 
@@ -70,7 +66,7 @@ public class DetailsActivity extends Activity {
 //        L.m(TopicId);
 
         GetReplyJson();
-        mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
+        RecyclerView mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
 //        // TODO: 2015/9/15  I want space!!
 //

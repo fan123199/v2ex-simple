@@ -4,6 +4,7 @@ import android.app.Application;
 
 /**
  * Created by fdx on 2015/8/16.
+ * 用于启动时获取app状态
  */
 public class MyApplication extends Application {
     private static MyApplication instance;
