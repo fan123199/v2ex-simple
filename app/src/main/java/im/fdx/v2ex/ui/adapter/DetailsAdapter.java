@@ -50,7 +50,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
             //// TODO: 2015/9/15 first try
             // set the view's size, margins, paddings and layout parameters
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                    RelativeLayout.LayoutParams.WRAP_CONTENT);
 //            lp.bottomMargin =30;
             lp.setMargins(0,0,0,30);
             view.setLayoutParams(lp);
@@ -60,7 +61,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             View view = mInflater.inflate(R.layout.reply_row_view, parent, false);
             return new ViewHolderItem(view);
         }
-        throw new RuntimeException("there is no type that matches the type " + viewType + " + make sure your using types correctly");
+        throw new RuntimeException(" no type that matches " + viewType + " + make sure using types correctly");
     }
 
     @Override
@@ -102,6 +103,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             VHItem.row.setText(String.valueOf(position));
             VHItem.avatar.setImageUrl(replyModel.avatarString, mImageLoader);
+            if(position == getItemCount()-1) {
+                VHItem.divider.setVisibility(View.GONE);
+            }
 
         }
 
@@ -140,6 +144,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView content;
         TextView row;
         NetworkImageView avatar;
+        View divider;
 
 
         public ViewHolderItem(View itemView) {
@@ -150,6 +155,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             content = (TextView) itemView.findViewById(R.id.tvReplyContent);
             row = (TextView) itemView.findViewById(R.id.tvRow);
             avatar = (NetworkImageView) itemView.findViewById(R.id.reply_avatar);
+            divider = itemView.findViewById(R.id.divider);
         }
     }
 }
