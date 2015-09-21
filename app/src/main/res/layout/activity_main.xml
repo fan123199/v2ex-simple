@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabMode="scrollable"
-        android:background="@color/primary"
         style="@style/MyCustomTabLayout"
         />
 
