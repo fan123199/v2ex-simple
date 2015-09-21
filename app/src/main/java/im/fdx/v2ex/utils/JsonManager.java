@@ -6,18 +6,24 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
+import com.android.volley.Request;
+import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.network.MySingleton;
 
 /**
  * Created by a708 on 15-8-13.
@@ -27,14 +33,16 @@ import im.fdx.v2ex.model.TopicModel;
 public class JsonManager {
 
 
-    public static final String V2EX_API = "http://www.v2ex.com/api";
-    public static final String HTTP_V2EX_BASE = "http://www.v2ex.com";
-    public static final String HOT_JSON = "http://www.v2ex.com/api/topics/hot.json";
-    public static final String LATEST_JSON = "http://www.v2ex.com/api/topics/latest.json";
+    public static final String V2EX_API = "https://www.v2ex.com/api";
+    public static final String HTTP_V2EX_BASE = "https://www.v2ex.com";
+    public static final String HOT_JSON = "https://www.v2ex.com/api/topics/hot.json";
+    public static final String LATEST_JSON = "https://www.v2ex.com/api/topics/latest.json";
     //以下,接受参数： name: 节点名
     public static final String NODE_JSON = "https://www.v2ex.com/api/nodes/show.json";
 
+    public static final String SIGN_UP_URL = HTTP_V2EX_BASE + "/signup";
 
+    public static final String SIGN_IN_URL = HTTP_V2EX_BASE + "/signin";
     //以下,接受以下参数之一：
     //    username: 用户名
     //    id: 用户在 V2EX 的数字 ID
@@ -57,7 +65,7 @@ public class JsonManager {
 
         } else if (error instanceof NetworkError) {
             L.m(context.getString(R.string.error_network));
-            L.t(context.getApplicationContext(), "网络错误，请重试");
+            L.t(context.getApplicationContext(), "网络错误，请检查网络连接后重试");
         } else if (error instanceof ParseError) {
             L.m(context.getString(R.string.error_parser));
         }
@@ -111,5 +119,44 @@ public class JsonManager {
 //            L.m("parse false");
             e.printStackTrace();
         }
+    }
+
+
+
+    public static void Login(final Context context,final String username,final String password){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, SIGN_IN_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                // TODO: 15-9-17
+                L.t(context,response);
+                L.m(response);
+            }
+
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                handleVolleyError(context,error);
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String,String> params = new HashMap<>();
+                params.put("u",username);
+                params.put("p", password);
+//                params.put("once",)  // TODO: 15-9-17
+                params.put("next","/");
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+               Map<String,String> params = new HashMap<>();
+                params.put("Content-Type", "application/x-www-form-urlencoded");
+
+
+                return params;
+            }
+        };
+        MySingleton.getInstance(context).addToRequestQueue(stringRequest);
     }
 }

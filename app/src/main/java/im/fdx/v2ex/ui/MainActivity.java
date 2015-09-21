@@ -34,7 +34,7 @@ public class MainActivity extends Activity {
         viewPager.setAdapter(mAdapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setBackgroundResource(R.color.primary);
+//        tabLayout.setBackgroundResource(R.color.primary);
         tabLayout.setupWithViewPager(viewPager);
     }
 
@@ -93,6 +93,8 @@ public class MainActivity extends Activity {
 //                L.t(this.getApplicationContext(), "choose Settings");
                 startActivity(new Intent(MainActivity.this,SettingsActivity.class));
                 break;
+            case R.id.menu_login:
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
