@@ -20,12 +20,12 @@
     <string name="reply_time">Time</string>
     <string name="row">n row</string>
     <string name="reply">reply</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="register_tips">No account yet? Create one</string>
-    <string name="account">Account</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
-    <string name="username">Username</string>
-    <string name="authenticating">Authenticating…</string>
+    <string name="title_activity_login" translatable="false">LoginActivity</string>
+    <string name="register_tips" translatable="false">No account yet? Create one</string>
+    <string name="account" translatable="false">Account</string>
+    <string name="password" translatable="false">Password</string>
+    <string name="login" translatable="false">Login</string>
+    <string name="username" translatable="false">Username</string>
+    <string name="authenticating" translatable="false">Authenticating…</string>
 
 </resources>
