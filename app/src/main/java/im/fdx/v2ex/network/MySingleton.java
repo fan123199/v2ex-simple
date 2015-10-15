@@ -11,6 +11,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import im.fdx.v2ex.MyApplication;
+
 /**
  * Created by fdx on 2015/8/14.
  * Volley网络库的请求队列。使用单例，增加资源利用
@@ -23,8 +25,8 @@ public class MySingleton {
     private Context mCtx;
 
     //带参数context, 与ytb教程不同
-    private MySingleton(Context context) {
-        mCtx = context;
+    private MySingleton() {
+//        mCtx = context;
 //        mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
 //        以上参数是没有传入context的构造函数的
         mRequestQueue = getRequestQueue();
@@ -48,9 +50,9 @@ public class MySingleton {
     }
 
     //带参数context, 与ytb教程不同
-    public static synchronized MySingleton getInstance(Context context) {
+    public static synchronized MySingleton getInstance() {
         if(mInstance ==  null){
-            mInstance = new MySingleton(context);
+            mInstance = new MySingleton();
         }
 
         return mInstance;
@@ -61,8 +63,10 @@ public class MySingleton {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
             //防止mCtx只是activity的context
-            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+//            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
+            mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
         }
+
         return mRequestQueue;
     }
 
