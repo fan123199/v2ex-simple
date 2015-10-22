@@ -20,12 +20,53 @@
     <string name="reply_time">Time</string>
     <string name="row">n row</string>
     <string name="reply">reply</string>
-    <string name="title_activity_login" translatable="false">LoginActivity</string>
+    <string name="title_activity_login">LoginActivity</string>
     <string name="register_tips" translatable="false">No account yet? Create one</string>
     <string name="account" translatable="false">Account</string>
-    <string name="password" translatable="false">Password</string>
+    <string name="password">Password</string>
     <string name="login" translatable="false">Login</string>
-    <string name="username" translatable="false">Username</string>
+    <string name="username">Username</string>
     <string name="authenticating" translatable="false">Authenticating…</string>
+    <string name="title_activity_testfor_as140">TestforAS140</string>
+    <string name="title_activity_nav_drawer">NavDrawer</string>
+
+    <string name="tab_title_latest">最新</string>
+    <string name="tab_title_top10">Top 10</string>
+
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string-array name="v2ex_favorite_tab_titles">
+        <item>技术</item>
+        <item>创意</item>
+        <item>好玩</item>
+        <item>Apple</item>
+        <item>酷工作</item>
+        <item>交易</item>
+        <item>城市</item>
+        <item>问与答</item>
+        <item>最热</item>
+        <item>全部</item>
+        <item>R2</item>
+        <item>关注</item>
+    </string-array>
+
+    <string-array name="v2ex_favorite_tab_paths">
+        <item>tech</item>
+        <item>creative</item>
+        <item>play</item>
+        <item>apple</item>
+        <item>jobs</item>
+        <item>deals</item>
+        <item>city</item>
+        <item>qna</item>
+        <item>hot</item>
+        <item>all</item>
+        <item>r2</item>
+        <item>members</item>
+    </string-array>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
