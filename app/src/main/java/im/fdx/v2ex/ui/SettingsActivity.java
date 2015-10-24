@@ -8,13 +8,14 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.Toolbar;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.utils.L;
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +23,7 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getActionBar().setDisplayHomeAsUpEnabled(true);
 

@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui;
+package im.fdx.v2ex.ui.adapter;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
