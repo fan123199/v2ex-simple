@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
         <!-- enable window content transitions -->
         <item name="android:windowContentTransitions">true</item>
@@ -19,25 +19,33 @@
 
          <!--Main theme colors-->
            <!--your app branding color for the app bar-->
-        <item name="android:colorPrimary">@color/primary</item>
+        <item name="colorPrimary">@color/primary</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="android:colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/accent</item>
 
     </style>
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">@color/accent</item>
-        <item name="tabBackground">@color/primary</item>
+        <item name="tabIndicatorColor">?attr/colorAccent</item>
+        <!--<item name="tabBackground">?attr/colorPrimary</item>-->
 
         <item name="tabPaddingStart">24dp</item>
         <item name="tabPaddingEnd">24dp</item>
     </style>
 
-    <style name="AppTheme.Dark.Dialog" parent="Theme.AppCompat.Dialog">
+    <style name="AppTheme.Dark.Dialog" parent="@style/AppTheme.NoActionBar">
         <item name="colorAccent">@color/accent</item>
         <item name="android:textColorPrimary">@color/primary</item>
         <item name="android:background">@color/primary_dark</item>
+    </style>>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+
 </resources>

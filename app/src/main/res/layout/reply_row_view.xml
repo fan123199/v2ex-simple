@@ -22,6 +22,7 @@
         android:id="@+id/tvReplyContent"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_marginBottom="6dp"
         android:layout_below="@+id/tvReplier"
         android:layout_alignStart="@+id/tvReplier" />
 
@@ -60,7 +61,6 @@
         android:background="@android:color/darker_gray"
         android:layout_alignStart="@+id/tvReplier"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/tvReplyContent"
-        android:layout_marginTop="6dp"/>
+        android:layout_below="@id/tvReplyContent" />
 
 </RelativeLayout>
