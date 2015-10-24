@@ -56,7 +56,6 @@ public class JsonManager {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
             L.m(context.getString(R.string.error_timeout));
             L.t(context.getApplicationContext(),"连接超时，请重试");
-            //TODO
         } else if (error instanceof AuthFailureError) {
             L.m(context.getString(R.string.error_auth_failure));
 
@@ -157,6 +156,6 @@ public class JsonManager {
                 return params;
             }
         };
-        MySingleton.getInstance(context).addToRequestQueue(stringRequest);
+        MySingleton.getInstance().addToRequestQueue(stringRequest);
     }
 }

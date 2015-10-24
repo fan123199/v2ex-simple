@@ -40,7 +40,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mInflater = LayoutInflater.from(context);
         this.header = header;
         this.replyList = replyList;
-        mImageLoader = MySingleton.getInstance(context).getImageLoader();
+        mImageLoader = MySingleton.getInstance().getImageLoader();
     }
 
     @Override

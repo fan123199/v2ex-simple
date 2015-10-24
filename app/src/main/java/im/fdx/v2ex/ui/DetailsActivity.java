@@ -1,16 +1,16 @@
 package im.fdx.v2ex.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toolbar;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -30,7 +30,7 @@ import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.DetailsAdapter;
 import im.fdx.v2ex.utils.JsonManager;
 
-public class DetailsActivity extends Activity {
+public class DetailsActivity extends AppCompatActivity {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private DetailsAdapter mDetailsAdapter;
@@ -47,10 +47,11 @@ public class DetailsActivity extends Activity {
         setContentView(R.layout.activity_details);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
-        setActionBar(toolbar);
+        setSupportActionBar(toolbar);
         //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setDisplayShowTitleEnabled(false);
+//        我认为下面这段应该在theme中完成
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
+//        getActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +79,7 @@ public class DetailsActivity extends Activity {
 //        mLayoutManager.findViewByPosition(0).setLayoutParams();
         mRCView.setLayoutManager(mLayoutManager);
 
-        mDetailsAdapter = new DetailsAdapter(this,Header, replyLists);
+        mDetailsAdapter = new DetailsAdapter(this, Header, replyLists);
 
 
         mRCView.setAdapter(mDetailsAdapter);
@@ -100,6 +101,12 @@ public class DetailsActivity extends Activity {
 
             }
 
+        });
+        findViewById(R.id.detail_recycler_view).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DetailsActivity.this, MainActivity.class));
+            }
         });
     }
 
@@ -127,7 +134,7 @@ public class DetailsActivity extends Activity {
             }
         });
 
-        MySingleton.getInstance(this).addToRequestQueue(jsonArrayRequest);
+        MySingleton.getInstance().addToRequestQueue(jsonArrayRequest);
 
     }
 

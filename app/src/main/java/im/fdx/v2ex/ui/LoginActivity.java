@@ -20,6 +20,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private Button btnLogin;
     private EditText etUsername;
     private EditText etPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +32,12 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
         findViewById(R.id.btn_login).setOnClickListener(this);
         findViewById(R.id.link_sign_up).setOnClickListener(this);
+        findViewById(R.id.btn_login).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            }
+        });
 
     }
 

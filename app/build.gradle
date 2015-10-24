@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "im.fdx.v2ex"
-        minSdkVersion 21
+        minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -25,11 +25,13 @@ dependencies {
 //    compile 'com.android.support:support-v4:22.+'
 
     compile 'com.mcxiaoke.volley:library:1.0.18'
-    compile 'com.android.support:design:23.0.1'
-    compile 'com.android.support:cardview-v7:23.0.1'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+
+    compile 'com.android.support:design:23.1.0'
+    compile 'com.android.support:cardview-v7:23.1.0'
+    compile 'com.android.support:recyclerview-v7:23.1.0'
 //    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'com.android.support:support-v13:23.0.1'
+    compile 'com.android.support:support-v13:23.1.0'
 
 
 //    compile project(':volley')

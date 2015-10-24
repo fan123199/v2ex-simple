@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.adapter;
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +35,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     public MainAdapter(Context context) {
 //        mContext = context;
         mInflater = LayoutInflater.from(context);
-        mImageLoader = MySingleton.getInstance(context).getImageLoader();
+        mImageLoader = MySingleton.getInstance().getImageLoader();
     }
 
 
@@ -52,6 +54,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     }
 
     //Done 对TextView进行赋值, 也就是操作
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         TopicModel currentTopic = TopicList.get(position);
