@@ -6,23 +6,26 @@
     >
 
 
-    <com.android.volley.toolbox.NetworkImageView
+    <im.fdx.v2ex.utils.MyNetworkCircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="@dimen/md_avatar"
         android:layout_height="@dimen/md_avatar"
         android:id="@+id/reply_avatar"
-        android:layout_marginTop="6dp"
+        android:src="@drawable/ic_person_black_48dp"
+        app:civ_border_width="0dp"
+        app:civ_border_color="#FFFFFFFF"
+        android:layout_marginTop="9dp"
         android:layout_marginStart="@dimen/md_left_margin"
         android:contentDescription="@string/it_is_avatar" />
-
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/content"
         android:id="@+id/tvReplyContent"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="6dp"
         android:layout_marginEnd="@dimen/md_left_margin"
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="9dp"
         android:layout_below="@+id/tvReplier"
         android:layout_alignStart="@+id/tvReplier" />
 
@@ -57,7 +60,7 @@
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height="1px"
         android:background="@android:color/darker_gray"
         android:layout_alignStart="@+id/tvReplier"
         android:layout_alignParentEnd="true"

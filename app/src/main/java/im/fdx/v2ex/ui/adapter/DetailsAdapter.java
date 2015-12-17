@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.adapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
@@ -18,6 +19,7 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.utils.MyNetworkCircleImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 
 /**
@@ -77,8 +79,11 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             MVHolder.tvContent.setAutoLinkMask(Linkify.ALL);
             MVHolder.tvContent.setText(currentTopic.content);
-            MVHolder.tvContent.setTransitionName("header" + position);
-            MVHolder.tvReplyNumber.setText(String.valueOf(currentTopic.replies) + "个回复");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                MVHolder.tvContent.setTransitionName("header" + position);
+            }
+            String string = String.valueOf(currentTopic.replies) + "个回复";
+            MVHolder.tvReplyNumber.setText(string);
             MVHolder.tvAuthor.setText(currentTopic.author);
             MVHolder.tvNode.setText(currentTopic.nodeTitle);
             MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(currentTopic.created));
@@ -143,7 +148,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView replyTime;
         TextView content;
         TextView row;
-        NetworkImageView avatar;
+        MyNetworkCircleImageView avatar;
         View divider;
 
 
@@ -154,7 +159,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             replyTime = (TextView) itemView.findViewById(R.id.tvReplyTime);
             content = (TextView) itemView.findViewById(R.id.tvReplyContent);
             row = (TextView) itemView.findViewById(R.id.tvRow);
-            avatar = (NetworkImageView) itemView.findViewById(R.id.reply_avatar);
+            avatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
             divider = itemView.findViewById(R.id.divider);
         }
     }

@@ -70,6 +70,14 @@ public class JsonManager {
         }
     }
 
+
+    /**
+     *
+     * @param response
+     *        foo
+     * @param articleModel
+     *        bar
+     */
     public static void handleJson(JSONArray response, ArrayList<TopicModel> articleModel) {
         if(response == null || response.length() == 0) {
             return;

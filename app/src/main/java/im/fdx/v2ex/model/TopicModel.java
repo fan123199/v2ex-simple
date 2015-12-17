@@ -98,8 +98,130 @@ public class TopicModel implements Parcelable {
         this.avatarString = avatarString;
     }
 
+    public TopicModel(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getContentRendered() {
+        return contentRendered;
+    }
+
+    public int getReplies() {
+        return replies;
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public long getLastModified() {
+        return lastModified;
+    }
+
+    public long getLastTouched() {
+        return lastTouched;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getNodeTitle() {
+        return nodeTitle;
+    }
+
+    public String getAvatarString() {
+        return avatarString;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setContentRendered(String contentRendered) {
+        this.contentRendered = contentRendered;
+    }
+
+    public void setReplies(int replies) {
+        this.replies = replies;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
+    }
+
+    public void setLastModified(long lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public void setLastTouched(long lastTouched) {
+        this.lastTouched = lastTouched;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setNodeTitle(String nodeTitle) {
+        this.nodeTitle = nodeTitle;
+    }
+
+    public void setAvatarString(String avatarString) {
+        this.avatarString = avatarString;
+    }
+
     public long getTopicId() {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return "TopicModel{" +
+                "replies=" + replies +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TopicModel that = (TopicModel) o;
+
+        return getTitle().equals(that.getTitle());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getTitle().hashCode();
+    }
 }
