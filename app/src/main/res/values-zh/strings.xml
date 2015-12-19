@@ -17,5 +17,5 @@
     <string name="username">用户名</string>
     <string name="title_activity_login">登陆</string>
     <string name="password">密码</string>
-    <string name="register_tips" translatable="false"></string>
+    <string name="register_tip">请注册</string>
 </resources>

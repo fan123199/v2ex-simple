@@ -65,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="@string/register_tips"
+            android:hint="@string/register_tip"
             android:gravity="center"
             android:textSize="12sp"/>
 

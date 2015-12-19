@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.utils.MyNetworkCircleImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 
 /**
@@ -62,7 +63,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.content);
         holder.tvContent.setTransitionName("header" + position);
-        holder.tvReplyNumber.setText(String.valueOf(currentTopic.replies) + "个回复");
+        String sequence = Integer.toString(currentTopic.replies) + "个回复";
+        holder.tvReplyNumber.setText(sequence);
         holder.tvAuthor.setText(currentTopic.author);
         holder.tvNode.setText(currentTopic.nodeTitle);
         holder.tvPushTime.setText(TimeHelper.RelativeTime(currentTopic.created));
@@ -93,7 +95,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         public TextView tvReplyNumber;
         public TextView tvPushTime;
         public TextView tvAuthor;
-        public NetworkImageView ivAvatar;
+        public MyNetworkCircleImageView ivAvatar;
         public TextView tvNode;
 
         public MainViewHolder(View root) {
@@ -104,7 +106,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
             tvReplyNumber = (TextView) root.findViewById(R.id.tvReplyNumber);
             tvPushTime = (TextView) root.findViewById(R.id.tvPushTime);
             tvAuthor = (TextView) root.findViewById(R.id.tvReplier);
-            ivAvatar = (NetworkImageView) root.findViewById(R.id.ivAvatar);
+            ivAvatar = (MyNetworkCircleImageView) root.findViewById(R.id.ivAvatar);
             tvNode = (TextView) root.findViewById(R.id.tvNode);
         }
 
