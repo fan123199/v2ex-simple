@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.adapter.ViewPagerAdapter;
@@ -105,6 +107,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {
+            Intent data=new Intent(Intent.ACTION_SENDTO);
+            data.putExtra(Intent.EXTRA_EMAIL, new String[]{"fan123199@qq.com"});
+            data.putExtra(Intent.EXTRA_SUBJECT, "这是标题");
+            data.putExtra(Intent.EXTRA_TEXT, "这是内容");
+            try {
+                startActivity(Intent.createChooser(data, "Send mail..."));
+            } catch (android.content.ActivityNotFoundException ex) {
+                Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+            }
 
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
