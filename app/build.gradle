@@ -2,38 +2,56 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
-
+    buildToolsVersion "23.0.2"
     defaultConfig {
         applicationId "im.fdx.v2ex"
         minSdkVersion 17
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            applicationIdSuffix ".debug"
+        }
     }
+//    productFlavors {
+//        pro {
+//            applicationId "im.fdx.v2ex.pro"
+//            signingConfig signingConfigs.KeyForRelease
+//        }
+//        free {
+//            applicationId "im.fdx.v2ex.free"
+//            signingConfig signingConfigs.KeyForRelease
+//        }
+//    }
 }
 
+//noinspection SpellCheckingInspection
 dependencies {
+
+    testCompile 'junit:junit:4.12'
     compile fileTree(dir: 'libs', include: ['*.jar'])
-//    compile 'com.belerweb:pinyin4j:2.5.0'
-//    compile 'com.android.support:support-v4:22.+'
-
-    compile 'com.mcxiaoke.volley:library:1.0.19' //volley网络请求库，更新很慢
-    compile 'de.hdodenhof:circleimageview:2.0.0' //github最火的圆形头像，可以自己实现。
-    compile 'com.squareup.okhttp:okhttp:2.7.0'   //最多人用的http请求库
-
-    compile 'com.android.support:design:23.1.1'  //fab,tablayout等md控件
-    compile 'com.android.support:cardview-v7:23.1.1'  //cardview
-    compile 'com.android.support:recyclerview-v7:23.1.1'  //recyclerview
-//    compile 'com.android.support:appcompat-v7:23.0.1'
+    //    compile 'com.belerweb:pinyin4j:2.5.0'
+    //    compile 'com.android.support:support-v4:22.+'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
+    //volley网络请求库，更新很慢
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+    //github最火的圆形头像，可以自己实现。
+    //    compile 'com.squareup.okhttp:okhttp:2.7.0'   //最多人用的http请求库
+    compile 'com.android.support:design:23.1.1'
+    //fab,tablayout等md控件
+    compile 'com.android.support:cardview-v7:23.1.1'
+    //cardview
+    compile 'com.android.support:recyclerview-v7:23.1.1'
+    //recyclerview
+    //    compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:support-v13:23.1.1'
-
-//    compile 'com.google.code.gson:gson:2.4.0'  //json object 互转工具库
-//    compile project(':volley')
+    //    compile 'com.google.code.gson:gson:2.4.0'  //json object 互转工具库
+//    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

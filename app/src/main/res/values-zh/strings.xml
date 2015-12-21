@@ -18,4 +18,9 @@
     <string name="title_activity_login">登陆</string>
     <string name="password">密码</string>
     <string name="register_tip">请注册</string>
+    <string name="navigation_drawer_close">打开抽屉</string>
+    <string name="navigation_drawer_open">关闭抽屉</string>
+    <string name="tab_title_latest">最新</string>
+    <string name="tab_title_top10">最热</string>
+    <string name="title_activity_nav_drawer">抽屉</string>
 </resources>

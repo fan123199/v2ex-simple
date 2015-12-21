@@ -27,7 +27,6 @@
     <string name="login" translatable="false">Login</string>
     <string name="username">Username</string>
     <string name="authenticating" translatable="false">Authenticating…</string>
-    <string name="title_activity_testfor_as140">TestforAS140</string>
     <string name="title_activity_nav_drawer">NavDrawer</string>
 
     <string name="tab_title_latest">New</string>
@@ -38,7 +37,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="register_tip">not register yet, click here to sign up</string>
 
-    <string-array name="v2ex_favorite_tab_titles">
+    <string-array name="v2ex_favorite_tab_titles" translatable = "false">
         <item>技术</item>
         <item>创意</item>
         <item>好玩</item>
@@ -53,7 +52,7 @@
         <item>关注</item>
     </string-array>
 
-    <string-array name="v2ex_favorite_tab_paths">
+    <string-array name="v2ex_favorite_tab_paths" translatable = "false">
         <item>tech</item>
         <item>creative</item>
         <item>play</item>

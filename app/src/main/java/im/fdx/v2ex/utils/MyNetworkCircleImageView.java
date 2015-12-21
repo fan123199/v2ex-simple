@@ -1,5 +1,6 @@
 package im.fdx.v2ex.utils;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
@@ -155,6 +157,7 @@ public class MyNetworkCircleImageView extends NetworkImageView{
         invalidate();
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     public void setBorderColorResource(@ColorRes int borderColorRes) {
         setBorderColor(getContext().getResources().getColor(borderColorRes,null));
     }
@@ -173,8 +176,9 @@ public class MyNetworkCircleImageView extends NetworkImageView{
         invalidate();
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     public void setFillColorResource(@ColorRes int fillColorRes) {
-        setFillColor(getContext().getResources().getColor(fillColorRes,null));
+            setFillColor(getContext().getResources().getColor(fillColorRes,null));
     }
 
     public int getBorderWidth() {
