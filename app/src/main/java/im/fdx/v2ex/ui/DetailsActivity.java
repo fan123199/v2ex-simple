@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -50,8 +51,12 @@ public class DetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
 //        我认为下面这段应该在theme中完成
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
-//        getActionBar().setDisplayShowTitleEnabled(false);
+        ActionBar mToolbar = getSupportActionBar();
+        if (mToolbar != null) {
+            mToolbar.setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,9 +205,6 @@ public class DetailsActivity extends AppCompatActivity {
 
         //SimplifiableIfStatement
         switch (id) {
-            case R.id.action_settings:
-                startActivity(new Intent(DetailsActivity.this,SettingsActivity.class));
-                break;
             case R.id.menu_refresh:
                 GetReplyJson();
                 break;
@@ -210,7 +212,8 @@ public class DetailsActivity extends AppCompatActivity {
 //                L.t(this,"分享到");
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + Header.title + "   " + JsonManager.HTTP_V2EX_BASE + "/t/" + TopicId);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + Header.title + "   "
+                        + JsonManager.HTTP_V2EX_BASE + "/t/" + TopicId);
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent,"分享到"));

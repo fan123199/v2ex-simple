@@ -3,7 +3,7 @@
 
     <PreferenceCategory
         android:key="pref_communication"
-        android:title="通用设置">
+        android:title="@string/general">
         <!--<CheckBoxPreference-->
 
             <!--android:key="pref_wifi"-->
@@ -14,10 +14,10 @@
 
 
     <PreferenceCategory
-        android:title="其他">
+        android:title="@string/other">
         <Preference
             android:key="pref_rates"
-            android:title="对应用评分" />
+            android:title="@string/rate" />
     </PreferenceCategory>
 
 </PreferenceScreen>

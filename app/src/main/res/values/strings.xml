@@ -22,11 +22,11 @@
 
     <string name="reply">reply</string>
     <string name="title_activity_login">LoginActivity</string>
-    <string name="account" translatable="false">Account</string>
+    <string name="account">Account</string>
     <string name="password">Password</string>
-    <string name="login" translatable="false">Login</string>
+    <string name="login">Login</string>
     <string name="username">Username</string>
-    <string name="authenticating" translatable="false">Authenticating…</string>
+    <string name="authenticating">Authenticating…</string>
     <string name="title_activity_nav_drawer">NavDrawer</string>
 
     <string name="tab_title_latest">New</string>
@@ -36,6 +36,12 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="register_tip">not register yet, click here to sign up</string>
+    <string name="feature">feature</string>
+    <string name="communicate">Communicate</string>
+    <string name="feedback">Feedback</string>
+    <string name="rate">Rate app</string>
+    <string name="other">Other</string>
+    <string name="general">General</string>
 
     <string-array name="v2ex_favorite_tab_titles" translatable = "false">
         <item>技术</item>

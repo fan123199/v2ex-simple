@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -24,8 +25,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
-        //noinspection ConstantConditions
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +50,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        public final static String CONF_WIFI = "perf_wifi";
+        public final static String CONF_WIFI = "pref_wifi";
+        public static final String PREF_RATES = "pref_rates";
         SharedPreferences sharedPreferences;
 
         public SettingsFragment() {
@@ -58,19 +63,21 @@ public class SettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.preference);
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-            findPreference("pref_rates").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                public boolean onPreferenceClick(Preference preference) {
-                    try {
-                        Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
-                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                    } catch (Exception e) {
-                       L.t(getActivity(), "没有找到V2EX客户端");
-                    }
-                    return true;
+            findPreference(PREF_RATES).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick (Preference preference){
+                try {
+                    Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } catch (Exception e) {
+                    L.t(getActivity(), "没有找到V2EX客户端");
                 }
-            });
+                return true;
+            }
+        }
+
+        );
         }
 
         @Override

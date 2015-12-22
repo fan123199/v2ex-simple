@@ -81,9 +81,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 break;
-            case R.id.menu_settings:
-                startActivity(new Intent(MainActivity.this,SettingsActivity.class));
-                break;
             case R.id.menu_login:
                 startActivity(new Intent(MainActivity.this,LoginActivity.class));
                 break;
@@ -96,27 +93,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        switch (id) {
+            case R.id.nav_camera:
+                // Handle the camera action
+                break;
+            case R.id.nav_gallery:
 
-        } else if (id == R.id.nav_slideshow) {
+                break;
+            case R.id.nav_slideshow:
 
-        } else if (id == R.id.nav_manage) {
+                break;
+            case R.id.nav_manage:
 
-        } else if (id == R.id.nav_share) {
+                break;
+            case R.id.nav_share:
 
-        } else if (id == R.id.nav_send) {
-            Intent data=new Intent(Intent.ACTION_SENDTO);
-            data.putExtra(Intent.EXTRA_EMAIL, new String[]{"fan123199@qq.com"});
-            data.putExtra(Intent.EXTRA_SUBJECT, "这是标题");
-            data.putExtra(Intent.EXTRA_TEXT, "这是内容");
-            try {
-                startActivity(Intent.createChooser(data, "Send mail..."));
-            } catch (android.content.ActivityNotFoundException ex) {
-                Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-            }
+                break;
+            case R.id.nav_send:
+                Intent data = new Intent(Intent.ACTION_SENDTO);
+                data.putExtra(Intent.EXTRA_EMAIL, new String[]{"fan123199@qq.com"});
+                data.putExtra(Intent.EXTRA_SUBJECT, "这是标题");
+                data.putExtra(Intent.EXTRA_TEXT, "这是内容");
+                try {
+                    startActivity(Intent.createChooser(data, "Send mail..."));
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                }
 
+                break;
+            case R.id.nav_setting:
+                Intent intentSetting = new Intent(MainActivity.this,SettingsActivity.class);
+                startActivity(intentSetting);
+                break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

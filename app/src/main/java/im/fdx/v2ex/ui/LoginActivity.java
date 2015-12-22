@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,7 +11,6 @@ import android.widget.EditText;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.utils.JsonManager;
-import im.fdx.v2ex.utils.L;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -31,14 +29,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         etPassword = (EditText) findViewById(R.id.input_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
 
-        findViewById(R.id.btn_login).setOnClickListener(this);
+        btnLogin.setOnClickListener(this);
         findViewById(R.id.link_sign_up).setOnClickListener(this);
-        findViewById(R.id.btn_login).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            }
-        });
 
     }
 
@@ -65,15 +57,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 login();
                 break;
             case R.id.link_sign_up:
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(JsonManager.SIGN_UP_URL)));
+                Intent openUrl = new Intent(Intent.ACTION_VIEW, Uri.parse(JsonManager.SIGN_UP_URL));
+                //// TODO: 2015/12/22  
+                startActivityForResult(openUrl, REQUEST_SIGNUP);
                 break;
         }
     }
 
 
+
+
     private void login() {
 
-        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
+        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Light_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage(getString(R.string.authenticating));
         progressDialog.show();
