@@ -77,7 +77,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             TopicModel currentTopic = header;
             MVHolder.tvTitle.setText(currentTopic.title);
 
-            MVHolder.tvContent.setAutoLinkMask(Linkify.ALL);
+            MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
+            MVHolder.tvContent.setTextIsSelectable(true);
             MVHolder.tvContent.setText(currentTopic.content);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 MVHolder.tvContent.setTransitionName("header" + position);
@@ -103,7 +104,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             VHItem.replyTime.setText(TimeHelper.RelativeTime(replyModel.created));
             VHItem.replier.setText(replyModel.author);
 
-            VHItem.content.setAutoLinkMask(Linkify.ALL);
+            VHItem.content.setAutoLinkMask(Linkify.WEB_URLS);
             VHItem.content.setText(replyModel.content);
 
             VHItem.row.setText(String.valueOf(position));

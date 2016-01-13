@@ -61,7 +61,7 @@ public class TopicsFragment extends Fragment {
         mNodeID = gets_args.getInt("node_id", 0);
 
 
-        final View layout = inflater.inflate(R.layout.fragment_latest_article, container, false);
+        final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
 
         queue = MySingleton.getInstance().getRequestQueue();
         GetJson(mNodeID);

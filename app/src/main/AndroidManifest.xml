@@ -26,7 +26,8 @@
         </activity>
         <activity
             android:name=".ui.DetailsActivity"
-            android:label="@string/title_activity_details" >
+            android:label="@string/title_activity_details"
+            android:parentActivityName=".ui.MainActivity">
         </activity>
         <activity
             android:name=".ui.SettingsActivity"
