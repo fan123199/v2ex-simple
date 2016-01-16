@@ -54,17 +54,17 @@ public class DetailsActivity extends AppCompatActivity {
         ActionBar mToolbar = getSupportActionBar();
         if (mToolbar != null) {
             mToolbar.setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
         //I add parentAcitity in Manifest, so I do not need below code ?
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-////                finish();
-//                onBackPressed();
-//            }
-//        });
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                finish();
+                onBackPressed();
+            }
+        });
 
         //处理传递过来的Intent，共两个数据
         Intent mGetIntent = getIntent();

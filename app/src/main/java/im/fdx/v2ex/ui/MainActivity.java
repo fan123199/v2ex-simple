@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_refresh:
-                break;
+//            case R.id.menu_refresh:
+//                break;
             case R.id.menu_login:
                 startActivity(new Intent(MainActivity.this,LoginActivity.class));
                 break;
