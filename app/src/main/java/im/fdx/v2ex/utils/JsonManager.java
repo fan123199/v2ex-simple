@@ -80,6 +80,8 @@ public class JsonManager {
     }
 
 
+    public static Gson myGson = new Gson();
+
     /**
      *  @param response
      *        foo
@@ -87,91 +89,30 @@ public class JsonManager {
      * @param context
      */
     public static void handleJson(JSONArray response, ArrayList<TopicModel> articleModel, Context context) {
-        if(response == null || response.length() == 0) {
+        if (response == null || response.length() == 0) {
             return;
         }
-        long id;
-        String title;
-//        String author;
-        String content;
-        int replies;
-        String node_title;
-        long created;
-        MemberModel member;
-//        String avatarString;
 
-        boolean flag = true;
-
-        if(articleModel.isEmpty()) {
-            flag = false;
-        }
-
-//        L.m(String.valueOf(flag));
-
-
-        // 看不懂的地方 // TODO: 16-1-16
-        // Deserialization
-
-
-        try {
-            JsonReader mReader = new JsonReader(new StringReader(response.toString()));
-
-            mReader.beginArray();
-            while (mReader.hasNext()) {
-                mReader.beginObject();
-                while (mReader.hasNext()) {
-                    String tagName = mReader.nextName();
-                    if (tagName.equals("id")) {
-                        id = mReader.nextLong();
-                    }
-
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        Gson myGson = new Gson();
+//        史上最简化处理json
         Type arraylistType = new TypeToken<ArrayList<TopicModel>>() {
         }.getType();
+//        String gStr = myGson.toJson(response,arraylistType);
+        articleModel = myGson.fromJson(response.toString(), arraylistType);
+//// TODO: 16-1-18
+//        L.m(articleModel.get(0).getTitle());
 
-//        articleModel =  myGson.fromJson(responseJSONObject.toString(), arraylistType);
-
-        //以下是用非GSON方法处理json数据
 //        try {
-//            for(int i = 0; i< response.length();i++) {
-//                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(),TopicModel.class);
-//                JSONObject responseJSONObject = response.getJSONObject(i);
-//                id = responseJSONObject.optInt("id");
-//                title = responseJSONObject.optString("title");
-////                author = responseJSONObject.optJSONObject("member").optString("username");
-//                content = responseJSONObject.optString("content");
-//                replies = responseJSONObject.optInt("replies");
-//                node_title = responseJSONObject.optJSONObject("node").optString("title");
-//                created = responseJSONObject.optLong("created");
-////                avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
-//                member = (MemberModel) responseJSONObject.opt("member");
+////            L.m(response.toString(2));
+//            for (int i = 0; i < response.length(); i++) {
 //
-//                if(flag) {
-//                    if (id == articleModel.get(i).id) {
-//                        break;
-//                    }
-//                }
-//
-//                articleModel.add(i, new TopicModel(id, title, content, replies, node_title, created, member));
+//                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
+////                L.t(context, tm.getTitle());
+//                articleModel.add(tm);
 //            }
-//
-//        }
-        try {
-            for (int i = 0; i < response.length(); i++) {
-
-                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
-                L.t(context, tm.getTitle());
-            }
-        } catch (JSONException e) {
-//            L.m("parse false");
-            e.printStackTrace();
-        }
+//        } catch (JSONException e) {
+////            L.m("parse false");
+//            e.printStackTrace();
+//    }
     }
 
 

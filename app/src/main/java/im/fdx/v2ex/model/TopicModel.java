@@ -9,19 +9,55 @@ import im.fdx.v2ex.R;
  * Created by a708 on 15-8-18.
  * 主题模型
  */
+
+
+//[
+//
+//        {
+//        "id" : 251393,
+//        "title" : "室友是个女 coder",
+//        "url" : "http://www.v2ex.com/t/251393",
+//        "content" : "454f",
+//        "content_rendered" : "吗？",
+//        "replies" : 100,
+//        "member" : {
+//        "id" : 80938,
+//        "username" : "boyhailong",
+//        "tagline" : "",
+//        "avatar_mini" : "//cdn.v2ex.co/avatar/ad59/185e/80938_mini.png?m=1452315358",
+//        "avatar_normal" : "//cdn.v2ex.co/avatar/ad59/185e/80938_normal.png?m=1452315358",
+//        "avatar_large" : "//cdn.v2ex.co/avatar/ad59/185e/80938_large.png?m=1452315358"
+//        },
+//        "node" : {
+//        "id" : 320,
+//        "name" : "wtf",
+//        "title" : "不靠谱茶话会",
+//        "title_alternative" : "WTF",
+//        "url" : "http://www.v2ex.com/go/wtf",
+//        "topics" : 212,
+//        "avatar_mini" : "//cdn.v2ex.co/navatar/3207/2254/320_mini.png?m=1435210420",
+//        "avatar_normal" : "//cdn.v2ex.co/navatar/3207/2254/320_normal.png?m=1435210420",
+//        "avatar_large" : "//cdn.v2ex.co/navatar/3207/2254/320_large.png?m=1435210420"
+//        },
+//        "created" : 1453030019,
+//        "last_modified" : 1453044647,
+//        "last_touched" : 1453094527
+//        },
+//        {some of above}
+//    ]
 public class TopicModel implements Parcelable {
 
     private long id;
     private String title;
     private String url;
     private String content;
-    private String contentRendered;
+    private String content_rendered;
     private int replies;
     private MemberModel member;
-    public NodeModel node;
+    private NodeModel node;
     private long created;
-    private long lastModified;
-    private long lastTouched;
+    private long last_modified;
+    private long last_touched;
 //    public String author;
 //    public String nodeTitle;
 //    public String avatarString;
@@ -35,13 +71,13 @@ public class TopicModel implements Parcelable {
         title = in.readString();
         url = in.readString();
         content = in.readString();
-        contentRendered = in.readString();
-        created = in.readLong();
-        lastModified = in.readLong();
-        lastTouched = in.readLong();
+        content_rendered = in.readString();
 //        author = in.readString();
         member = (MemberModel) in.readValue(MemberModel.class.getClassLoader());
         node = (NodeModel) in.readValue(NodeModel.class.getClassLoader());
+        created = in.readLong();
+        last_modified = in.readLong();
+        last_touched = in.readLong();
 //        nodeTitle = in.readString();
 //        avatarString = in.readString();
 
@@ -74,15 +110,15 @@ public class TopicModel implements Parcelable {
         dest.writeString(title);
         dest.writeString(url);
         dest.writeString(content);
-        dest.writeString(contentRendered);
-        dest.writeLong(created);
-        dest.writeLong(lastModified);
-        dest.writeLong(lastTouched);
+        dest.writeString(content_rendered);
 //        dest.writeString(author);//学devliu
 //        dest.writeString(nodeTitle);
 //        dest.writeString(avatarString);
         dest.writeValue(member);
         dest.writeValue(node);
+        dest.writeLong(created);
+        dest.writeLong(last_modified);
+        dest.writeLong(last_touched);
     }
 
     public TopicModel(long id, String title, String content, int replies, String node_title, long created, MemberModel member, NodeModel nodeModel) {
@@ -102,9 +138,6 @@ public class TopicModel implements Parcelable {
         this.id = id;
     }
 
-    public long getId() {
-        return id;
-    }
 
     public String getTitle() {
         return title;
@@ -118,8 +151,8 @@ public class TopicModel implements Parcelable {
         return content;
     }
 
-    public String getContentRendered() {
-        return contentRendered;
+    public String getContent_rendered() {
+        return content_rendered;
     }
 
     public int getReplies() {
@@ -130,19 +163,19 @@ public class TopicModel implements Parcelable {
         return created;
     }
 
-    public long getLastModified() {
-        return lastModified;
+    public long getLast_modified() {
+        return last_modified;
     }
 
-    public long getLastTouched() {
-        return lastTouched;
+    public long getLast_touched() {
+        return last_touched;
     }
 
 //    public String getAuthor() {
 //        return author;
 //    }
 
-//    public String getNodeTitle() {
+//    public String getTitle() {
 //        return nodeTitle;
 //    }
 
@@ -166,8 +199,8 @@ public class TopicModel implements Parcelable {
         this.content = content;
     }
 
-    public void setContentRendered(String contentRendered) {
-        this.contentRendered = contentRendered;
+    public void setContent_rendered(String content_rendered) {
+        this.content_rendered = content_rendered;
     }
 
     public void setReplies(int replies) {
@@ -178,19 +211,19 @@ public class TopicModel implements Parcelable {
         this.created = created;
     }
 
-    public void setLastModified(long lastModified) {
-        this.lastModified = lastModified;
+    public void setLast_modified(long last_modified) {
+        this.last_modified = last_modified;
     }
 
-    public void setLastTouched(long lastTouched) {
-        this.lastTouched = lastTouched;
+    public void setLast_touched(long last_touched) {
+        this.last_touched = last_touched;
     }
 
 //    public void setAuthor(String author) {
 //        this.author = author;
 //    }
 
-//    public void setNodeTitle(String nodeTitle) {
+//    public void setTitle(String nodeTitle) {
 //        this.nodeTitle = nodeTitle;
 //    }
 
@@ -198,13 +231,13 @@ public class TopicModel implements Parcelable {
 //        this.avatarString = avatarString;
 //    }
 
-    public long getTopicId() {
+    public long getId() {
         return id;
     }
 
     @Override
     public String toString() {
-        return R.string.title + title + R.string.content + content;
+        return R.string.title + title + R.string.content + "\n" + content;
     }
 
 

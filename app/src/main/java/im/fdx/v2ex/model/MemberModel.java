@@ -9,31 +9,31 @@ import android.os.Parcelable;
  */
 public class MemberModel implements Parcelable {
 
-    long userId;
-    String userName;
-    String tagLine;
-    String avatarMini;
-    String avatarNormal;
-    String avatarLarge;
+    long id;
+    String username;
+    String tagline;
+    String avatar_mini;
+    String avatar_normal;
+    String avatar_large;
 
 
     protected MemberModel(Parcel in) {
-        userId = in.readLong();
-        userName = in.readString();
-        tagLine = in.readString();
-        avatarMini = in.readString();
-        avatarNormal = in.readString();
-        avatarLarge = in.readString();
+        id = in.readLong();
+        username = in.readString();
+        tagline = in.readString();
+        avatar_mini = in.readString();
+        avatar_normal = in.readString();
+        avatar_large = in.readString();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(userId);
-        dest.writeString(userName);
-        dest.writeString(tagLine);
-        dest.writeString(avatarMini);
-        dest.writeString(avatarNormal);
-        dest.writeString(avatarLarge);
+        dest.writeLong(id);
+        dest.writeString(username);
+        dest.writeString(tagline);
+        dest.writeString(avatar_mini);
+        dest.writeString(avatar_normal);
+        dest.writeString(avatar_large);
     }
 
     @Override
@@ -53,33 +53,36 @@ public class MemberModel implements Parcelable {
         }
     };
 
-    public MemberModel(long userId, String username, String tagline) {
-        this.userId = userId;
-        this.userName = username;
-        this.tagLine = tagline;
+    public MemberModel(long id, String username) {
+        this.id = id;
+        this.username = username;
     }
 
-    public long getUserId() {
-        return userId;
+    public long getId() {
+        return id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public String getTagLine() {
-        return tagLine;
+    public String getTagline() {
+        return tagline;
     }
 
-    public String getAvatarMini() {
-        return avatarMini;
+    public String getAvatar_mini() {
+        return avatar_mini;
     }
 
-    public String getAvatarNormal() {
-        return avatarNormal;
+    public String getAvatar_normal() {
+        return avatar_normal;
     }
 
-    public String getAvatarLarge() {
-        return avatarLarge;
+    public String getAvatar_large() {
+        return avatar_large;
+    }
+
+    public String getAvatarMiniUrl() {
+        return "http:" + avatar_mini;
     }
 }

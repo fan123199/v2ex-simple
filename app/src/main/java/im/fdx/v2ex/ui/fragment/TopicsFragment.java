@@ -37,7 +37,7 @@ public class TopicsFragment extends Fragment {
     public static final int TOP_10_TOPICS = -2;
 
 
-    private ArrayList<TopicModel> detailsPage = new ArrayList<>();
+    private ArrayList<TopicModel> topicModels = new ArrayList<>();
 
     private MainAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;//TODO
@@ -68,28 +68,24 @@ public class TopicsFragment extends Fragment {
 
         //找出recyclerview,并赋予变量
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));//这里用线性显示 类似于listView
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//这里用线性显示 类似于listView
         mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new myClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
-//                intent.putExtra("topic_id", detailsPage.get(position).getTopicId());
-                intent.putExtra("model", detailsPage.get(position));
+                intent.putExtra("model", topicModels.get(position));
                 //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
 //                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view.findViewById(R.id.tvContent),"header");
 
                 getActivity().startActivity(intent);
-//                L.t(getActivity(), "短按");
             }
-
             @Override
             public void onLongClick(View view, int position) {
-//                L.t(getActivity(), "长按");
-
             }
         }));
-        mAdapter = new MainAdapter(this.getActivity());
-        mAdapter.setTopic(detailsPage);
+
+        mAdapter = new MainAdapter(getActivity());
+        mAdapter.setTopic(topicModels);
         mRecyclerView.setAdapter(mAdapter); //大工告成
 //        L.m("显示Latest成功");
 
@@ -122,7 +118,7 @@ public class TopicsFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
-                JsonManager.handleJson(response, detailsPage, getActivity().getApplicationContext());
+                JsonManager.handleJson(response, topicModels, getActivity().getApplicationContext());
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
 

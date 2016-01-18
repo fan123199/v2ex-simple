@@ -83,13 +83,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 MVHolder.tvContent.setTransitionName("header" + position);
             }
-            String string = String.valueOf(currentTopic.getReplies()) + " " + R.string.reply;
+            String string = String.valueOf(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
+
             MVHolder.tvReplyNumber.setText(string);
-            MVHolder.tvAuthor.setText(currentTopic.getMember().getUserName());
-            MVHolder.tvNode.setText(currentTopic.getNode().getNodeName());
+            MVHolder.tvAuthor.setText(currentTopic.getMember().getUsername());
+            MVHolder.tvNode.setText(currentTopic.getNode().getName());
             MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
 
-            MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMini(), mImageLoader);
+            MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMiniUrl(), mImageLoader);
             MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -109,14 +110,15 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //    因为上一个if语句默认了replylist不可能为空
             ReplyModel replyItem = getItem(position - 1);
 //                L.m(replyModel +" No. "+String.valueOf(position-1)+ "in DetailsAdapter");
-            VHItem.replyTime.setText(TimeHelper.RelativeTime(mContext, replyItem.getCreated()));
-            VHItem.replier.setText(replyItem.getUser().getUserName());
+            VHItem.tvReplyTime.setText(TimeHelper.RelativeTime(mContext, replyItem.getCreated()));
 
-            VHItem.content.setAutoLinkMask(Linkify.WEB_URLS);
-            VHItem.content.setText(replyItem.getContent());
+            VHItem.tvReplier.setText(replyItem.getMember().getUsername());
 
-            VHItem.row.setText(String.valueOf(position));
-            VHItem.userAvatar.setImageUrl(replyItem.getUser().getAvatarMini(), mImageLoader);
+            VHItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
+            VHItem.tvContent.setText(replyItem.getContent());
+
+            VHItem.tvRow.setText(String.valueOf(position));
+            VHItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarMiniUrl(), mImageLoader);
             if(position == getItemCount()-1) {
                 VHItem.divider.setVisibility(View.GONE);
             }
@@ -153,22 +155,22 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public static class ViewHolderItem extends RecyclerView.ViewHolder {
 
-        TextView replier;
-        TextView replyTime;
-        TextView content;
-        TextView row;
-        MyNetworkCircleImageView userAvatar;
+        TextView tvReplier;
+        TextView tvReplyTime;
+        TextView tvContent;
+        TextView tvRow;
+        MyNetworkCircleImageView ivUserAvatar;
         View divider;
 
 
         public ViewHolderItem(View itemView) {
             super(itemView);
 
-            replier = (TextView) itemView.findViewById(R.id.tvReplier);
-            replyTime = (TextView) itemView.findViewById(R.id.tvReplyTime);
-            content = (TextView) itemView.findViewById(R.id.tvReplyContent);
-            row = (TextView) itemView.findViewById(R.id.tvRow);
-            userAvatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
+            tvReplier = (TextView) itemView.findViewById(R.id.tvReplier);
+            tvReplyTime = (TextView) itemView.findViewById(R.id.tvReplyTime);
+            tvContent = (TextView) itemView.findViewById(R.id.tvReplyContent);
+            tvRow = (TextView) itemView.findViewById(R.id.tvRow);
+            ivUserAvatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
             divider = itemView.findViewById(R.id.divider);
         }
     }

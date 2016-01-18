@@ -64,12 +64,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.getContent());
         holder.tvContent.setTransitionName("header" + position);
-        String sequence = Integer.toString(currentTopic.getReplies()) + " " + R.string.reply;
+
+        String sequence = Integer.toString(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
         holder.tvReplyNumber.setText(sequence);
-        holder.tvAuthor.setText(currentTopic.getMember().getUserName()); // 各个模型建立完毕
+        holder.tvAuthor.setText(currentTopic.getMember().getUsername()); // 各个模型建立完毕
 //        holder.tvNode.setText(currentTopic.nodeTitle);
         holder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
-        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMini(), mImageLoader);
+        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMiniUrl(), mImageLoader);
 
     }
 

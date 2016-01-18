@@ -52,9 +52,8 @@ dependencies {
     //cardview
     compile 'com.android.support:recyclerview-v7:23.1.1'
     //recyclerview
-    //    compile 'com.android.support:appcompat-v7:23.0.1'
+//    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v13:23.1.1'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
-    //    compile 'com.google.code.gson:gson:2.4.0'  //json object 互转工具库
 //    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

@@ -32,24 +32,28 @@ public class NodeModel implements Parcelable {
 
 
     //留个ID见证一下变态的Java封装性
-    private Long nodeId;
-    private String nodeName;
-    private String nodeTitle;
-    private String nodeTitleEn;
-    private String nodeUrl;
+    private Long id;
+    private String name;
+    private String url;
+    private String title;
+    private String title_alternative;
     private int topics;
+    private int stars;
+    private String header;
     private String avatar_mini;
     private String avatar_normal;
     private String avatar_large;
 
 
     protected NodeModel(Parcel in) {
-        setNodeId(in.readLong());
-        nodeName = in.readString();
-        nodeTitle = in.readString();
-        nodeTitleEn = in.readString();
-        nodeUrl = in.readString();
+        id = in.readLong();
+        name = in.readString();
+        title = in.readString();
+        title_alternative = in.readString();
+        url = in.readString();
         topics = in.readInt();
+        stars = in.readInt();
+        header = in.readString();
         avatar_mini = in.readString();
         avatar_normal = in.readString();
         avatar_large = in.readString();
@@ -74,23 +78,25 @@ public class NodeModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(getNodeId());
-        dest.writeString(nodeName);
-        dest.writeString(nodeTitle);
-        dest.writeString(nodeTitleEn);
-        dest.writeString(nodeUrl);
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(title);
+        dest.writeString(title_alternative);
+        dest.writeString(url);
         dest.writeInt(topics);
+        dest.writeInt(stars);
+        dest.writeString(header);
         dest.writeString(avatar_mini);
         dest.writeString(avatar_normal);
         dest.writeString(avatar_large);
     }
 
-    public String getNodeName() {
-        return nodeName;
+    public String getName() {
+        return name;
     }
 
-    public String getNodeTitle() {
-        return nodeTitle;
+    public String getTitle() {
+        return title;
     }
 
     public int getTopics() {
@@ -109,36 +115,36 @@ public class NodeModel implements Parcelable {
         return avatar_large;
     }
 
-    public String getNodeUrl() {
-        return nodeUrl;
+    public String getUrl() {
+        return url;
     }
 
-    public String getNodeTitleEn() {
-        return nodeTitleEn;
+    public String getTitle_alternative() {
+        return title_alternative;
     }
 
-    public Long getNodeId() {
-        return nodeId;
+    public Long getId() {
+        return id;
     }
 
-    public void setNodeId(Long nodeId) {
-        this.nodeId = nodeId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setNodeName(String nodeName) {
-        this.nodeName = nodeName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public void setNodeTitle(String nodeTitle) {
-        this.nodeTitle = nodeTitle;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setNodeTitleEn(String nodeTitleEn) {
-        this.nodeTitleEn = nodeTitleEn;
+    public void setTitle_alternative(String title_alternative) {
+        this.title_alternative = title_alternative;
     }
 
-    public void setNodeUrl(String nodeUrl) {
-        this.nodeUrl = nodeUrl;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public void setTopics(int topics) {
@@ -156,4 +162,9 @@ public class NodeModel implements Parcelable {
     public void setAvatar_large(String avatar_large) {
         this.avatar_large = avatar_large;
     }
+
+    public String getAvatarMiniUrl() {
+        return "http:" + getAvatar_mini();
+    }
+
 }

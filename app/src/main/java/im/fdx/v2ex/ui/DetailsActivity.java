@@ -20,7 +20,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -30,6 +29,7 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.DetailsAdapter;
 import im.fdx.v2ex.utils.JsonManager;
+import im.fdx.v2ex.utils.L;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -39,7 +39,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TopicModel detailsHeader;
     private ArrayList<ReplyModel> replyLists = new ArrayList<>();
 
-    private String topicId;
+//    private String topicId;
 
 
     @Override
@@ -69,7 +69,7 @@ public class DetailsActivity extends AppCompatActivity {
         //处理传递过来的Intent，共一个数据
         Intent mGetIntent = getIntent();
         detailsHeader = mGetIntent.getParcelableExtra("model");
-        topicId = String.valueOf(mGetIntent.getLongExtra("topic_id", 1L));
+//        topicId = String.valueOf(mGetIntent.getLongExtra("topic_id", 1L));
 //        L.m(topicId);
 
         GetReplyJson();
@@ -119,7 +119,7 @@ public class DetailsActivity extends AppCompatActivity {
     public void GetReplyJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                JsonManager.API_REPLIES + "?topic_id=" + topicId, new Response.Listener<JSONArray>() {
+                JsonManager.API_REPLIES + "?topic_id=" + detailsHeader.getId(), new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
@@ -148,40 +148,46 @@ public class DetailsActivity extends AppCompatActivity {
             return;
         }
 
-        long id;
-        String author;
-        String content;
-        long created;
-        int thanks;
-        String avatarString;
-
         if(replyLists.size() == response.length()){
 //            L.m("no new reply");
             return;
         }
         replyLists.clear();
-
-
+//        Gson myGson = new Gson();
         try {
-            for(int i = 0; i< response.length();i++) {
+            L.m(response.toString(2));
+            for (int i = 0; i < response.length(); i++) {
 
-                JSONObject responseJSONObject = response.getJSONObject(i);
-
-                id = responseJSONObject.optInt("id");
-                author = responseJSONObject.optJSONObject("member").optString("username");
-                content = responseJSONObject.optString("content");
-                thanks = responseJSONObject.optInt("thanks");
-                created = responseJSONObject.optLong("created");
-                avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
-//                L.m(content+i);
-
-                replyLists.add(new ReplyModel());
+                ReplyModel tm = JsonManager.myGson.fromJson(response.getJSONObject(i).toString(), ReplyModel.class);
+//                L.t(context, tm.getTitle());
+                replyLists.add(tm);
             }
-
         } catch (JSONException e) {
 //            L.m("parse false");
             e.printStackTrace();
         }
+
+
+//        try {
+//            for(int i = 0; i< response.length();i++) {
+//
+//                JSONObject responseJSONObject = response.getJSONObject(i);
+//
+//                id = responseJSONObject.optInt("id");
+//                author = responseJSONObject.optJSONObject("member").optString("username");
+//                content = responseJSONObject.optString("content");
+//                thanks = responseJSONObject.optInt("thanks");
+//                created = responseJSONObject.optLong("created");
+//                avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
+////                L.m(content+i);
+//
+////                replyLists.add(new ReplyModel());
+//            }
+//
+//        } catch (JSONException e) {
+////            L.m("parse false");
+//            e.printStackTrace();
+//        }
     }
 
     @Override
@@ -212,7 +218,7 @@ public class DetailsActivity extends AppCompatActivity {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + detailsHeader.getTitle() + "   "
-                        + JsonManager.HTTP_V2EX_BASE + "/t/" + topicId);
+                        + JsonManager.HTTP_V2EX_BASE + "/t/" + detailsHeader.getId());
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent,"分享到"));

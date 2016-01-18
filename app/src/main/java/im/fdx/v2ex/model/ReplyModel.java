@@ -8,26 +8,44 @@ import android.os.Parcelable;
  * 评论模型，用于传递从JSON获取到的数据。
  * 以后将加入添加评论功能。
  */
+
+//{
+//        "id" : 2826846,
+//        "thanks" : 0,
+//        "content" : "关键你是男还是女？",
+//        "content_rendered" : "关键你是男还是女？",
+//        "member" : {
+//        "id" : 27619,
+//        "username" : "hengzhang",
+//        "tagline" : "我白天是个民工，晚上就是个有抱负的IT人士。",
+//        "avatar_mini" : "//cdn.v2ex.co/avatar/d165/7a2a/27619_mini.png?m=1413707431",
+//        "avatar_normal" : "//cdn.v2ex.co/avatar/d165/7a2a/27619_normal.png?m=1413707431",
+//        "avatar_large" : "//cdn.v2ex.co/avatar/d165/7a2a/27619_large.png?m=1413707431"
+//        },
+//        "created" : 1453030169,
+//        "last_modified" : 1453030169
+//        }
+
 public class ReplyModel implements Parcelable {
 
-    private long replyId;
+    private long id;
     private String content;
-    private String contentRendered;
+    private String content_rendered;
     private int thanks;
     private long created;
     //    private String author;
 //    private String avatarString;
-    private MemberModel user;
+    private MemberModel member;
 
     protected ReplyModel(Parcel in) {
-        replyId = in.readLong();
-        content = in.readString();
-        contentRendered = in.readString();
+        id = in.readLong();
         thanks = in.readInt();
+        content = in.readString();
+        content_rendered = in.readString();
         created = in.readLong();
 //        author = in.readString();
 //        avatarString = in.readString();
-        user = in.readParcelable(MemberModel.class.getClassLoader());
+        member = in.readParcelable(MemberModel.class.getClassLoader());
     }
     public ReplyModel() {}
 
@@ -51,27 +69,27 @@ public class ReplyModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(replyId);
+        dest.writeLong(id);
         dest.writeString(content);
-        dest.writeString(contentRendered);
+        dest.writeString(content_rendered);
         dest.writeInt(thanks);
         dest.writeLong(created);
 //        dest.writeString(author);
 //        dest.writeString(avatarString);
-        dest.writeValue(user);
+        dest.writeValue(member);
 
     }
 
-    public long getReplyId() {
-        return replyId;
+    public long getId() {
+        return id;
     }
 
     public String getContent() {
         return content;
     }
 
-    public String getContentRendered() {
-        return contentRendered;
+    public String getContent_rendered() {
+        return content_rendered;
     }
 
     public int getThanks() {
@@ -82,16 +100,16 @@ public class ReplyModel implements Parcelable {
         return created;
     }
 
-    public MemberModel getUser() {
-        return user;
+    public MemberModel getMember() {
+        return member;
     }
 
     public ReplyModel(MemberModel user, long replyId, String content, int thanks, String contentRendered, long created) {
-        this.user = user;
-        this.replyId = replyId;
-        this.content = content;
+        this.member = user;
         this.thanks = thanks;
-        this.contentRendered = contentRendered;
+        this.id = replyId;
+        this.content = content;
+        this.content_rendered = contentRendered;
         this.created = created;
     }
 }
