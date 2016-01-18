@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.utils.MyNetworkCircleImageView;
@@ -27,15 +27,15 @@ import im.fdx.v2ex.utils.TimeHelper;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
 
     private LayoutInflater mInflater;
-    private ArrayList<TopicModel> TopicList = new ArrayList<>();
+    private ArrayList<TopicModel> topicList = new ArrayList<>();
     private ImageLoader mImageLoader;
-//    private Context mContext;
+    private Context mContext;
 
 
     //这是构造器
     public MainAdapter(Context context) {
-//        mContext = context;
-        mInflater = LayoutInflater.from(context);
+        mContext = context;
+        mInflater = LayoutInflater.from(mContext);
         mImageLoader = MySingleton.getInstance().getImageLoader();
     }
 
@@ -58,27 +58,28 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
-        TopicModel currentTopic = TopicList.get(position);
-        holder.tvTitle.setText(currentTopic.title);
+        TopicModel currentTopic = topicList.get(position);
+        MemberModel memberModel = currentTopic.getMember();
+        holder.tvTitle.setText(currentTopic.getTitle());
         holder.tvContent.setMaxLines(6);
-        holder.tvContent.setText(currentTopic.content);
+        holder.tvContent.setText(currentTopic.getContent());
         holder.tvContent.setTransitionName("header" + position);
-        String sequence = Integer.toString(currentTopic.replies) + "个回复";
+        String sequence = Integer.toString(currentTopic.getReplies()) + " " + R.string.reply;
         holder.tvReplyNumber.setText(sequence);
-        holder.tvAuthor.setText(currentTopic.author);
-        holder.tvNode.setText(currentTopic.nodeTitle);
-        holder.tvPushTime.setText(TimeHelper.RelativeTime(currentTopic.created));
-        holder.ivAvatar.setImageUrl(currentTopic.avatarString, mImageLoader);
+        holder.tvAuthor.setText(currentTopic.getMember().getUserName()); // 各个模型建立完毕
+//        holder.tvNode.setText(currentTopic.nodeTitle);
+        holder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
+        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMini(), mImageLoader);
 
     }
 
     public void setTopic(ArrayList<TopicModel> top10){
-        this.TopicList = top10;
+        this.topicList = top10;
     }
     //Done
     @Override
     public int getItemCount() {
-        return TopicList.size();
+        return topicList.size();
     }
 
     @Override

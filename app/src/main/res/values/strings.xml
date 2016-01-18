@@ -42,6 +42,7 @@
     <string name="rate">Rate app</string>
     <string name="other">Other</string>
     <string name="general">General</string>
+    <string name="justnow">刚刚</string>
 
     <string-array name="v2ex_favorite_tab_titles" translatable = "false">
         <item>技术</item>

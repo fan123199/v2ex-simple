@@ -25,7 +25,7 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.DetailsActivity;
 import im.fdx.v2ex.ui.adapter.MainAdapter;
-import im.fdx.v2ex.utils.ClickListener;
+import im.fdx.v2ex.utils.myClickListener;
 import im.fdx.v2ex.utils.RecyclerTouchListener;
 import im.fdx.v2ex.utils.JsonManager;
 
@@ -33,11 +33,11 @@ import im.fdx.v2ex.utils.JsonManager;
 // simplify it, receive in onCreateView
 public class TopicsFragment extends Fragment {
 
-    public static final int LatestTopics = -1;
-    public static final int Top10Topics = -2;
+    public static final int LATEST_TOPICS = -1;
+    public static final int TOP_10_TOPICS = -2;
 
 
-    private ArrayList<TopicModel> Latest = new ArrayList<>();
+    private ArrayList<TopicModel> detailsPage = new ArrayList<>();
 
     private MainAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;//TODO
@@ -69,12 +69,12 @@ public class TopicsFragment extends Fragment {
         //找出recyclerview,并赋予变量
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));//这里用线性显示 类似于listView
-        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new ClickListener() {
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new myClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra("topic_id", Latest.get(position).getTopicId());
-                intent.putExtra("model", Latest.get(position));
+//                intent.putExtra("topic_id", detailsPage.get(position).getTopicId());
+                intent.putExtra("model", detailsPage.get(position));
                 //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
 //                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view.findViewById(R.id.tvContent),"header");
 
@@ -89,7 +89,7 @@ public class TopicsFragment extends Fragment {
             }
         }));
         mAdapter = new MainAdapter(this.getActivity());
-        mAdapter.setTopic(Latest);
+        mAdapter.setTopic(detailsPage);
         mRecyclerView.setAdapter(mAdapter); //大工告成
 //        L.m("显示Latest成功");
 
@@ -111,10 +111,9 @@ public class TopicsFragment extends Fragment {
 
     private void GetJson(int nodeID) {
         String requestURL = "";
-        if(nodeID == LatestTopics){
+        if (nodeID == LATEST_TOPICS) {
             requestURL = JsonManager.LATEST_JSON;
-        }
-        else if(nodeID == Top10Topics){
+        } else if (nodeID == TOP_10_TOPICS) {
             requestURL = JsonManager.HOT_JSON;
         }
 
@@ -123,7 +122,7 @@ public class TopicsFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
-                JsonManager.handleJson(response, Latest);
+                JsonManager.handleJson(response, detailsPage, getActivity().getApplicationContext());
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
 

@@ -94,15 +94,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_camera:
-                // Handle the camera action
-                break;
-            case R.id.nav_gallery:
-
-                break;
-            case R.id.nav_slideshow:
-
-                break;
+//            case R.id.nav_camera:
+//                // Handle the camera action
+//                break;
+//            case R.id.nav_gallery:
+//
+//                break;
+//            case R.id.nav_slideshow:
+//
+//                break;
             case R.id.nav_manage:
 
                 break;

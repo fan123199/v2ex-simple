@@ -3,8 +3,7 @@ package im.fdx.v2ex.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import im.fdx.v2ex.utils.ContentUtils;
-import im.fdx.v2ex.utils.L;
+import im.fdx.v2ex.R;
 
 /**
  * Created by a708 on 15-8-18.
@@ -12,20 +11,20 @@ import im.fdx.v2ex.utils.L;
  */
 public class TopicModel implements Parcelable {
 
-    public long id;
-    public String title;
-    public String url;
-    public String content;
-    public String contentRendered;
-    public int replies;
-//    public MemberModel member;
-//    public NodeModel node;
-    public long created;
-    public long lastModified;
-    public long lastTouched;
-    public String author;
-    public String nodeTitle;
-    public String avatarString;
+    private long id;
+    private String title;
+    private String url;
+    private String content;
+    private String contentRendered;
+    private int replies;
+    private MemberModel member;
+    public NodeModel node;
+    private long created;
+    private long lastModified;
+    private long lastTouched;
+//    public String author;
+//    public String nodeTitle;
+//    public String avatarString;
 
     //暂时不知道如何传递数据到Model,先用vivz的方法,在activty中设置解析方法
 
@@ -40,11 +39,11 @@ public class TopicModel implements Parcelable {
         created = in.readLong();
         lastModified = in.readLong();
         lastTouched = in.readLong();
-        author = in.readString();
-//        member = (MemberModel) in.readValue(MemberModel.class.getClassLoader());
-//        node = (NodeModel) in.readValue(NodeModel.class.getClassLoader());
-        nodeTitle = in.readString();
-        avatarString = in.readString();
+//        author = in.readString();
+        member = (MemberModel) in.readValue(MemberModel.class.getClassLoader());
+        node = (NodeModel) in.readValue(NodeModel.class.getClassLoader());
+//        nodeTitle = in.readString();
+//        avatarString = in.readString();
 
 
     }
@@ -79,23 +78,24 @@ public class TopicModel implements Parcelable {
         dest.writeLong(created);
         dest.writeLong(lastModified);
         dest.writeLong(lastTouched);
-        dest.writeString(author);//学devliu
-        dest.writeString(nodeTitle);
-        dest.writeString(avatarString);
-
-//        dest.writeValue(member);
-//        dest.writeValue(node);
+//        dest.writeString(author);//学devliu
+//        dest.writeString(nodeTitle);
+//        dest.writeString(avatarString);
+        dest.writeValue(member);
+        dest.writeValue(node);
     }
 
-    public TopicModel(long id,String title,String author,String content,int replies,String node_title,long created,String avatarString){
-        this.author = author;
+    public TopicModel(long id, String title, String content, int replies, String node_title, long created, MemberModel member, NodeModel nodeModel) {
+//        this.author = author;
         this.id = id;
         this.title = title;
         this.content = content;
         this.replies = replies;
-        this.nodeTitle = node_title;
+//        this.nodeTitle = node_title;
         this.created = created;
-        this.avatarString = avatarString;
+//        this.avatarString = avatarString;
+        this.member = member;
+        this.node = nodeModel;
     }
 
     public TopicModel(long id) {
@@ -138,17 +138,17 @@ public class TopicModel implements Parcelable {
         return lastTouched;
     }
 
-    public String getAuthor() {
-        return author;
-    }
+//    public String getAuthor() {
+//        return author;
+//    }
 
-    public String getNodeTitle() {
-        return nodeTitle;
-    }
+//    public String getNodeTitle() {
+//        return nodeTitle;
+//    }
 
-    public String getAvatarString() {
-        return avatarString;
-    }
+//    public String getAvatarString() {
+//        return avatarString;
+//    }
 
     public void setId(long id) {
         this.id = id;
@@ -186,17 +186,17 @@ public class TopicModel implements Parcelable {
         this.lastTouched = lastTouched;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+//    public void setAuthor(String author) {
+//        this.author = author;
+//    }
 
-    public void setNodeTitle(String nodeTitle) {
-        this.nodeTitle = nodeTitle;
-    }
+//    public void setNodeTitle(String nodeTitle) {
+//        this.nodeTitle = nodeTitle;
+//    }
 
-    public void setAvatarString(String avatarString) {
-        this.avatarString = avatarString;
-    }
+//    public void setAvatarString(String avatarString) {
+//        this.avatarString = avatarString;
+//    }
 
     public long getTopicId() {
         return id;
@@ -204,9 +204,24 @@ public class TopicModel implements Parcelable {
 
     @Override
     public String toString() {
-        return "TopicModel{" +
-                "replies=" + replies +
-                '}';
+        return R.string.title + title + R.string.content + content;
+    }
+
+
+    public NodeModel getNode() {
+        return node;
+    }
+
+    public MemberModel getMember() {
+        return member;
+    }
+
+    public void setMember(MemberModel member) {
+        this.member = member;
+    }
+
+    public void setNode(NodeModel node) {
+        this.node = node;
     }
 
     @Override

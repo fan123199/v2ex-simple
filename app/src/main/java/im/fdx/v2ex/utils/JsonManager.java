@@ -1,6 +1,8 @@
 package im.fdx.v2ex.utils;
 
 import android.content.Context;
+import android.view.View;
+import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -12,16 +14,23 @@ import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 
@@ -72,24 +81,24 @@ public class JsonManager {
 
 
     /**
-     *
-     * @param response
+     *  @param response
      *        foo
      * @param articleModel
-     *        bar
+     * @param context
      */
-    public static void handleJson(JSONArray response, ArrayList<TopicModel> articleModel) {
+    public static void handleJson(JSONArray response, ArrayList<TopicModel> articleModel, Context context) {
         if(response == null || response.length() == 0) {
             return;
         }
         long id;
         String title;
-        String author;
+//        String author;
         String content;
         int replies;
         String node_title;
         long created;
-        String avatarString;
+        MemberModel member;
+//        String avatarString;
 
         boolean flag = true;
 
@@ -99,29 +108,66 @@ public class JsonManager {
 
 //        L.m(String.valueOf(flag));
 
+
+        // 看不懂的地方 // TODO: 16-1-16
+        // Deserialization
+
+
         try {
-            for(int i = 0; i< response.length();i++) {
+            JsonReader mReader = new JsonReader(new StringReader(response.toString()));
 
-                JSONObject responseJSONObject = response.getJSONObject(i);
-
-                id = responseJSONObject.optInt("id");
-                title = responseJSONObject.optString("title");
-                author = responseJSONObject.optJSONObject("member").optString("username");
-                content = responseJSONObject.optString("content");
-                replies = responseJSONObject.optInt("replies");
-                node_title = responseJSONObject.optJSONObject("node").optString("title");
-                created = responseJSONObject.optLong("created");
-                avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
-
-                if(flag) {
-                    if (id == articleModel.get(i).id) {
-                        break;
+            mReader.beginArray();
+            while (mReader.hasNext()) {
+                mReader.beginObject();
+                while (mReader.hasNext()) {
+                    String tagName = mReader.nextName();
+                    if (tagName.equals("id")) {
+                        id = mReader.nextLong();
                     }
+
                 }
-
-                articleModel.add(i, new TopicModel(id, title, author, content, replies, node_title, created, avatarString));
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+        Gson myGson = new Gson();
+        Type arraylistType = new TypeToken<ArrayList<TopicModel>>() {
+        }.getType();
+
+//        articleModel =  myGson.fromJson(responseJSONObject.toString(), arraylistType);
+
+        //以下是用非GSON方法处理json数据
+//        try {
+//            for(int i = 0; i< response.length();i++) {
+//                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(),TopicModel.class);
+//                JSONObject responseJSONObject = response.getJSONObject(i);
+//                id = responseJSONObject.optInt("id");
+//                title = responseJSONObject.optString("title");
+////                author = responseJSONObject.optJSONObject("member").optString("username");
+//                content = responseJSONObject.optString("content");
+//                replies = responseJSONObject.optInt("replies");
+//                node_title = responseJSONObject.optJSONObject("node").optString("title");
+//                created = responseJSONObject.optLong("created");
+////                avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
+//                member = (MemberModel) responseJSONObject.opt("member");
+//
+//                if(flag) {
+//                    if (id == articleModel.get(i).id) {
+//                        break;
+//                    }
+//                }
+//
+//                articleModel.add(i, new TopicModel(id, title, content, replies, node_title, created, member));
+//            }
+//
+//        }
+        try {
+            for (int i = 0; i < response.length(); i++) {
+
+                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
+                L.t(context, tm.getTitle());
+            }
         } catch (JSONException e) {
 //            L.m("parse false");
             e.printStackTrace();
@@ -129,7 +175,11 @@ public class JsonManager {
     }
 
 
-
+    /**
+     * @param context  登录的Context
+     * @param username 用户名
+     * @param password 密码
+     */
     public static void Login(final Context context,final String username,final String password){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, SIGN_IN_URL, new Response.Listener<String>() {
             @Override

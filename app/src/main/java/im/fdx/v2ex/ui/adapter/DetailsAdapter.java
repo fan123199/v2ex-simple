@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.util.Linkify;
@@ -11,7 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 
 import java.util.ArrayList;
 
@@ -50,7 +51,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         if (viewType == TYPE_HEADER) {
             View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
-            //// TODO: 2015/9/15 first try
             // set the view's size, margins, paddings and layout parameters
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -75,21 +75,29 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             MainAdapter.MainViewHolder MVHolder = (MainAdapter.MainViewHolder) holder;
             TopicModel currentTopic = header;
-            MVHolder.tvTitle.setText(currentTopic.title);
+            MVHolder.tvTitle.setText(currentTopic.getTitle());
 
             MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             MVHolder.tvContent.setTextIsSelectable(true);
-            MVHolder.tvContent.setText(currentTopic.content);
+            MVHolder.tvContent.setText(currentTopic.getContent());
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 MVHolder.tvContent.setTransitionName("header" + position);
             }
-            String string = String.valueOf(currentTopic.replies) + "个回复";
+            String string = String.valueOf(currentTopic.getReplies()) + " " + R.string.reply;
             MVHolder.tvReplyNumber.setText(string);
-            MVHolder.tvAuthor.setText(currentTopic.author);
-            MVHolder.tvNode.setText(currentTopic.nodeTitle);
-            MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(currentTopic.created));
+            MVHolder.tvAuthor.setText(currentTopic.getMember().getUserName());
+            MVHolder.tvNode.setText(currentTopic.getNode().getNodeName());
+            MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
 
-            MVHolder.ivAvatar.setImageUrl(currentTopic.avatarString, mImageLoader);
+            MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMini(), mImageLoader);
+            MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Uri uri = Uri.parse("https:www.v2ex.com/");
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                }
+            });
 
         }
 //        if(holder instanceof ViewHolderItem) {
@@ -99,16 +107,16 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             // if(!replyList.isEmpty()) {
             //    因为上一个if语句默认了replylist不可能为空
-            ReplyModel replyModel = getItem(position - 1);
+            ReplyModel replyItem = getItem(position - 1);
 //                L.m(replyModel +" No. "+String.valueOf(position-1)+ "in DetailsAdapter");
-            VHItem.replyTime.setText(TimeHelper.RelativeTime(replyModel.created));
-            VHItem.replier.setText(replyModel.author);
+            VHItem.replyTime.setText(TimeHelper.RelativeTime(mContext, replyItem.getCreated()));
+            VHItem.replier.setText(replyItem.getUser().getUserName());
 
             VHItem.content.setAutoLinkMask(Linkify.WEB_URLS);
-            VHItem.content.setText(replyModel.content);
+            VHItem.content.setText(replyItem.getContent());
 
             VHItem.row.setText(String.valueOf(position));
-            VHItem.avatar.setImageUrl(replyModel.avatarString, mImageLoader);
+            VHItem.userAvatar.setImageUrl(replyItem.getUser().getAvatarMini(), mImageLoader);
             if(position == getItemCount()-1) {
                 VHItem.divider.setVisibility(View.GONE);
             }
@@ -149,7 +157,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView replyTime;
         TextView content;
         TextView row;
-        MyNetworkCircleImageView avatar;
+        MyNetworkCircleImageView userAvatar;
         View divider;
 
 
@@ -160,7 +168,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             replyTime = (TextView) itemView.findViewById(R.id.tvReplyTime);
             content = (TextView) itemView.findViewById(R.id.tvReplyContent);
             row = (TextView) itemView.findViewById(R.id.tvRow);
-            avatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
+            userAvatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
             divider = itemView.findViewById(R.id.divider);
         }
     }

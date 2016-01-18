@@ -1,7 +1,9 @@
 package im.fdx.v2ex.utils;
 
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 /**
@@ -18,5 +20,13 @@ public class L {
     }
     public static void T(Context context, String message) {
         Toast.makeText(context,"" + message, Toast.LENGTH_LONG).show();
+    }
+
+    public static void s(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+    }
+
+    public static void S(View view, String message) {
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG);
     }
 }

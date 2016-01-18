@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v13.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         //Latest topic
         TopicsFragment latestTopicsFragment = new TopicsFragment();
         Bundle bundle_latest = new Bundle();
-        bundle_latest.putInt("node_id", TopicsFragment.LatestTopics);
+        bundle_latest.putInt("node_id", TopicsFragment.LATEST_TOPICS);
         latestTopicsFragment.setArguments(bundle_latest);
         mFragments.add(latestTopicsFragment);
         mTabTitles.add(mCtx.getString(R.string.tab_title_latest));
@@ -45,7 +44,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         //Top10 topic
         TopicsFragment Top10TopicsFragment = new TopicsFragment();
         Bundle bundle_top10 = new Bundle();
-        bundle_top10.putInt("node_id", TopicsFragment.Top10Topics);
+        bundle_top10.putInt("node_id", TopicsFragment.TOP_10_TOPICS);
 
         Top10TopicsFragment.setArguments(bundle_top10);
         mFragments.add(Top10TopicsFragment);

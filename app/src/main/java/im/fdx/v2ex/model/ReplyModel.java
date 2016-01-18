@@ -10,22 +10,24 @@ import android.os.Parcelable;
  */
 public class ReplyModel implements Parcelable {
 
-    public long id;
-    public String content;
-    public String contentRendered;
-    public int thanks;
-    public long created;
-    public String author;
-    public String avatarString;
+    private long replyId;
+    private String content;
+    private String contentRendered;
+    private int thanks;
+    private long created;
+    //    private String author;
+//    private String avatarString;
+    private MemberModel user;
 
     protected ReplyModel(Parcel in) {
-        id = in.readLong();
+        replyId = in.readLong();
         content = in.readString();
         contentRendered = in.readString();
         thanks = in.readInt();
         created = in.readLong();
-        author = in.readString();
-        avatarString = in.readString();
+//        author = in.readString();
+//        avatarString = in.readString();
+        user = in.readParcelable(MemberModel.class.getClassLoader());
     }
     public ReplyModel() {}
 
@@ -49,22 +51,47 @@ public class ReplyModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
+        dest.writeLong(replyId);
         dest.writeString(content);
         dest.writeString(contentRendered);
         dest.writeInt(thanks);
         dest.writeLong(created);
-        dest.writeString(author);
-        dest.writeString(avatarString);
+//        dest.writeString(author);
+//        dest.writeString(avatarString);
+        dest.writeValue(user);
 
     }
 
-    public ReplyModel(long id,String content,int thanks,long created, String author, String avatarString) {
-        this.id = id;
+    public long getReplyId() {
+        return replyId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getContentRendered() {
+        return contentRendered;
+    }
+
+    public int getThanks() {
+        return thanks;
+    }
+
+    public long getCreated() {
+        return created;
+    }
+
+    public MemberModel getUser() {
+        return user;
+    }
+
+    public ReplyModel(MemberModel user, long replyId, String content, int thanks, String contentRendered, long created) {
+        this.user = user;
+        this.replyId = replyId;
         this.content = content;
         this.thanks = thanks;
+        this.contentRendered = contentRendered;
         this.created = created;
-        this.author = author;
-        this.avatarString = avatarString;
     }
 }

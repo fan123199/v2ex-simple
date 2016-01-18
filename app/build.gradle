@@ -37,6 +37,8 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.google.code.gson:gson:2.5'
     //    compile 'com.belerweb:pinyin4j:2.5.0'
     //    compile 'com.android.support:support-v4:22.+'
     compile 'com.mcxiaoke.volley:library:1.0.19'

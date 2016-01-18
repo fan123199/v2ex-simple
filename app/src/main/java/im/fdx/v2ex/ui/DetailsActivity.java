@@ -36,10 +36,10 @@ public class DetailsActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private DetailsAdapter mDetailsAdapter;
 
-    private TopicModel Header;
+    private TopicModel detailsHeader;
     private ArrayList<ReplyModel> replyLists = new ArrayList<>();
 
-    private String TopicId;
+    private String topicId;
 
 
     @Override
@@ -66,16 +66,16 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        //处理传递过来的Intent，共两个数据
+        //处理传递过来的Intent，共一个数据
         Intent mGetIntent = getIntent();
-        Header = mGetIntent.getParcelableExtra("model");
-        TopicId = String.valueOf(mGetIntent.getLongExtra("topic_id", 1L));
-//        L.m(TopicId);
+        detailsHeader = mGetIntent.getParcelableExtra("model");
+        topicId = String.valueOf(mGetIntent.getLongExtra("topic_id", 1L));
+//        L.m(topicId);
 
         GetReplyJson();
         RecyclerView mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-//        // TODO: 2015/9/15  I want space!!
+//        // 2015/9/15  I want space!! fdx： solved in adapter
 //
 //        RecyclerView.LayoutParams params =
 //                new RecyclerView.LayoutParams(
@@ -85,9 +85,7 @@ public class DetailsActivity extends AppCompatActivity {
 //        mLayoutManager.findViewByPosition(0).setLayoutParams();
         mRCView.setLayoutManager(mLayoutManager);
 
-        mDetailsAdapter = new DetailsAdapter(this, Header, replyLists);
-
-
+        mDetailsAdapter = new DetailsAdapter(this, detailsHeader, replyLists);
         mRCView.setAdapter(mDetailsAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
@@ -121,7 +119,7 @@ public class DetailsActivity extends AppCompatActivity {
     public void GetReplyJson() {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                JsonManager.API_REPLIES+"?topic_id="+ TopicId, new Response.Listener<JSONArray>() {
+                JsonManager.API_REPLIES + "?topic_id=" + topicId, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 
@@ -177,7 +175,7 @@ public class DetailsActivity extends AppCompatActivity {
                 avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
 //                L.m(content+i);
 
-                replyLists.add(new ReplyModel(id, content, thanks, created, author,avatarString));
+                replyLists.add(new ReplyModel());
             }
 
         } catch (JSONException e) {
@@ -213,8 +211,8 @@ public class DetailsActivity extends AppCompatActivity {
 //                L.t(this,"分享到");
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + Header.title + "   "
-                        + JsonManager.HTTP_V2EX_BASE + "/t/" + TopicId);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + detailsHeader.getTitle() + "   "
+                        + JsonManager.HTTP_V2EX_BASE + "/t/" + topicId);
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent,"分享到"));
