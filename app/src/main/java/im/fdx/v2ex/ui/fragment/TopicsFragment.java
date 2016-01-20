@@ -25,9 +25,10 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.DetailsActivity;
 import im.fdx.v2ex.ui.adapter.MainAdapter;
+import im.fdx.v2ex.utils.GsonTopic;
 import im.fdx.v2ex.utils.myClickListener;
 import im.fdx.v2ex.utils.RecyclerTouchListener;
-import im.fdx.v2ex.utils.JsonManager;
+import im.fdx.v2ex.network.JsonManager;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
@@ -56,15 +57,13 @@ public class TopicsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
 
         Bundle gets_args = getArguments();
         mNodeID = gets_args.getInt("node_id", 0);
 
-
-        final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
-
         queue = MySingleton.getInstance().getRequestQueue();
-        GetJson(mNodeID);
+        getJson(mNodeID);
 
         //找出recyclerview,并赋予变量
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
@@ -84,8 +83,11 @@ public class TopicsFragment extends Fragment {
             }
         }));
 
-        mAdapter = new MainAdapter(getActivity());
-        mAdapter.setTopic(topicModels);
+        mAdapter = new MainAdapter(getActivity(), topicModels);
+
+        //setTopic 不好，还是在创建Apter时加入参数比较好。
+//        mAdapter.setTopic(topicModels);
+
         mRecyclerView.setAdapter(mAdapter); //大工告成
 //        L.m("显示Latest成功");
 
@@ -97,7 +99,7 @@ public class TopicsFragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                GetJson(mNodeID);
+                getJson(mNodeID);
             }
         });
 
@@ -105,13 +107,14 @@ public class TopicsFragment extends Fragment {
         return layout;
     }
 
-    private void GetJson(int nodeID) {
+    private void getJson(int nodeID) {
         String requestURL = "";
         if (nodeID == LATEST_TOPICS) {
             requestURL = JsonManager.LATEST_JSON;
         } else if (nodeID == TOP_10_TOPICS) {
             requestURL = JsonManager.HOT_JSON;
         }
+
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
                 requestURL, new Response.Listener<JSONArray>() {

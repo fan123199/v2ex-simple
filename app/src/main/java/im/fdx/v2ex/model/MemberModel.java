@@ -70,16 +70,12 @@ public class MemberModel implements Parcelable {
         return tagline;
     }
 
-    public String getAvatar_mini() {
-        return avatar_mini;
+    public String getAvatarNormal() {
+        return "http:" + avatar_normal;
     }
 
-    public String getAvatar_normal() {
-        return avatar_normal;
-    }
-
-    public String getAvatar_large() {
-        return avatar_large;
+    public String getAvatarLarge() {
+        return "http:" + avatar_large;
     }
 
     public String getAvatarMiniUrl() {

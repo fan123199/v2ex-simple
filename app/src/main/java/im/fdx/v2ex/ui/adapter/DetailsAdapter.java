@@ -90,7 +90,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             MVHolder.tvNode.setText(currentTopic.getNode().getName());
             MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
 
-            MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMiniUrl(), mImageLoader);
+            MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
             MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,7 +118,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             VHItem.tvContent.setText(replyItem.getContent());
 
             VHItem.tvRow.setText(String.valueOf(position));
-            VHItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarMiniUrl(), mImageLoader);
+            VHItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormal(), mImageLoader);
             if(position == getItemCount()-1) {
                 VHItem.divider.setVisibility(View.GONE);
             }

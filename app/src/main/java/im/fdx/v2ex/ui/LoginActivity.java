@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.utils.JsonManager;
+import im.fdx.v2ex.network.JsonManager;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 

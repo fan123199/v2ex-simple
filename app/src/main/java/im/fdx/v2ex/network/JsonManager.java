@@ -1,8 +1,6 @@
-package im.fdx.v2ex.utils;
+package im.fdx.v2ex.network;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -15,24 +13,21 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.utils.L;
 
 /**
  * Created by a708 on 15-8-13.
@@ -93,26 +88,14 @@ public class JsonManager {
             return;
         }
 
-//        史上最简化处理json
-        Type arraylistType = new TypeToken<ArrayList<TopicModel>>() {
-        }.getType();
-//        String gStr = myGson.toJson(response,arraylistType);
-        articleModel = myGson.fromJson(response.toString(), arraylistType);
-//// TODO: 16-1-18
-//        L.m(articleModel.get(0).getTitle());
-
-//        try {
-////            L.m(response.toString(2));
-//            for (int i = 0; i < response.length(); i++) {
-//
-//                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
-////                L.t(context, tm.getTitle());
-//                articleModel.add(tm);
-//            }
-//        } catch (JSONException e) {
-////            L.m("parse false");
-//            e.printStackTrace();
-//    }
+        try {
+            for (int i = 0; i < response.length(); i++) {
+                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
+                articleModel.add(tm);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 

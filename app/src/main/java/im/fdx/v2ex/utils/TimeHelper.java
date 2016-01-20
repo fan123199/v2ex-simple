@@ -16,7 +16,7 @@ public class TimeHelper {
         long now = System.currentTimeMillis();
         long difference = now - created;
         CharSequence text = (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS) ?
-                context.getString(R.string.justnow) :
+                context.getString(R.string.just_now) :
                 DateUtils.getRelativeTimeSpanString(
                         created,
                         now,

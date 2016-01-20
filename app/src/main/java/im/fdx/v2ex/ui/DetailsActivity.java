@@ -28,8 +28,7 @@ import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.DetailsAdapter;
-import im.fdx.v2ex.utils.JsonManager;
-import im.fdx.v2ex.utils.L;
+import im.fdx.v2ex.network.JsonManager;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -155,7 +154,6 @@ public class DetailsActivity extends AppCompatActivity {
         replyLists.clear();
 //        Gson myGson = new Gson();
         try {
-            L.m(response.toString(2));
             for (int i = 0; i < response.length(); i++) {
 
                 ReplyModel tm = JsonManager.myGson.fromJson(response.getJSONObject(i).toString(), ReplyModel.class);

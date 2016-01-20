@@ -27,16 +27,17 @@ import im.fdx.v2ex.utils.TimeHelper;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
 
     private LayoutInflater mInflater;
-    private ArrayList<TopicModel> topicList = new ArrayList<>();
+    private ArrayList<TopicModel> topicList;
     private ImageLoader mImageLoader;
     private Context mContext;
 
 
     //这是构造器
-    public MainAdapter(Context context) {
+    public MainAdapter(Context context, ArrayList<TopicModel> topList) {
         mContext = context;
         mInflater = LayoutInflater.from(mContext);
         mImageLoader = MySingleton.getInstance().getImageLoader();
+        topicList = topList;
     }
 
 
@@ -59,7 +60,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         TopicModel currentTopic = topicList.get(position);
-        MemberModel memberModel = currentTopic.getMember();
         holder.tvTitle.setText(currentTopic.getTitle());
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.getContent());
@@ -68,9 +68,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         String sequence = Integer.toString(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
         holder.tvReplyNumber.setText(sequence);
         holder.tvAuthor.setText(currentTopic.getMember().getUsername()); // 各个模型建立完毕
-//        holder.tvNode.setText(currentTopic.nodeTitle);
+        holder.tvNode.setText(currentTopic.getNode().getTitle());
         holder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
-        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarMiniUrl(), mImageLoader);
+        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
 
     }
 
