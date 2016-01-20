@@ -13,4 +13,11 @@ public class ContentUtils {
                 .replace("href=\"/t/", "href=\"http://www.v2ex.com/t/")
                 .replace("href=\"/go/", "href=\"http://www.v2ex.com/go/");
     }
+
+    public static String formatContentSimple(String content) {
+        return content.replace("/member/", "http://www.v2ex.com/member/")
+                .replace("/i/", "https://i.v2ex.co/")
+                .replace("/t/", "http://www.v2ex.com/t/")
+                .replace("/go/", "http://www.v2ex.com/go/");
+    }
 }

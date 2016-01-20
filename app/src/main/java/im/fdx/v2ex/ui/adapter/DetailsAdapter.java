@@ -20,6 +20,7 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.MyNetworkCircleImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 
@@ -79,7 +80,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             MVHolder.tvContent.setTextIsSelectable(true);
-            MVHolder.tvContent.setText(currentTopic.getContent());
+            MVHolder.tvContent.setText(ContentUtils.formatContentSimple(currentTopic.getContent()));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 MVHolder.tvContent.setTransitionName("header" + position);
             }
@@ -115,7 +116,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             VHItem.tvReplier.setText(replyItem.getMember().getUsername());
 
             VHItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
-            VHItem.tvContent.setText(replyItem.getContent());
+            VHItem.tvContent.setText(ContentUtils.formatContent(replyItem.getContent()));
 
             VHItem.tvRow.setText(String.valueOf(position));
             VHItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormal(), mImageLoader);

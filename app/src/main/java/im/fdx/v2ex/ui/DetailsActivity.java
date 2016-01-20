@@ -165,35 +165,12 @@ public class DetailsActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-
-//        try {
-//            for(int i = 0; i< response.length();i++) {
-//
-//                JSONObject responseJSONObject = response.getJSONObject(i);
-//
-//                id = responseJSONObject.optInt("id");
-//                author = responseJSONObject.optJSONObject("member").optString("username");
-//                content = responseJSONObject.optString("content");
-//                thanks = responseJSONObject.optInt("thanks");
-//                created = responseJSONObject.optLong("created");
-//                avatarString = "http:"+ responseJSONObject.optJSONObject("member").optString("avatar_normal");
-////                L.m(content+i);
-//
-////                replyLists.add(new ReplyModel());
-//            }
-//
-//        } catch (JSONException e) {
-////            L.m("parse false");
-//            e.printStackTrace();
-//        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_details, menu);
-
-
 
         return true;
     }
@@ -209,6 +186,7 @@ public class DetailsActivity extends AppCompatActivity {
         //SimplifiableIfStatement
         switch (id) {
             case R.id.menu_refresh:
+                mSwipeRefreshLayout.setRefreshing(true);
                 GetReplyJson();
                 break;
             case R.id.menu_item_share:

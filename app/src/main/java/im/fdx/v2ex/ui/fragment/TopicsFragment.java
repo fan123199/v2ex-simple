@@ -7,6 +7,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,9 +18,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
@@ -26,6 +31,7 @@ import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.DetailsActivity;
 import im.fdx.v2ex.ui.adapter.MainAdapter;
 import im.fdx.v2ex.utils.GsonTopic;
+import im.fdx.v2ex.utils.L;
 import im.fdx.v2ex.utils.myClickListener;
 import im.fdx.v2ex.utils.RecyclerTouchListener;
 import im.fdx.v2ex.network.JsonManager;
@@ -44,7 +50,6 @@ public class TopicsFragment extends Fragment {
     RecyclerView.LayoutManager mLayoutManger;//TODO
     private SwipeRefreshLayout mSwipeLayout;
 
-    private RequestQueue queue;
     private int mNodeID;
 //    private OnFragmentInteractionListener mListener;
 
@@ -52,18 +57,27 @@ public class TopicsFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
-
         Bundle gets_args = getArguments();
         mNodeID = gets_args.getInt("node_id", 0);
 
-        queue = MySingleton.getInstance().getRequestQueue();
+        RequestQueue queue = MySingleton.getInstance().getRequestQueue();
         getJson(mNodeID);
+        mAdapter = new MainAdapter(getActivity(), topicModels);
+
+        //setTopic 不好，还是在创建Apter时加入参数比较好。
+//        mAdapter.setTopic(topicModels);
+
 
         //找出recyclerview,并赋予变量
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
@@ -82,11 +96,6 @@ public class TopicsFragment extends Fragment {
             public void onLongClick(View view, int position) {
             }
         }));
-
-        mAdapter = new MainAdapter(getActivity(), topicModels);
-
-        //setTopic 不好，还是在创建Apter时加入参数比较好。
-//        mAdapter.setTopic(topicModels);
 
         mRecyclerView.setAdapter(mAdapter); //大工告成
 //        L.m("显示Latest成功");
@@ -121,7 +130,15 @@ public class TopicsFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
-                JsonManager.handleJson(response, topicModels, getActivity().getApplicationContext());
+                Type tp = new TypeToken<ArrayList<TopicModel>>() {
+                }.getType();
+                ArrayList<TopicModel> hehe = JsonManager.myGson.fromJson(response.toString(), tp);
+                L.m(hehe.get(3).getContent());
+                L.m(hehe.get(3).getContent_rendered());
+                topicModels.addAll(hehe);
+
+//                JsonManager.handleJson(response, topicModels, getActivity().getApplicationContext());
+
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
 
@@ -135,9 +152,22 @@ public class TopicsFragment extends Fragment {
         });
 
         MySingleton.getInstance().addToRequestQueue(jsonArrayRequest);
-
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_topic_fragement, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_refresh) {
+            mSwipeLayout.setRefreshing(true);
+            getJson(mNodeID);
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onDetach() {
