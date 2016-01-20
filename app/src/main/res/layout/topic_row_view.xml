@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="?attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/main_text_view"
@@ -9,9 +9,7 @@
     android:paddingBottom="6dp"
     android:layout_marginStart="0dp"
     android:layout_marginEnd="0dp"
-    android:layout_marginTop="6dp"
-    android:elevation="3dp"
-    >
+    android:layout_marginTop="6dp">
 
 
     <TextView
@@ -92,9 +90,8 @@
         android:layout_width="@dimen/md_avatar"
         android:layout_height="@dimen/md_avatar"
         android:id="@+id/ivAvatar"
-        android:src="@drawable/ic_person_black_48dp"
+        android:src="@drawable/ic_person_outline_black_48dp"
         app:civ_border_width="0dp"
-        app:civ_border_color="#FF000000"
         android:contentDescription="@string/it_is_avatar"
         android:layout_below="@+id/tvContent"
         android:layout_alignStart="@+id/tvContent"

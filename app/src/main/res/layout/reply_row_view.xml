@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="1dp"
-    >
+    tools:ignore="UnusedAttribute">
 
 
     <im.fdx.v2ex.utils.MyNetworkCircleImageView
@@ -11,7 +12,7 @@
         android:layout_width="@dimen/md_avatar"
         android:layout_height="@dimen/md_avatar"
         android:id="@+id/reply_avatar"
-        android:src="@drawable/ic_person_black_48dp"
+        android:src="@drawable/ic_person_outline_black_48dp"
         app:civ_border_width="0dp"
         app:civ_border_color="#FFFFFFFF"
         android:layout_marginTop="9dp"
