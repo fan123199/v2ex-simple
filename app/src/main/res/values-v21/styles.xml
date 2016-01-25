@@ -2,10 +2,10 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <!-- enable window content transitions -->
-        <item name="android:windowContentTransitions">true</item>
+        <!--&lt;!&ndash; enable window content transitions &ndash;&gt;-->
+        <!--<item name="android:windowContentTransitions">true</item>-->
 
-        <!-- specify enter and exit transitions -->
+        <!--&lt;!&ndash;specify enter and exit transitions&ndash;&gt;-->
         <!--<item name="android:windowEnterTransition">@transition/explode</item>-->
         <!--<item name="android:windowExitTransition">@transition/explode</item>-->
 

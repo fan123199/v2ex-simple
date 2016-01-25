@@ -2,4 +2,5 @@
 <transitionSet>
     <changeTransform/>
     <changeBounds/>
+    <changeClipBounds />
 </transitionSet>

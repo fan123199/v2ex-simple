@@ -40,13 +40,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //这句话不懂什么意思，来自as1.40drawer模板
-//        findViewById(R.id.design_menu_item_text).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//            }
-//        });
-
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager(),MainActivity.this);

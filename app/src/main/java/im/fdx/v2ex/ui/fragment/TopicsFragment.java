@@ -1,8 +1,9 @@
 package im.fdx.v2ex.ui.fragment;
 
+import android.app.ActivityOptions;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,11 +14,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -27,14 +30,13 @@ import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.DetailsActivity;
 import im.fdx.v2ex.ui.adapter.MainAdapter;
-import im.fdx.v2ex.utils.GsonTopic;
 import im.fdx.v2ex.utils.L;
-import im.fdx.v2ex.utils.myClickListener;
 import im.fdx.v2ex.utils.RecyclerTouchListener;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.utils.myClickListener;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
@@ -44,6 +46,7 @@ public class TopicsFragment extends Fragment {
     public static final int TOP_10_TOPICS = -2;
 
 
+    Gson myGson = new Gson();
     private ArrayList<TopicModel> topicModels = new ArrayList<>();
 
     private MainAdapter mAdapter;
@@ -81,17 +84,24 @@ public class TopicsFragment extends Fragment {
 
         //找出recyclerview,并赋予变量
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//这里用线性显示 类似于listView
-        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), mRecyclerView, new myClickListener() {
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //这里用线性显示 类似于listView
+        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
+                mRecyclerView, new myClickListener() {
             @Override
             public void onClick(View view, int position) {
                 Intent intent = new Intent(getActivity(), DetailsActivity.class);
                 intent.putExtra("model", topicModels.get(position));
                 //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
-//                ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(),view.findViewById(R.id.tvContent),"header");
-
+//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+//                    ActivityOptions options = ActivityOptions
+//                            .makeSceneTransitionAnimation(getActivity(), view, "headee");
+//                    getActivity().startActivity(intent, options.toBundle());
+//                } else {
                 getActivity().startActivity(intent);
+//                }
             }
+
             @Override
             public void onLongClick(View view, int position) {
             }
@@ -116,7 +126,7 @@ public class TopicsFragment extends Fragment {
         return layout;
     }
 
-    private void getJson(int nodeID) {
+    private void getJson(final int nodeID) {
         String requestURL = "";
         if (nodeID == LATEST_TOPICS) {
             requestURL = JsonManager.LATEST_JSON;
@@ -130,15 +140,31 @@ public class TopicsFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
+                L.t(getActivity(), "yes, I refresh");
+
                 Type tp = new TypeToken<ArrayList<TopicModel>>() {
                 }.getType();
-                ArrayList<TopicModel> hehe = JsonManager.myGson.fromJson(response.toString(), tp);
-                L.m(hehe.get(3).getContent());
-                L.m(hehe.get(3).getContent_rendered());
-                topicModels.addAll(hehe);
+                ArrayList<TopicModel> jsonTopics = myGson.fromJson(response.toString(), tp);
 
-//                JsonManager.handleJson(response, topicModels, getActivity().getApplicationContext());
+                if (topicModels.equals(jsonTopics)) {
+                    mSwipeLayout.setRefreshing(false);
+                    return;
+                }
 
+                if (nodeID == LATEST_TOPICS) {
+                    if (topicModels.isEmpty()) {
+                        topicModels.addAll(0, jsonTopics);
+                    } else if (jsonTopics.indexOf(topicModels.get(0)) != -1) {
+                        for (int i = 0; i < jsonTopics.indexOf(topicModels.get(0)); i++) {
+                            topicModels.add(0, jsonTopics.get(i));
+                        }
+                    } else {
+                        topicModels.addAll(0, jsonTopics);
+                    }
+                } else {
+                    topicModels.clear();
+                    topicModels.addAll(0, jsonTopics);
+                }
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
 
@@ -150,6 +176,9 @@ public class TopicsFragment extends Fragment {
                 mSwipeLayout.setRefreshing(false);
             }
         });
+        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(JsonManager.MY_TIMEOUT_MS,
+                JsonManager.MY_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         MySingleton.getInstance().addToRequestQueue(jsonArrayRequest);
     }

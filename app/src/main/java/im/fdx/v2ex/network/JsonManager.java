@@ -34,6 +34,10 @@ import im.fdx.v2ex.utils.L;
  * 用于对Json处理的类
  */
 
+//BasicNetwork.logSlowRequests: HTTP response for request=<[ ]
+//        https://www.v2ex.com/api/topics/latest.json 0xe61fa5b9 NORMAL 1>
+//        // [lifetime=5462], [size=60681], [rc=200], [retryCount=0]
+
 public class JsonManager {
 
 
@@ -56,47 +60,53 @@ public class JsonManager {
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
     public static final String API_REPLIES = "https://www.v2ex.com/api/replies/show.json";
 
+    public static final int MY_TIMEOUT_MS = 5000;
+
+    public static final int MY_MAX_RETRIES = 1;
+
     public static void handleVolleyError(Context context,VolleyError error) {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
             L.m(context.getString(R.string.error_timeout));
-            L.t(context.getApplicationContext(),"连接超时，请重试");
+            L.t(context, context.getString(R.string.error_timeout));
         } else if (error instanceof AuthFailureError) {
             L.m(context.getString(R.string.error_auth_failure));
+            L.t(context, context.getString(R.string.error_auth_failure));
 
         } else if (error instanceof ServerError) {
             L.m(context.getString(R.string.error_auth_failure));
+            L.t(context, context.getString(R.string.error_auth_failure));
 
         } else if (error instanceof NetworkError) {
             L.m(context.getString(R.string.error_network));
-            L.t(context.getApplicationContext(), "网络错误，请检查网络连接后重试");
+            L.t(context, context.getString(R.string.error_network));
         } else if (error instanceof ParseError) {
             L.m(context.getString(R.string.error_parser));
+            L.t(context, context.getString(R.string.error_parser));
         }
     }
-
 
     public static Gson myGson = new Gson();
 
-    /**
-     *  @param response
-     *        foo
-     * @param articleModel
-     * @param context
-     */
-    public static void handleJson(JSONArray response, ArrayList<TopicModel> articleModel, Context context) {
-        if (response == null || response.length() == 0) {
-            return;
-        }
-
-        try {
-            for (int i = 0; i < response.length(); i++) {
-                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
-                articleModel.add(tm);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     *  @param response
+//     *        foo
+//     * @param articleModel
+//     * @param context
+//     */
+//    public static void handleJson(JSONArray response, ArrayList<TopicModel> articleModel, Context context) {
+//        if (response == null || response.length() == 0) {
+//            return;
+//        }
+//
+//        try {
+//            for (int i = 0; i < response.length(); i++) {
+//                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
+//                articleModel.add(tm);
+//            }
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     /**

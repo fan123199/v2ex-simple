@@ -56,7 +56,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
 //            lp.bottomMargin =30;
-            lp.setMargins(0,0,0,30);
+            lp.setMargins(0, 0, 0, 30);
             view.setLayoutParams(lp);
 
             return new MainAdapter.MainViewHolder(view);
@@ -75,14 +75,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (getItemViewType(position) == TYPE_HEADER) {
 
             MainAdapter.MainViewHolder MVHolder = (MainAdapter.MainViewHolder) holder;
-            TopicModel currentTopic = header;
+            final TopicModel currentTopic = header;
             MVHolder.tvTitle.setText(currentTopic.getTitle());
 
             MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             MVHolder.tvContent.setTextIsSelectable(true);
             MVHolder.tvContent.setText(ContentUtils.formatContentSimple(currentTopic.getContent()));
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                MVHolder.tvContent.setTransitionName("header" + position);
+                MVHolder.tvContent.setTransitionName("header");
             }
             String string = String.valueOf(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
 
@@ -95,9 +95,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Uri uri = Uri.parse("https:www.v2ex.com/");
+                    Uri uri = Uri.parse(currentTopic.getMember().getAvatarLarge());
 
                     Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                    mContext.startActivity(intent);
                 }
             });
 

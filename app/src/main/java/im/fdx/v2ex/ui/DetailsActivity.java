@@ -88,7 +88,8 @@ public class DetailsActivity extends AppCompatActivity {
         mRCView.setAdapter(mDetailsAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
-        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+        mSwipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
@@ -104,12 +105,6 @@ public class DetailsActivity extends AppCompatActivity {
 
             }
 
-        });
-        findViewById(R.id.detail_recycler_view).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(DetailsActivity.this, MainActivity.class));
-            }
         });
     }
 
@@ -178,13 +173,9 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
         //SimplifiableIfStatement
-        switch (id) {
+        switch (item.getItemId()) {
             case R.id.menu_refresh:
                 mSwipeRefreshLayout.setRefreshing(true);
                 GetReplyJson();

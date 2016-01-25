@@ -56,15 +56,16 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     }
 
     //Done 对TextView进行赋值, 也就是操作
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
         TopicModel currentTopic = topicList.get(position);
         holder.tvTitle.setText(currentTopic.getTitle());
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.getContent());
-        holder.tvContent.setTransitionName("header" + position);
 
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            holder.tvContent.setTransitionName("header");
+//        }
         String sequence = Integer.toString(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
         holder.tvReplyNumber.setText(sequence);
         holder.tvAuthor.setText(currentTopic.getMember().getUsername()); // 各个模型建立完毕
@@ -102,6 +103,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
         public MainViewHolder(View root) {
             super(root);
+
 
             tvTitle = (TextView) root.findViewById(R.id.tvTitle);
             tvContent = (TextView) root.findViewById(R.id.tvContent);
