@@ -115,10 +115,13 @@ public class JsonManager {
      * @param password 密码
      */
     public static void Login(final Context context,final String username,final String password){
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, SIGN_IN_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 // TODO: 15-9-17
+
+
                 L.t(context,response);
                 L.m(response);
             }
@@ -134,7 +137,7 @@ public class JsonManager {
                 Map<String,String> params = new HashMap<>();
                 params.put("u",username);
                 params.put("p", password);
-//                params.put("once",)  // TODO: 15-9-17
+                params.put("once", "1154");  // TODO: 15-9-17
                 params.put("next","/");
                 return params;
             }

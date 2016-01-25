@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.link_sign_up:
                 Intent openUrl = new Intent(Intent.ACTION_VIEW, Uri.parse(JsonManager.SIGN_UP_URL));
                 //// TODO: 2015/12/22  
-                startActivityForResult(openUrl, REQUEST_SIGNUP);
+                startActivity(openUrl);
                 break;
         }
     }

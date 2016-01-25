@@ -35,7 +35,7 @@
         <item name="tabPaddingEnd">16dp</item>
     </style>
 
-    <style name="AppTheme.Light.Dialog" parent="@style/AppTheme.NoActionBar">
+    <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/accent</item>
         <item name="android:textColorPrimary">@color/primary</item>
         <item name="android:background">@color/primary_dark</item>
