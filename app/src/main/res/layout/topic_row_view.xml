@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/main_text_view"
-    android:paddingTop="6dp"
-    android:paddingBottom="6dp"
-    android:layout_marginStart="0dp"
-    android:layout_marginEnd="0dp"
-    android:layout_marginTop="6dp">
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/main_text_view"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp"
+                android:layout_marginTop="6dp">
 
 
     <TextView
@@ -21,22 +18,24 @@
         android:id="@+id/tvTitle"
         android:textColor="@color/title_color"
         android:layout_marginStart="@dimen/md_left_margin"
-        android:layout_marginEnd="@dimen/md_left_margin"/>
+        android:layout_marginLeft="@dimen/md_left_margin"
+        android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_marginRight="@dimen/md_left_margin"
+
+        />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tvContent"
         android:text="@string/content"
-
         android:textSize="@dimen/content_font_size"
         android:ellipsize="end"
         android:textColor="#333333"
         android:layout_below="@+id/tvTitle"
         android:layout_alignStart="@+id/tvTitle"
-        android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_alignLeft="@+id/tvTitle"
         android:layout_marginTop="6dp"/>
-    <!--android:maxLines="10"-->
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,8 +44,11 @@
         android:text="@string/reply_time"
         android:id="@+id/tvPushTime"
         android:layout_marginStart="29dp"
+        android:layout_marginLeft="29dp"
         android:layout_alignBottom="@+id/ivAvatar"
-        android:layout_toEndOf="@+id/tvReplyNumber" />
+        android:layout_toEndOf="@+id/tvReplyNumber"
+        android:layout_toRightOf="@+id/tvReplyNumber"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -55,7 +57,9 @@
         android:text="@string/reply"
         android:id="@+id/tvReplyNumber"
         android:layout_alignBottom="@+id/ivAvatar"
-        android:layout_alignStart="@+id/tvReplier" />
+        android:layout_alignStart="@+id/tvReplier"
+        android:layout_alignLeft="@+id/tvReplier"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -64,7 +68,10 @@
         android:id="@+id/tvNode"
         android:layout_alignBottom="@+id/ivAvatar"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="@dimen/md_left_margin"/>
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_marginRight="@dimen/md_left_margin"
+        />
 
 
     <TextView
@@ -73,7 +80,9 @@
         android:text="@string/author"
         android:id="@+id/tvReplier"
         android:layout_toEndOf="@+id/ivAvatar"
+        android:layout_toRightOf="@+id/ivAvatar"
         android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:layout_alignTop="@+id/ivAvatar" />
 
     <!--<com.android.volley.toolbox.NetworkImageView-->
@@ -87,14 +96,15 @@
 
     <im.fdx.v2ex.utils.MyNetworkCircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="@dimen/md_avatar"
-        android:layout_height="@dimen/md_avatar"
+        android:layout_width="@dimen/md_avatar_size"
+        android:layout_height="@dimen/md_avatar_size"
         android:id="@+id/ivAvatar"
         android:src="@drawable/ic_person_outline_black_48dp"
         app:civ_border_width="0dp"
         android:contentDescription="@string/it_is_avatar"
         android:layout_below="@+id/tvContent"
         android:layout_alignStart="@+id/tvContent"
+        android:layout_alignLeft="@+id/tvContent"
         android:layout_marginTop="12dp" />
 
 </RelativeLayout>

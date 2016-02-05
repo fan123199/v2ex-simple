@@ -13,5 +13,10 @@
         android:orderInCategory="98"
         android:title="@string/menu_share"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/menu_item_open_in_browser"
+        android:orderInCategory="97"
+        android:title="@string/menu_open_in_browser"
+        app:showAsAction="never"/>
 
 </menu>

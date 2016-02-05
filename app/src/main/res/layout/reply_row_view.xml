@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:elevation="1dp"
-    tools:ignore="UnusedAttribute">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="1dp"
+                android:orientation="vertical"
+                tools:ignore="UnusedAttribute">
 
 
-    <im.fdx.v2ex.utils.MyNetworkCircleImageView
+<im.fdx.v2ex.utils.MyNetworkCircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="@dimen/md_avatar"
-        android:layout_height="@dimen/md_avatar"
+        android:layout_width="@dimen/md_avatar_size"
+        android:layout_height="@dimen/md_avatar_size"
         android:id="@+id/reply_avatar"
         android:src="@drawable/ic_person_outline_black_48dp"
         app:civ_border_width="0dp"
         app:civ_border_color="#FFFFFFFF"
         android:layout_marginTop="9dp"
         android:layout_marginStart="@dimen/md_left_margin"
+        android:layout_marginLeft="@dimen/md_left_margin"
         android:contentDescription="@string/it_is_avatar" />
 
     <TextView
@@ -27,9 +29,11 @@
         android:textIsSelectable="true"
         android:layout_marginTop="6dp"
         android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_marginRight="@dimen/md_left_margin"
         android:layout_marginBottom="9dp"
         android:layout_below="@+id/tvReplier"
-        android:layout_alignStart="@+id/tvReplier" />
+        android:layout_alignStart="@+id/tvReplier"
+        android:layout_alignLeft="@+id/tvReplier" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,7 +44,9 @@
         android:textColor="#333333"
         android:layout_alignTop="@+id/reply_avatar"
         android:layout_toEndOf="@+id/reply_avatar"
-        android:layout_marginStart="@dimen/md_left_margin" />
+        android:layout_toRightOf="@+id/reply_avatar"
+        android:layout_marginStart="@dimen/md_left_margin"
+        android:layout_marginLeft="@dimen/md_left_margin" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -48,9 +54,12 @@
         android:text="@string/reply_time"
         android:id="@+id/tvReplyTime"
         android:layout_marginStart="@dimen/md_left_margin"
+        android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_alignBaseline="@+id/tvReplier"
         android:layout_alignTop="@+id/reply_avatar"
-        android:layout_toEndOf="@+id/tvReplier" />
+        android:layout_toEndOf="@+id/tvReplier"
+        android:layout_toRightOf="@+id/tvReplier"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -58,14 +67,18 @@
         android:text="@string/row"
         android:id="@+id/tvRow"
         android:layout_alignTop="@+id/reply_avatar"
-        android:layout_alignEnd="@+id/tvReplyContent" />
+        android:layout_alignEnd="@+id/tvReplyContent"
+        android:layout_alignRight="@+id/tvReplyContent"
+        />
     <View
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:background="@android:color/darker_gray"
         android:layout_alignStart="@+id/tvReplier"
+        android:layout_alignLeft="@+id/tvReplier"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_below="@id/tvReplyContent" />
 
 </RelativeLayout>

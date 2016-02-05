@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -189,6 +190,12 @@ public class DetailsActivity extends AppCompatActivity {
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent,"分享到"));
+                break;
+            case R.id.menu_item_open_in_browser:
+                Uri uri = Uri.parse(detailsHeader.getUrl());
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 break;
         }
 

@@ -43,6 +43,7 @@
     <string name="other">Other</string>
     <string name="general">General</string>
     <string name="just_now">just</string>
+    <string name="menu_open_in_browser">Open In Browser</string>
 
     <string-array name="v2ex_favorite_tab_titles" translatable = "false">
         <item>技术</item>
