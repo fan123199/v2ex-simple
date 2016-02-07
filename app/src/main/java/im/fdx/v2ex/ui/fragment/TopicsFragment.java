@@ -140,7 +140,8 @@ public class TopicsFragment extends Fragment {
             @Override
             public void onResponse(JSONArray response) {
 
-                L.t(getActivity(), "yes, I refresh");
+//                L.t(getActivity(), "yes, I refresh");
+                L.m("yes, I refresh");
 
                 Type tp = new TypeToken<ArrayList<TopicModel>>() {
                 }.getType();
@@ -151,7 +152,10 @@ public class TopicsFragment extends Fragment {
                     return;
                 }
 
-                if (nodeID == LATEST_TOPICS) {
+                if (nodeID != LATEST_TOPICS) {
+                    topicModels.clear();
+                    topicModels.addAll(0, jsonTopics);
+                } else {
                     if (topicModels.isEmpty()) {
                         topicModels.addAll(0, jsonTopics);
                     } else if (jsonTopics.indexOf(topicModels.get(0)) != -1) {
@@ -161,9 +165,6 @@ public class TopicsFragment extends Fragment {
                     } else {
                         topicModels.addAll(0, jsonTopics);
                     }
-                } else {
-                    topicModels.clear();
-                    topicModels.addAll(0, jsonTopics);
                 }
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);

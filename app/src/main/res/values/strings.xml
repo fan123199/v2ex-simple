@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">V2ex</string>
+    <string name="app_name">V2ex</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -7,7 +7,7 @@
     <string name="it_is_avatar">It is avatar</string>
     <string name="menu_refresh">Refresh</string>
 
-    <string name="error_timeout" translatable="false">error timeout</string>
+    <string name="error_timeout">error timeout</string>
     <string name="error_auth_failure" translatable="false">auth failure</string>
     <string name="error_network" translatable="false">error network</string>
     <string name="error_parser" translatable="false">error parse</string>

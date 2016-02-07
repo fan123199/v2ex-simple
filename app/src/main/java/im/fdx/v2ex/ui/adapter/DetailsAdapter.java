@@ -88,7 +88,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             MVHolder.tvReplyNumber.setText(string);
             MVHolder.tvAuthor.setText(currentTopic.getMember().getUsername());
-            MVHolder.tvNode.setText(currentTopic.getNode().getName());
+            MVHolder.tvNode.setText(currentTopic.getNode().getTitle());
             MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
 
             MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);

@@ -67,21 +67,21 @@ public class JsonManager {
     public static void handleVolleyError(Context context,VolleyError error) {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
             L.m(context.getString(R.string.error_timeout));
-            L.t(context, context.getString(R.string.error_timeout));
+            L.t(context,context.getString(R.string.app_name) + ": " + context.getString(R.string.error_timeout));
         } else if (error instanceof AuthFailureError) {
             L.m(context.getString(R.string.error_auth_failure));
-            L.t(context, context.getString(R.string.error_auth_failure));
+            L.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
 
         } else if (error instanceof ServerError) {
             L.m(context.getString(R.string.error_auth_failure));
-            L.t(context, context.getString(R.string.error_auth_failure));
+            L.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
 
         } else if (error instanceof NetworkError) {
             L.m(context.getString(R.string.error_network));
-            L.t(context, context.getString(R.string.error_network));
+            L.t(context, context.getPackageName() + ": " + context.getString(R.string.error_network));
         } else if (error instanceof ParseError) {
             L.m(context.getString(R.string.error_parser));
-            L.t(context, context.getString(R.string.error_parser));
+            L.t(context, context.getPackageName() + ": " + context.getString(R.string.error_parser));
         }
     }
 

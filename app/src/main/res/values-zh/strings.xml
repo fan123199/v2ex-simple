@@ -34,4 +34,6 @@
     <string name="rate">对应用评分</string>
     <string name="just_now">刚刚</string>
     <string name="menu_open_in_browser">在浏览器打开</string>
+    <string name="app_name">探索路</string>
+    <string name="error_timeout">连接超时</string>
 </resources>
