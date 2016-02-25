@@ -148,24 +148,25 @@ public class TopicsFragment extends Fragment {
                 ArrayList<TopicModel> jsonTopics = myGson.fromJson(response.toString(), tp);
 
                 if (topicModels.equals(jsonTopics)) {
+                    mAdapter.notifyDataSetChanged();
                     mSwipeLayout.setRefreshing(false);
                     return;
                 }
 
-                if (nodeID != LATEST_TOPICS) {
+//                if (nodeID != LATEST_TOPICS) {
                     topicModels.clear();
                     topicModels.addAll(0, jsonTopics);
-                } else {
-                    if (topicModels.isEmpty()) {
-                        topicModels.addAll(0, jsonTopics);
-                    } else if (jsonTopics.indexOf(topicModels.get(0)) != -1) {
-                        for (int i = 0; i < jsonTopics.indexOf(topicModels.get(0)); i++) {
-                            topicModels.add(0, jsonTopics.get(i));
-                        }
-                    } else {
-                        topicModels.addAll(0, jsonTopics);
-                    }
-                }
+//                } else {
+//                    if (topicModels.isEmpty()) {
+//                        topicModels.addAll(0, jsonTopics);
+//                    } else if (jsonTopics.indexOf(topicModels.get(0)) != -1) {
+//                        for (int i = 0; i < jsonTopics.indexOf(topicModels.get(0)); i++) {
+//                            topicModels.add(0, jsonTopics.get(i));
+//                        }
+//                    } else {
+//                        topicModels.addAll(0, jsonTopics);
+//                    }
+//                }
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
 

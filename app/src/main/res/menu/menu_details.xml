@@ -4,14 +4,15 @@
       tools:context="im.fdx.v2ex.ui.DetailsActivity">
     <item
         android:id="@+id/menu_refresh"
-        android:icon="@drawable/ic_refresh_black_24dp"
-        android:orderInCategory="99"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        android:orderInCategory="97"
         android:title="@string/menu_refresh"
-        app:showAsAction="never"/>
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_item_share"
         android:orderInCategory="98"
         android:title="@string/menu_share"
+        android:icon="@drawable/ic_share_white_24dp"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/menu_item_open_in_browser"

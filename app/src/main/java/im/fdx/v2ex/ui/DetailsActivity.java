@@ -143,6 +143,7 @@ public class DetailsActivity extends AppCompatActivity {
             return;
         }
 
+        //时间会变化
         if(replyLists.size() == response.length()){
 //            L.m("no new reply");
             return;
