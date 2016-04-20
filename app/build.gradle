@@ -46,14 +46,14 @@ dependencies {
     compile 'de.hdodenhof:circleimageview:2.0.0'
     //github最火的圆形头像，可以自己实现。
     //    compile 'com.squareup.okhttp:okhttp:2.7.0'   //最多人用的http请求库
-    compile 'com.android.support:design:23.1.1'
+    compile 'com.android.support:design:23.3.0'
     //fab,tablayout等md控件
-    compile 'com.android.support:cardview-v7:23.1.1'
+    compile 'com.android.support:cardview-v7:23.3.0'
     //cardview
-    compile 'com.android.support:recyclerview-v7:23.1.1'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
     //recyclerview
 //    compile 'com.android.support:appcompat-v7:23.1.1'
-    compile 'com.android.support:support-v13:23.1.1'
+    compile 'com.android.support:support-v13:23.3.0'
     compile "com.daimajia.swipelayout:library:1.2.0@aar"
 //    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }
