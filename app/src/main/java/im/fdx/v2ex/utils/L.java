@@ -23,10 +23,10 @@ public class L {
     }
 
     public static void s(View view, String message) {
-        Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show();
     }
 
     public static void S(View view, String message) {
-        Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
     }
 }
