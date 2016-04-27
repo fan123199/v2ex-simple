@@ -74,7 +74,7 @@ public class TopicsFragment extends Fragment {
         Bundle gets_args = getArguments();
         mNodeID = gets_args.getInt("node_id", 0);
 
-        RequestQueue queue = MySingleton.getInstance().getRequestQueue();
+//        RequestQueue queue = MySingleton.getInstance().getRequestQueue();
         getJson(mNodeID);
         mAdapter = new MainAdapter(getActivity(), topicModels);
 
@@ -136,7 +136,7 @@ public class TopicsFragment extends Fragment {
 
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                requestURL, new Response.Listener<JSONArray>() {
+                requestURL, null,new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
 

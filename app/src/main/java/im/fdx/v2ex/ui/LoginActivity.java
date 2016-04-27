@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.network.JsonManager;
@@ -33,6 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        assert toolbar != null;
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,8 +47,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         etPassword = (EditText) findViewById(R.id.input_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
 
+        assert btnLogin != null;
         btnLogin.setOnClickListener(this);
-        findViewById(R.id.link_sign_up).setOnClickListener(this);
+        TextView tv_signup = (TextView) findViewById(R.id.link_sign_up);
+        assert tv_signup != null;
+        tv_signup.setOnClickListener(this);
 
     }
 

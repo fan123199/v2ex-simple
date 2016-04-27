@@ -58,6 +58,7 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         //I add parentAcitity in Manifest, so I do not need below code ?
+        assert toolbar != null;
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,12 +84,14 @@ public class DetailsActivity extends AppCompatActivity {
 //                        RecyclerView.LayoutParams.WRAP_CONTENT);
 //        params.setMargins(0,0,0,30);
 //        mLayoutManager.findViewByPosition(0).setLayoutParams();
+        assert mRCView != null;
         mRCView.setLayoutManager(mLayoutManager);
 
         mDetailsAdapter = new DetailsAdapter(this, detailsHeader, replyLists);
         mRCView.setAdapter(mDetailsAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
+        assert mSwipeRefreshLayout != null;
         mSwipeRefreshLayout.setColorSchemeResources(
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -113,25 +116,29 @@ public class DetailsActivity extends AppCompatActivity {
 
     public void GetReplyJson() {
 
-        JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                JsonManager.API_REPLIES + "?topic_id=" + detailsHeader.getId(), new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
+        JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(
+                Request.Method.GET,
+                JsonManager.API_REPLIES + "?topic_id=" + detailsHeader.getId(),
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
 
-                parseDetailJsonArray(response);
-//                L.m(String.valueOf(replyLists));
-                mDetailsAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
+                        parseDetailJsonArray(response);
+        //                L.m(String.valueOf(replyLists));
+                        mDetailsAdapter.notifyDataSetChanged();
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        JsonManager.handleVolleyError(DetailsActivity.this,error); // DONE: 15-9-8 重构volleyerror.
+                        mSwipeRefreshLayout.setRefreshing(false);
 
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                JsonManager.handleVolleyError(DetailsActivity.this,error); // DONE: 15-9-8 重构volleyerror.
-                mSwipeRefreshLayout.setRefreshing(false);
-
-            }
-        });
+                    }
+                }
+        );
 
         MySingleton.getInstance().addToRequestQueue(jsonArrayRequest);
 
