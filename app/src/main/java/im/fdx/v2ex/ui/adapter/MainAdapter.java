@@ -1,8 +1,7 @@
 package im.fdx.v2ex.ui.adapter;
 
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +13,11 @@ import com.android.volley.toolbox.ImageLoader;
 import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.ui.DetailsActivity;
+import im.fdx.v2ex.ui.NodeActivity;
+import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.MyNetworkCircleImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 
@@ -29,13 +30,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     private LayoutInflater mInflater;
     private ArrayList<TopicModel> topicList;
     private ImageLoader mImageLoader;
-    private Context mContext;
-
+    private Context mActivity;
 
     //这是构造器
-    public MainAdapter(Context context, ArrayList<TopicModel> topList) {
-        mContext = context;
-        mInflater = LayoutInflater.from(mContext);
+    public MainAdapter(Context acitvity, ArrayList<TopicModel> topList) {
+        mActivity = acitvity;
+        mInflater = LayoutInflater.from(mActivity);
         mImageLoader = MySingleton.getInstance().getImageLoader();
         topicList = topList;
     }
@@ -49,7 +49,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         //这叫布局解释器,用来解释
 //        另一种方式，LayoutInflater lyInflater = LayoutInflater.from(parent.getContext());
         //找到需要显示的xml文件,是通过inflate
-        View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
+         View view = mInflater.inflate(R.layout.item_topic_view, parent, false);
 
         return new MainViewHolder(view);
 
@@ -58,7 +58,16 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
     //Done 对TextView进行赋值, 也就是操作
     @Override
     public void onBindViewHolder(MainViewHolder holder, int position) {
-        TopicModel currentTopic = topicList.get(position);
+        final TopicModel currentTopic = topicList.get(position);
+
+        holder.viewRoot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mActivity, DetailsActivity.class);
+                intent.putExtra("model", currentTopic);
+                mActivity.startActivity(intent);
+            }
+        });
         holder.tvTitle.setText(currentTopic.getTitle());
         holder.tvContent.setMaxLines(6);
         holder.tvContent.setText(currentTopic.getContent());
@@ -66,11 +75,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            holder.tvContent.setTransitionName("header");
 //        }
-        String sequence = Integer.toString(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
+        String sequence = Integer.toString(currentTopic.getReplies()) + " " + mActivity.getString(R.string.reply);
         holder.tvReplyNumber.setText(sequence);
         holder.tvAuthor.setText(currentTopic.getMember().getUsername()); // 各个模型建立完毕
         holder.tvNode.setText(currentTopic.getNode().getTitle());
-        holder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
+        holder.tvNode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent itNode = new Intent(mActivity, NodeActivity.class);
+                itNode.putExtra(Keys.KEY_NODE_NAME, currentTopic.getNode().getName());
+                mActivity.startActivity(itNode);
+            }
+        });
+        holder.tvPushTime.setText(TimeHelper.RelativeTime(mActivity, currentTopic.getCreated()));
         holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
 
     }
@@ -100,11 +117,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         public TextView tvAuthor;
         public MyNetworkCircleImageView ivAvatar;
         public TextView tvNode;
+        public View viewRoot;
 
         public MainViewHolder(View root) {
             super(root);
 
-
+            viewRoot=root;
             tvTitle = (TextView) root.findViewById(R.id.tvTitle);
             tvContent = (TextView) root.findViewById(R.id.tvContent);
             tvReplyNumber = (TextView) root.findViewById(R.id.tvReplyNumber);

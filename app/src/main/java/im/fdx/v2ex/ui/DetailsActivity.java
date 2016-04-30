@@ -70,8 +70,6 @@ public class DetailsActivity extends AppCompatActivity {
         //处理传递过来的Intent，共一个数据
         Intent mGetIntent = getIntent();
         detailsHeader = mGetIntent.getParcelableExtra("model");
-//        topicId = String.valueOf(mGetIntent.getLongExtra("topic_id", 1L));
-//        L.m(topicId);
 
         GetReplyJson();
         RecyclerView mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
@@ -156,7 +154,6 @@ public class DetailsActivity extends AppCompatActivity {
             return;
         }
         replyLists.clear();
-//        Gson myGson = new Gson();
         try {
             for (int i = 0; i < response.length(); i++) {
 
@@ -194,7 +191,7 @@ public class DetailsActivity extends AppCompatActivity {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + detailsHeader.getTitle() + "   "
-                        + JsonManager.HTTP_V2EX_BASE + "/t/" + detailsHeader.getId());
+                        + JsonManager.HTTPS_V2EX_BASE + "/t/" + detailsHeader.getId());
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent,"分享到"));

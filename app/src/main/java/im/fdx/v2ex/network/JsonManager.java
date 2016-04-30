@@ -42,15 +42,15 @@ public class JsonManager {
 
 
     public static final String V2EX_API = "https://www.v2ex.com/api";
-    public static final String HTTP_V2EX_BASE = "https://www.v2ex.com";
+    public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
     public static final String HOT_JSON = "https://www.v2ex.com/api/topics/hot.json";
     public static final String LATEST_JSON = "https://www.v2ex.com/api/topics/latest.json";
     //以下,接受参数： name: 节点名
     public static final String NODE_JSON = "https://www.v2ex.com/api/nodes/show.json";
 
-    public static final String SIGN_UP_URL = HTTP_V2EX_BASE + "/signup";
+    public static final String SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup";
 
-    public static final String SIGN_IN_URL = HTTP_V2EX_BASE + "/signin";
+    public static final String SIGN_IN_URL = HTTPS_V2EX_BASE + "/signin";
     //以下,接受以下参数之一：
     //    username: 用户名
     //    id: 用户在 V2EX 的数字 ID

@@ -30,14 +30,15 @@ android {
 //            signingConfig signingConfigs.KeyForRelease
 //        }
 //    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+    }
 }
 
 //noinspection SpellCheckingInspection
 dependencies {
-
-//    testCompile 'junit:junit:4.12'
-//    compile fileTree(dir: 'libs', include: ['*.jar'])
-
+    //    testCompile 'junit:junit:4.12'
+    //    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.google.code.gson:gson:2.5'
     //    compile 'com.belerweb:pinyin4j:2.5.0'
     //    compile 'com.android.support:support-v4:22.+'
@@ -52,8 +53,8 @@ dependencies {
     //cardview
     compile 'com.android.support:recyclerview-v7:23.3.0'
     //recyclerview
-//    compile 'com.android.support:appcompat-v7:23.1.1'
+    //    compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v13:23.3.0'
-    compile "com.daimajia.swipelayout:library:1.2.0@aar"
-//    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile 'com.daimajia.swipelayout:library:1.2.0@aar'
+    //    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
 }

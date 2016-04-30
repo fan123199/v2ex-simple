@@ -53,7 +53,7 @@ public class TopicsFragment extends Fragment {
     RecyclerView.LayoutManager mLayoutManger;//TODO
     private SwipeRefreshLayout mSwipeLayout;
 
-    private int mNodeID;
+    private String requestURL;
 //    private OnFragmentInteractionListener mListener;
 
     public TopicsFragment() {
@@ -72,10 +72,15 @@ public class TopicsFragment extends Fragment {
 
         final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
         Bundle gets_args = getArguments();
-        mNodeID = gets_args.getInt("node_id", 0);
+        int mNodeID = gets_args.getInt("column_id", 0);
 
 //        RequestQueue queue = MySingleton.getInstance().getRequestQueue();
-        getJson(mNodeID);
+        if (mNodeID == LATEST_TOPICS) {
+            requestURL = JsonManager.LATEST_JSON;
+        } else if (mNodeID == TOP_10_TOPICS) {
+            requestURL = JsonManager.HOT_JSON;
+        }
+        getJson(requestURL);
         mAdapter = new MainAdapter(getActivity(), topicModels);
 
         //setTopic 不好，还是在创建Apter时加入参数比较好。
@@ -86,26 +91,30 @@ public class TopicsFragment extends Fragment {
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //这里用线性显示 类似于listView
-        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
-                mRecyclerView, new myClickListener() {
-            @Override
-            public void onClick(View view, int position) {
-                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-                intent.putExtra("model", topicModels.get(position));
-                //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
-//                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-//                    ActivityOptions options = ActivityOptions
-//                            .makeSceneTransitionAnimation(getActivity(), view, "headee");
-//                    getActivity().startActivity(intent, options.toBundle());
-//                } else {
-                getActivity().startActivity(intent);
-//                }
-            }
 
-            @Override
-            public void onLongClick(View view, int position) {
-            }
-        }));
+
+        
+        // TODO: 16/4/30 不用自定义的Listener。 因为子视图的点击问题，无法屏蔽父视图的点击。
+//        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
+//                mRecyclerView, new myClickListener() {
+//            @Override
+//            public void onClick(View view, int position) {
+//                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+//                intent.putExtra("model", topicModels.get(position));
+//                //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
+////                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+////                    ActivityOptions options = ActivityOptions
+////                            .makeSceneTransitionAnimation(getActivity(), view, "headee");
+////                    getActivity().startActivity(intent, options.toBundle());
+////                } else {
+//                getActivity().startActivity(intent);
+////                }
+//            }
+//
+//            @Override
+//            public void onLongClick(View view, int position) {
+//            }
+//        }));
 
         mRecyclerView.setAdapter(mAdapter); //大工告成
 //        L.m("显示Latest成功");
@@ -118,7 +127,7 @@ public class TopicsFragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getJson(mNodeID);
+                getJson(requestURL);
             }
         });
 
@@ -126,14 +135,7 @@ public class TopicsFragment extends Fragment {
         return layout;
     }
 
-    private void getJson(final int nodeID) {
-        String requestURL = "";
-        if (nodeID == LATEST_TOPICS) {
-            requestURL = JsonManager.LATEST_JSON;
-        } else if (nodeID == TOP_10_TOPICS) {
-            requestURL = JsonManager.HOT_JSON;
-        }
-
+    private void getJson(String requestURL) {
 
         JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
                 requestURL, null,new Response.Listener<JSONArray>() {
@@ -195,7 +197,7 @@ public class TopicsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
             mSwipeLayout.setRefreshing(true);
-            getJson(mNodeID);
+            getJson(requestURL);
         }
         return super.onOptionsItemSelected(item);
     }
