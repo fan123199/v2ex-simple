@@ -45,7 +45,7 @@
     <string name="just_now">just</string>
     <string name="menu_open_in_browser">Open In Browser</string>
 
-    <string-array name="v2ex_favorite_tab_titles" translatable = "false">
+    <string-array name="v2ex_favorite_tab_titles" translatable="false">
         <item>技术</item>
         <item>创意</item>
         <item>好玩</item>
@@ -60,7 +60,7 @@
         <item>关注</item>
     </string-array>
 
-    <string-array name="v2ex_favorite_tab_paths" translatable = "false">
+    <string-array name="v2ex_favorite_tab_paths" translatable="false">
         <item>tech</item>
         <item>creative</item>
         <item>play</item>
@@ -74,5 +74,7 @@
         <item>r2</item>
         <item>members</item>
     </string-array>
+    <string name="title_activity_node">NodeActivity</string>
+    <string name="node_image">node image</string>
 
 </resources>

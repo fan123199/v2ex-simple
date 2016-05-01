@@ -17,7 +17,7 @@
     <string name="username">用户名</string>
     <string name="title_activity_login">登录</string>
     <string name="password">密码</string>
-    <string name="register_tip">请注册</string>
+    <string name="register_tip">新用户点此注册</string>
     <string name="navigation_drawer_close">打开抽屉</string>
     <string name="navigation_drawer_open">关闭抽屉</string>
     <string name="tab_title_latest">最新</string>

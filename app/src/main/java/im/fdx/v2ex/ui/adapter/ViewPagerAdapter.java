@@ -36,7 +36,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         //Latest topic
         TopicsFragment latestTopicsFragment = new TopicsFragment();
         Bundle bundle_latest = new Bundle();
-        bundle_latest.putInt("node_id", TopicsFragment.LATEST_TOPICS);
+        bundle_latest.putInt("column_id", TopicsFragment.LATEST_TOPICS);
         latestTopicsFragment.setArguments(bundle_latest);
         mFragments.add(latestTopicsFragment);
         mTabTitles.add(mCtx.getString(R.string.tab_title_latest));
@@ -44,7 +44,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         //Top10 topic
         TopicsFragment Top10TopicsFragment = new TopicsFragment();
         Bundle bundle_top10 = new Bundle();
-        bundle_top10.putInt("node_id", TopicsFragment.TOP_10_TOPICS);
+        bundle_top10.putInt("column_id", TopicsFragment.TOP_10_TOPICS);
 
         Top10TopicsFragment.setArguments(bundle_top10);
         mFragments.add(Top10TopicsFragment);

@@ -41,19 +41,18 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
     //onInterceptTouchEvent默认值是false这样才能把事件传给View里的onTouchEvent.
     @Override
     public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-
         View childView = rv.findChildViewUnder(e.getX(), e.getY());
 
         if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
             mListener.onClick(childView, rv.getChildAdapterPosition(childView));
-//            L.m("why do onIntercept");
+            L.m("why do onIntercept");
         }
-
-        return false;
+        return false; //默认返回true
     }
-    //默认返回true
+
     @Override
     public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
 
     }
 

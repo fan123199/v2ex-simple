@@ -34,15 +34,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawToggle = new ActionBarDrawerToggle(this,mDrawer,
                 mToolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
-        mDrawer.setDrawerListener(mDrawToggle);
+        mDrawer.addDrawerListener(mDrawToggle);
         mDrawToggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager(),MainActivity.this);
+        assert viewPager != null;
         viewPager.setAdapter(mAdapter);
 
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //这句话可以省略，主要用于如果在其他地方对tablayout自定义title的话，
         // 忽略自定义，只从pageAdapter中获取title
 //        mTabLayout.setTabsFromPagerAdapter(mAdapter);
+        assert mTabLayout != null;
         mTabLayout.setupWithViewPager(viewPager);
     }
 
@@ -118,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        assert drawer != null;
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

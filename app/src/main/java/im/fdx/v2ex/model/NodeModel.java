@@ -167,4 +167,18 @@ public class NodeModel implements Parcelable {
         return "http:" + getAvatar_mini();
     }
 
+    public String getAvatarLargeUrl() {
+        return "http:" + getAvatar_large();
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public int getStars() {
+        return stars;
+    }
+
+    public NodeModel() {
+    }
 }

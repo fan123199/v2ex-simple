@@ -20,7 +20,9 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.ui.NodeActivity;
 import im.fdx.v2ex.utils.ContentUtils;
+import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.MyNetworkCircleImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 
@@ -51,7 +53,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == TYPE_HEADER) {
-            View view = mInflater.inflate(R.layout.topic_row_view, parent, false);
+            View view = mInflater.inflate(R.layout.item_topic_view, parent, false);
             // set the view's size, margins, paddings and layout parameters
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -61,7 +63,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             return new MainAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
-            View view = mInflater.inflate(R.layout.reply_row_view, parent, false);
+            View view = mInflater.inflate(R.layout.item_reply_view, parent, false);
             return new ViewHolderItem(view);
         }
         throw new RuntimeException(" no type that matches " + viewType + " + make sure using types correctly");
@@ -89,6 +91,13 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             MVHolder.tvReplyNumber.setText(string);
             MVHolder.tvAuthor.setText(currentTopic.getMember().getUsername());
             MVHolder.tvNode.setText(currentTopic.getNode().getTitle());
+            MVHolder.tvNode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent itNode = new Intent(mContext, NodeActivity.class);
+                    itNode.putExtra(Keys.KEY_NODE_ID, currentTopic.getNode());
+                }
+            });
             MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
 
             MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);

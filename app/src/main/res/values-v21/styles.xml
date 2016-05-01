@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
         <!--&lt;!&ndash; enable window content transitions &ndash;&gt;-->
@@ -13,12 +14,12 @@
         <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
         <!--&lt;!&ndash; specify shared element transitions &ndash;&gt;-->
         <!--<item name="android:windowSharedElementEnterTransition">-->
-            <!--@transition/explode</item>-->
+        <!--@transition/explode</item>-->
         <!--<item name="android:windowSharedElementExitTransition">-->
-            <!--@transition/explode</item>-->
+        <!--@transition/explode</item>-->
 
-         <!--Main theme colors-->
-           <!--your app branding color for the app bar-->
+        <!--Main theme colors-->
+        <!--your app branding color for the app bar-->
         <item name="colorPrimary">@color/primary</item>
         <!--   darker variant for the status bar and contextual app bars -->
         <item name="colorPrimaryDark">@color/primary_dark</item>
@@ -39,7 +40,9 @@
         <item name="colorAccent">@color/accent</item>
         <item name="android:textColorPrimary">@color/primary</item>
         <item name="android:background">@color/primary_dark</item>
-    </style>>
+    </style>
+    >
+
     <style name="AppTheme.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
