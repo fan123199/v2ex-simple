@@ -76,5 +76,6 @@
     </string-array>
     <string name="title_activity_node">NodeActivity</string>
     <string name="node_image">node image</string>
+    <string name="search_hint">Search Topic</string>
 
 </resources>
