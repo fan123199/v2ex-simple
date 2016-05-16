@@ -3,11 +3,11 @@
     <!--from http://www.google.com/design/spec/style/color.html-->
 
     <!--Cyan 500-->
-    <color name = "primary">#00BCD4</color>
+    <color name="primary">#00BCD4</color>
     <!--Cyan 700-->
-    <color name = "primary_dark">#0097A7</color>
+    <color name="primary_dark">#0097A7</color>
     <!--red 600-->
-    <color name = "accent">#E53935</color>
+    <color name="accent">#E53935</color>
 
     <!--use for background-->
     <color name="list_background">#e8e8e8</color>
@@ -17,5 +17,7 @@
     <color name="black">#000000</color>
 
     <color name="white">#FFFFFF</color>
+
+    <color name="black_overlay">#66000000</color>
 
 </resources>

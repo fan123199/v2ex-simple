@@ -28,17 +28,17 @@
         <activity
             android:name=".ui.DetailsActivity"
             android:label="@string/title_activity_details"
-            android:parentActivityName=".ui.MainActivity"/>
+            android:parentActivityName=".ui.MainActivity" />
         <activity
             android:name=".ui.SettingsActivity"
-            android:label="@string/title_activity_settings"/>
+            android:label="@string/title_activity_settings" />
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login" />
         <activity
             android:name=".ui.NodeActivity"
             android:label="@string/title_activity_node"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
