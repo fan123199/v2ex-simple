@@ -31,6 +31,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
 
+        assert toolbar != null;
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
