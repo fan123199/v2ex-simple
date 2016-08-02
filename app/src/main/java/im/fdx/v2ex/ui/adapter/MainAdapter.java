@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
@@ -28,12 +29,12 @@ import im.fdx.v2ex.utils.TimeHelper;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
 
     private LayoutInflater mInflater;
-    private ArrayList<TopicModel> topicList;
+    private List<TopicModel> topicList;
     private ImageLoader mImageLoader;
     private Context mActivity;
 
     //这是构造器
-    public MainAdapter(Context acitvity, ArrayList<TopicModel> topList) {
+    public MainAdapter(Context acitvity, List<TopicModel> topList) {
         mActivity = acitvity;
         mInflater = LayoutInflater.from(mActivity);
         mImageLoader = MySingleton.getInstance().getImageLoader();
@@ -92,7 +93,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
     }
 
-    public void setTopic(ArrayList<TopicModel> top10){
+    public void setTopic(List<TopicModel> top10){
         this.topicList = top10;
     }
     //Done

@@ -18,11 +18,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
@@ -30,6 +32,7 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.DetailsAdapter;
 import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.utils.GsonSimple;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -37,7 +40,7 @@ public class DetailsActivity extends AppCompatActivity {
     private DetailsAdapter mDetailsAdapter;
 
     private TopicModel detailsHeader;
-    private ArrayList<ReplyModel> replyLists = new ArrayList<>();
+    private List<ReplyModel> replyLists = new ArrayList<>();
 
 //    private String topicId;
 
@@ -71,7 +74,7 @@ public class DetailsActivity extends AppCompatActivity {
         Intent mGetIntent = getIntent();
         detailsHeader = mGetIntent.getParcelableExtra("model");
 
-        GetReplyJson();
+        GetReplyData();
         RecyclerView mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
 //        // 2015/9/15  I want space!! fdx： solved in adapter
@@ -101,7 +104,7 @@ public class DetailsActivity extends AppCompatActivity {
                 new Handler().post(new Runnable() {
                     @Override
                     public void run() {
-                        GetReplyJson();
+                        GetReplyData();
                     }
                 });
 
@@ -111,19 +114,44 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
 
+    public void GetReplyData() {
 
-    public void GetReplyJson() {
-
-        JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 JsonManager.API_REPLIES + "?topic_id=" + detailsHeader.getId(),
                 null,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
+                        if (response == null || response.length() == 0) {
+                            return;
+                        }
 
-                        parseDetailJsonArray(response);
-        //                L.m(String.valueOf(replyLists));
+                        //时间会变化, so we do not need this.
+//        if(replyLists.size() == response.length()){
+////            L.m("no new reply");
+//            return;
+//        }
+                        replyLists.clear();
+
+                        Type typeofR = new TypeToken<ArrayList<ReplyModel>>() {
+                        }.getType();
+                        List<ReplyModel> jsonReply = JsonManager.myGson.fromJson(response.toString(), typeofR);
+                        replyLists.addAll(jsonReply);
+//
+// 老方法，不够简介。当然目前也不够简介，todo: 改成Gson最好了
+// try {
+//                            for (int i = 0; i < response.length(); i++) {
+//
+//                                ReplyModel tm = JsonManager.myGson.fromJson(response.getJSONObject(i).toString(), ReplyModel.class);
+////                L.t(context, tm.getTitle());
+//                                replyLists.add(tm);
+//                            }
+//                        } catch (JSONException e) {
+////            L.m("parse false");
+//                            e.printStackTrace();
+//                        }
+                        //                L.m(String.valueOf(replyLists));
                         mDetailsAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -131,7 +159,7 @@ public class DetailsActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        JsonManager.handleVolleyError(DetailsActivity.this,error); // DONE: 15-9-8 重构volleyerror.
+                        JsonManager.handleVolleyError(DetailsActivity.this, error); // DONE: 15-9-8 重构volleyerror.
                         mSwipeRefreshLayout.setRefreshing(false);
 
                     }
@@ -142,31 +170,6 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
-    private void parseDetailJsonArray(JSONArray response) {
-
-        if(response == null || response.length() == 0) {
-            return;
-        }
-
-        //时间会变化
-        if(replyLists.size() == response.length()){
-//            L.m("no new reply");
-            return;
-        }
-        replyLists.clear();
-        try {
-            for (int i = 0; i < response.length(); i++) {
-
-                ReplyModel tm = JsonManager.myGson.fromJson(response.getJSONObject(i).toString(), ReplyModel.class);
-//                L.t(context, tm.getTitle());
-                replyLists.add(tm);
-            }
-        } catch (JSONException e) {
-//            L.m("parse false");
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -184,7 +187,7 @@ public class DetailsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 mSwipeRefreshLayout.setRefreshing(true);
-                GetReplyJson();
+                GetReplyData();
                 break;
             case R.id.menu_item_share:
 //                L.t(this,"分享到");
@@ -194,7 +197,7 @@ public class DetailsActivity extends AppCompatActivity {
                         + JsonManager.HTTPS_V2EX_BASE + "/t/" + detailsHeader.getId());
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
-                startActivity(Intent.createChooser(sendIntent,"分享到"));
+                startActivity(Intent.createChooser(sendIntent, "分享到"));
                 break;
             case R.id.menu_item_open_in_browser:
                 Uri uri = Uri.parse(detailsHeader.getUrl());

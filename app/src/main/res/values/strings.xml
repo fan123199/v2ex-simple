@@ -8,9 +8,9 @@
     <string name="menu_refresh">Refresh</string>
 
     <string name="error_timeout">error timeout</string>
-    <string name="error_auth_failure" translatable="false">auth failure</string>
-    <string name="error_network" translatable="false">error network</string>
-    <string name="error_parser" translatable="false">error parse</string>
+    <string name="error_auth_failure">auth failure</string>
+    <string name="error_network">error network</string>
+    <string name="error_parser">error parse</string>
     <string name="title_activity_details">DetailsActivity</string>
     <string name="author">Author</string>
     <string name="content">Content , For change line I have to do a lot of things, please hurt me</string>
@@ -81,5 +81,14 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="share_app">Share this Apps</string>
+    <string name="share_to">Share to</string>
+    <string name="feedback_hint">Please input your idea or recommendation below</string>
+    <string name="send_email">Send feedback mail…</string>
+    <string name="feedback_subject">Feedback for v2ex-simple</string>
+    <string name="email">Email</string>
+    <string name="tanks">tanks</string>
+
+    "<string name="show_tanks">♥ %d</string>
 
 </resources>

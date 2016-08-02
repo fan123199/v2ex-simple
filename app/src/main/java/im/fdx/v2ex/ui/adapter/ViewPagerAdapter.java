@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.fragment.TopicsFragment;
@@ -20,8 +21,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 //        private static final int PAGE_COUNT = 2;
 //        public String tabTitles[] = new String[]{"最新","热门"};
 
-    private ArrayList<TopicsFragment> mFragments = new ArrayList<>();
-    private ArrayList<String> mTabTitles = new ArrayList<>();
+    private List<TopicsFragment> mFragments = new ArrayList<>();
+    private List<String> mTabTitles = new ArrayList<>();
 
     private Context mCtx;
 

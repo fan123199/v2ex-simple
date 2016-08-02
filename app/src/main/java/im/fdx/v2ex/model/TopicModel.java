@@ -72,12 +72,12 @@ public class TopicModel implements Parcelable {
         url = in.readString();
         content = in.readString();
         content_rendered = in.readString();
-//        author = in.readString();
         member = (MemberModel) in.readValue(MemberModel.class.getClassLoader());
         node = (NodeModel) in.readValue(NodeModel.class.getClassLoader());
         created = in.readLong();
         last_modified = in.readLong();
         last_touched = in.readLong();
+//        author = in.readString();
 //        nodeTitle = in.readString();
 //        avatarString = in.readString();
 

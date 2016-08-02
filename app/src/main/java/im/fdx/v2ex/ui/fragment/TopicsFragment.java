@@ -27,6 +27,7 @@ import org.json.JSONArray;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
@@ -47,7 +48,7 @@ public class TopicsFragment extends Fragment {
 
 
     Gson myGson = new Gson();
-    private ArrayList<TopicModel> topicModels = new ArrayList<>();
+    private List<TopicModel> topicModels = new ArrayList<>();
 
     private MainAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;//TODO
@@ -145,9 +146,9 @@ public class TopicsFragment extends Fragment {
 //                L.t(getActivity(), "yes, I refresh");
                 L.m("yes, I refresh");
 
-                Type tp = new TypeToken<ArrayList<TopicModel>>() {
+                Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
                 }.getType();
-                ArrayList<TopicModel> jsonTopics = myGson.fromJson(response.toString(), tp);
+                List<TopicModel> jsonTopics = myGson.fromJson(response.toString(), typeOfT);
 
                 if (topicModels.equals(jsonTopics)) {
                     mAdapter.notifyDataSetChanged();

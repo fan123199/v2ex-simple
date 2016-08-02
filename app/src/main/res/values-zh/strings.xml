@@ -36,4 +36,13 @@
     <string name="menu_open_in_browser">在浏览器打开</string>
     <string name="app_name">探索路</string>
     <string name="error_timeout">连接超时</string>
+    <string name="error_auth_failure">验证失败</string>
+    <string name="error_network">网络错误</string>
+    <string name="error_parser">解析错误</string>
+    <string name="share_app">分享应用</string>
+    <string name="share_to">分享到</string>
+    <string name="feedback_hint">请写下你的建议或问题。</string>
+    <string name="send_email">发送反馈邮件</string>
+    <string name="search_hint">请输入搜索内容</string>
+    <string name="show_tanks">♥ %d</string>
 </resources>

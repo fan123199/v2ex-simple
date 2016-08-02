@@ -44,4 +44,7 @@ public interface Keys {
     String KEY_LOCATION = "location";
     String KEY_TAGLINE = "tagline";
     String KEY_BIO = "bio";
+
+    //Author's const
+    String AUTHOR_EMAIL = "fan123199@gmail.com";
 }

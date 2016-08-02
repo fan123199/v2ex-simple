@@ -1,31 +1,45 @@
 package im.fdx.v2ex.ui;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.ui.adapter.ViewPagerAdapter;
+import im.fdx.v2ex.utils.Keys;
+import im.fdx.v2ex.utils.L;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     DrawerLayout mDrawer;
+    private Notification mNotificationCompat;
+    private NotificationManager mNotificationManager;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+
+        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(mToolbar);
@@ -97,21 +111,60 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //
 //                break;
             case R.id.nav_manage:
+                Intent itNoti = new Intent();
+                PendingIntent pdit = PendingIntent.getActivity(this,0,itNoti,0);
+
+                Intent resultIntent = new Intent(MainActivity.this,SettingsActivity.class);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                stackBuilder.addParentStack(SettingsActivity.class);
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent resultPendingIntent = stackBuilder
+                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+                int notifyID = 1;
+                int color = Color.argb ( 127,  255,  0,  255 );
+                int c;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                     c = getResources().getColor(R.color.primary, getTheme());
+                } else
+                {
+                     c = color;
+                }
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+                mBuilder.setContentTitle("fdx")
+                        .setContentText("shinishinijiushi")
+                        .setSubText("subtext")
+                        .setTicker("this is from others")
+                        .setWhen(System.currentTimeMillis()/1000)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+//                        .setLargeIcon(R.drawable.logo2x)
+                        .setLights(c,2000, 1000)
+                .setDefaults( Notification.DEFAULT_SOUND)
+                        .setAutoCancel(true)
+                        .setContentIntent(resultPendingIntent);
+                mNotificationCompat = mBuilder.build();
+                mNotificationManager.notify(notifyID, mNotificationCompat);
+
 
                 break;
             case R.id.nav_share:
-
+                Uri uri = Uri.parse("market://details?id=" + getPackageName());
+                Intent intentShare = new Intent(Intent.ACTION_SEND);
+                intentShare.setType("text/plain");
+                intentShare.putExtra(Intent.EXTRA_TEXT,"这是真正的内容");
+//                intentShare.putExtra(Intent.EXTRA_TITLE, "这是Title");
+                startActivity(Intent.createChooser(intentShare,getString(R.string.share_to)));
                 break;
-            case R.id.nav_send:
-                Intent data = new Intent(Intent.ACTION_SENDTO);
-                data.setType("message/rfc822");
-                data.putExtra(Intent.EXTRA_EMAIL, new String[]{"fan123199@qq.com"});
-                data.putExtra(Intent.EXTRA_SUBJECT, "这是标题");
-                data.putExtra(Intent.EXTRA_TEXT, "这是内容");
+            case R.id.nav_feedback:
+                Intent intentData = new Intent(Intent.ACTION_SEND);
+                intentData.setType("message/rfc822");
+                intentData.putExtra(Intent.EXTRA_EMAIL, new String[]{Keys.AUTHOR_EMAIL});
+                intentData.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
+                intentData.putExtra(Intent.EXTRA_TEXT, getString(R.string.feedback_hint)+"\n");
                 try {
-                    startActivity(Intent.createChooser(data, "Send mail..."));
+                    startActivity(Intent.createChooser(intentData, getString(R.string.send_email)));
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "There are no email clients installed.",
+                            Toast.LENGTH_SHORT).show();
                 }
 
                 break;

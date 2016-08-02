@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
@@ -36,12 +37,12 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_ITEM = 1;
 
     private TopicModel header;
-    private ArrayList<ReplyModel> replyList = new ArrayList<>();
+    private List<ReplyModel> replyList = new ArrayList<>();
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
     private Context mContext;
 
-    public DetailsAdapter(Context context, TopicModel header, ArrayList<ReplyModel> replyList) {
+    public DetailsAdapter(Context context, TopicModel header, List<ReplyModel> replyList) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
         this.header = header;
@@ -124,13 +125,13 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             VHItem.tvReplyTime.setText(TimeHelper.RelativeTime(mContext, replyItem.getCreated()));
 
             VHItem.tvReplier.setText(replyItem.getMember().getUsername());
-
+            VHItem.tvThanks.setText(String.format(mContext.getResources().
+                    getString(R.string.show_tanks), replyItem.getThanks()));
             VHItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             VHItem.tvContent.setText(ContentUtils.formatContent(replyItem.getContent()));
-
             VHItem.tvRow.setText(String.valueOf(position));
             VHItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormal(), mImageLoader);
-            if(position == getItemCount()-1) {
+            if (position == getItemCount() - 1) {
                 VHItem.divider.setVisibility(View.GONE);
             }
 
@@ -170,6 +171,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView tvReplyTime;
         TextView tvContent;
         TextView tvRow;
+        TextView tvThanks;
         MyNetworkCircleImageView ivUserAvatar;
         View divider;
 
@@ -182,6 +184,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvContent = (TextView) itemView.findViewById(R.id.tvReplyContent);
             tvRow = (TextView) itemView.findViewById(R.id.tvRow);
             ivUserAvatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
+            tvThanks = (TextView) itemView.findViewById(R.id.tvThanks);
             divider = itemView.findViewById(R.id.divider);
         }
     }

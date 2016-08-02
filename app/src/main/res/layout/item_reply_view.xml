@@ -81,4 +81,16 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/tvReplyContent" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="@string/tanks"
+        android:id="@+id/tvThanks"
+        android:layout_alignTop="@+id/tvReplyTime"
+        android:layout_toRightOf="@+id/tvReplyTime"
+        android:layout_toEndOf="@+id/tvReplyTime"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"/>
+
 </RelativeLayout>

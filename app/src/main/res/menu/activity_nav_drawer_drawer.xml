@@ -5,21 +5,13 @@
         android:id="@+id/main_nav_item"
         android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
-            android:icon="@android:drawable/ic_menu_camera"
-            android:title="Import"/>
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@android:drawable/ic_menu_gallery"
-            android:title="Gallery"/>
-        <item
-            android:id="@+id/nav_slideshow"
+            android:id="@+id/nav_node"
             android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="Slideshow"/>
+            android:title="@string/node"/>
         <item
             android:id="@+id/nav_manage"
             android:icon="@android:drawable/ic_menu_manage"
-            android:title="Tools"/>
+            android:title="Test Notification"/>
     </group>
 
     <group android:id="@+id/setting_nav_item">
@@ -27,9 +19,9 @@
         <item
             android:id="@+id/nav_share"
             android:icon="@android:drawable/ic_menu_share"
-            android:title="@string/menu_share"/>
+            android:title="@string/share_app"/>
         <item
-            android:id="@+id/nav_send"
+            android:id="@+id/nav_feedback"
             android:icon="@android:drawable/ic_menu_send"
             android:title="@string/feedback"/>
         <item
