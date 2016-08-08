@@ -1,8 +1,6 @@
 package im.fdx.v2ex.ui.fragment;
 
-import android.app.ActivityOptions;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +14,6 @@ import android.view.ViewGroup;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -33,11 +30,8 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.MySingleton;
-import im.fdx.v2ex.ui.DetailsActivity;
 import im.fdx.v2ex.ui.adapter.MainAdapter;
 import im.fdx.v2ex.utils.L;
-import im.fdx.v2ex.utils.RecyclerTouchListener;
-import im.fdx.v2ex.utils.myClickListener;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
@@ -97,7 +91,7 @@ public class TopicsFragment extends Fragment {
         
         // TODO: 16/4/30 不用自定义的Listener。 因为子视图的点击问题，无法屏蔽父视图的点击。
 //        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
-//                mRecyclerView, new myClickListener() {
+//                mRecyclerView, new EasyClickListener() {
 //            @Override
 //            public void onClick(View view, int position) {
 //                Intent intent = new Intent(getActivity(), DetailsActivity.class);

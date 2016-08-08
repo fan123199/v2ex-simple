@@ -6,7 +6,7 @@ import android.view.View;
  * Created by a708 on 15-8-28.
  * 点击事件接口
  */
-public interface myClickListener {
+public interface EasyClickListener {
     void onClick(View view, int position);
 
     void onLongClick(View view, int position);
