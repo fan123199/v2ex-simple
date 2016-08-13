@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/main_text_view"
@@ -17,6 +16,7 @@
         android:text="@string/title"
         android:id="@+id/tvTitle"
         android:textColor="@color/title_color"
+        android:layout_alignParentTop="true"
         android:layout_marginStart="@dimen/md_left_margin"
         android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_marginEnd="@dimen/md_left_margin"
@@ -35,7 +35,9 @@
         android:layout_below="@+id/tvTitle"
         android:layout_alignStart="@+id/tvTitle"
         android:layout_alignLeft="@+id/tvTitle"
-        android:layout_marginTop="6dp"/>
+        android:layout_marginTop="6dp"
+        android:layout_alignRight="@+id/tvTitle"
+        android:layout_alignEnd="@+id/tvTitle"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -84,15 +86,6 @@
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
         android:layout_alignTop="@+id/ivAvatar" />
-
-    <!--<com.android.volley.toolbox.NetworkImageView-->
-        <!--android:layout_width="@dimen/md_avatar"-->
-        <!--android:layout_height="@dimen/md_avatar"-->
-        <!--android:layout_marginTop="4dp"-->
-        <!--android:id="@+id/ivAvatar"-->
-        <!--android:layout_below="@+id/tvContent"-->
-        <!--android:layout_alignStart="@+id/tvTitle"-->
-        <!--android:contentDescription="@string/it_is_avatar" />-->
 
     <im.fdx.v2ex.utils.MyNetworkCircleImageView
         xmlns:app="http://schemas.android.com/apk/res-auto"

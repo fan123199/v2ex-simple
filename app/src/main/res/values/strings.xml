@@ -89,6 +89,6 @@
     <string name="email">Email</string>
     <string name="tanks">tanks</string>
 
-    "<string name="show_tanks">♥ %d</string>
+    "<string name="show_thanks">♥ %d</string>
 
 </resources>
