@@ -46,6 +46,7 @@ public class NodeActivity extends AppCompatActivity {
         tvNodeHeader = (TextView) findViewById(R.id.tvNodeHeader);
 
         String nodeName = getIntent().getStringExtra(Keys.KEY_NODE_NAME);
+
         String requestURL = JsonManager.NODE_JSON + "?name=" + nodeName;
         L.m(requestURL);
 
@@ -70,7 +71,7 @@ public class NodeActivity extends AppCompatActivity {
                     public void onResponse(String response) {
                         nodeModel = JsonManager.myGson.fromJson(response,NodeModel.class);
                         ImageLoader imageloader = MySingleton.getInstance().getImageLoader();
-                        L.T(getApplication(), nodeModel.getHeader());
+//                        L.T(getApplication(), nodeModel.getHeader());
                         ivNode.setImageUrl(nodeModel.getAvatarLargeUrl(),imageloader);
                         tvNode.setText(nodeModel.getName());
                         tvNodeHeader.setText(nodeModel.getHeader());

@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle mDrawToggle = new ActionBarDrawerToggle(this,mDrawer,
-                mToolbar,R.string.navigation_drawer_open,R.string.navigation_drawer_close);
+        ActionBarDrawerToggle mDrawToggle = new ActionBarDrawerToggle(this, mDrawer,
+                mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(mDrawToggle);
         mDrawToggle.syncState();
 
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager(),MainActivity.this);
+        ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager(), MainActivity.this);
         assert viewPager != null;
         viewPager.setAdapter(mAdapter);
 
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_login:
-                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -112,33 +112,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                break;
             case R.id.nav_manage:
                 Intent itNoti = new Intent();
-                PendingIntent pdit = PendingIntent.getActivity(this,0,itNoti,0);
+                PendingIntent pdit = PendingIntent.getActivity(this, 0, itNoti, 0);
 
-                Intent resultIntent = new Intent(MainActivity.this,SettingsActivity.class);
+                Intent resultIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(SettingsActivity.class);
                 stackBuilder.addNextIntent(resultIntent);
                 PendingIntent resultPendingIntent = stackBuilder
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
                 int notifyID = 1;
-                int color = Color.argb ( 127,  255,  0,  255 );
+                int color = Color.argb(127, 255, 0, 255);
                 int c;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                     c = getResources().getColor(R.color.primary, getTheme());
-                } else
-                {
-                     c = color;
+                    c = getResources().getColor(R.color.primary, getTheme());
+                } else {
+                    c = color;
                 }
                 NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
                 mBuilder.setContentTitle("fdx")
                         .setContentText("shinishinijiushi")
                         .setSubText("subtext")
                         .setTicker("this is from others")
-                        .setWhen(System.currentTimeMillis()/1000)
+                        .setWhen(System.currentTimeMillis() / 1000)
                         .setSmallIcon(R.mipmap.ic_launcher)
 //                        .setLargeIcon(R.drawable.logo2x)
-                        .setLights(c,2000, 1000)
-                .setDefaults( Notification.DEFAULT_SOUND)
+                        .setLights(c, 2000, 1000)
+                        .setDefaults(Notification.DEFAULT_SOUND)
                         .setAutoCancel(true)
                         .setContentIntent(resultPendingIntent);
                 mNotificationCompat = mBuilder.build();
@@ -150,16 +149,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Uri uri = Uri.parse("market://details?id=" + getPackageName());
                 Intent intentShare = new Intent(Intent.ACTION_SEND);
                 intentShare.setType("text/plain");
-                intentShare.putExtra(Intent.EXTRA_TEXT,"这是真正的内容");
+                intentShare.putExtra(Intent.EXTRA_TEXT, "这是真正的内容");
 //                intentShare.putExtra(Intent.EXTRA_TITLE, "这是Title");
-                startActivity(Intent.createChooser(intentShare,getString(R.string.share_to)));
+                startActivity(Intent.createChooser(intentShare, getString(R.string.share_to)));
                 break;
             case R.id.nav_feedback:
                 Intent intentData = new Intent(Intent.ACTION_SEND);
                 intentData.setType("message/rfc822");
                 intentData.putExtra(Intent.EXTRA_EMAIL, new String[]{Keys.AUTHOR_EMAIL});
                 intentData.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
-                intentData.putExtra(Intent.EXTRA_TEXT, getString(R.string.feedback_hint)+"\n");
+                intentData.putExtra(Intent.EXTRA_TEXT, getString(R.string.feedback_hint) + "\n");
                 try {
                     startActivity(Intent.createChooser(intentData, getString(R.string.send_email)));
                 } catch (android.content.ActivityNotFoundException ex) {
@@ -169,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 break;
             case R.id.nav_setting:
-                Intent intentSetting = new Intent(MainActivity.this,SettingsActivity.class);
+                Intent intentSetting = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intentSetting);
                 break;
         }

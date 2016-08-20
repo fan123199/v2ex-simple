@@ -3,9 +3,7 @@ package im.fdx.v2ex.ui.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,20 +22,21 @@ import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.NodeActivity;
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.Keys;
+import im.fdx.v2ex.utils.L;
 import im.fdx.v2ex.utils.MyNetworkCircleImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 
 /**
- * Created by a708 on 15-9-7.
- * 注意<>中的参数是默认的
+ * Created by fdx on 15-9-7.
+ * 详情页的Adapter。
  */
 public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
 
-    private TopicModel header;
-    private List<ReplyModel> replyList = new ArrayList<>();
+    private TopicModel mHeader;
+    private List<ReplyModel> mReplyList = new ArrayList<>();
     private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
     private Context mContext;
@@ -45,8 +44,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public DetailsAdapter(Context context, TopicModel header, List<ReplyModel> replyList) {
         mContext = context;
         mInflater = LayoutInflater.from(context);
-        this.header = header;
-        this.replyList = replyList;
+        mHeader = header;
+        this.mReplyList = replyList;
         mImageLoader = MySingleton.getInstance().getImageLoader();
     }
 
@@ -56,19 +55,24 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (viewType == TYPE_HEADER) {
             View view = mInflater.inflate(R.layout.item_topic_view, parent, false);
             // set the view's size, margins, paddings and layout parameters
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
-//            lp.bottomMargin =30;
             lp.setMargins(0, 0, 0, 30);
             view.setLayoutParams(lp);
+//            L.m("align : " + String.valueOf(lp.alignWithParent));
+//            L.m(String.valueOf(view.isScrollContainer()));
+//            L.m(String.valueOf(parent.isScrollContainer()));
+//            view.stopNestedScroll();
 
             return new MainAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
             View view = mInflater.inflate(R.layout.item_reply_view, parent, false);
             return new ViewHolderItem(view);
         }
-        throw new RuntimeException(" no type that matches " + viewType + " + make sure using types correctly");
+        throw new RuntimeException(" No type that matches " + viewType + " + Make sure using types correctly");
     }
+
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -78,28 +82,32 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (getItemViewType(position) == TYPE_HEADER) {
 
             MainAdapter.MainViewHolder MVHolder = (MainAdapter.MainViewHolder) holder;
-            final TopicModel currentTopic = header;
+            final TopicModel currentTopic = mHeader;
+//            MVHolder.itemView.setTop(position);
             MVHolder.tvTitle.setText(currentTopic.getTitle());
 
-            MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
+//            MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
+            // TODO: 2016/8/8 能够识别链接和图片
             MVHolder.tvContent.setTextIsSelectable(true);
             MVHolder.tvContent.setText(ContentUtils.formatContentSimple(currentTopic.getContent()));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                MVHolder.tvContent.setTransitionName("header");
-            }
-            String string = String.valueOf(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                MVHolder.tvContent.setTransitionName("header");
+//            }
+            String replyNumberString = String.valueOf(currentTopic.getReplies()) +
+                    " " + mContext.getString(R.string.reply);
 
-            MVHolder.tvReplyNumber.setText(string);
+            MVHolder.tvReplyNumber.setText(replyNumberString);
             MVHolder.tvAuthor.setText(currentTopic.getMember().getUsername());
             MVHolder.tvNode.setText(currentTopic.getNode().getTitle());
             MVHolder.tvNode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent itNode = new Intent(mContext, NodeActivity.class);
-                    itNode.putExtra(Keys.KEY_NODE_ID, currentTopic.getNode());
+                    itNode.putExtra(Keys.KEY_NODE_NAME, currentTopic.getNode().getName());
+                    mContext.startActivity(itNode);
                 }
             });
-            MVHolder.tvPushTime.setText(TimeHelper.RelativeTime(mContext, currentTopic.getCreated()));
+            MVHolder.tvPushTime.setText(TimeHelper.getRelativeTime(mContext, currentTopic.getCreated()));
 
             MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
             MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
@@ -113,21 +121,18 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
 
         }
-//        if(holder instanceof ViewHolderItem) {
-        //采用更直观的选择语句
+
         else if (getItemViewType(position) == TYPE_ITEM) {
             ViewHolderItem VHItem = (ViewHolderItem) holder;
 
-            // if(!replyList.isEmpty()) {
+            // if(!mReplyList.isEmpty()) {
             //    因为上一个if语句默认了replylist不可能为空
-            ReplyModel replyItem = getItem(position - 1);
-//                L.m(replyModel +" No. "+String.valueOf(position-1)+ "in DetailsAdapter");
-            VHItem.tvReplyTime.setText(TimeHelper.RelativeTime(mContext, replyItem.getCreated()));
-
+            ReplyModel replyItem = mReplyList.get(position - 1);
+            VHItem.tvReplyTime.setText(TimeHelper.getRelativeTime(mContext, replyItem.getCreated()));
             VHItem.tvReplier.setText(replyItem.getMember().getUsername());
             VHItem.tvThanks.setText(String.format(mContext.getResources().
-                    getString(R.string.show_tanks), replyItem.getThanks()));
-            VHItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
+                    getString(R.string.show_thanks), replyItem.getThanks()));
+            // TODO: 2016/8/8   VHItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             VHItem.tvContent.setText(ContentUtils.formatContent(replyItem.getContent()));
             VHItem.tvRow.setText(String.valueOf(position));
             VHItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormal(), mImageLoader);
@@ -139,15 +144,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     }
 
-    //不需要判空。
-    private ReplyModel getItem(int position) {
-        return replyList.get(position);
-    }
-
 
     @Override
     public int getItemCount() {
-        return replyList.size() + 1;
+        return mReplyList.size() + 1;
     }
 
     @Override

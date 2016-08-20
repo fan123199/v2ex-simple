@@ -11,7 +11,7 @@ import im.fdx.v2ex.R;
  */
 public class TimeHelper {
 
-    public static String RelativeTime(Context context, long created) {
+    public static String getRelativeTime(Context context, long created) {
         created = created * 1000;
         long now = System.currentTimeMillis();
         long difference = now - created;

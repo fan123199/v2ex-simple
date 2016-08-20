@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -33,6 +35,7 @@ import im.fdx.v2ex.network.MySingleton;
 import im.fdx.v2ex.ui.adapter.DetailsAdapter;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.utils.GsonSimple;
+import im.fdx.v2ex.utils.L;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -42,6 +45,7 @@ public class DetailsActivity extends AppCompatActivity {
     private TopicModel detailsHeader;
     private List<ReplyModel> replyLists = new ArrayList<>();
 
+    RecyclerView mRCView;
 //    private String topicId;
 
 
@@ -52,47 +56,46 @@ public class DetailsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
-        //noinspection ConstantConditions
-//        我认为下面这段应该在theme中完成
+
         ActionBar mToolbar = getSupportActionBar();
         if (mToolbar != null) {
             mToolbar.setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        //I add parentAcitity in Manifest, so I do not need below code ?
-        assert toolbar != null;
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        //I add parentActivity in Manifest, so I do not need below code ? NEED
+        if(toolbar !=null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 //                finish();
-                onBackPressed();
-            }
-        });
+                    onBackPressed();
+                }
+            });
+        }
 
-        //处理传递过来的Intent，共一个数据
+        mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
+//        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+//        mLayoutManager.scrollToPosition(0);
+//        mRCView.setLayoutManager(mLayoutManager);
+
+
+        LinearLayoutManager mLayoutManager = new LinearLayoutManagerWithSmoothScroller(this);
+        mRCView.setLayoutManager(mLayoutManager);
+        mRCView.smoothScrollToPosition(0);
+        //// TODO: 2016/8/14  这个Scroll 到顶部的bug，卡了我一个星期，用了So上的方法，自定义了一个LinearLayoutManager
+
+
+
         Intent mGetIntent = getIntent();
         detailsHeader = mGetIntent.getParcelableExtra("model");
 
         GetReplyData();
-        RecyclerView mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-//        // 2015/9/15  I want space!! fdx： solved in adapter
-//
-//        RecyclerView.LayoutParams params =
-//                new RecyclerView.LayoutParams(
-//                        RecyclerView.LayoutParams.WRAP_CONTENT,
-//                        RecyclerView.LayoutParams.WRAP_CONTENT);
-//        params.setMargins(0,0,0,30);
-//        mLayoutManager.findViewByPosition(0).setLayoutParams();
-        assert mRCView != null;
-        mRCView.setLayoutManager(mLayoutManager);
-
         mDetailsAdapter = new DetailsAdapter(this, detailsHeader, replyLists);
         mRCView.setAdapter(mDetailsAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
-        assert mSwipeRefreshLayout != null;
+
         mSwipeRefreshLayout.setColorSchemeResources(
                 android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
@@ -115,7 +118,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
     public void GetReplyData() {
-
+        L.m("hehe");
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 JsonManager.API_REPLIES + "?topic_id=" + detailsHeader.getId(),
@@ -138,20 +141,9 @@ public class DetailsActivity extends AppCompatActivity {
                         }.getType();
                         List<ReplyModel> jsonReply = JsonManager.myGson.fromJson(response.toString(), typeofR);
                         replyLists.addAll(jsonReply);
-//
-// 老方法，不够简介。当然目前也不够简介，todo: 改成Gson最好了
-// try {
-//                            for (int i = 0; i < response.length(); i++) {
-//
-//                                ReplyModel tm = JsonManager.myGson.fromJson(response.getJSONObject(i).toString(), ReplyModel.class);
-////                L.t(context, tm.getTitle());
-//                                replyLists.add(tm);
-//                            }
-//                        } catch (JSONException e) {
-////            L.m("parse false");
-//                            e.printStackTrace();
-//                        }
-                        //                L.m(String.valueOf(replyLists));
+
+// 老方法，不够简洁。简洁当然目前也不够，todo: 改成Gson最好了
+
                         mDetailsAdapter.notifyDataSetChanged();
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
@@ -190,7 +182,6 @@ public class DetailsActivity extends AppCompatActivity {
                 GetReplyData();
                 break;
             case R.id.menu_item_share:
-//                L.t(this,"分享到");
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + detailsHeader.getTitle() + "   "

@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import im.fdx.v2ex.R;
@@ -26,31 +25,31 @@ import im.fdx.v2ex.utils.TimeHelper;
  * Created by a708 on 15-8-14.
  * 主页的Adapter，就一个普通的RecyclerView
  */
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private LayoutInflater mInflater;
-    private List<TopicModel> topicList;
+    private List<TopicModel> mTopicList;
     private ImageLoader mImageLoader;
     private Context mActivity;
 
     //这是构造器
-    public MainAdapter(Context acitvity, List<TopicModel> topList) {
-        mActivity = acitvity;
-        mInflater = LayoutInflater.from(mActivity);
+    public MainAdapter(Context activity, List<TopicModel> topicList) {
+        mActivity = activity;
+        mInflater = LayoutInflater.from(activity);
         mImageLoader = MySingleton.getInstance().getImageLoader();
-        topicList = topList;
+        mTopicList = topicList;
     }
-
 
 
     //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
     // 20150916,可以对View进行Layout的设置。
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //这叫布局解释器,用来解释
-//        另一种方式，LayoutInflater lyInflater = LayoutInflater.from(parent.getContext());
-        //找到需要显示的xml文件,是通过inflate
-         View view = mInflater.inflate(R.layout.item_topic_view, parent, false);
+
+        /**
+         * 找到需要显示的xml文件,是通过inflate
+         */
+        View view = mInflater.inflate(R.layout.item_topic_view, parent, false);
 
         return new MainViewHolder(view);
 
@@ -58,10 +57,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
 
     //Done 对TextView进行赋值, 也就是操作
     @Override
-    public void onBindViewHolder(MainViewHolder holder, int position) {
-        final TopicModel currentTopic = topicList.get(position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder2, int position) {
+        final TopicModel currentTopic = mTopicList.get(position);
+        MainViewHolder holder = (MainViewHolder) holder2;
 
-        holder.viewRoot.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mActivity, DetailsActivity.class);
@@ -88,18 +88,18 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
                 mActivity.startActivity(itNode);
             }
         });
-        holder.tvPushTime.setText(TimeHelper.RelativeTime(mActivity, currentTopic.getCreated()));
+        holder.tvPushTime.setText(TimeHelper.getRelativeTime(mActivity, currentTopic.getCreated()));
         holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
 
     }
 
-    public void setTopic(List<TopicModel> top10){
-        this.topicList = top10;
-    }
-    //Done
+//    public void setTopic(List<TopicModel> top10){
+//        this.mTopicList = top10;
+//    }
+
     @Override
     public int getItemCount() {
-        return topicList.size();
+        return mTopicList.size();
     }
 
     @Override
@@ -107,8 +107,8 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         return super.getItemId(position);
     }
 
-    //Done
-    //这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来
+    // 这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来,。
+    // 用static就是为了复用
     public static class MainViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvTitle;
@@ -118,12 +118,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MainViewHolder
         public TextView tvAuthor;
         public MyNetworkCircleImageView ivAvatar;
         public TextView tvNode;
-        public View viewRoot;
 
         public MainViewHolder(View root) {
             super(root);
 
-            viewRoot=root;
             tvTitle = (TextView) root.findViewById(R.id.tvTitle);
             tvContent = (TextView) root.findViewById(R.id.tvContent);
             tvReplyNumber = (TextView) root.findViewById(R.id.tvReplyNumber);
