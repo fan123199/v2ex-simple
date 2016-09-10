@@ -3,10 +3,10 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              tools:context="im.fdx.v2ex.ui.DetailsActivity"
+              tools:context="im.fdx.v2ex.ui.details.DetailsActivity"
               android:orientation="vertical">
 
-    <include android:id="@+id/toolBar"
+    <include android:id="@+id/toolbar"
         layout="@layout/app_toolbar"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

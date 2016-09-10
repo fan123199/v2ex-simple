@@ -14,7 +14,7 @@
         tools:ignore="UnusedAttribute">
 
         <include
-            android:id="@+id/toolBar"
+            android:id="@+id/toolbar"
             layout="@layout/app_toolbar" />
 
         <android.support.design.widget.TabLayout

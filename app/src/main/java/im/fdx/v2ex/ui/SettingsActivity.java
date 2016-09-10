@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -14,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.utils.L;
+import im.fdx.v2ex.utils.HintUI;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -23,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -72,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 } catch (Exception e) {
-                    L.t(getActivity(), "没有找到V2EX客户端");
+                    HintUI.t(getActivity(), "没有找到V2EX客户端");
                 }
                 return true;
             }

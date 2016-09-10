@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui.adapter;
+package im.fdx.v2ex.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +14,9 @@ import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
-import im.fdx.v2ex.network.MySingleton;
-import im.fdx.v2ex.ui.DetailsActivity;
-import im.fdx.v2ex.ui.NodeActivity;
+import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.ui.details.DetailsActivity;
+import im.fdx.v2ex.ui.node.NodeActivity;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.MyNetworkCircleImageView;
 import im.fdx.v2ex.utils.TimeHelper;
@@ -36,7 +36,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public MainAdapter(Context activity, List<TopicModel> topicList) {
         mActivity = activity;
         mInflater = LayoutInflater.from(activity);
-        mImageLoader = MySingleton.getInstance().getImageLoader();
+        mImageLoader = VolleyHelper.getInstance().getImageLoader();
         mTopicList = topicList;
     }
 
@@ -122,13 +122,15 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public MainViewHolder(View root) {
             super(root);
 
-            tvTitle = (TextView) root.findViewById(R.id.tvTitle);
-            tvContent = (TextView) root.findViewById(R.id.tvContent);
-            tvReplyNumber = (TextView) root.findViewById(R.id.tvReplyNumber);
-            tvPushTime = (TextView) root.findViewById(R.id.tvPushTime);
-            tvAuthor = (TextView) root.findViewById(R.id.tvReplier);
-            ivAvatar = (MyNetworkCircleImageView) root.findViewById(R.id.ivAvatar);
-            tvNode = (TextView) root.findViewById(R.id.tvNode);
+            tvTitle = (TextView) root.findViewById(R.id.tv_title);
+            tvContent = (TextView) root.findViewById(R.id.tv_content);
+            tvReplyNumber = (TextView) root.findViewById(R.id.tv_reply_number);
+            tvPushTime = (TextView) root.findViewById(R.id.tv_pushtime);
+            tvAuthor = (TextView) root.findViewById(R.id.tv_replier);
+            ivAvatar = (MyNetworkCircleImageView) root.findViewById(R.id.iv_avatar);
+            tvNode = (TextView) root.findViewById(R.id.tv_node);
+
+//            tvNode.setOnClickListener(listener);
         }
 
 

@@ -1,8 +1,6 @@
-package im.fdx.v2ex.ui.adapter;
+package im.fdx.v2ex.ui.details;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +16,11 @@ import java.util.List;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
-import im.fdx.v2ex.network.MySingleton;
-import im.fdx.v2ex.ui.NodeActivity;
+import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.ui.main.MainAdapter;
 import im.fdx.v2ex.utils.ContentUtils;
-import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.L;
 import im.fdx.v2ex.utils.MyNetworkCircleImageView;
+import im.fdx.v2ex.utils.MyOnClickListener;
 import im.fdx.v2ex.utils.TimeHelper;
 
 /**
@@ -31,6 +28,8 @@ import im.fdx.v2ex.utils.TimeHelper;
  * 详情页的Adapter。
  */
 public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final String TAG = DetailsAdapter.class.getSimpleName();
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
@@ -46,7 +45,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mInflater = LayoutInflater.from(context);
         mHeader = header;
         this.mReplyList = replyList;
-        mImageLoader = MySingleton.getInstance().getImageLoader();
+        mImageLoader = VolleyHelper.getInstance().getImageLoader();
     }
 
     @Override
@@ -59,9 +58,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0, 0, 0, 30);
             view.setLayoutParams(lp);
-//            L.m("align : " + String.valueOf(lp.alignWithParent));
-//            L.m(String.valueOf(view.isScrollContainer()));
-//            L.m(String.valueOf(parent.isScrollContainer()));
+//            HintUI.m("align : " + String.valueOf(lp.alignWithParent));
+//            HintUI.m(String.valueOf(view.isScrollContainer()));
+//            HintUI.m(String.valueOf(parent.isScrollContainer()));
 //            view.stopNestedScroll();
 
             return new MainAdapter.MainViewHolder(view);
@@ -99,26 +98,12 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             MVHolder.tvReplyNumber.setText(replyNumberString);
             MVHolder.tvAuthor.setText(currentTopic.getMember().getUsername());
             MVHolder.tvNode.setText(currentTopic.getNode().getTitle());
-            MVHolder.tvNode.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent itNode = new Intent(mContext, NodeActivity.class);
-                    itNode.putExtra(Keys.KEY_NODE_NAME, currentTopic.getNode().getName());
-                    mContext.startActivity(itNode);
-                }
-            });
+            MVHolder.tvNode.setOnClickListener(new MyOnClickListener(mContext, currentTopic));
             MVHolder.tvPushTime.setText(TimeHelper.getRelativeTime(mContext, currentTopic.getCreated()));
 
             MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
-            MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Uri uri = Uri.parse(currentTopic.getMember().getAvatarLarge());
 
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    mContext.startActivity(intent);
-                }
-            });
+            MVHolder.ivAvatar.setOnClickListener(new MyOnClickListener(mContext, currentTopic));
 
         }
 
@@ -179,13 +164,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         public ViewHolderItem(View itemView) {
             super(itemView);
 
-            tvReplier = (TextView) itemView.findViewById(R.id.tvReplier);
-            tvReplyTime = (TextView) itemView.findViewById(R.id.tvReplyTime);
-            tvContent = (TextView) itemView.findViewById(R.id.tvReplyContent);
-            tvRow = (TextView) itemView.findViewById(R.id.tvRow);
+            tvReplier = (TextView) itemView.findViewById(R.id.tv_replier);
+            tvReplyTime = (TextView) itemView.findViewById(R.id.tv_reply_time);
+            tvContent = (TextView) itemView.findViewById(R.id.tv_reply_content);
+            tvRow = (TextView) itemView.findViewById(R.id.tv_reply_row);
             ivUserAvatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
-            tvThanks = (TextView) itemView.findViewById(R.id.tvThanks);
+            tvThanks = (TextView) itemView.findViewById(R.id.tv_thanks);
             divider = itemView.findViewById(R.id.divider);
         }
     }
+
 }

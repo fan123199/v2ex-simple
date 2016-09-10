@@ -17,15 +17,15 @@ import im.fdx.v2ex.MyApplication;
  * Created by fdx on 2015/8/14.
  * Volley网络库的请求队列。使用单例，增加资源利用
  */
-public class MySingleton {
+public class VolleyHelper {
 
-    private static MySingleton mInstance;
+    private static VolleyHelper mInstance;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
     private Context mCtx;
 
     //带参数context, 与ytb教程不同
-    private MySingleton() {
+    private VolleyHelper() {
 //        mCtx = context;
 //        mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
 //        以上参数是没有传入context的构造函数的
@@ -50,9 +50,9 @@ public class MySingleton {
     }
 
     //带参数context, 与ytb教程不同
-    public static synchronized MySingleton getInstance() {
+    public static synchronized VolleyHelper getInstance() {
         if(mInstance ==  null){
-            mInstance = new MySingleton();
+            mInstance = new VolleyHelper();
         }
 
         return mInstance;

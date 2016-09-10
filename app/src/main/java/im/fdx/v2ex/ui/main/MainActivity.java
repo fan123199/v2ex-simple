@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui;
+package im.fdx.v2ex.ui.main;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -23,10 +22,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.network.JsonManager;
-import im.fdx.v2ex.ui.adapter.ViewPagerAdapter;
+import im.fdx.v2ex.ui.LoginActivity;
+import im.fdx.v2ex.ui.SettingsActivity;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.L;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -41,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolBar);
+        Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
 
@@ -52,13 +50,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawToggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        ViewPagerAdapter mAdapter = new ViewPagerAdapter(getFragmentManager(), MainActivity.this);
-        assert viewPager != null;
+        MyViewPagerAdapter mAdapter = new MyViewPagerAdapter(getFragmentManager(), MainActivity.this);
         viewPager.setAdapter(mAdapter);
 
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);

@@ -2,6 +2,7 @@ package im.fdx.v2ex.utils;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.view.View;
  */
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
+    private static final String TAG = RecyclerTouchListener.class.getSimpleName();
     private GestureDetector mGestureDetector;
     private EasyClickListener mListener;
 
@@ -22,7 +24,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
         mGestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
-//                L.m("single tap up");
+//                HintUI.m("single tap up");
                 return true;
             }
 
@@ -32,7 +34,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
                 View childView = recyclerView.findChildViewUnder(e.getX(), e.getY());
                 if (childView != null && mListener != null) {
                     mListener.onLongClick(childView, recyclerView.getChildAdapterPosition(childView));
-//                    L.m("on Long Press");
+//                    HintUI.m("on Long Press");
                 }
             }
         });
@@ -45,7 +47,7 @@ public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
         if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
             mListener.onClick(childView, rv.getChildAdapterPosition(childView));
-            L.m("why do onIntercept");
+            Log.e(TAG,"why do onIntercept");
         }
         return false; //默认返回true
     }

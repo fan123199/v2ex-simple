@@ -1,12 +1,9 @@
-package im.fdx.v2ex.ui.adapter;
+package im.fdx.v2ex.ui.node;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -14,7 +11,7 @@ import com.android.volley.toolbox.NetworkImageView;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
-import im.fdx.v2ex.network.MySingleton;
+import im.fdx.v2ex.network.VolleyHelper;
 
 /**
  * Created by fdx on 16/4/28.
@@ -22,12 +19,12 @@ import im.fdx.v2ex.network.MySingleton;
  */
 public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.NodeViewHolder> {
 
-    NodeModel mNodeMode = new NodeModel();
-    ImageLoader mImageLoader;
+    private NodeModel mNodeMode = new NodeModel();
+    private ImageLoader mImageLoader;
 
     public NodeAdapter(NodeModel nodeModel) {
         mNodeMode = nodeModel;
-        mImageLoader = MySingleton.getInstance().getImageLoader();
+        mImageLoader = VolleyHelper.getInstance().getImageLoader();
 
     }
 
@@ -41,7 +38,7 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.NodeViewHolder
     public void onBindViewHolder(NodeViewHolder holder, int position) {
         holder.tvNodeName.setText(mNodeMode.getName());
         holder.ivNode.setImageUrl(mNodeMode.getAvatarLargeUrl(),mImageLoader);
-
+        holder.tvNodeHeader.setText(mNodeMode.getHeader());
     }
 
     @Override
@@ -53,11 +50,13 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.NodeViewHolder
 
         public TextView tvNodeName;
         public NetworkImageView ivNode;
+        public TextView tvNodeHeader;
 
         public NodeViewHolder(View itemView) {
             super(itemView);
-            tvNodeName = (TextView) itemView.findViewById(R.id.tvNodeName);
-            ivNode = (NetworkImageView) itemView.findViewById(R.id.ivNodeImage);
+            tvNodeName = (TextView) itemView.findViewById(R.id.tv_node_name);
+            ivNode = (NetworkImageView) itemView.findViewById(R.id.iv_node_image);
+            tvNodeHeader = (TextView) itemView.findViewById(R.id.tv_node_header);
 
 
         }

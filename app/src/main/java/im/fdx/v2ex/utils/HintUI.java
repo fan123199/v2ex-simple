@@ -8,12 +8,9 @@ import android.widget.Toast;
 
 /**
  * Created by fdx on 2015/8/18.
- * 简化调试的工具类
+ * Toast或Snackbar的封装
  */
-public class L {
-    public static void m(String message) {
-        Log.d("MY_DEBUG ", "" + message);
-    }
+public class HintUI {
 
     public static void t(Context context, String message) {
         Toast.makeText(context,"" + message, Toast.LENGTH_SHORT).show();

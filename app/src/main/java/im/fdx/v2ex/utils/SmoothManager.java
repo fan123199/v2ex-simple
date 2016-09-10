@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui;
+package im.fdx.v2ex.utils;
 
 import android.content.Context;
 import android.graphics.PointF;
@@ -6,13 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 
-public class LinearLayoutManagerWithSmoothScroller extends LinearLayoutManager {
+public class SmoothManager extends LinearLayoutManager {
 
-    public LinearLayoutManagerWithSmoothScroller(Context context) {
+    public SmoothManager(Context context) {
         super(context, VERTICAL, false);
     }
 
-    public LinearLayoutManagerWithSmoothScroller(Context context, int orientation, boolean reverseLayout) {
+    public SmoothManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
     }
 
@@ -32,7 +32,7 @@ public class LinearLayoutManagerWithSmoothScroller extends LinearLayoutManager {
 
         @Override
         public PointF computeScrollVectorForPosition(int targetPosition) {
-            return LinearLayoutManagerWithSmoothScroller.this
+            return SmoothManager.this
                     .computeScrollVectorForPosition(targetPosition);
         }
 

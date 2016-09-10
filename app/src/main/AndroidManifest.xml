@@ -16,7 +16,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop">
             <intent-filter>
@@ -26,9 +26,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.DetailsActivity"
+            android:name=".ui.details.DetailsActivity"
             android:label="@string/title_activity_details"
-            android:parentActivityName=".ui.MainActivity"/>
+            android:parentActivityName=".ui.main.MainActivity"/>
         <activity
             android:name=".ui.SettingsActivity"
             android:label="@string/title_activity_settings"/>
@@ -36,15 +36,27 @@
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login"/>
         <activity
-            android:name=".ui.NodeActivity"
+            android:name=".ui.node.NodeActivity"
             android:label="@string/title_activity_node"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="im.fdx.v2ex.intent.node"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".UpdateService"
             android:enabled="true"
             android:exported="false">
         </service>
+
+        <activity android:name=".ui.ProfileActivity">
+            <intent-filter>
+                <action android:name="im.fdx.v2ex.intent.profile"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

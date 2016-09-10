@@ -1,6 +1,7 @@
 package im.fdx.v2ex.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -13,21 +14,12 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.TopicModel;
-import im.fdx.v2ex.network.MySingleton;
-import im.fdx.v2ex.utils.L;
+import im.fdx.v2ex.utils.HintUI;
 
 /**
  * Created by a708 on 15-8-13.
@@ -39,6 +31,8 @@ import im.fdx.v2ex.utils.L;
 //        // [lifetime=5462], [size=60681], [rc=200], [retryCount=0]
 
 public class JsonManager {
+
+    public static final String TAG = JsonManager.class.getSimpleName();
 
 
     public static final String V2EX_API = "https://www.v2ex.com/api";
@@ -60,28 +54,28 @@ public class JsonManager {
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
     public static final String API_REPLIES = "https://www.v2ex.com/api/replies/show.json";
 
-    public static final int MY_TIMEOUT_MS = 5000;
+    public static final int MY_TIMEOUT_MS = 4000;
 
     public static final int MY_MAX_RETRIES = 1;
 
     public static void handleVolleyError(Context context,VolleyError error) {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-            L.m(context.getString(R.string.error_timeout));
-            L.t(context,context.getString(R.string.app_name) + ": " + context.getString(R.string.error_timeout));
+            Log.e(TAG,context.getString(R.string.error_timeout));
+            HintUI.t(context,context.getString(R.string.app_name) + ": " + context.getString(R.string.error_timeout));
         } else if (error instanceof AuthFailureError) {
-            L.m(context.getString(R.string.error_auth_failure));
-            L.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
+            Log.e(TAG,context.getString(R.string.error_auth_failure));
+            HintUI.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
 
         } else if (error instanceof ServerError) {
-            L.m(context.getString(R.string.error_auth_failure));
-            L.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
+            Log.e(TAG,context.getString(R.string.error_auth_failure));
+            HintUI.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
 
         } else if (error instanceof NetworkError) {
-            L.m(context.getString(R.string.error_network));
-            L.t(context, context.getPackageName() + ": " + context.getString(R.string.error_network));
+            Log.e(TAG,context.getString(R.string.error_network));
+            HintUI.t(context, context.getPackageName() + ": " + context.getString(R.string.error_network));
         } else if (error instanceof ParseError) {
-            L.m(context.getString(R.string.error_parser));
-            L.t(context, context.getPackageName() + ": " + context.getString(R.string.error_parser));
+            Log.e(TAG,context.getString(R.string.error_parser));
+            HintUI.t(context, context.getPackageName() + ": " + context.getString(R.string.error_parser));
         }
     }
 
@@ -122,8 +116,8 @@ public class JsonManager {
                 // TODO: 15-9-17
 
 
-                L.t(context,response);
-                L.m(response);
+                HintUI.t(context,response);
+                Log.i(TAG,response);
             }
 
         }, new Response.ErrorListener() {
@@ -151,6 +145,6 @@ public class JsonManager {
                 return params;
             }
         };
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
+        VolleyHelper.getInstance().addToRequestQueue(stringRequest);
     }
 }

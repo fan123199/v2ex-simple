@@ -1,12 +1,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/rl_node"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
         <com.android.volley.toolbox.NetworkImageView
-            android:id="@+id/ivNodeImage"
+            android:id="@+id/iv_node_image"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_horizontal"
@@ -14,25 +15,25 @@
             android:layout_margin="12dp" />
 
         <TextView
-            android:id="@+id/tvNodeName"
+            android:id="@+id/tv_node_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Large Text"
+            android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_alignTop="@+id/ivNodeImage"
-            android:layout_toEndOf="@+id/ivNodeImage"
-            android:layout_alignBottom="@+id/ivNodeImage"
-            android:layout_toRightOf="@+id/ivNodeImage"
+            android:layout_alignTop="@+id/iv_node_image"
+            android:layout_toEndOf="@+id/iv_node_image"
+            android:layout_alignBottom="@+id/iv_node_image"
+            android:layout_toRightOf="@+id/iv_node_image"
             android:gravity="center_vertical" />
 
     <TextView
-        android:id="@+id/tvNodeHeader"
+        android:id="@+id/tv_node_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/content"
-        android:layout_below="@+id/ivNodeImage"
-        android:layout_alignLeft="@+id/ivNodeImage"
-        android:layout_alignStart="@+id/ivNodeImage" />
+        android:text=""
+        android:layout_below="@+id/iv_node_image"
+        android:layout_alignLeft="@+id/iv_node_image"
+        android:layout_alignStart="@+id/iv_node_image" />
 
 </RelativeLayout>

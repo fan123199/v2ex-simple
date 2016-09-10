@@ -1,15 +1,13 @@
-package im.fdx.v2ex.ui;
+package im.fdx.v2ex.ui.node;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -17,21 +15,20 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.network.JsonManager;
-import im.fdx.v2ex.network.MySingleton;
-import im.fdx.v2ex.ui.adapter.NodeAdapter;
+import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.L;
 
 public class NodeActivity extends AppCompatActivity {
+    private static final String TAG = NodeActivity.class.getSimpleName();
     NodeModel nodeModel= new NodeModel();
-    RecyclerView rvNode;
-    NetworkImageView ivNode;
-    TextView tvNode;
+    RelativeLayout rlNode;
+    NetworkImageView ivNodeIcon;
+    TextView tvNodeName;
     TextView tvNodeHeader;
 
     @Override
@@ -41,14 +38,15 @@ public class NodeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ivNode = (NetworkImageView) findViewById(R.id.ivNodeImage);
-        tvNode = (TextView) findViewById(R.id.tvNodeName);
-        tvNodeHeader = (TextView) findViewById(R.id.tvNodeHeader);
+        rlNode = (RelativeLayout) findViewById(R.id.rl_node);
+        ivNodeIcon = (NetworkImageView) findViewById(R.id.iv_node_image);
+        tvNodeName = (TextView) findViewById(R.id.tv_node_name);
+        tvNodeHeader = (TextView) findViewById(R.id.tv_node_header);
 
         String nodeName = getIntent().getStringExtra(Keys.KEY_NODE_NAME);
 
         String requestURL = JsonManager.NODE_JSON + "?name=" + nodeName;
-        L.m(requestURL);
+        Log.i(TAG,requestURL);
 
         getNodeInfoJson(requestURL);
 
@@ -70,11 +68,18 @@ public class NodeActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         nodeModel = JsonManager.myGson.fromJson(response,NodeModel.class);
-                        ImageLoader imageloader = MySingleton.getInstance().getImageLoader();
-//                        L.T(getApplication(), nodeModel.getHeader());
-                        ivNode.setImageUrl(nodeModel.getAvatarLargeUrl(),imageloader);
-                        tvNode.setText(nodeModel.getName());
+                        ImageLoader imageloader = VolleyHelper.getInstance().getImageLoader();
+//                        HintUI.T(getApplication(), nodeModel.getHeader());
+                        ivNodeIcon.setImageUrl(nodeModel.getAvatarLargeUrl(),imageloader);
+                        tvNodeName.setText(nodeModel.getName());
                         tvNodeHeader.setText(nodeModel.getHeader());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                HintUI.S(rlNode, "getData");
+
+                            }
+                        });
 
 
                     }
@@ -82,11 +87,11 @@ public class NodeActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        L.S(rvNode, "hehe");
+                        HintUI.S(rlNode, "getNothing");
                     }
                 }
         );
-        MySingleton.getInstance().addToRequestQueue(stringRequest);
+        VolleyHelper.getInstance().addToRequestQueue(stringRequest);
     }
 
 }

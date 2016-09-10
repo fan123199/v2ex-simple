@@ -6,7 +6,7 @@
     <com.android.volley.toolbox.NetworkImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ivNodeImage"
+        android:id="@+id/iv_node_image"
         android:layout_gravity="center_horizontal"
         android:contentDescription="@string/node_image" />
 
@@ -15,6 +15,6 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Large Text"
-        android:id="@+id/tvNodeName"
+        android:id="@+id/tv_node_name"
         android:layout_gravity="center_horizontal" />
 </LinearLayout>

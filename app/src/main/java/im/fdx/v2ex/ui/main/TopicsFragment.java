@@ -1,10 +1,11 @@
-package im.fdx.v2ex.ui.fragment;
+package im.fdx.v2ex.ui.main;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +18,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
@@ -29,19 +29,21 @@ import java.util.List;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.JsonManager;
-import im.fdx.v2ex.network.MySingleton;
-import im.fdx.v2ex.ui.adapter.MainAdapter;
-import im.fdx.v2ex.utils.L;
+import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.utils.GsonSimple;
+
+import static im.fdx.v2ex.network.JsonManager.myGson;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
 public class TopicsFragment extends Fragment {
 
+    private static final String TAG = TopicsFragment.class.getSimpleName();
+
     public static final int LATEST_TOPICS = -1;
     public static final int TOP_10_TOPICS = -2;
 
 
-    Gson myGson = new Gson();
     private List<TopicModel> topicModels = new ArrayList<>();
 
     private MainAdapter mAdapter;
@@ -49,7 +51,8 @@ public class TopicsFragment extends Fragment {
     private SwipeRefreshLayout mSwipeLayout;
 
     private String requestURL;
-//    private OnFragmentInteractionListener mListener;
+    private int mMNodeID;
+    //    private OnFragmentInteractionListener mListener;
 
     public TopicsFragment() {
         // Required empty public constructor
@@ -67,15 +70,29 @@ public class TopicsFragment extends Fragment {
 
         final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
         Bundle gets_args = getArguments();
-        int mNodeID = gets_args.getInt("column_id", 0);
+        mMNodeID = gets_args.getInt("column_id", 0);
 
-//        RequestQueue queue = MySingleton.getInstance().getRequestQueue();
-        if (mNodeID == LATEST_TOPICS) {
+        if (mMNodeID == LATEST_TOPICS) {
             requestURL = JsonManager.LATEST_JSON;
-        } else if (mNodeID == TOP_10_TOPICS) {
+        } else if (mMNodeID == TOP_10_TOPICS) {
             requestURL = JsonManager.HOT_JSON;
         }
+
+
+        mSwipeLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipe_container);
+        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getJson(requestURL);
+
+            }
+        });
         getJson(requestURL);
+        mSwipeLayout.setRefreshing(true);
         mAdapter = new MainAdapter(getActivity(), topicModels);
 
         //setTopic 不好，还是在创建Apter时加入参数比较好。
@@ -112,19 +129,9 @@ public class TopicsFragment extends Fragment {
 //        }));
 
         mRecyclerView.setAdapter(mAdapter); //大工告成
-//        L.m("显示Latest成功");
+//        HintUI.m("显示Latest成功");
 
-        mSwipeLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipe_container);
-        mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
-        mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getJson(requestURL);
-            }
-        });
+
 
         // Inflate the layout for this fragment
         return layout;
@@ -132,41 +139,25 @@ public class TopicsFragment extends Fragment {
 
     private void getJson(String requestURL) {
 
-        JsonArrayRequest jsonArrayRequest= new JsonArrayRequest(Request.Method.GET,
-                requestURL, null,new Response.Listener<JSONArray>() {
+        Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
+        }.getType();
+        GsonSimple<ArrayList<TopicModel>> topicGson = new GsonSimple<>(requestURL, typeOfT, new Response.Listener<ArrayList<TopicModel>>() {
             @Override
-            public void onResponse(JSONArray response) {
+            public void onResponse(ArrayList<TopicModel> response) {
+//                HintUI.t(getActivity(), "yes, I refresh");
+                Log.i(TAG,"I refresh" + mMNodeID);
 
-//                L.t(getActivity(), "yes, I refresh");
-                L.m("yes, I refresh");
-
-                Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
-                }.getType();
-                List<TopicModel> jsonTopics = myGson.fromJson(response.toString(), typeOfT);
-
-                if (topicModels.equals(jsonTopics)) {
+                if (topicModels.equals(response)) {
                     mAdapter.notifyDataSetChanged();
                     mSwipeLayout.setRefreshing(false);
                     return;
                 }
 
-//                if (nodeID != LATEST_TOPICS) {
-                    topicModels.clear();
-                    topicModels.addAll(0, jsonTopics);
-//                } else {
-//                    if (topicModels.isEmpty()) {
-//                        topicModels.addAll(0, jsonTopics);
-//                    } else if (jsonTopics.indexOf(topicModels.get(0)) != -1) {
-//                        for (int i = 0; i < jsonTopics.indexOf(topicModels.get(0)); i++) {
-//                            topicModels.add(0, jsonTopics.get(i));
-//                        }
-//                    } else {
-//                        topicModels.addAll(0, jsonTopics);
-//                    }
-//                }
+                topicModels.clear();
+                topicModels.addAll(0, response);
+
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
-
             }
         }, new Response.ErrorListener() {
             @Override
@@ -175,11 +166,8 @@ public class TopicsFragment extends Fragment {
                 mSwipeLayout.setRefreshing(false);
             }
         });
-        jsonArrayRequest.setRetryPolicy(new DefaultRetryPolicy(JsonManager.MY_TIMEOUT_MS,
-                JsonManager.MY_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        MySingleton.getInstance().addToRequestQueue(jsonArrayRequest);
+        VolleyHelper.getInstance().addToRequestQueue(topicGson);
     }
 
     @Override

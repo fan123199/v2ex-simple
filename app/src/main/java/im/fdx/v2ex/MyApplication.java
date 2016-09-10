@@ -2,8 +2,6 @@ package im.fdx.v2ex;
 
 import android.app.Application;
 
-import im.fdx.v2ex.network.MySingleton;
-
 /**
  * Created by fdx on 2015/8/16.
  * 用于启动时获取app状态

@@ -112,4 +112,11 @@ public class ReplyModel implements Parcelable {
         this.content_rendered = contentRendered;
         this.created = created;
     }
+
+    @Override
+    public String toString() {
+        return "ReplyModel{" +
+                "content='" + content + '\'' +
+                '}';
+    }
 }

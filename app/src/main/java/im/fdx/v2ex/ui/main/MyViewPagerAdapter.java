@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui.adapter;
+package im.fdx.v2ex.ui.main;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.ui.fragment.TopicsFragment;
+import im.fdx.v2ex.ui.main.TopicsFragment;
 
 /**
  * Created by fdx on 2015/10/15.
  * 从MainActivity分离出来
  */
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+public class MyViewPagerAdapter extends FragmentStatePagerAdapter {
 
 //        private static final int PAGE_COUNT = 2;
 //        public String tabTitles[] = new String[]{"最新","热门"};
@@ -26,7 +26,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private Context mCtx;
 
-    public ViewPagerAdapter(FragmentManager fm, Context context) {
+    public MyViewPagerAdapter(FragmentManager fm, Context context) {
         super(fm);
         this.mCtx = context;
         initFragment();

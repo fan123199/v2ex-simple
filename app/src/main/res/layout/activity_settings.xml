@@ -6,7 +6,7 @@
     tools:context="im.fdx.v2ex.ui.SettingsActivity">
 
     <include
-        android:id="@+id/toolBar"
+        android:id="@+id/toolbar"
         layout="@layout/app_toolbar" />
 
     <FrameLayout
