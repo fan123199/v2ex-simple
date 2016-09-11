@@ -46,8 +46,6 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-
-
     public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
         public final static String CONF_WIFI = "pref_wifi";
@@ -64,20 +62,20 @@ public class SettingsActivity extends AppCompatActivity {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
             findPreference(PREF_RATES).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick (Preference preference){
-                try {
-                    Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } catch (Exception e) {
-                    HintUI.t(getActivity(), "没有找到V2EX客户端");
-                }
-                return true;
-            }
-        }
+                                                                        public boolean onPreferenceClick(Preference preference) {
+                                                                            try {
+                                                                                Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+                                                                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                                                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                                startActivity(intent);
+                                                                            } catch (Exception e) {
+                                                                                HintUI.t(getActivity(), "没有找到V2EX客户端");
+                                                                            }
+                                                                            return true;
+                                                                        }
+                                                                    }
 
-        );
+            );
         }
 
         @Override
@@ -100,7 +98,6 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     }
-
 
 
 }

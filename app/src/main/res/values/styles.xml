@@ -27,6 +27,18 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">?attr/colorAccent</item>
+        <!--<item name="tabBackground">?attr/colorPrimary</item>-->
 
+        <item name="tabPaddingStart">16dp</item>
+        <item name="tabPaddingEnd">16dp</item>
+    </style>
+
+    <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/primary</item>
+        <item name="android:background">@color/primary_dark</item>
+    </style>
 
 </resources>

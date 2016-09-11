@@ -8,6 +8,13 @@ import android.os.Parcelable;
  * V2ex 节点模型
  */
 
+///api/topics/show.json
+//
+//        参数（选其一）
+//        username	根据用户名取该用户所发表主题
+//        node_id	根据节点id取该节点下所有主题
+//        node_name	根据节点名取该节点下所有主题
+
 //{
 //        "id" : 90,
 //        "name" : "python",
@@ -31,68 +38,27 @@ import android.os.Parcelable;
 public class NodeModel implements Parcelable {
 
 
-    //留个ID见证一下变态的Java封装性
-    private Long id;
+    private long id;
     private String name;
     private String url;
     private String title;
     private String title_alternative;
     private int topics;
     private int stars;
+
+    private long created;
+
     private String header;
     private String avatar_mini;
     private String avatar_normal;
     private String avatar_large;
-
-
-    protected NodeModel(Parcel in) {
-        id = in.readLong();
-        name = in.readString();
-        title = in.readString();
-        title_alternative = in.readString();
-        url = in.readString();
-        topics = in.readInt();
-        stars = in.readInt();
-        header = in.readString();
-        avatar_mini = in.readString();
-        avatar_normal = in.readString();
-        avatar_large = in.readString();
-    }
-
-    public static final Creator<NodeModel> CREATOR = new Creator<NodeModel>() {
-        @Override
-        public NodeModel createFromParcel(Parcel in) {
-            return new NodeModel(in);
-        }
-
-        @Override
-        public NodeModel[] newArray(int size) {
-            return new NodeModel[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
-        dest.writeString(name);
-        dest.writeString(title);
-        dest.writeString(title_alternative);
-        dest.writeString(url);
-        dest.writeInt(topics);
-        dest.writeInt(stars);
-        dest.writeString(header);
-        dest.writeString(avatar_mini);
-        dest.writeString(avatar_normal);
-        dest.writeString(avatar_large);
-    }
-
     public String getName() {
         return name;
+    }
+
+
+    public long getCreated() {
+        return created;
     }
 
     public String getTitle() {
@@ -181,4 +147,52 @@ public class NodeModel implements Parcelable {
 
     public NodeModel() {
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.url);
+        dest.writeString(this.title);
+        dest.writeString(this.title_alternative);
+        dest.writeInt(this.topics);
+        dest.writeInt(this.stars);
+        dest.writeLong(this.created);
+        dest.writeString(this.header);
+        dest.writeString(this.avatar_mini);
+        dest.writeString(this.avatar_normal);
+        dest.writeString(this.avatar_large);
+    }
+
+    protected NodeModel(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.name = in.readString();
+        this.url = in.readString();
+        this.title = in.readString();
+        this.title_alternative = in.readString();
+        this.topics = in.readInt();
+        this.stars = in.readInt();
+        this.created = in.readLong();
+        this.header = in.readString();
+        this.avatar_mini = in.readString();
+        this.avatar_normal = in.readString();
+        this.avatar_large = in.readString();
+    }
+
+    public static final Creator<NodeModel> CREATOR = new Creator<NodeModel>() {
+        @Override
+        public NodeModel createFromParcel(Parcel source) {
+            return new NodeModel(source);
+        }
+
+        @Override
+        public NodeModel[] newArray(int size) {
+            return new NodeModel[size];
+        }
+    };
 }

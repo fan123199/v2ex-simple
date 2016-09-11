@@ -1,5 +1,6 @@
 package im.fdx.v2ex.utils;
 
+import android.util.Log;
 import android.widget.LinearLayout;
 
 import com.android.volley.AuthFailureError;
@@ -42,6 +43,7 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
+        Log.w("GSONREQ","I get response");
         try {
             String json = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers));

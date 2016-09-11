@@ -91,5 +91,6 @@
 
     "
     <string name="show_thanks">♥ %d</string>
+    <string name="profile">profile</string>
 
 </resources>

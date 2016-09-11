@@ -7,8 +7,8 @@
                 tools:ignore="UnusedAttribute">
 
 
-    <im.fdx.v2ex.utils.MyNetworkCircleImageView
-        android:id="@+id/reply_avatar"
+    <im.fdx.v2ex.utils.CircleVImage
+        android:id="@+id/iv_reply_avatar"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="@dimen/md_avatar_size"
         android:layout_height="@dimen/md_avatar_size"
@@ -16,7 +16,7 @@
         android:layout_marginStart="@dimen/md_left_margin"
         android:layout_marginTop="9dp"
         android:contentDescription="@string/it_is_avatar"
-        android:src="@drawable/ic_person_outline_black_48dp"
+        android:src="@drawable/ic_profile"
         app:civ_border_color="#FFFFFFFF"
         app:civ_border_width="0dp"/>
 
@@ -38,11 +38,11 @@
         android:id="@+id/tv_replier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/reply_avatar"
+        android:layout_alignTop="@+id/iv_reply_avatar"
         android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_marginStart="@dimen/md_left_margin"
-        android:layout_toEndOf="@+id/reply_avatar"
-        android:layout_toRightOf="@+id/reply_avatar"
+        android:layout_toEndOf="@+id/iv_reply_avatar"
+        android:layout_toRightOf="@+id/iv_reply_avatar"
         android:text="@string/author"
         android:textColor="#333333"
         android:textStyle="bold"/>
@@ -52,7 +52,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_replier"
-        android:layout_alignTop="@+id/reply_avatar"
+        android:layout_alignTop="@+id/iv_reply_avatar"
         android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_marginStart="@dimen/md_left_margin"
         android:layout_toEndOf="@+id/tv_replier"
@@ -66,7 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/tv_reply_content"
         android:layout_alignRight="@+id/tv_reply_content"
-        android:layout_alignTop="@+id/reply_avatar"
+        android:layout_alignTop="@+id/iv_reply_avatar"
         android:text="@string/row"
         />
 

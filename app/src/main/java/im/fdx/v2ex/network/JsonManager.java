@@ -12,6 +12,7 @@ import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
@@ -37,10 +38,10 @@ public class JsonManager {
 
     public static final String V2EX_API = "https://www.v2ex.com/api";
     public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
-    public static final String HOT_JSON = "https://www.v2ex.com/api/topics/hot.json";
-    public static final String LATEST_JSON = "https://www.v2ex.com/api/topics/latest.json";
+    public static final String HOT_JSON = HTTPS_V2EX_BASE+"/api/topics/hot.json";
+    public static final String LATEST_JSON = HTTPS_V2EX_BASE + "/api/topics/latest.json";
     //以下,接受参数： name: 节点名
-    public static final String NODE_JSON = "https://www.v2ex.com/api/nodes/show.json";
+    public static final String NODE_JSON = HTTPS_V2EX_BASE + "/api/nodes/show.json";
 
     public static final String SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup";
 

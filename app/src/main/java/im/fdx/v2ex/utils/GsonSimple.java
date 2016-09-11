@@ -22,10 +22,10 @@ public class GsonSimple<T> extends GsonRequest<T> {
 //        super(method, url,  clazz, headers, listener, errorListener);
 //    }
 
-    public GsonSimple(String url, Type t,
+    public GsonSimple(String url, Type type,
                       Response.Listener<T> listener,
                       Response.ErrorListener errorListener) {
-        super(Method.GET, url, t, null, listener, errorListener);
+        super(Method.GET, url, type, null, listener, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(JsonManager.MY_TIMEOUT_MS,
                 JsonManager.MY_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

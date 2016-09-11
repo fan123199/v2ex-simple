@@ -30,6 +30,13 @@ public class MemberModelDao extends AbstractDao<MemberModel, Long> {
         public final static Property Avatar_mini = new Property(3, String.class, "avatar_mini", false, "AVATAR_MINI");
         public final static Property Avatar_normal = new Property(4, String.class, "avatar_normal", false, "AVATAR_NORMAL");
         public final static Property Avatar_large = new Property(5, String.class, "avatar_large", false, "AVATAR_LARGE");
+        public final static Property Github = new Property(6, String.class, "github", false, "GITHUB");
+        public final static Property Btc = new Property(7, String.class, "btc", false, "BTC");
+        public final static Property Location = new Property(8, String.class, "location", false, "LOCATION");
+        public final static Property Bio = new Property(9, String.class, "bio", false, "BIO");
+        public final static Property Twitter = new Property(10, String.class, "twitter", false, "TWITTER");
+        public final static Property Website = new Property(11, String.class, "website", false, "WEBSITE");
+        public final static Property Created = new Property(12, String.class, "created", false, "CREATED");
     }
 
 
@@ -50,7 +57,14 @@ public class MemberModelDao extends AbstractDao<MemberModel, Long> {
                 "\"TAGLINE\" TEXT," + // 2: tagline
                 "\"AVATAR_MINI\" TEXT," + // 3: avatar_mini
                 "\"AVATAR_NORMAL\" TEXT," + // 4: avatar_normal
-                "\"AVATAR_LARGE\" TEXT);"); // 5: avatar_large
+                "\"AVATAR_LARGE\" TEXT," + // 5: avatar_large
+                "\"GITHUB\" TEXT," + // 6: github
+                "\"BTC\" TEXT," + // 7: btc
+                "\"LOCATION\" TEXT," + // 8: location
+                "\"BIO\" TEXT," + // 9: bio
+                "\"TWITTER\" TEXT," + // 10: twitter
+                "\"WEBSITE\" TEXT," + // 11: website
+                "\"CREATED\" TEXT);"); // 12: created
     }
 
     /** Drops the underlying database table. */
@@ -88,6 +102,41 @@ public class MemberModelDao extends AbstractDao<MemberModel, Long> {
         if (avatar_large != null) {
             stmt.bindString(6, avatar_large);
         }
+ 
+        String github = entity.getGithub();
+        if (github != null) {
+            stmt.bindString(7, github);
+        }
+ 
+        String btc = entity.getBtc();
+        if (btc != null) {
+            stmt.bindString(8, btc);
+        }
+ 
+        String location = entity.getLocation();
+        if (location != null) {
+            stmt.bindString(9, location);
+        }
+ 
+        String bio = entity.getBio();
+        if (bio != null) {
+            stmt.bindString(10, bio);
+        }
+ 
+        String twitter = entity.getTwitter();
+        if (twitter != null) {
+            stmt.bindString(11, twitter);
+        }
+ 
+        String website = entity.getWebsite();
+        if (website != null) {
+            stmt.bindString(12, website);
+        }
+ 
+        String created = entity.getCreated();
+        if (created != null) {
+            stmt.bindString(13, created);
+        }
     }
 
     @Override
@@ -119,6 +168,41 @@ public class MemberModelDao extends AbstractDao<MemberModel, Long> {
         if (avatar_large != null) {
             stmt.bindString(6, avatar_large);
         }
+ 
+        String github = entity.getGithub();
+        if (github != null) {
+            stmt.bindString(7, github);
+        }
+ 
+        String btc = entity.getBtc();
+        if (btc != null) {
+            stmt.bindString(8, btc);
+        }
+ 
+        String location = entity.getLocation();
+        if (location != null) {
+            stmt.bindString(9, location);
+        }
+ 
+        String bio = entity.getBio();
+        if (bio != null) {
+            stmt.bindString(10, bio);
+        }
+ 
+        String twitter = entity.getTwitter();
+        if (twitter != null) {
+            stmt.bindString(11, twitter);
+        }
+ 
+        String website = entity.getWebsite();
+        if (website != null) {
+            stmt.bindString(12, website);
+        }
+ 
+        String created = entity.getCreated();
+        if (created != null) {
+            stmt.bindString(13, created);
+        }
     }
 
     @Override
@@ -134,7 +218,14 @@ public class MemberModelDao extends AbstractDao<MemberModel, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // tagline
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // avatar_mini
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // avatar_normal
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // avatar_large
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // avatar_large
+            cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6), // github
+            cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7), // btc
+            cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // location
+            cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9), // bio
+            cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10), // twitter
+            cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11), // website
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // created
         );
         return entity;
     }
@@ -147,6 +238,13 @@ public class MemberModelDao extends AbstractDao<MemberModel, Long> {
         entity.setAvatar_mini(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setAvatar_normal(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setAvatar_large(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setGithub(cursor.isNull(offset + 6) ? null : cursor.getString(offset + 6));
+        entity.setBtc(cursor.isNull(offset + 7) ? null : cursor.getString(offset + 7));
+        entity.setLocation(cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8));
+        entity.setBio(cursor.isNull(offset + 9) ? null : cursor.getString(offset + 9));
+        entity.setTwitter(cursor.isNull(offset + 10) ? null : cursor.getString(offset + 10));
+        entity.setWebsite(cursor.isNull(offset + 11) ? null : cursor.getString(offset + 11));
+        entity.setCreated(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
      }
     
     @Override

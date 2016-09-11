@@ -34,8 +34,9 @@ public class VolleyHelper {
 
         mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
 
+            int cacheSize = 4 * 1024; //4K
             private final LruCache<String, Bitmap>
-                    cache = new LruCache<>(20);
+                    cache = new LruCache<>(cacheSize);
 
             @Override
             public Bitmap getBitmap(String url) {
@@ -58,7 +59,7 @@ public class VolleyHelper {
         return mInstance;
     }
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.

@@ -108,7 +108,7 @@ public class DetailsActivity extends AppCompatActivity {
         mSwipe.setRefreshing(true);
         final DisplayMetrics metrics = getResources().getDisplayMetrics();
         int start = (int) (40 * metrics.density);
-        mSwipe.setProgressViewOffset(false, -start, (int) (start*1.5));
+//        mSwipe.setProgressViewOffset(false, -start, (int) (start*1.5));
         mDetailsAdapter = new DetailsAdapter(this, detailsHeader, replyLists);
         mRCView.setAdapter(mDetailsAdapter);
 
@@ -119,12 +119,9 @@ public class DetailsActivity extends AppCompatActivity {
     public void GetReplyData() {
         Type typeofR = new TypeToken<ArrayList<ReplyModel>>() {
         }.getType();
-        GsonSimple<ArrayList<ReplyModel>> d = new GsonSimple<>(JsonManager.API_REPLIES + "?topic_id="
+        GsonSimple<ArrayList<ReplyModel>> replies = new GsonSimple<>(JsonManager.API_REPLIES + "?topic_id="
                 + detailsHeader.getId(),typeofR, new ArrayListListener(), new MyErrorListener());
-        VolleyHelper.getInstance().addToRequestQueue(d);
-
-        //GsonRequest改造成功，弃用这个
-//        VolleyHelper.getInstance().addToRequestQueue(jsonArrayRequest);
+        VolleyHelper.getInstance().addToRequestQueue(replies);
 
     }
 

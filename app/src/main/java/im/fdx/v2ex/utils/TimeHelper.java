@@ -3,6 +3,10 @@ package im.fdx.v2ex.utils;
 import android.content.Context;
 import android.text.format.DateUtils;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 import im.fdx.v2ex.R;
 
 /**
@@ -24,5 +28,15 @@ public class TimeHelper {
                         DateUtils.FORMAT_ABBREV_RELATIVE);
 
         return text.toString();
+    }
+
+
+    public static String getAbsoluteTime(long created) {
+        created *= 1000;
+
+        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM);
+        String d = format.format(created);
+        return d;
+
     }
 }

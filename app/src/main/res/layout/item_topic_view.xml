@@ -24,7 +24,7 @@
 
         />
 
-    <TextView
+    <im.fdx.v2ex.widget.GoodTextView
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
         android:text="@string/reply_time"
         android:layout_marginStart="29dp"
         android:layout_marginLeft="29dp"
-        android:layout_alignBottom="@+id/iv_avatar"
+        android:layout_alignBottom="@+id/iv_avatar_profile"
         android:layout_toEndOf="@+id/tv_reply_number"
         android:layout_toRightOf="@+id/tv_reply_number"
         />
@@ -58,9 +58,9 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/reply"
-        android:layout_alignBottom="@+id/iv_avatar"
-        android:layout_alignStart="@+id/tv_replier"
-        android:layout_alignLeft="@+id/tv_replier"
+        android:layout_alignBottom="@+id/iv_avatar_profile"
+        android:layout_alignStart="@+id/tv_author"
+        android:layout_alignLeft="@+id/tv_author"
         />
 
     <TextView
@@ -68,31 +68,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/node"
-        android:layout_alignBottom="@+id/iv_avatar"
+        android:layout_alignBottom="@+id/iv_avatar_profile"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
+        android:background="@drawable/radios"
+        android:elevation="2dp"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:layout_marginEnd="@dimen/md_left_margin"
         android:layout_marginRight="@dimen/md_left_margin"
         />
 
 
     <TextView
-        android:id="@+id/tv_replier"
+        android:id="@+id/tv_author"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/author"
-        android:layout_toEndOf="@+id/iv_avatar"
-        android:layout_toRightOf="@+id/iv_avatar"
+        android:layout_toEndOf="@+id/iv_avatar_profile"
+        android:layout_toRightOf="@+id/iv_avatar_profile"
         android:layout_marginStart="15dp"
         android:layout_marginLeft="15dp"
-        android:layout_alignTop="@+id/iv_avatar" />
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:layout_alignTop="@+id/iv_avatar_profile" />
 
-    <im.fdx.v2ex.utils.MyNetworkCircleImageView
+    <im.fdx.v2ex.utils.CircleVImage
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/iv_avatar"
+        android:id="@+id/iv_avatar_profile"
         android:layout_width="@dimen/md_avatar_size"
         android:layout_height="@dimen/md_avatar_size"
-        android:src="@drawable/ic_person_outline_black_48dp"
+        android:src="@drawable/ic_profile"
         app:civ_border_width="0dp"
         android:contentDescription="@string/it_is_avatar"
         android:layout_below="@+id/tv_content"

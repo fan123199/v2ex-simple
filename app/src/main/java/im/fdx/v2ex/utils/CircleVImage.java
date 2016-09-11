@@ -30,7 +30,7 @@ import im.fdx.v2ex.R;
 /**
  * Created by a708 on 15-12-17.
  */
-public class MyNetworkCircleImageView extends NetworkImageView{
+public class CircleVImage extends NetworkImageView{
 
     private static final ScaleType SCALE_TYPE = ScaleType.CENTER_CROP;
 
@@ -68,17 +68,17 @@ public class MyNetworkCircleImageView extends NetworkImageView{
     private boolean mSetupPending;
     private boolean mBorderOverlay;
 
-    public MyNetworkCircleImageView(Context context) {
+    public CircleVImage(Context context) {
         super(context);
 
         init();
     }
 
-    public MyNetworkCircleImageView(Context context, AttributeSet attrs) {
+    public CircleVImage(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MyNetworkCircleImageView(Context context, AttributeSet attrs, int defStyle) {
+    public CircleVImage(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CircleImageView, defStyle, 0);

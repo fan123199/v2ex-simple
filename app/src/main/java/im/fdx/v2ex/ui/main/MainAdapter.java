@@ -18,8 +18,9 @@ import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.details.DetailsActivity;
 import im.fdx.v2ex.ui.node.NodeActivity;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.MyNetworkCircleImageView;
+import im.fdx.v2ex.utils.CircleVImage;
 import im.fdx.v2ex.utils.TimeHelper;
+import im.fdx.v2ex.widget.GoodTextView;
 
 /**
  * Created by a708 on 15-8-14.
@@ -30,11 +31,11 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private LayoutInflater mInflater;
     private List<TopicModel> mTopicList;
     private ImageLoader mImageLoader;
-    private Context mActivity;
+    private Context context;
 
     //这是构造器
     public MainAdapter(Context activity, List<TopicModel> topicList) {
-        mActivity = activity;
+        context = activity;
         mInflater = LayoutInflater.from(activity);
         mImageLoader = VolleyHelper.getInstance().getImageLoader();
         mTopicList = topicList;
@@ -64,9 +65,9 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(mActivity, DetailsActivity.class);
+                Intent intent = new Intent(context, DetailsActivity.class);
                 intent.putExtra("model", currentTopic);
-                mActivity.startActivity(intent);
+                context.startActivity(intent);
             }
         });
         holder.tvTitle.setText(currentTopic.getTitle());
@@ -76,20 +77,24 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            holder.tvContent.setTransitionName("header");
 //        }
-        String sequence = Integer.toString(currentTopic.getReplies()) + " " + mActivity.getString(R.string.reply);
+        String sequence = Integer.toString(currentTopic.getReplies()) + " " + context.getString(R.string.reply);
         holder.tvReplyNumber.setText(sequence);
-        holder.tvAuthor.setText(currentTopic.getMember().getUsername()); // 各个模型建立完毕
+        holder.tvAuthor.setText(currentTopic.getMember().getUserName()); // 各个模型建立完毕
         holder.tvNode.setText(currentTopic.getNode().getTitle());
         holder.tvNode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent itNode = new Intent(mActivity, NodeActivity.class);
+                Intent itNode = new Intent(context, NodeActivity.class);
                 itNode.putExtra(Keys.KEY_NODE_NAME, currentTopic.getNode().getName());
-                mActivity.startActivity(itNode);
+                context.startActivity(itNode);
             }
         });
-        holder.tvPushTime.setText(TimeHelper.getRelativeTime(mActivity, currentTopic.getCreated()));
-        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
+        holder.tvPushTime.setText(TimeHelper.getRelativeTime(context, currentTopic.getCreated()));
+        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormalUrl(), mImageLoader);
+
+
+        holder.ivAvatar.setOnClickListener(new MyOnClickListener(currentTopic, context));
+        holder.tvAuthor.setOnClickListener(new MyOnClickListener(currentTopic, context));
 
     }
 
@@ -112,22 +117,22 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static class MainViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvTitle;
-        public TextView tvContent;
+        public GoodTextView tvContent;
         public TextView tvReplyNumber;
         public TextView tvPushTime;
         public TextView tvAuthor;
-        public MyNetworkCircleImageView ivAvatar;
+        public CircleVImage ivAvatar;
         public TextView tvNode;
 
         public MainViewHolder(View root) {
             super(root);
 
             tvTitle = (TextView) root.findViewById(R.id.tv_title);
-            tvContent = (TextView) root.findViewById(R.id.tv_content);
+            tvContent = (GoodTextView) root.findViewById(R.id.tv_content);
             tvReplyNumber = (TextView) root.findViewById(R.id.tv_reply_number);
             tvPushTime = (TextView) root.findViewById(R.id.tv_pushtime);
-            tvAuthor = (TextView) root.findViewById(R.id.tv_replier);
-            ivAvatar = (MyNetworkCircleImageView) root.findViewById(R.id.iv_avatar);
+            tvAuthor = (TextView) root.findViewById(R.id.tv_author);
+            ivAvatar = (CircleVImage) root.findViewById(R.id.iv_avatar_profile);
             tvNode = (TextView) root.findViewById(R.id.tv_node);
 
 //            tvNode.setOnClickListener(listener);
@@ -136,4 +141,30 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
+    private static class MyOnClickListener implements View.OnClickListener {
+        private TopicModel current;
+        private Context context;
+
+        private MyOnClickListener(TopicModel current, Context context) {
+            this.current = current;
+            this.context = context;
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.iv_avatar_profile:
+                case R.id.tv_author:
+                    Intent intent = new Intent();
+                    intent.setAction("im.fdx.v2ex.intent.profile");
+                    intent.putExtra("profile_id", current.getMember().getId());
+                    context.startActivity(intent);
+                    break;
+
+                case R.id.tv_node:
+
+            }
+
+        }
+    }
 }

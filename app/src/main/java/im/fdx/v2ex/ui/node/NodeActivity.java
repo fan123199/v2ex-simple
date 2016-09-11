@@ -25,7 +25,7 @@ import im.fdx.v2ex.utils.Keys;
 
 public class NodeActivity extends AppCompatActivity {
     private static final String TAG = NodeActivity.class.getSimpleName();
-    NodeModel nodeModel= new NodeModel();
+    NodeModel nodeModel;
     RelativeLayout rlNode;
     NetworkImageView ivNodeIcon;
     TextView tvNodeName;
@@ -71,17 +71,8 @@ public class NodeActivity extends AppCompatActivity {
                         ImageLoader imageloader = VolleyHelper.getInstance().getImageLoader();
 //                        HintUI.T(getApplication(), nodeModel.getHeader());
                         ivNodeIcon.setImageUrl(nodeModel.getAvatarLargeUrl(),imageloader);
-                        tvNodeName.setText(nodeModel.getName());
+                        tvNodeName.setText(nodeModel.getTitle());
                         tvNodeHeader.setText(nodeModel.getHeader());
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                HintUI.S(rlNode, "getData");
-
-                            }
-                        });
-
-
                     }
                 },
                 new Response.ErrorListener() {

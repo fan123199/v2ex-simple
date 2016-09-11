@@ -22,9 +22,9 @@
             android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:layout_alignTop="@+id/iv_node_image"
-            android:layout_toEndOf="@+id/iv_node_image"
             android:layout_alignBottom="@+id/iv_node_image"
             android:layout_toRightOf="@+id/iv_node_image"
+            android:layout_marginRight="148dp"
             android:gravity="center_vertical" />
 
     <TextView
@@ -35,5 +35,12 @@
         android:layout_below="@+id/iv_node_image"
         android:layout_alignLeft="@+id/iv_node_image"
         android:layout_alignStart="@+id/iv_node_image" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_node_header"
+        android:layout_alignStart="@+id/tv_node_header"
+        android:layout_marginTop="28dp"/>
 
 </RelativeLayout>

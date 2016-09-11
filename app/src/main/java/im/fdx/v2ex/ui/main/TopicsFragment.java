@@ -40,8 +40,8 @@ public class TopicsFragment extends Fragment {
 
     private static final String TAG = TopicsFragment.class.getSimpleName();
 
-    public static final int LATEST_TOPICS = -1;
-    public static final int TOP_10_TOPICS = -2;
+    public static final int LATEST_TOPICS = 11;
+    public static final int TOP_10_TOPICS = 2;
 
 
     private List<TopicModel> topicModels = new ArrayList<>();
@@ -93,7 +93,6 @@ public class TopicsFragment extends Fragment {
         });
         getJson(requestURL);
         mSwipeLayout.setRefreshing(true);
-        mAdapter = new MainAdapter(getActivity(), topicModels);
 
         //setTopic 不好，还是在创建Apter时加入参数比较好。
 //        mAdapter.setTopic(topicModels);
@@ -101,11 +100,13 @@ public class TopicsFragment extends Fragment {
 
         //找出recyclerview,并赋予变量
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //这里用线性显示 类似于listView
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mAdapter = new MainAdapter(getActivity(), topicModels);
+        mRecyclerView.setAdapter(mAdapter); //大工告成
 
 
-        
         // TODO: 16/4/30 不用自定义的Listener。 因为子视图的点击问题，无法屏蔽父视图的点击。
 //        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
 //                mRecyclerView, new EasyClickListener() {
@@ -128,8 +129,6 @@ public class TopicsFragment extends Fragment {
 //            }
 //        }));
 
-        mRecyclerView.setAdapter(mAdapter); //大工告成
-//        HintUI.m("显示Latest成功");
 
 
 
@@ -138,13 +137,13 @@ public class TopicsFragment extends Fragment {
     }
 
     private void getJson(String requestURL) {
+        Log.i(TAG,"In getjson" + mMNodeID);
 
         Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
         }.getType();
         GsonSimple<ArrayList<TopicModel>> topicGson = new GsonSimple<>(requestURL, typeOfT, new Response.Listener<ArrayList<TopicModel>>() {
             @Override
             public void onResponse(ArrayList<TopicModel> response) {
-//                HintUI.t(getActivity(), "yes, I refresh");
                 Log.i(TAG,"I refresh" + mMNodeID);
 
                 if (topicModels.equals(response)) {

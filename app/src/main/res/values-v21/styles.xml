@@ -1,52 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
-        <!--&lt;!&ndash; enable window content transitions &ndash;&gt;-->
-        <!--<item name="android:windowContentTransitions">true</item>-->
-
-        <!--&lt;!&ndash;specify enter and exit transitions&ndash;&gt;-->
-        <!--<item name="android:windowEnterTransition">@transition/explode</item>-->
-        <!--<item name="android:windowExitTransition">@transition/explode</item>-->
-
-        <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->
-        <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
-        <!--&lt;!&ndash; specify shared element transitions &ndash;&gt;-->
-        <!--<item name="android:windowSharedElementEnterTransition">-->
-        <!--@transition/explode</item>-->
-        <!--<item name="android:windowSharedElementExitTransition">-->
-        <!--@transition/explode</item>-->
-
-        <!--Main theme colors-->
-        <!--your app branding color for the app bar-->
-        <item name="colorPrimary">@color/primary</item>
-        <!--   darker variant for the status bar and contextual app bars -->
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <!--   theme UI controls like checkboxes and text fields -->
-        <item name="colorAccent">@color/accent</item>
-
-    </style>
-
-    <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">?attr/colorAccent</item>
-        <!--<item name="tabBackground">?attr/colorPrimary</item>-->
-
-        <item name="tabPaddingStart">16dp</item>
-        <item name="tabPaddingEnd">16dp</item>
-    </style>
-
-    <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:textColorPrimary">@color/primary</item>
-        <item name="android:background">@color/primary_dark</item>
-    </style>
-    >
-
     <style name="AppTheme.NoActionBar">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
-
-
 </resources>

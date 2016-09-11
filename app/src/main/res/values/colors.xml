@@ -3,7 +3,7 @@
     <!--from http://www.google.com/design/spec/style/color.html-->
 
     <!--Cyan 500-->
-    <color name="primary">#00BCD4</color>
+    <color name="primary">#00bcd4</color>
     <!--Cyan 700-->
     <color name="primary_dark">#0097A7</color>
     <!--red 600-->
@@ -19,5 +19,6 @@
     <color name="white">#FFFFFF</color>
 
     <color name="black_overlay">#66000000</color>
+    <color name="node_background">#41000000</color>
 
 </resources>

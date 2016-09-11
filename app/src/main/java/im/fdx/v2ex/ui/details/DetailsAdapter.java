@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.details;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,9 +20,11 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.MainAdapter;
 import im.fdx.v2ex.utils.ContentUtils;
-import im.fdx.v2ex.utils.MyNetworkCircleImageView;
-import im.fdx.v2ex.utils.MyOnClickListener;
+import im.fdx.v2ex.utils.CircleVImage;
+import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by fdx on 15-9-7.
@@ -72,7 +75,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
 
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
@@ -81,52 +83,96 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (getItemViewType(position) == TYPE_HEADER) {
 
             MainAdapter.MainViewHolder MVHolder = (MainAdapter.MainViewHolder) holder;
-            final TopicModel currentTopic = mHeader;
+            final TopicModel thisTopic = mHeader;
 //            MVHolder.itemView.setTop(position);
-            MVHolder.tvTitle.setText(currentTopic.getTitle());
+            MVHolder.tvTitle.setText(thisTopic.getTitle());
 
 //            MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             // TODO: 2016/8/8 能够识别链接和图片
-            MVHolder.tvContent.setTextIsSelectable(true);
-            MVHolder.tvContent.setText(ContentUtils.formatContentSimple(currentTopic.getContent()));
+//            MVHolder.tvContent.setTextIsSelectable(true);
+            MVHolder.tvContent.setGoodText(ContentUtils.formatContent(thisTopic.getContent_rendered()));
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                MVHolder.tvContent.setTransitionName("header");
 //            }
-            String replyNumberString = String.valueOf(currentTopic.getReplies()) +
+            String replyNumberString = String.valueOf(thisTopic.getReplies()) +
                     " " + mContext.getString(R.string.reply);
 
             MVHolder.tvReplyNumber.setText(replyNumberString);
-            MVHolder.tvAuthor.setText(currentTopic.getMember().getUsername());
-            MVHolder.tvNode.setText(currentTopic.getNode().getTitle());
-            MVHolder.tvNode.setOnClickListener(new MyOnClickListener(mContext, currentTopic));
-            MVHolder.tvPushTime.setText(TimeHelper.getRelativeTime(mContext, currentTopic.getCreated()));
+            MVHolder.tvAuthor.setText(thisTopic.getMember().getUserName());
+            MVHolder.tvNode.setText(thisTopic.getNode().getTitle());
+            MVHolder.tvNode.setOnClickListener(new View.OnClickListener() {
 
-            MVHolder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormal(), mImageLoader);
+                @Override
+                public void onClick(View view) {
+                            openNode(thisTopic);
+                }
 
-            MVHolder.ivAvatar.setOnClickListener(new MyOnClickListener(mContext, currentTopic));
 
-        }
+            });
+            MVHolder.tvPushTime.setText(TimeHelper.getRelativeTime(mContext, thisTopic.getCreated()));
 
-        else if (getItemViewType(position) == TYPE_ITEM) {
-            ViewHolderItem VHItem = (ViewHolderItem) holder;
+            MVHolder.ivAvatar.setImageUrl(thisTopic.getMember().getAvatarNormalUrl(), mImageLoader);
+            MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openProfile(thisTopic);
+
+                }
+
+
+            });
+
+        } else if (getItemViewType(position) == TYPE_ITEM) {
+            ViewHolderItem vhItem = (ViewHolderItem) holder;
 
             // if(!mReplyList.isEmpty()) {
             //    因为上一个if语句默认了replylist不可能为空
-            ReplyModel replyItem = mReplyList.get(position - 1);
-            VHItem.tvReplyTime.setText(TimeHelper.getRelativeTime(mContext, replyItem.getCreated()));
-            VHItem.tvReplier.setText(replyItem.getMember().getUsername());
-            VHItem.tvThanks.setText(String.format(mContext.getResources().
+            final ReplyModel replyItem = mReplyList.get(position - 1);
+            vhItem.tvReplyTime.setText(TimeHelper.getRelativeTime(mContext, replyItem.getCreated()));
+            vhItem.tvReplier.setText(replyItem.getMember().getUserName());
+            vhItem.tvThanks.setText(String.format(mContext.getResources().
                     getString(R.string.show_thanks), replyItem.getThanks()));
-            // TODO: 2016/8/8   VHItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
-            VHItem.tvContent.setText(ContentUtils.formatContent(replyItem.getContent()));
-            VHItem.tvRow.setText(String.valueOf(position));
-            VHItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormal(), mImageLoader);
+            // TODO: 2016/8/8   vhItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
+            vhItem.tvContent.setText(ContentUtils.formatContent(replyItem.getContent()));
+            vhItem.tvRow.setText(String.valueOf(position));
+
+
+            vhItem.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormalUrl(), mImageLoader);
+//            vhItem.ivUserAvatar.setImageURI(Uri.parse(replyItem.getMember().getAvatarNormalUrl()));
+
+            vhItem.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switch (v.getId()) {
+                        case R.id.iv_reply_avatar:
+                           openProfile(replyItem);
+                            break;
+                    }
+
+                }
+            });
             if (position == getItemCount() - 1) {
-                VHItem.divider.setVisibility(View.GONE);
+                vhItem.divider.setVisibility(View.GONE);
             }
 
         }
 
+    }
+    private void openNode(TopicModel topicModel) {
+        Intent itNode = new Intent();
+        itNode.setAction("im.fdx.v2ex.intent.node");
+        itNode.putExtra(Keys.KEY_NODE_NAME, topicModel.getNode().getName());
+        mContext.startActivity(itNode);
+    }
+
+    private void openProfile(Object model) {
+        Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
+        if (model instanceof TopicModel) {
+            itProfile.putExtra("profile_id", ((TopicModel) model).getMember().getId());
+        } else if (model instanceof ReplyModel) {
+            itProfile.putExtra("profile_id", ((ReplyModel) model).getMember().getId());
+        }
+        mContext.startActivity(itProfile);
     }
 
 
@@ -157,7 +203,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView tvContent;
         TextView tvRow;
         TextView tvThanks;
-        MyNetworkCircleImageView ivUserAvatar;
+        CircleVImage ivUserAvatar;
         View divider;
 
 
@@ -168,7 +214,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvReplyTime = (TextView) itemView.findViewById(R.id.tv_reply_time);
             tvContent = (TextView) itemView.findViewById(R.id.tv_reply_content);
             tvRow = (TextView) itemView.findViewById(R.id.tv_reply_row);
-            ivUserAvatar = (MyNetworkCircleImageView) itemView.findViewById(R.id.reply_avatar);
+            ivUserAvatar = (CircleVImage) itemView.findViewById(R.id.iv_reply_avatar);
             tvThanks = (TextView) itemView.findViewById(R.id.tv_thanks);
             divider = itemView.findViewById(R.id.divider);
         }
