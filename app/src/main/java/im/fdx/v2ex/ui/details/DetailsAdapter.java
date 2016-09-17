@@ -23,6 +23,7 @@ import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.CircleVImage;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
+import im.fdx.v2ex.widget.GoodTextView;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
@@ -90,7 +91,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             // TODO: 2016/8/8 能够识别链接和图片
 //            MVHolder.tvContent.setTextIsSelectable(true);
-            MVHolder.tvContent.setGoodText(ContentUtils.formatContent(thisTopic.getContent_rendered()));
+            MVHolder.tvContent.setGoodText(thisTopic.getContent_rendered());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                MVHolder.tvContent.setTransitionName("header");
 //            }
@@ -133,7 +134,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vhItem.tvThanks.setText(String.format(mContext.getResources().
                     getString(R.string.show_thanks), replyItem.getThanks()));
             // TODO: 2016/8/8   vhItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
-            vhItem.tvContent.setText(ContentUtils.formatContent(replyItem.getContent()));
+            vhItem.tvContent.setGoodText(replyItem.getContent_rendered());
             vhItem.tvRow.setText(String.valueOf(position));
 
 
@@ -161,7 +162,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void openNode(TopicModel topicModel) {
         Intent itNode = new Intent();
         itNode.setAction("im.fdx.v2ex.intent.node");
-        itNode.putExtra(Keys.KEY_NODE_NAME, topicModel.getNode().getName());
+        itNode.putExtra(Keys.KEY_NODE_ID, topicModel.getNode().getId());
         mContext.startActivity(itNode);
     }
 
@@ -200,7 +201,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         TextView tvReplier;
         TextView tvReplyTime;
-        TextView tvContent;
+        GoodTextView tvContent;
         TextView tvRow;
         TextView tvThanks;
         CircleVImage ivUserAvatar;
@@ -212,7 +213,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             tvReplier = (TextView) itemView.findViewById(R.id.tv_replier);
             tvReplyTime = (TextView) itemView.findViewById(R.id.tv_reply_time);
-            tvContent = (TextView) itemView.findViewById(R.id.tv_reply_content);
+            tvContent = (GoodTextView) itemView.findViewById(R.id.tv_reply_content);
             tvRow = (TextView) itemView.findViewById(R.id.tv_reply_row);
             ivUserAvatar = (CircleVImage) itemView.findViewById(R.id.iv_reply_avatar);
             tvThanks = (TextView) itemView.findViewById(R.id.tv_thanks);

@@ -85,7 +85,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View view) {
                 Intent itNode = new Intent(context, NodeActivity.class);
-                itNode.putExtra(Keys.KEY_NODE_NAME, currentTopic.getNode().getName());
+                itNode.putExtra(Keys.KEY_NODE_ID, currentTopic.getNode().getId());
                 context.startActivity(itNode);
             }
         });

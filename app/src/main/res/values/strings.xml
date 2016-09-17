@@ -76,7 +76,7 @@
     </string-array>
     <string name="title_activity_node">NodeActivity</string>
     <string name="node_image">node image</string>
-    <string name="search_hint">Search Topic</string>
+    <string name="search_hint">Search …</string>
 
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>

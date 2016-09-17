@@ -8,16 +8,10 @@ package im.fdx.v2ex.utils;
 public class ContentUtils {
 
     public static String formatContent(String content){
-        return content.replace("href=\"/member/", "href=\"http://www.v2ex.com/member/")
+        return content.replace("href=\"/member/", "href=\"https://www.v2ex.com/member/")
                 .replace("href=\"/i/", "href=\"https://i.v2ex.co/")
-                .replace("href=\"/t/", "href=\"http://www.v2ex.com/t/")
-                .replace("href=\"/go/", "href=\"http://www.v2ex.com/go/");
+                .replace("href=\"/t/", "href=\"https://www.v2ex.com/t/")
+                .replace("href=\"/go/", "href=\"https://www.v2ex.com/go/");
     }
 
-    public static String formatContentSimple(String content) {
-        return content.replace("/member/", "http://www.v2ex.com/member/")
-                .replace("/i/", "https://i.v2ex.co/")
-                .replace("/t/", "http://www.v2ex.com/t/")
-                .replace("/go/", "http://www.v2ex.com/go/");
-    }
 }

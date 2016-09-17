@@ -116,7 +116,7 @@ public class ReplyModel implements Parcelable {
     @Override
     public String toString() {
         return "ReplyModel{" +
-                "content='" + content + '\'' +
+                "content='" + content_rendered + '\'' +
                 '}';
     }
 }

@@ -41,6 +41,7 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="im.fdx.v2ex.intent.node"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -54,8 +55,18 @@
         <activity android:name=".ui.ProfileActivity">
             <intent-filter>
                 <action android:name="im.fdx.v2ex.intent.profile"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".ui.node.AllNodesActivity"
+            android:exported="true">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
     </application>
 

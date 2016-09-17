@@ -40,7 +40,7 @@ public class TopicsFragment extends Fragment {
 
     private static final String TAG = TopicsFragment.class.getSimpleName();
 
-    public static final int LATEST_TOPICS = 11;
+    public static final int LATEST_TOPICS = 1;
     public static final int TOP_10_TOPICS = 2;
 
 

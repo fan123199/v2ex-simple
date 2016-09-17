@@ -43,9 +43,9 @@ public class NodeActivity extends AppCompatActivity {
         tvNodeName = (TextView) findViewById(R.id.tv_node_name);
         tvNodeHeader = (TextView) findViewById(R.id.tv_node_header);
 
-        String nodeName = getIntent().getStringExtra(Keys.KEY_NODE_NAME);
+        long nodeId = getIntent().getLongExtra(Keys.KEY_NODE_ID, -1L);
 
-        String requestURL = JsonManager.NODE_JSON + "?name=" + nodeName;
+        String requestURL = JsonManager.NODE_JSON + "?id=" + nodeId;
         Log.i(TAG,requestURL);
 
         getNodeInfoJson(requestURL);
@@ -68,6 +68,7 @@ public class NodeActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         nodeModel = JsonManager.myGson.fromJson(response,NodeModel.class);
+
                         ImageLoader imageloader = VolleyHelper.getInstance().getImageLoader();
 //                        HintUI.T(getApplication(), nodeModel.getHeader());
                         ivNodeIcon.setImageUrl(nodeModel.getAvatarLargeUrl(),imageloader);

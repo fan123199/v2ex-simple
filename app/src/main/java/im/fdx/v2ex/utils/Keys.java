@@ -19,7 +19,7 @@ public class Keys {
     String KEY_LAST_TOUCHED = "last_touched";
 
     //node API
-    String KEY_NODE_ID = "id";
+    public static final String  KEY_NODE_ID = "id";
     public static final String KEY_NODE_NAME = "name";
     String KEY_URL = "url";
     String KEY_NODE_TITLE = "title";

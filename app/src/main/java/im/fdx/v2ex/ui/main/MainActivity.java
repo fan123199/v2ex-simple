@@ -24,6 +24,7 @@ import android.widget.Toast;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.LoginActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
+import im.fdx.v2ex.ui.node.AllNodesActivity;
 import im.fdx.v2ex.utils.Keys;
 
 
@@ -103,10 +104,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            case R.id.nav_gallery:
 //
 //                break;
-//            case R.id.nav_slideshow:
-//
-//                break;
-            case R.id.nav_manage:
+            case R.id.nav_node:
+                startActivity(new Intent(this, AllNodesActivity.class));
+
+                break;
+            case R.id.nav_testNotify:
                 Intent itNoti = new Intent();
                 PendingIntent pdit = PendingIntent.getActivity(this, 0, itNoti, 0);
 

@@ -58,6 +58,7 @@ public class JsonManager {
     public static final int MY_TIMEOUT_MS = 4000;
 
     public static final int MY_MAX_RETRIES = 1;
+    public static final String URL_ALL_NODE =HTTPS_V2EX_BASE + "/api/nodes/all.json";
 
     public static void handleVolleyError(Context context,VolleyError error) {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
@@ -81,27 +82,6 @@ public class JsonManager {
     }
 
     public static Gson myGson = new Gson();
-
-//    /**
-//     *  @param response
-//     *        foo
-//     * @param articleModel
-//     * @param context
-//     */
-//    public static void handleJson(JSONArray response, ArrayList<TopicModel> articleModel, Context context) {
-//        if (response == null || response.length() == 0) {
-//            return;
-//        }
-//
-//        try {
-//            for (int i = 0; i < response.length(); i++) {
-//                TopicModel tm = myGson.fromJson(response.getJSONObject(i).toString(), TopicModel.class);
-//                articleModel.add(tm);
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 
     /**
