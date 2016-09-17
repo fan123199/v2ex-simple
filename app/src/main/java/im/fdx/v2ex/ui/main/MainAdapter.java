@@ -141,11 +141,11 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     }
 
-    private static class MyOnClickListener implements View.OnClickListener {
+    public static class MyOnClickListener implements View.OnClickListener {
         private TopicModel current;
         private Context context;
 
-        private MyOnClickListener(TopicModel current, Context context) {
+        public MyOnClickListener(TopicModel current, Context context) {
             this.current = current;
             this.context = context;
         }

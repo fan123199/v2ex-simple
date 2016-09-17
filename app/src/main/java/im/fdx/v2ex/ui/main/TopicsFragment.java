@@ -13,14 +13,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -31,8 +26,6 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.GsonSimple;
-
-import static im.fdx.v2ex.network.JsonManager.myGson;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
@@ -87,11 +80,11 @@ public class TopicsFragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getJson(requestURL);
+                getTopicsJson(requestURL);
 
             }
         });
-        getJson(requestURL);
+        getTopicsJson(requestURL);
         mSwipeLayout.setRefreshing(true);
 
         //setTopic 不好，还是在创建Apter时加入参数比较好。
@@ -136,7 +129,7 @@ public class TopicsFragment extends Fragment {
         return layout;
     }
 
-    private void getJson(String requestURL) {
+    private void getTopicsJson(String requestURL) {
         Log.i(TAG,"In getjson" + mMNodeID);
 
         Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
@@ -179,7 +172,7 @@ public class TopicsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
             mSwipeLayout.setRefreshing(true);
-            getJson(requestURL);
+            getTopicsJson(requestURL);
         }
         return super.onOptionsItemSelected(item);
     }

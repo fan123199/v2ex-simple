@@ -53,6 +53,8 @@ public class AllNodesActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("所有节点");
 
 
+
+
         Type type = new TypeToken<ArrayList<NodeModel>>(){}.getType();
         GsonSimple<ArrayList<NodeModel>> nodeModelGsonSimple  = new GsonSimple<>(JsonManager.URL_ALL_NODE, type,
                 new Response.Listener<ArrayList<NodeModel>>() {

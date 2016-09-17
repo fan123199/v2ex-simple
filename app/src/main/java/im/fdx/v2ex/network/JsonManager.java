@@ -43,6 +43,10 @@ public class JsonManager {
     //以下,接受参数： name: 节点名
     public static final String NODE_JSON = HTTPS_V2EX_BASE + "/api/nodes/show.json";
 
+
+    public static final String NODE_TOPIC = HTTPS_V2EX_BASE + "/api/topics/show.json";
+
+
     public static final String SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup";
 
     public static final String SIGN_IN_URL = HTTPS_V2EX_BASE + "/signin";
