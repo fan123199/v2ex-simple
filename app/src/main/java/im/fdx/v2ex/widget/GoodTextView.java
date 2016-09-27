@@ -125,6 +125,7 @@ public class GoodTextView extends TextView {
 
         protected Drawable drawable;
 
+
         @Override
         public void draw(final Canvas canvas) {
             if (drawable != null) {
@@ -158,9 +159,11 @@ public class GoodTextView extends TextView {
                             Drawable dr = new BitmapDrawable(getResources(), bp);
                             dr.setBounds(0, 0, width, height);
                             bitmapHolder.setDrawable(dr);
-                            //很关键，然而我一无所知
-                    setText(getText());
-//                                        invalidate();
+                            bitmapHolder.setBounds(0, 0, width, height);
+
+                            //很关键，然而我一无所知,必须先invalidate，然后setText
+                            invalidate();
+                            setText(getText());
 //                                        postInvalidate();
 //                                    drawable.invalidateSelf();
 
