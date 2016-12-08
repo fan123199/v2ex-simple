@@ -6,6 +6,7 @@ import android.text.format.DateUtils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import im.fdx.v2ex.R;
 
