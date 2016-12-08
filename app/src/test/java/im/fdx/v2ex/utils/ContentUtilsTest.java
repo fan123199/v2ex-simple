@@ -13,7 +13,7 @@ public class ContentUtilsTest {
     public void formatContent() throws Exception {
         String s  = "href=\"/go/";
         String out = ContentUtils.formatContent(s);
-        assertEquals(out,"href=\"http://www.v2ex.com/go/");
+        assertEquals(out,"href=\"https://www.v2ex.com/go/");
     }
 
 }
