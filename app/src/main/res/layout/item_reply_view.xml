@@ -7,7 +7,7 @@
                 tools:ignore="UnusedAttribute">
 
 
-    <im.fdx.v2ex.utils.CircleVImage
+    <im.fdx.v2ex.view.CircleVImage
         android:id="@+id/iv_reply_avatar"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="@dimen/md_avatar_size"
@@ -20,7 +20,7 @@
         app:civ_border_color="#FFFFFFFF"
         app:civ_border_width="0dp"/>
 
-    <im.fdx.v2ex.widget.GoodTextView
+    <im.fdx.v2ex.view.GoodTextView
         android:id="@+id/tv_reply_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

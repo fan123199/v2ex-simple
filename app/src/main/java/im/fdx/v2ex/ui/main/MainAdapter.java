@@ -18,9 +18,9 @@ import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.details.DetailsActivity;
 import im.fdx.v2ex.ui.node.NodeActivity;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.CircleVImage;
+import im.fdx.v2ex.view.CircleVImage;
 import im.fdx.v2ex.utils.TimeHelper;
-import im.fdx.v2ex.widget.GoodTextView;
+import im.fdx.v2ex.view.GoodTextView;
 
 /**
  * Created by a708 on 15-8-14.

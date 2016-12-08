@@ -46,4 +46,5 @@
     <string name="search_hint">请输入搜索内容</string>
     <string name="show_thanks">♥ %d</string>
     <string name="profile">个人信息</string>
+    <string name="email">邮箱名</string>
 </resources>

@@ -19,13 +19,10 @@ import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.MainAdapter;
-import im.fdx.v2ex.utils.ContentUtils;
-import im.fdx.v2ex.utils.CircleVImage;
+import im.fdx.v2ex.view.CircleVImage;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
-import im.fdx.v2ex.widget.GoodTextView;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import im.fdx.v2ex.view.GoodTextView;
 
 /**
  * Created by fdx on 15-9-7.

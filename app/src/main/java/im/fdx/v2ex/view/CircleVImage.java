@@ -1,4 +1,4 @@
-package im.fdx.v2ex.utils;
+package im.fdx.v2ex.view;
 
 import android.annotation.TargetApi;
 import android.content.Context;

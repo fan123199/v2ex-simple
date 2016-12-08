@@ -25,7 +25,7 @@
 
         />
 
-    <im.fdx.v2ex.widget.GoodTextView
+    <im.fdx.v2ex.view.GoodTextView
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
         android:paddingBottom="4dp"
         android:layout_alignTop="@+id/iv_avatar_profile" />
 
-    <im.fdx.v2ex.utils.CircleVImage
+    <im.fdx.v2ex.view.CircleVImage
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/iv_avatar_profile"
         android:layout_width="@dimen/md_avatar_size"

@@ -22,6 +22,9 @@ import java.util.Map;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.utils.HintUI;
 
+import static android.R.attr.name;
+import static android.R.attr.value;
+
 /**
  * Created by a708 on 15-8-13.
  * 用于对Json处理的类
@@ -88,48 +91,13 @@ public class JsonManager {
     public static Gson myGson = new Gson();
 
 
-    /**
-     * @param context  登录的Context
-     * @param username 用户名
-     * @param password 密码
-     */
-    public static void Login(final Context context,final String username,final String password){
+    public static String getOnceCode(String htmlString) {
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, SIGN_IN_URL, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                // TODO: 15-9-17
+        int index = htmlString.indexOf("name=\"once\"");
 
+        String onceString = htmlString.substring(index - 2 - 5, index - 2);
 
-                HintUI.t(context,response);
-                Log.i(TAG,response);
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                handleVolleyError(context,error);
-            }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<>();
-                params.put("u",username);
-                params.put("p", password);
-                params.put("once", "1154");  // TODO: 15-9-17
-                params.put("next","/");
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-               Map<String,String> params = new HashMap<>();
-                params.put("Content-Type", "application/x-www-form-urlencoded");
-
-
-                return params;
-            }
-        };
-        VolleyHelper.getInstance().addToRequestQueue(stringRequest);
+//        int once = Integer.parseInt(onceString);
+        return onceString;
     }
 }

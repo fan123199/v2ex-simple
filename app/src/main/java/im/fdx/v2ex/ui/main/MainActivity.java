@@ -19,6 +19,7 @@ import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import im.fdx.v2ex.R;
@@ -30,6 +31,8 @@ import im.fdx.v2ex.utils.Keys;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int LOG_IN_SUCCESSED = 1;
+    private static final int LOG_IN_FAILED = 0;
     DrawerLayout mDrawer;
     private Notification mNotificationCompat;
     private NotificationManager mNotificationManager;
@@ -52,6 +55,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headView = navigationView.getHeaderView(0);
+
+
 
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
@@ -86,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_login:
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                startActivityForResult(new Intent(MainActivity.this, LoginActivity.class), LOG_IN_FAILED);
                 break;
         }
         return super.onOptionsItemSelected(item);

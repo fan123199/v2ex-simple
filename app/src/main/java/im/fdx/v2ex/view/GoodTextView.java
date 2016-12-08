@@ -1,4 +1,4 @@
-package im.fdx.v2ex.widget;
+package im.fdx.v2ex.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,10 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -26,18 +22,11 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 
-import org.xml.sax.XMLReader;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.ContentUtils;
-
-import static android.R.attr.bitmap;
-import static android.R.attr.width;
-import static android.text.Html.FROM_HTML_SEPARATOR_LINE_BREAK_PARAGRAPH;
-import static im.fdx.v2ex.R.id.container;
 
 
 /**
