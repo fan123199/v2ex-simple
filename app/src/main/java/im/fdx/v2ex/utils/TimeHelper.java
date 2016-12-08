@@ -34,7 +34,7 @@ public class TimeHelper {
     public static String getAbsoluteTime(long created) {
         created *= 1000;
 
-        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM);
+        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM,Locale.CHINA);
         String d = format.format(created);
         return d;
 
