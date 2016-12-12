@@ -1,42 +1,36 @@
 language: android
 android:
   components:
-    # below list is all needed , vebose is better than nothing
-    - tools
-    - build-tools-25.0.1
-    - platform-tools
-    - android-25
-    - android-24
-    - extra-android-m2repository
-    - extra-android-support
-    - extra-google-m2repository
-
-    # need licenses
+  - tools
+  - build-tools-25.0.1
+  - platform-tools
+  - android-25
+  - extra-android-m2repository
+  - extra-android-support
+  - extra-google-m2repository
   licenses:
-    - 'android-sdk-preview-license-52d11cd2'
-    - 'android-sdk-license-.+'
-    - 'google-gdk-license-.+'
-    - '.+'
-
-# jdk version
+  - android-sdk-preview-license-52d11cd2
+  - android-sdk-license-.+
+  - google-gdk-license-.+
+  - ".+"
 jdk:
-  - oraclejdk8
-
+- oraclejdk8
 before_install:
-  - mkdir "$ANDROID_HOME/licenses" || true
-  - echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
-  - echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
-
-# cache related
+- mkdir "$ANDROID_HOME/licenses" || true
+- echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55" > "$ANDROID_HOME/licenses/android-sdk-license"
+- echo -e "\n84831b9409646a918e30573bab4c9c91346d8abd" > "$ANDROID_HOME/licenses/android-sdk-preview-license"
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-
-
-# Core Cmd
-script:
-  ./gradlew build
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+deploy:
+  provider: releases
+  api_key:
+    secure: xUR2U9bmUTzNmlQoUmiPhP++vsO25W4xBTs6aXMZ2/D+6hkCbh47SKgYuSPV/Fh2HMBqz+dxqe8xk9tt+MGKY3WwjbVbWE8f2rsFNdH4i6XPJiwROG5M+mz/jXAP63R65Uq2lCuUHTUxT6lcEj7jfyQqlyY51e5lg1zepywSUslhE5Q3Ji9fCDY4cMKhO5y16tTMDnlN/W5UA1nKCMH5JCuKYgA9IKwWzx7Wm9WqoN+4P8/4BZiZYkvG7nN1utNzi3feEX4A2MEj7Vs8mcfCpa5QOEQi2d6+abqk7yCZYB5nMn+M2glTeFw305i8OzUdsNhYHdSFZpqos8kH3iSxmg6xWE30mW53kkNSYVW4sqw12xeNgxKaK9ByDUxdqCVdWopOB+wDfkdPyhQ3yI/dtyLNRz9qbKJuHFyN7NDnhpdMs0nqyGgKSIDWf3hZBpp4rCZ66fAYeUGr1Zv++9z8Tje/xgZM3XThtBZyC5ojP14n0SXql/fBv8P58Hq0FCAldxkhshK444jvsMvEmgpa98kalOG9hT862rTsPK73F/hx+CclgI6usk30PagSNIjLlqyNy5Bz9dzvsfczqmiFscp+xxaCHuV8j/ipomvkamhUnNB2snmQ+oqtRUdV3XDRnaYwsyc3IdHwQqHSds55ydxJ82fPB07g41NXYBIeNUQ=
+  file: app/build/outputs/apk/app-release.apk
+  on:
+    repo: fan123199/V2ex-simple
+script: "./gradlew assembleRelease"
