@@ -1,7 +1,6 @@
 # V2ex-simple
 An V2ex simple android client
 
-[![experimental](http://badges.github.io/stability-badges/dist/experimental.svg)](http://github.com/badges/stability-badges)
 [![Build Status](https://travis-ci.org/fan123199/V2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/V2ex-simple)
 
 ## 基本功能
@@ -19,14 +18,18 @@ An V2ex simple android client
 
 ##Change log
 
-###2016.8.1
+### 2016.12.8
+
+加入travis
+
+### 2016.8.1
 
 重启该项目
 
-###2015.12.17
+### 2015.12.17
 
 - 加入了圆形头像
 
-##开源协议
+## 开源协议
 
 GPL v2
