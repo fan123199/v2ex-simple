@@ -33,6 +33,6 @@ deploy:
   file: app/build/outputs/apk/app-release.apk
   skip_cleanup: true
   on:
-    tags: ture
+    tags: true
     repo: fan123199/V2ex-simple
 script: "./gradlew assembleRelease"
