@@ -7,7 +7,7 @@
     <string name="content">这是内容，来吧来吧 相约98。来吧来吧 相约98来吧来吧 相约98</string>
     <string name="menu_share">分享</string>
     <string name="node">节点</string>
-    <string name="title_activity_details">主题详情</string>
+    <string name="title_activity_details">帖子内容</string>
     <string name="action_settings">设置</string>
     <string name="author">作者</string>
     <string name="reply">回复</string>
@@ -34,7 +34,8 @@
     <string name="rate">对应用评分</string>
     <string name="just_now">刚刚</string>
     <string name="menu_open_in_browser">在浏览器打开</string>
-    <string name="app_name">探索路</string>
+    <string name="app_name">探索路V2ex</string>
+    <string name="app_simple_name">V2ex</string>
     <string name="error_timeout">连接超时</string>
     <string name="error_auth_failure">验证失败</string>
     <string name="error_network">网络错误</string>
@@ -47,4 +48,5 @@
     <string name="show_thanks">♥ %d</string>
     <string name="profile">个人信息</string>
     <string name="email">邮箱名</string>
+    <string name="title_activity_node">节点</string>
 </resources>

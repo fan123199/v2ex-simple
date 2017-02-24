@@ -32,12 +32,12 @@
 
     <im.fdx.v2ex.view.CircleVImage
         android:id="@+id/imageView"
+        app:civ_border_width="2dp"
+        app:civ_border_color="@color/white"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:contentDescription="@string/feature"
-        android:src="@drawable/ic_person_black_48dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp"
+        android:background="@drawable/ic_person_outline_black_48dp"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="17dp"
         android:layout_alignParentBottom="true"

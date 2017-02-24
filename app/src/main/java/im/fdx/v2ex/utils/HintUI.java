@@ -26,4 +26,8 @@ public class HintUI {
     public static void S(View view, String message) {
         Snackbar.make(view, message, Snackbar.LENGTH_LONG).show();
     }
+
+    public static void Logd(String msg) {
+        Log.d("hehe", msg);
+    }
 }

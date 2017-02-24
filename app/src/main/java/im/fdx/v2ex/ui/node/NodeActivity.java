@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -41,10 +42,11 @@ import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
 
+
 public class NodeActivity extends AppCompatActivity {
     private static final String TAG = NodeActivity.class.getSimpleName();
 //    NodeModel nodeModel;
-    ConstraintLayout rlNode;
+RelativeLayout rlNode;
     NetworkImageView ivNodeIcon;
     TextView tvNodeName;
     TextView tvNodeHeader;
@@ -60,7 +62,7 @@ public class NodeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        rlNode = (ConstraintLayout) findViewById(R.id.rl_node);
+        rlNode = (RelativeLayout) findViewById(R.id.rl_node);
         ivNodeIcon = (NetworkImageView) findViewById(R.id.iv_node_image);
         tvNodeName = (TextView) findViewById(R.id.tv_node_name);
         tvNodeHeader = (TextView) findViewById(R.id.tv_node_header);
@@ -83,15 +85,6 @@ public class NodeActivity extends AppCompatActivity {
         String reqTopicsUrl = JsonManager.NODE_TOPIC+ "?node_id="+nodeId;
         getTopicsJson(reqTopicsUrl);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        assert fab != null;
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
 
     private void getTopicsJson(String requestURL) {

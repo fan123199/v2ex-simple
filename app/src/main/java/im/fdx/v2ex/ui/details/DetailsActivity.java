@@ -79,7 +79,7 @@ public class DetailsActivity extends AppCompatActivity {
         LinearLayoutManager mLayoutManager = new SmoothManager(this);
         mRCView.setLayoutManager(mLayoutManager);
         mRCView.smoothScrollToPosition(0);
-        //// TODO: 2016/8/14  这个Scroll 到顶部的bug，卡了我一个星期，用了So上的方法，自定义了一个LinearLayoutManager
+        //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
 
 
         Intent mGetIntent = getIntent();

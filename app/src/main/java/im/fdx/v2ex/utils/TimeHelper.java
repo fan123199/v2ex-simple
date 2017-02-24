@@ -36,8 +36,7 @@ public class TimeHelper {
         created *= 1000;
 
         DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM,Locale.CHINA);
-        String d = format.format(created);
-        return d;
+        return format.format(created);
 
     }
 }

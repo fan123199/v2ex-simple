@@ -86,7 +86,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             MVHolder.tvTitle.setText(thisTopic.getTitle());
 
 //            MVHolder.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
-            // TODO: 2016/8/8 能够识别链接和图片
+            // 2016/8/8 能够识别链接和图片
 //            MVHolder.tvContent.setTextIsSelectable(true);
             MVHolder.tvContent.setGoodText(thisTopic.getContent_rendered());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -130,7 +130,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             vhItem.tvReplier.setText(replyItem.getMember().getUserName());
             vhItem.tvThanks.setText(String.format(mContext.getResources().
                     getString(R.string.show_thanks), replyItem.getThanks()));
-            // TODO: 2016/8/8   vhItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
+            //  2016/8/8   vhItem.tvContent.setAutoLinkMask(Linkify.WEB_URLS);
             vhItem.tvContent.setGoodText(replyItem.getContent_rendered());
             vhItem.tvRow.setText(String.valueOf(position));
 

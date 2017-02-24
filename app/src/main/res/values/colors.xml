@@ -21,4 +21,6 @@
     <color name="black_overlay">#66000000</color>
     <color name="node_background">#41000000</color>
 
+    <color name="content_font_color">#2d2d2d</color>
+
 </resources>

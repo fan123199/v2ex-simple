@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui.node;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,7 +38,7 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_node_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_nodes, parent, false);
 
         return new MyViewHolder(view);
     }

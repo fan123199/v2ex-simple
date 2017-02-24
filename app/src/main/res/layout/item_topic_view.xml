@@ -32,7 +32,7 @@
         android:text="@string/content"
         android:textSize="@dimen/content_font_size"
         android:ellipsize="end"
-        android:textColor="#333333"
+        android:textColor="@color/content_font_color"
         android:layout_below="@+id/tv_title"
         android:layout_alignStart="@+id/tv_title"
         android:layout_alignLeft="@+id/tv_title"
@@ -94,7 +94,9 @@
         android:layout_marginLeft="15dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:layout_alignTop="@+id/iv_avatar_profile" />
+        android:layout_alignTop="@+id/iv_avatar_profile"
+        android:textStyle="normal|bold"
+        android:textColor="@color/content_font_color"/>
 
     <im.fdx.v2ex.view.CircleVImage
         xmlns:app="http://schemas.android.com/apk/res-auto"

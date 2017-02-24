@@ -13,7 +13,7 @@
     app:contentPaddingBottom="6dp"
     app:cardBackgroundColor="@color/white">
 
-    <android.support.constraint.ConstraintLayout
+    <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -23,24 +23,17 @@
 
         <TextView
             android:id="@+id/tv_node_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingEnd="@dimen/md_left_margin"
             android:paddingStart="@dimen/md_left_margin"
-            android:text="name"
-            tools:layout_constraintTop_creator="1"
-            tools:layout_constraintRight_creator="1"
-            tools:layout_constraintBottom_creator="1"
+            android:text=""
             android:layout_marginStart="8dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="8dp"
-            app:layout_constraintRight_toRightOf="parent"
             tools:layout_constraintLeft_creator="1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:textStyle="normal|bold"/>
 
-    </android.support.constraint.ConstraintLayout>
+    </RelativeLayout>
 
 </android.support.v7.widget.CardView>

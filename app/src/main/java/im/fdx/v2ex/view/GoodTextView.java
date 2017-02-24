@@ -64,32 +64,35 @@ public class GoodTextView extends TextView {
     public void setGoodText(String text) {
 
         String formContent = ContentUtils.formatContent(text);
-        final Spanned spannedText = Html.fromHtml(formContent, new MyImageGetter(), null);
+        final Spanned spannedText;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            spannedText = Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, new MyImageGetter(), null);
+        } else {
+            spannedText = Html.fromHtml(formContent, new MyImageGetter(), null);
+        }
 
 
         SpannableStringBuilder htmlSpannable = new SpannableStringBuilder(spannedText);
 //        SpannableStringBuilder htmlSpannable = (SpannableStringBuilder)spannedText;
 
 //
-        //这一步没干什么事情？
-        ImageSpan[] spans = htmlSpannable.getSpans(0, htmlSpannable.length(), ImageSpan.class);
+        //分离 图片 span
+        ImageSpan[] imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length(), ImageSpan.class);
 
 
         final List<String> imageUrls = new ArrayList<>();
         List<String> imagePositions = new ArrayList<>();
-        for (final ImageSpan span : spans) {
-            String imageUrl = span.getSource();
-            int start = htmlSpannable.getSpanStart(span);
-            int end = htmlSpannable.getSpanEnd(span);
+        for (final ImageSpan imageSpan : imageSpans) {
+            final String imageUrl = imageSpan.getSource();
+            int start = htmlSpannable.getSpanStart(imageSpan);
+            int end = htmlSpannable.getSpanEnd(imageSpan);
 
             imagePositions.add(start + "/" + end);
             imageUrls.add(imageUrl);
-
-
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(span.getSource())));
+                    getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl)));
                 }
             };
 

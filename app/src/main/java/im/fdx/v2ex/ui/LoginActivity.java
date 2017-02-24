@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,18 +21,39 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import java.io.IOException;
+
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.OkHttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.HintUI;
+import okhttp3.OkHttpClient;
+
+import static android.os.Build.VERSION_CODES.M;
+import static im.fdx.v2ex.network.JsonManager.SIGN_IN_URL;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int REQUEST_SIGNUP = 0;
 
     private Button btnLogin;
-    private EditText etUsername;
-    private EditText etPassword;
+    private TextInputEditText etUsername;
+    private TextInputEditText etPassword;
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            Log.d("hehe", String.valueOf(msg.what));
+
+            if (msg.what == 0) {
+                String onceCode = (String) msg.obj;
+                HintUI.T(LoginActivity.this, onceCode);
+            }
+            return false;
+        }
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +75,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
-        etUsername = (EditText) findViewById(R.id.input_username);
-        etPassword = (EditText) findViewById(R.id.input_password);
+        etUsername = (TextInputEditText) findViewById(R.id.input_username);
+        etPassword = (TextInputEditText) findViewById(R.id.input_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
 
         assert btnLogin != null;
@@ -77,13 +101,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.btn_login:
-                if(!validate()) {
+                if (!validate()) {
                     return;
                 }
 
                 login();
+
                 break;
             case R.id.link_sign_up:
                 Intent openUrl = new Intent(Intent.ACTION_VIEW, Uri.parse(JsonManager.SIGN_UP_URL));
@@ -94,7 +119,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
+    public final OkHttpClient okHttpClient = new OkHttpClient();
 
     private void login() {
 
@@ -105,70 +130,57 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, JsonManager.SIGN_IN_URL, new Response.Listener<String>() {
+        new Thread(new Runnable() {
             @Override
-            public void onResponse(String response) {
-                // TODO: 15-9-17
-//value="54055" name="once"
+            public void run() {
+                doit();
+                progressDialog.dismiss();
 
-
-//                int onceCode = getOnceCode(response);
-
-
-
-                HintUI.t(LoginActivity.this,response);
-                Log.i(JsonManager.TAG,response);
             }
+        }).start();
 
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                JsonManager.handleVolleyError(LoginActivity.this,error);
-            }
-        }){
-//            @Override
-//            protected Map<String, String> getParams() throws AuthFailureError {
-//                Map<String,String> params = new HashMap<>();
-//                params.put("u",username);
-//                params.put("p", password);
-//                params.put("once", "1154");  // TODO: 15-9-17
-//                params.put("next","/");
-//                return params;
-//            }
-//
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//               Map<String,String> params = new HashMap<>();
-//                params.put("Content-Type", "application/x-www-form-urlencoded");
-//
-//
-//                return params;
-//            }
-        };
-        VolleyHelper.getInstance().addToRequestQueue(stringRequest);
-        progressDialog.dismiss();
+
+    }
+
+    private void doit() {
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url(SIGN_IN_URL)
+                .build();
+
+        okhttp3.Response response = null;
+        try {
+            response = okHttpClient.newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String onceCode = null;
+        try {
+            onceCode = JsonManager.getOnceCode(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("FDX", onceCode);
+        Message.obtain(handler, 0, onceCode).sendToTarget();
     }
 
     private boolean validate() {
-        boolean valid =true;
+        boolean valid = true;
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
-        if(username.isEmpty()){
+        if (username.isEmpty()) {
             etUsername.setError("名字不能为空");
             etUsername.requestFocus();
 //            valid = false;
         }
-        if(password.isEmpty()) {
+        if (password.isEmpty()) {
             etPassword.setError("密码不能为空");
             etPassword.requestFocus();
 //            valid = false;
         }
         return valid;
     }
-
-
 
 
 }
