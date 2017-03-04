@@ -49,4 +49,6 @@
     <string name="profile">个人信息</string>
     <string name="email">邮箱名</string>
     <string name="title_activity_node">节点</string>
+    <string name="log_in_v2ex">登录 V2EX</string>
+    <string name="thanks">感谢</string>
 </resources>

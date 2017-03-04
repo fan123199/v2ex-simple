@@ -35,7 +35,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="register_tip">not register yet, click here to sign up</string>
+    <string name="register_tip">new? click here to sign up</string>
     <string name="feature">feature</string>
     <string name="communicate">Communicate</string>
     <string name="feedback">Feedback</string>
@@ -75,22 +75,24 @@
         <item>members</item>
     </string-array>
     <string name="title_activity_node">Node</string>
-    <string name="node_image">node image</string>
+    <string name="node_image" translatable="false">node image</string>
     <string name="search_hint">Search …</string>
 
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_fullscreen" translatable="false">FullscreenActivity</string>
+    <string name="dummy_button" translatable="false">Dummy Button</string>
+    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
     <string name="share_app">Share this Apps</string>
     <string name="share_to">Share to</string>
     <string name="feedback_hint">Please input your idea or recommendation below</string>
     <string name="send_email">Send feedback mail…</string>
-    <string name="feedback_subject">Feedback for v2ex-simple</string>
+    <string name="feedback_subject" translatable="false">Feedback for v2ex-simple</string>
     <string name="email">Email</string>
-    <string name="tanks">tanks</string>
+    <string name="thanks">thanks</string>
 
     "
     <string name="show_thanks">♥ %d</string>
     <string name="profile">profile</string>
+    <string name="log_in_v2ex">Log in V2EX</string>
+    <string name="app_simple_name">V2ex</string>
 
 </resources>

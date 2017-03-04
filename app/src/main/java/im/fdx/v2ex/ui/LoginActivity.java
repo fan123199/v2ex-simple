@@ -2,7 +2,9 @@ package im.fdx.v2ex.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,25 +15,42 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.elvishew.xlog.XLog;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.network.JsonManager;
-import im.fdx.v2ex.network.OkHttpHelper;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.HintUI;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.FormBody;
+import okhttp3.HttpUrl;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 
-import static android.os.Build.VERSION_CODES.M;
+import static android.content.Context.MODE_PRIVATE;
+import static im.fdx.v2ex.R.id.toolbar;
+import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 import static im.fdx.v2ex.network.JsonManager.SIGN_IN_URL;
+import static org.jsoup.nodes.Entities.EscapeMode.base;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,28 +60,58 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextInputEditText etUsername;
     private TextInputEditText etPassword;
 
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
+    HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
 
-            Log.d("hehe", String.valueOf(msg.what));
+    {
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+    }
 
-            if (msg.what == 0) {
-                String onceCode = (String) msg.obj;
-                HintUI.T(LoginActivity.this, onceCode);
-            }
-            return false;
-        }
-    });
+    public final OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+//            .addInterceptor(interceptor)
+//            .connectTimeout(10, TimeUnit.SECONDS)
+//            .writeTimeout(10, TimeUnit.SECONDS)
+//            .readTimeout(30, TimeUnit.SECONDS)
+            .cookieJar(new CookieJar() {
+                private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
+
+                @Override
+                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                    cookieStore.put(url.host(), cookies);
+
+                }
+
+                @Override
+                public List<Cookie> loadForRequest(HttpUrl url) {
+
+                    List<Cookie> cookies = cookieStore.get(url.host());
+                    return cookies == null ? new ArrayList<Cookie>() : cookies;
+                }
+            })
+            .build();
+
+    private Request.Builder baseRequestBuilder = new Request.Builder()
+            .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+            .addHeader("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
+            .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
+            .addHeader("Host", "www.v2ex.com")
+            .addHeader("Cache-Control", "max-age=0")
+//            .addHeader("X-Requested-With", "com.android.browser")
+//            .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
+            .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        SharedPreferences sf = getSharedPreferences("DEFAULT", MODE_PRIVATE);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
+        toolbar.setTitle("");
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
@@ -76,15 +125,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
 
         etUsername = (TextInputEditText) findViewById(R.id.input_username);
+
+        etUsername.setText(sf.getString("username", ""));
         etPassword = (TextInputEditText) findViewById(R.id.input_password);
         btnLogin = (Button) findViewById(R.id.btn_login);
-
-        assert btnLogin != null;
         btnLogin.setOnClickListener(this);
+
         TextView tv_signup = (TextView) findViewById(R.id.link_sign_up);
-        assert tv_signup != null;
         tv_signup.setOnClickListener(this);
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        login();
     }
 
     @Override
@@ -119,8 +175,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    public final OkHttpClient okHttpClient = new OkHttpClient();
-
     private void login() {
 
         final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Light_Dialog);
@@ -130,38 +184,107 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                doit();
-                progressDialog.dismiss();
 
-            }
-        }).start();
+        getLoginData(username, password);
+        progressDialog.dismiss();
 
 
     }
 
-    private void doit() {
-        okhttp3.Request request = new okhttp3.Request.Builder()
+    private void getLoginData(final String username, final String password) {
+        Request requestToGetOnce = baseRequestBuilder
                 .url(SIGN_IN_URL)
                 .build();
 
-        okhttp3.Response response = null;
-        try {
-            response = okHttpClient.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String onceCode = null;
-        try {
-            onceCode = JsonManager.getOnceCode(response.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        okHttpClient.newCall(requestToGetOnce).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
 
-        Log.d("FDX", onceCode);
-        Message.obtain(handler, 0, onceCode).sendToTarget();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response0) throws IOException {
+                String htmlString = response0.body().string();
+                Element body = Jsoup.parse(htmlString).body();
+//                    Element box = body.getElementsByClass("box").last();
+//                    Element cell = box.getElementsByClass("cell").first();
+                String nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮箱地址").attr("name");
+                String passwordKey = body.getElementsByAttributeValue("type", "password").attr("name");
+                String onceCode = body.getElementsByAttributeValue("name", "once").attr("value");
+
+                XLog.i(nameKey + "|" + passwordKey + "|" + onceCode);
+
+
+                RequestBody requestBody = new FormBody.Builder()
+//                            .add("next", "/")
+                        .add(nameKey, username)
+                        .add(passwordKey, password)
+                        .add("once", onceCode)
+                        .build();
+
+
+                Request request = baseRequestBuilder
+                        .url(SIGN_IN_URL)
+                        .addHeader("Origin", HTTPS_V2EX_BASE)
+                        .addHeader("Referer", SIGN_IN_URL)
+                        .addHeader("Content-Type", "application/x-www-form-urlencoded")
+                        .post(requestBody)
+                        .build();
+
+//            XLog.d(request.headers().toString());
+//            XLog.d(request.toString());
+//            XLog.d(request.isHttps() + request.method() +request.body().toString() );
+
+
+                okHttpClient.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+
+                        final int httpcode = response.code();
+                        XLog.d("http code: " + response.code());
+                        XLog.d("Headers:  " + response.headers().toString());
+                        XLog.d("Requests: " + response.request());
+                        XLog.d("msg: " + response.message());
+//
+                        XLog.d("response String: " + response.toString());
+
+                        final String errorMsg = getErrorCode(response.body().string());
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                HintUI.T(LoginActivity.this, String.valueOf(httpcode) + errorMsg);
+
+                            }
+                        });
+                    }
+                });
+
+
+//            }
+
+//            responseToGetOnce.close();
+//            response.close();
+
+            }
+        });
+
+
+//            XLog.d( String.valueOf(htmlString.length()));
+//            XLog.d(htmlString);
+
+    }
+
+    private String getErrorCode(String body) {
+        Element element = Jsoup.parse(body).body();
+        Elements message = element.getElementsByClass("problem");
+
+        return message.text();
     }
 
     private boolean validate() {

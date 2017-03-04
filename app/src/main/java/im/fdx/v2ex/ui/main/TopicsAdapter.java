@@ -26,7 +26,7 @@ import im.fdx.v2ex.view.GoodTextView;
  * Created by a708 on 15-8-14.
  * 主页的Adapter，就一个普通的RecyclerView
  */
-public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class TopicsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private LayoutInflater mInflater;
     private List<TopicModel> mTopicList;
@@ -34,7 +34,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
 
     //这是构造器
-    public MainAdapter(Context activity, List<TopicModel> topicList) {
+    public TopicsAdapter(Context activity, List<TopicModel> topicList) {
         context = activity;
         mInflater = LayoutInflater.from(activity);
         mImageLoader = VolleyHelper.getInstance().getImageLoader();

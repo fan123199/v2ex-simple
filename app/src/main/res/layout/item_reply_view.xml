@@ -70,16 +70,16 @@
         android:text="@string/row"
         />
 
-    <View
+    <include
+        layout="@layout/divider"
         android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1px"
         android:layout_alignLeft="@+id/tv_replier"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignStart="@+id/tv_replier"
         android:layout_below="@id/tv_reply_content"
-        android:background="@android:color/darker_gray"/>
+        android:layout_height="1px"
+        android:layout_width="match_parent" />
 
     <TextView
         android:id="@+id/tv_thanks"
@@ -90,7 +90,7 @@
         android:layout_marginStart="15dp"
         android:layout_toEndOf="@+id/tv_reply_time"
         android:layout_toRightOf="@+id/tv_reply_time"
-        android:text="@string/tanks"
+        android:text="@string/thanks"
         android:textAppearance="?android:attr/textAppearanceSmall"/>
 
 </RelativeLayout>

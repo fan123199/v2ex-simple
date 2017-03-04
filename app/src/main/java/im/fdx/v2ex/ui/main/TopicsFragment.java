@@ -39,7 +39,7 @@ public class TopicsFragment extends Fragment {
 
     private List<TopicModel> topicModels = new ArrayList<>();
 
-    private MainAdapter mAdapter;
+    private TopicsAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;//TODO
     private SwipeRefreshLayout mSwipeLayout;
 
@@ -96,7 +96,7 @@ public class TopicsFragment extends Fragment {
         //这里用线性显示 类似于listView
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new MainAdapter(getActivity(), topicModels);
+        mAdapter = new TopicsAdapter(getActivity(), topicModels);
         mRecyclerView.setAdapter(mAdapter); //大工告成
 
 

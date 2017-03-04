@@ -17,7 +17,7 @@ public class JsonManagerTest {
                 "                                                                </table>\n" +
                 "                                                                <td width=\"auto\" align=\"left\"><input type=\"submit\" class=\"super normal button\" value=\"登录\" style=\"width: 100%; line-height: 20px; box-sizing: border-box;\" /></td>";
 
-        System.out.print(JsonManager.getOnceCode(tt));
+//        System.out.print(JsonManager.getOnceCode(tt));
     }
 
 }

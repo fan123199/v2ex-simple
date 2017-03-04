@@ -34,7 +34,9 @@
             android:label="@string/title_activity_settings"/>
         <activity
             android:name=".ui.LoginActivity"
-            android:label="@string/title_activity_login"/>
+            android:label="@string/title_activity_login"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.node.NodeActivity"
             android:label="@string/title_activity_node"

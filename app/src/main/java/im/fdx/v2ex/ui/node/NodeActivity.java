@@ -3,9 +3,6 @@ package im.fdx.v2ex.ui.node;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,8 +21,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.reflect.TypeToken;
 
-import org.w3c.dom.Node;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +31,7 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.details.DetailsActivity;
-import im.fdx.v2ex.ui.main.MainAdapter;
+import im.fdx.v2ex.ui.main.TopicsAdapter;
 import im.fdx.v2ex.utils.GsonSimple;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
@@ -159,14 +154,14 @@ RelativeLayout rlNode;
 
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_topic_view, parent, false);
 
-            return new MainAdapter.MainViewHolder(view);
+            return new TopicsAdapter.MainViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder holder2, int position) {
             final TopicModel currentTopic = data.get(position);
 
-            MainAdapter.MainViewHolder holder = (MainAdapter.MainViewHolder) holder2;
+            TopicsAdapter.MainViewHolder holder = (TopicsAdapter.MainViewHolder) holder2;
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -196,8 +191,8 @@ RelativeLayout rlNode;
             holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormalUrl(), imageloader);
 
 
-//            holder.ivAvatar.setOnClickListener(new MainAdapter.MyOnClickListener(currentTopic, context));
-//            holder.tvAuthor.setOnClickListener(new MainAdapter.MyOnClickListener(currentTopic, context));
+//            holder.ivAvatar.setOnClickListener(new TopicsAdapter.MyOnClickListener(currentTopic, context));
+//            holder.tvAuthor.setOnClickListener(new TopicsAdapter.MyOnClickListener(currentTopic, context));
 
         }
 

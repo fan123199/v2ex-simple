@@ -27,8 +27,6 @@ public class OkHttpHelper {
                 .build();
 
         Response response = okHttpClient.newCall(request).execute();
-        String onceCode = JsonManager.getOnceCode(response.body().string());
-        HintUI.Logd(onceCode);
 
         Request requestPush = new Request.Builder()
                 .addHeader("Origin", JsonManager.HTTPS_V2EX_BASE)

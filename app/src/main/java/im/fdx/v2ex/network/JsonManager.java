@@ -41,6 +41,7 @@ public class JsonManager {
 
     public static final String V2EX_API = "https://www.v2ex.com/api";
     public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
+    public static final String HTTP_V2EX_BASE = "http://www.v2ex.com";
     public static final String HOT_JSON = HTTPS_V2EX_BASE+"/api/topics/hot.json";
     public static final String LATEST_JSON = HTTPS_V2EX_BASE + "/api/topics/latest.json";
     //以下,接受参数： name: 节点名
@@ -89,15 +90,4 @@ public class JsonManager {
     }
 
     public static Gson myGson = new Gson();
-
-
-    public static String getOnceCode(String htmlString) {
-
-        int index = htmlString.indexOf("name=\"once\"");
-
-        String onceString = htmlString.substring(index - 2 - 5, index - 2);
-
-//        int once = Integer.parseInt(onceString);
-        return onceString;
-    }
 }
