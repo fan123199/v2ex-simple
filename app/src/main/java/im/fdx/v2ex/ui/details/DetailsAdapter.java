@@ -37,23 +37,30 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private TopicModel mHeader;
     private List<ReplyModel> mReplyList = new ArrayList<>();
-    private LayoutInflater mInflater;
     private ImageLoader mImageLoader;
     private Context mContext;
+    private int mTopicId;
 
     public DetailsAdapter(Context context, TopicModel header, List<ReplyModel> replyList) {
         mContext = context;
-        mInflater = LayoutInflater.from(context);
         mHeader = header;
-        this.mReplyList = replyList;
+        mReplyList = replyList;
         mImageLoader = VolleyHelper.getInstance().getImageLoader();
+    }
+
+    public DetailsAdapter(Context context, int topicId, List<ReplyModel> replyList) {
+        mContext = context;
+        mTopicId = topicId;
+        mReplyList = replyList;
+        mImageLoader = VolleyHelper.getInstance().getImageLoader();
+
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == TYPE_HEADER) {
-            View view = mInflater.inflate(R.layout.item_topic_view, parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_topic_view, parent, false);
             // set the view's size, margins, paddings and layout parameters
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -66,7 +73,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             return new TopicsAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
-            View view = mInflater.inflate(R.layout.item_reply_view, parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false);
             return new ItemViewHolder(view);
         }
         throw new RuntimeException(" No type that matches " + viewType + " + Make sure using types correctly");

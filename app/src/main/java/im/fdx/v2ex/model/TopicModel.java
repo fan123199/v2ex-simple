@@ -66,6 +66,10 @@ public class TopicModel implements Parcelable {
 
     //暂时不知道如何传递数据到Model,先用vivz的方法,在activty中设置解析方法
 
+
+    public TopicModel() {
+    }
+
     //yaoyumeng 喜欢用array,也就是id和replies都是int的话,他就会用readIntArray.我认为不好.我采用vivz.
     protected TopicModel(Parcel in) {
         id = in.readLong();
@@ -201,7 +205,7 @@ public class TopicModel implements Parcelable {
         this.content = content;
     }
 
-    public void setContent_rendered(String content_rendered) {
+    public void setContentRendered(String content_rendered) {
         this.content_rendered = content_rendered;
     }
 

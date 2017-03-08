@@ -2,6 +2,7 @@
   <dictionary name="fdx">
     <words>
       <w>httpcode</w>
+      <w>paddings</w>
       <w>referer</w>
     </words>
   </dictionary>

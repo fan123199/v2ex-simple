@@ -2,7 +2,7 @@
     <string name="app_name">V2ex</string>
 
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="settings">Settings</string>
     <string name="title">title</string>
     <string name="it_is_avatar">It is avatar</string>
     <string name="menu_refresh">Refresh</string>
@@ -94,5 +94,6 @@
     <string name="profile">profile</string>
     <string name="log_in_v2ex">Log in V2EX</string>
     <string name="app_simple_name">V2ex</string>
+    <string name="created_on">Created on</string>
 
 </resources>

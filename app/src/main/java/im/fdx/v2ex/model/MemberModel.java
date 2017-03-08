@@ -10,6 +10,8 @@ import org.greenrobot.greendao.annotation.Generated;
 /**
  * Created by a708 on 16-1-16.
  * V2ex 的 个人信息 模型
+ *
+ * username 和 id 都是 key value
  */
 
 //{

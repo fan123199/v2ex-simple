@@ -4,15 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,37 +20,23 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.OkHttpHelper;
 import im.fdx.v2ex.utils.HintUI;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Cookie;
-import okhttp3.CookieJar;
 import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-import static android.content.Context.MODE_PRIVATE;
-import static im.fdx.v2ex.R.id.toolbar;
 import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 import static im.fdx.v2ex.network.JsonManager.SIGN_IN_URL;
-import static org.jsoup.nodes.Entities.EscapeMode.base;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
-
-    private static final int REQUEST_SIGNUP = 0;
 
     private Button btnLogin;
     private TextInputEditText etUsername;
@@ -65,39 +47,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
     }
-
-    public final OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
-//            .addInterceptor(interceptor)
-//            .connectTimeout(10, TimeUnit.SECONDS)
-//            .writeTimeout(10, TimeUnit.SECONDS)
-//            .readTimeout(30, TimeUnit.SECONDS)
-            .cookieJar(new CookieJar() {
-                private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
-
-                @Override
-                public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-                    cookieStore.put(url.host(), cookies);
-
-                }
-
-                @Override
-                public List<Cookie> loadForRequest(HttpUrl url) {
-
-                    List<Cookie> cookies = cookieStore.get(url.host());
-                    return cookies == null ? new ArrayList<Cookie>() : cookies;
-                }
-            })
-            .build();
-
-    private Request.Builder baseRequestBuilder = new Request.Builder()
-            .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-            .addHeader("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
-            .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
-            .addHeader("Host", "www.v2ex.com")
-            .addHeader("Cache-Control", "max-age=0")
-//            .addHeader("X-Requested-With", "com.android.browser")
-//            .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
-            .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36");
 
 
     @Override
@@ -145,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_SIGNUP) {
+        if (requestCode == OkHttpHelper.REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
 
                 // TODO: Implement successful signup logic here
@@ -192,11 +141,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getLoginData(final String username, final String password) {
-        Request requestToGetOnce = baseRequestBuilder
+        Request requestToGetOnce = OkHttpHelper.baseRequestBuilder
                 .url(SIGN_IN_URL)
                 .build();
 
-        okHttpClient.newCall(requestToGetOnce).enqueue(new Callback() {
+        OkHttpHelper.okHttpClient.newCall(requestToGetOnce).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -223,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         .build();
 
 
-                Request request = baseRequestBuilder
+                Request request = OkHttpHelper.baseRequestBuilder
                         .url(SIGN_IN_URL)
                         .addHeader("Origin", HTTPS_V2EX_BASE)
                         .addHeader("Referer", SIGN_IN_URL)
@@ -236,7 +185,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //            XLog.d(request.isHttps() + request.method() +request.body().toString() );
 
 
-                okHttpClient.newCall(request).enqueue(new Callback() {
+                OkHttpHelper.okHttpClient.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
 

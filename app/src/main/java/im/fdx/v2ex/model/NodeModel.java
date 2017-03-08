@@ -3,6 +3,8 @@ package im.fdx.v2ex.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.w3c.dom.Node;
+
 /**
  * Created by a708 on 16-1-17.
  * V2ex 节点模型
@@ -15,6 +17,8 @@ import android.os.Parcelable;
 //        node_id	根据节点id取该节点下所有主题
 //        node_name	根据节点名取该节点下所有主题
 
+
+//------------------其中 name 是 key value
 //{
 //        "id" : 90,
 //        "name" : "python",
@@ -52,6 +56,19 @@ public class NodeModel implements Parcelable {
     private String avatar_mini;
     private String avatar_normal;
     private String avatar_large;
+
+    public NodeModel() {
+    }
+
+
+    /**
+     * @param nodeName 唯一确定一个node模型
+     */
+    public NodeModel(String nodeName) {
+        name = nodeName;
+    }
+
+
     public String getName() {
         return name;
     }
@@ -145,8 +162,7 @@ public class NodeModel implements Parcelable {
         return stars;
     }
 
-    public NodeModel() {
-    }
+
 
     @Override
     public int describeContents() {
