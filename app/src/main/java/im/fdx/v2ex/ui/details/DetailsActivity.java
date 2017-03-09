@@ -49,8 +49,8 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 
-import static im.fdx.v2ex.network.OkHttpHelper.baseRequestBuilder;
-import static im.fdx.v2ex.network.OkHttpHelper.okHttpClient;
+import static im.fdx.v2ex.network.HttpHelper.baseRequestBuilder;
+import static im.fdx.v2ex.network.HttpHelper.okHttpClient;
 
 public class DetailsActivity extends AppCompatActivity {
 

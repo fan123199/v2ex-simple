@@ -22,8 +22,8 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.JsonManager;
-import im.fdx.v2ex.network.OkHttpHelper;
 import im.fdx.v2ex.utils.HintUI;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == OkHttpHelper.REQUEST_SIGNUP) {
+        if (requestCode == HttpHelper.REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
 
                 // TODO: Implement successful signup logic here
@@ -141,11 +141,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getLoginData(final String username, final String password) {
-        Request requestToGetOnce = OkHttpHelper.baseRequestBuilder
+        Request requestToGetOnce = HttpHelper.baseRequestBuilder
                 .url(SIGN_IN_URL)
                 .build();
 
-        OkHttpHelper.okHttpClient.newCall(requestToGetOnce).enqueue(new Callback() {
+        HttpHelper.okHttpClient.newCall(requestToGetOnce).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -172,7 +172,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         .build();
 
 
-                Request request = OkHttpHelper.baseRequestBuilder
+                Request request = HttpHelper.baseRequestBuilder
                         .url(SIGN_IN_URL)
                         .addHeader("Origin", HTTPS_V2EX_BASE)
                         .addHeader("Referer", SIGN_IN_URL)
@@ -185,7 +185,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //            XLog.d(request.isHttps() + request.method() +request.body().toString() );
 
 
-                OkHttpHelper.okHttpClient.newCall(request).enqueue(new Callback() {
+                HttpHelper.okHttpClient.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
 

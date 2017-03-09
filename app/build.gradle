@@ -81,6 +81,9 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     compile 'com.github.promeg:tinypinyin:2.0.2' // TinyPinyin核心包，约80KB
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    debugCompile 'com.readystatesoftware.chuck:library:1.0.4'  //okhttp 查看器
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
 }
 
 greendao {

@@ -46,4 +46,8 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Text.Bg" parent="TextAppearance.AppCompat">
+        <item name="android:background">@drawable/select_background</item>
+    </style>
+
 </resources>

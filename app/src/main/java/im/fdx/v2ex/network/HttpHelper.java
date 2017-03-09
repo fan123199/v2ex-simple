@@ -1,9 +1,12 @@
 package im.fdx.v2ex.network;
 
+import com.readystatesoftware.chuck.ChuckInterceptor;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import im.fdx.v2ex.MyApplication;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
@@ -15,15 +18,16 @@ import okhttp3.Request;
  * fdx will maintain it
  */
 
-public class OkHttpHelper {
+public class HttpHelper {
 
 
     public static final int REQUEST_SIGNUP = 0;
-    public final static OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
+    public static final OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
 //            .addInterceptor(interceptor)
 //            .connectTimeout(10, TimeUnit.SECONDS)
 //            .writeTimeout(10, TimeUnit.SECONDS)
 //            .readTimeout(30, TimeUnit.SECONDS)
+            .addInterceptor(new ChuckInterceptor(MyApplication.getInstance().getApplicationContext()))
             .cookieJar(new CookieJar() {
                 private final HashMap<String, List<Cookie>> cookieStore = new HashMap<>();
 

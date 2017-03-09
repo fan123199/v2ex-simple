@@ -52,4 +52,6 @@
     <string name="log_in_v2ex">登录 V2EX</string>
     <string name="thanks">感谢</string>
     <string name="created_on">创建于</string>
+    <string name="introduction">个人简介</string>
+    <string name="the_n_member">第 %d 个会员</string>
 </resources>
