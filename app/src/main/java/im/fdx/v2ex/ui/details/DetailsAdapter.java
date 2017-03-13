@@ -18,7 +18,7 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.ui.main.TopicsAdapter;
+import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.view.CircleVImage;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
@@ -71,7 +71,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            HintUI.m(String.valueOf(parent.isScrollContainer()));
 //            view.stopNestedScroll();
 
-            return new TopicsAdapter.MainViewHolder(view);
+            return new TopicsRVAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false);
             return new ItemViewHolder(view);
@@ -83,16 +83,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-//        if(holder instanceof TopicsAdapter.MainViewHolder) {
+//        if(holder instanceof TopicsRVAdapter.MainViewHolder) {
         //采用更直观的选择语句
         if (getItemViewType(position) == TYPE_HEADER) {
 
-            TopicsAdapter.MainViewHolder MVHolder = (TopicsAdapter.MainViewHolder) holder;
+            TopicsRVAdapter.MainViewHolder MVHolder = (TopicsRVAdapter.MainViewHolder) holder;
             final TopicModel thisTopic = mHeader;
 //            MVHolder.itemView.setTop(position);
             MVHolder.tvTitle.setText(thisTopic.getTitle());
-
-
             MVHolder.tvContent.setGoodText(thisTopic.getContent_rendered());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                MVHolder.tvContent.setTransitionName("header");
@@ -112,7 +110,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
             });
-            MVHolder.tvPushTime.setText(TimeHelper.getRelativeTime(mContext, thisTopic.getCreated()));
+            MVHolder.tvCreated.setText(TimeHelper.getRelativeTime(thisTopic.getCreated()));
 
             MVHolder.ivAvatar.setImageUrl(thisTopic.getMember().getAvatarNormalUrl(), mImageLoader);
             MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +129,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             // if(!mReplyList.isEmpty()) {
             //    因为上一个if语句默认了replylist不可能为空
             final ReplyModel replyItem = mReplyList.get(position - 1);
-            itemVH.tvReplyTime.setText(TimeHelper.getRelativeTime(mContext, replyItem.getCreated()));
+            itemVH.tvReplyTime.setText(TimeHelper.getRelativeTime(replyItem.getCreated()));
             itemVH.tvReplier.setText(replyItem.getMember().getUserName());
             itemVH.tvThanks.setText(String.format(mContext.getResources().
                     getString(R.string.show_thanks), replyItem.getThanks()));

@@ -2,6 +2,8 @@ package im.fdx.v2ex.ui.main;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,17 +17,23 @@ import android.view.ViewGroup;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.utils.GsonSimple;
+import im.fdx.v2ex.utils.Keys;
+import im.fdx.v2ex.utils.MyGsonRequest;
+import okhttp3.Call;
+import okhttp3.Callback;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
@@ -37,19 +45,37 @@ public class TopicsFragment extends Fragment {
     public static final int TOP_10_TOPICS = 2;
 
 
-    private List<TopicModel> topicModels = new ArrayList<>();
+    private List<TopicModel> mTopicModels = new ArrayList<>();
 
-    private TopicsAdapter mAdapter;
+    private TopicsRVAdapter mAdapter;
     RecyclerView.LayoutManager mLayoutManger;//TODO
-    private SwipeRefreshLayout mSwipeLayout;
+    private int MSG_GET_DATA_BY_OK = 1;
 
-    private String requestURL;
+
+    private SwipeRefreshLayout mSwipeLayout;
+    private String mRequestURL;
     private int mMNodeID;
+    private String mTabs;
+
     //    private OnFragmentInteractionListener mListener;
 
     public TopicsFragment() {
         // Required empty public constructor
     }
+
+    Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+
+            if (msg.what == MSG_GET_DATA_BY_OK) {
+                XLog.d("GET MESSAGE");
+                mAdapter.notifyDataSetChanged();
+                mSwipeLayout.setRefreshing(false);
+            }
+
+            return false;
+        }
+    });
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,15 +88,21 @@ public class TopicsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
-        Bundle gets_args = getArguments();
-        mMNodeID = gets_args.getInt("column_id", 0);
+        Bundle args = getArguments();
+        mMNodeID = args.getInt(Keys.KEY_COLUMN_ID, 0);
+        mTabs = args.getString(Keys.KEY_TAB);
 
         if (mMNodeID == LATEST_TOPICS) {
-            requestURL = JsonManager.LATEST_JSON;
+            mRequestURL = JsonManager.LATEST_JSON;
+            getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == TOP_10_TOPICS) {
-            requestURL = JsonManager.HOT_JSON;
+            mRequestURL = JsonManager.HOT_JSON;
+            getTopicsJsonByVolley(mRequestURL);
+        } else if (mMNodeID == 0) {
+            if (mTabs != null && !mTabs.isEmpty())
+                mRequestURL = JsonManager.HTTPS_V2EX_BASE + "/?tab=" + mTabs;
+            getTopicsByOK(mRequestURL);
         }
-
 
         mSwipeLayout = (SwipeRefreshLayout) layout.findViewById(R.id.swipe_container);
         mSwipeLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -80,23 +112,18 @@ public class TopicsFragment extends Fragment {
         mSwipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getTopicsJson(requestURL);
-
+//                getTopicsJsonByVolley(mRequestURL);
+                refresh();
             }
         });
-        getTopicsJson(requestURL);
         mSwipeLayout.setRefreshing(true);
-
-        //setTopic 不好，还是在创建Apter时加入参数比较好。
-//        mAdapter.setTopic(topicModels);
-
 
         //找出recyclerview,并赋予变量
         RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
         //这里用线性显示 类似于listView
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        mAdapter = new TopicsAdapter(getActivity(), topicModels);
+        mAdapter = new TopicsRVAdapter(getActivity(), mTopicModels);
         mRecyclerView.setAdapter(mAdapter); //大工告成
 
 
@@ -106,7 +133,7 @@ public class TopicsFragment extends Fragment {
 //            @Override
 //            public void onClick(View view, int position) {
 //                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-//                intent.putExtra("model", topicModels.get(position));
+//                intent.putExtra("model", mTopicModels.get(position));
 //                //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
 ////                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 ////                    ActivityOptions options = ActivityOptions
@@ -122,31 +149,53 @@ public class TopicsFragment extends Fragment {
 //            }
 //        }));
 
-
-
-
         // Inflate the layout for this fragment
         return layout;
     }
 
-    private void getTopicsJson(String requestURL) {
-        Log.i(TAG,"In getjson" + mMNodeID);
+    private void getTopicsByOK(String requestURL) {
 
+        HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder.url(requestURL).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                mTopicModels.clear();
+                mTopicModels.addAll(JsonManager.parseTopics(response.body().string()));
+                XLog.d("done, parse");
+                handler.sendEmptyMessage(MSG_GET_DATA_BY_OK);
+            }
+        });
+    }
+
+    private String getContentRendered() {
+        return "";
+    }
+
+    private String getContent() {
+        return "";
+    }
+
+    @Deprecated
+    private void getTopicsJsonByVolley(String requestURL) {
+        Log.i(TAG, "In get json" + mMNodeID);
         Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
         }.getType();
-        GsonSimple<ArrayList<TopicModel>> topicGson = new GsonSimple<>(requestURL, typeOfT, new Response.Listener<ArrayList<TopicModel>>() {
+        MyGsonRequest<ArrayList<TopicModel>> topicGson = new MyGsonRequest<>(requestURL, typeOfT, new Response.Listener<ArrayList<TopicModel>>() {
             @Override
             public void onResponse(ArrayList<TopicModel> response) {
                 Log.i(TAG,"I refresh" + mMNodeID);
 
-                if (topicModels.equals(response)) {
+                if (mTopicModels.equals(response)) {
                     mAdapter.notifyDataSetChanged();
                     mSwipeLayout.setRefreshing(false);
                     return;
                 }
 
-                topicModels.clear();
-                topicModels.addAll(0, response);
+                mTopicModels.clear();
+                mTopicModels.addAll(0, response);
 
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
@@ -172,25 +221,23 @@ public class TopicsFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_refresh) {
             mSwipeLayout.setRefreshing(true);
-            getTopicsJson(requestURL);
+//            getTopicsJsonByVolley(mRequestURL);
+            refresh();
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    private void refresh() {
+        if (mMNodeID == 0) {
+            getTopicsByOK(mRequestURL);
+        } else if (mMNodeID != 0) {
+            getTopicsJsonByVolley(mRequestURL);
+        }
     }
 
     @Override
-    public void onStart() {
-        // During startup, check if there are arguments passed to the fragment.
-        // onStart is a good place to do this because the layout has already been
-        // applied to the fragment at this point so we can safely call the method
-        // below that sets the article text.
-        super.onStart();
-
-
+    public void onStop() {
+        super.onStop();
 
     }
 }

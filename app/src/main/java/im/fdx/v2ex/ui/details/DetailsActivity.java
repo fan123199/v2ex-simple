@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.details;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,12 +31,8 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
@@ -43,14 +41,15 @@ import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.network.JsonManager;
-import im.fdx.v2ex.utils.GsonSimple;
+import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.SmoothManager;
+import im.fdx.v2ex.utils.TimeHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 
 import static im.fdx.v2ex.network.HttpHelper.baseRequestBuilder;
-import static im.fdx.v2ex.network.HttpHelper.okHttpClient;
+import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -76,7 +75,6 @@ public class DetailsActivity extends AppCompatActivity {
                 getReplyData();
                 mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mDetailsMainContent, replyLists);
                 mRCView.setAdapter(mDetailsAdapter);
-
             }
             return false;
         }
@@ -139,8 +137,26 @@ public class DetailsActivity extends AppCompatActivity {
 
         });
 
-        Intent mGetIntent = getIntent();
-        Uri data = mGetIntent.getData();
+        parseIntent(getIntent());
+
+
+        //以下是设置刷新按钮的位置，暂时不用
+//        final DisplayMetrics metrics = getResources().getDisplayMetrics();
+//        int start = (int) (40 * metrics.density);
+//        mSwipe.setProgressViewOffset(false, -start, (int) (start*1.5));
+
+
+    }
+
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        parseIntent(intent);
+    }
+
+    private void parseIntent(Intent intent) {
+        Uri data = intent.getData();
         if (data != null) {
             String scheme = data.getScheme();
             String host = data.getHost();
@@ -152,7 +168,7 @@ public class DetailsActivity extends AppCompatActivity {
                     final Request request = baseRequestBuilder
                             .url(data.toString())
                             .build();
-                    okHttpClient.newCall(request).enqueue(new Callback() {
+                    OK_CLIENT.newCall(request).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             XLog.d("failed " + e.getMessage());
@@ -160,33 +176,20 @@ public class DetailsActivity extends AppCompatActivity {
 
                         @Override
                         public void onResponse(Call call, okhttp3.Response response) throws IOException {
-
-
                             TopicModel topicModel = parseResponse(response, topicId);
-
-
                             Message.obtain(handler, MSG_OK_GET_TOPIC, topicModel).sendToTarget();
-
                         }
                     });
 
                 }
             }
         } else {
-            mDetailsMainContent = mGetIntent.getParcelableExtra("model");
+            mDetailsMainContent = intent.getParcelableExtra("model");
             getReplyData();
             mSwipe.setRefreshing(true);
             mDetailsAdapter = new DetailsAdapter(this, mDetailsMainContent, replyLists);
             mRCView.setAdapter(mDetailsAdapter);
         }
-
-
-        //以下是设置刷新按钮的位置，暂时不用
-//        final DisplayMetrics metrics = getResources().getDisplayMetrics();
-//        int start = (int) (40 * metrics.density);
-//        mSwipe.setProgressViewOffset(false, -start, (int) (start*1.5));
-
-
     }
 
     @NonNull
@@ -195,56 +198,56 @@ public class DetailsActivity extends AppCompatActivity {
         Document html = Jsoup.parse(response.body().string());
         Element body = html.body();
         Element head = html.head();
+
+
         String title = body.getElementsByTag("h1").text();
-
-
         String content = body.getElementsByClass("topic_content").first().text();
         String contentRendered = body.getElementsByClass("topic_content").first().html();
-
-        Elements allMeta = head.getElementsByTag("meta");
-        String createdUnformed = head.getElementsByAttributeValue("property", "article:published_time").attr("content");
-        long created = formatDate(createdUnformed);
+        String createdUnformed = body.getElementsByClass("header").
+                first().getElementsByClass("gray").first().ownText(); // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
+        String time = createdUnformed.split("·")[1].trim();
+        long created = TimeHelper.toLong(time);
 
 
         String replyNum = "";
-
         Elements grays = body.getElementsByClass("gray");
-
-        int replies = 0;
+        boolean flag = false;
         for (Element gray :
                 grays) {
             if (gray.text().contains("回复")) {
                 String wholeText = gray.text();
                 int index = wholeText.indexOf("回复");
                 replyNum = wholeText.substring(0, index - 1);
-
+                if (!TextUtils.isEmpty(replyNum)) {
+                    flag = true;
+                }
                 break;
             }
         }
-        XLog.d("hehe" + replyNum);
-        replies = Integer.parseInt(replyNum);
-        topicModel.setReplies(replies); //done
 
-        topicModel.setTitle(title); //done
-        topicModel.setContent(content); //done
+        XLog.d("hehe?" + replyNum);
+        int replies;
+        if (!flag) {
+            replies = 0;
+        } else {
+            replies = Integer.parseInt(replyNum);
+        }
 
         topicModel.setContentRendered(contentRendered); //done
-        topicModel.setCreated(created); //done
+
         MemberModel member = new MemberModel();
 
 
         String memberLink = body.getElementsByClass("header").first()
                 .getElementsByAttributeValueStarting("href", "/member/").attr("href");
         String username = memberLink.replace("/member/", "");
-        member.setUsername(username); //done
+        member.setUsername(username);
         String largeAvatar = body.getElementsByClass("header").first()
                 .getElementsByClass("avatar").attr("src");
 
         member.setAvatar_large(largeAvatar);
         member.setAvatar_normal(largeAvatar.replace("large", "normal"));
 //                            member.setId(0);
-
-        topicModel.setMember(member); //done
 
         Element nodeElement = body.getElementsByClass("header").first()
                 .getElementsByAttributeValueStarting("href", "/go/").first();
@@ -254,52 +257,47 @@ public class DetailsActivity extends AppCompatActivity {
         NodeModel nodeModel = new NodeModel();
         nodeModel.setName(nodeName);
         nodeModel.setTitle(nodeTitle);
+
+        topicModel.setMember(member); //done
+        topicModel.setReplies(replies); //done
+        topicModel.setCreated(created); //done
+        topicModel.setTitle(title); //done
+        topicModel.setContent(content); //done
         topicModel.setNode(nodeModel);//done
         return topicModel;
     }
 
-    private long formatDate(String createdUnformed) {
+    private ReplyModel parseResponseToRepay(okhttp3.Response response) throws IOException {
+        ReplyModel replyModel = new ReplyModel();
 
-        //2017-03-07T01:45:30Z
 
-        String beautyString = createdUnformed.replace('T', ' ').replace('Z', ' ');
+        return replyModel;
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ", Locale.CHINA);
-        Date date;
-        try {
-            date = simpleDateFormat.parse(beautyString);
-            return date.getTime();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return -1L;
     }
 
-
-    public void getReplyData() {
+    private void getReplyData() {
         Type typeofR = new TypeToken<ArrayList<ReplyModel>>() {
         }.getType();
-        GsonSimple<ArrayList<ReplyModel>> replies = new GsonSimple<>(JsonManager.API_REPLIES + "?topic_id="
+        MyGsonRequest<ArrayList<ReplyModel>> replies = new MyGsonRequest<>(JsonManager.API_REPLIES + "?topic_id="
                 + mDetailsMainContent.getId(), typeofR, new ArrayListListener(), new MyErrorListener());
         VolleyHelper.getInstance().addToRequestQueue(replies);
+
+    }
+
+    public void getReplyDataByOk() {
 
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_details, menu);
-
         return true;
     }
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        //SimplifiableIfStatement
         switch (item.getItemId()) {
             case R.id.menu_refresh:
                 mSwipe.setRefreshing(true);
@@ -317,8 +315,14 @@ public class DetailsActivity extends AppCompatActivity {
             case R.id.menu_item_open_in_browser:
                 Uri uri = Uri.parse(mDetailsMainContent.getUrl());
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                intent.setPackage("com.android.chrome");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    intent.setPackage(null);
+                    startActivity(intent);
+                }
                 break;
         }
 

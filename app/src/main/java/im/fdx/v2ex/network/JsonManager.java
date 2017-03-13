@@ -14,13 +14,24 @@ import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpStack;
 import com.android.volley.toolbox.StringRequest;
+import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.model.MemberModel;
+import im.fdx.v2ex.model.NodeModel;
+import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.utils.HintUI;
+import im.fdx.v2ex.utils.TimeHelper;
 
 import static android.R.attr.name;
 import static android.R.attr.value;
@@ -90,4 +101,62 @@ public class JsonManager {
     }
 
     public static Gson myGson = new Gson();
+
+    public static ArrayList<TopicModel> parseTopics(String string) {
+        ArrayList<TopicModel> topics = new ArrayList<>();
+
+        //用okhttp模拟登录的话获取不到Content内容，必须再一步。
+        Document element = Jsoup.parse(string);
+        Element body = element.body();
+        Elements items = body.getElementsByClass("cell item");
+        for (Element item :
+                items) {
+            TopicModel topicModel = new TopicModel();
+
+
+            String title = item.getElementsByClass("item_title").first().text();
+            String linkWithReply = item.getElementsByClass("item_title").first()
+                    .getElementsByTag("a").first().attr("href");
+            int replies = Integer.parseInt(linkWithReply.split("reply")[1]);
+            long id = Long.parseLong(linkWithReply.substring(3, 9));
+
+//            String content = getContent();
+//            String content_rendered  = getContentRendered();
+
+            NodeModel nodeModel = new NodeModel();
+
+            //  <a class="node" href="/go/career">职场话题</a>
+            String nodeTitle = item.getElementsByClass("node").text();
+            String nodeName = item.getElementsByClass("node").attr("href").substring(4);
+            nodeModel.setTitle(nodeTitle);
+            nodeModel.setName(nodeName);
+
+            MemberModel memberModel = new MemberModel();
+//            <a href="/member/wineway">
+// <img src="//v2" class="avatar" border="0" align="default" style="max-width: 48px; max-height: 48px;"></a>
+            String username = item.getElementsByTag("a").first().attr("href").substring(8);
+            memberModel.setUsername(username);
+
+            String smallItem = item.getElementsByClass("small fade").first().text();
+            XLog.i(smallItem);
+            long created;
+            if (!smallItem.contains("最后回复")) {
+                created = -1L;
+            } else {
+                String createdOriginal = item.getElementsByClass("small fade").first().text()
+                        .split("•")[2].trim();
+                created = TimeHelper.toLong(createdOriginal);
+            }
+            topicModel.setReplies(replies);
+            topicModel.setContent("");
+            topicModel.setContentRendered("");
+            topicModel.setTitle(title);
+            topicModel.setNode(nodeModel);
+            topicModel.setMember(memberModel);
+            topicModel.setId(id);
+            topicModel.setCreated(created);
+            topics.add(topicModel);
+        }
+        return topics;
+    }
 }

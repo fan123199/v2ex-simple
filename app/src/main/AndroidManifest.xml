@@ -8,7 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name=".MyApplication"
+        android:name=".MyApp"
         android:allowBackup="true"
         android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
@@ -109,7 +109,24 @@
             android:enabled="true"
             android:exported="false"></service>
 
-        <activity android:name=".ui.ProfileActivity">
+        <provider
+            android:authorities="im.fdx.v2ex.provider.documents"
+            android:name=".provider.MyProvider"
+            android:readPermission=""
+            android:exported="true"
+            android:icon="@drawable/ic_profile"
+            android:label="@string/menu_share"
+            android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS">
+            <intent-filter>
+                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
+            </intent-filter>
+        </provider>
+
+        <activity
+            android:name=".ui.ProfileActivity"
+            android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="im.fdx.v2ex.intent.profile" />
 

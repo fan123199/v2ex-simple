@@ -11,7 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
-import im.fdx.v2ex.MyApplication;
+import im.fdx.v2ex.MyApp;
 
 /**
  * Created by fdx on 2015/8/14.
@@ -27,7 +27,7 @@ public class VolleyHelper {
     //带参数context, 与ytb教程不同
     private VolleyHelper() {
 //        mCtx = context;
-//        mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
+//        mRequestQueue = Volley.newRequestQueue(MyApp.getInstance());
 //        以上参数是没有传入context的构造函数的
         mRequestQueue = getRequestQueue();
 
@@ -65,7 +65,7 @@ public class VolleyHelper {
             // Activity or BroadcastReceiver if someone passes one in.
             //防止mCtx只是activity的context
 //            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
-            mRequestQueue = Volley.newRequestQueue(MyApplication.getInstance());
+            mRequestQueue = Volley.newRequestQueue(MyApp.getInstance());
         }
 
         return mRequestQueue;

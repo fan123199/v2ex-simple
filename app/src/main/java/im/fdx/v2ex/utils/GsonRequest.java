@@ -43,7 +43,7 @@ public class GsonRequest<T> extends Request<T> {
 
     @Override
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
-        Log.w("GSONREQ","I get response");
+        Log.w("GsonRequest", "I get response");
         try {
             String json = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers));

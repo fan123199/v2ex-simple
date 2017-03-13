@@ -7,6 +7,8 @@ package im.fdx.v2ex.utils;
 public class Keys {
 
     // top and latest API
+
+    public static final String KEY_MEMBER_ID = "profile_id";
     String KEY_POST_ID = "id";
     String KEY_POST_TITLE = "title";
     String KEY_CONTENT = "content";
@@ -17,6 +19,9 @@ public class Keys {
     String KEY_CREATED = "created";
     String KEY_LAST_MODIFIED = "last_modified";
     String KEY_LAST_TOUCHED = "last_touched";
+
+    public static final String KEY_TAB = "tab";
+    public static final String KEY_COLUMN_ID = "column_id";
 
     //node API
     public static final String  KEY_NODE_ID = "id";

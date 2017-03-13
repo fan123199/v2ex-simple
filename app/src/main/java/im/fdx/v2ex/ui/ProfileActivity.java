@@ -32,14 +32,10 @@ import im.fdx.v2ex.utils.TimeHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-
 public class ProfileActivity extends AppCompatActivity {
 
 
     public static final String TAG = ProfileActivity.class.getSimpleName();
-    private static final int USE_VOLLEY = 1;
-    public static final int USE_OKHTTP = 2;
     private final ImageLoader imageLoader = VolleyHelper.getInstance().getImageLoader();
     private TextView mTvUsername;
     private NetworkImageView mIvAvatar;
@@ -52,7 +48,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mTvTwitter;
     private TextView mTvWebsite;
     public int mHttpMode = 2;
-    public static final int MSG_GET = 0;
+    private static final int MSG_GET = 0;
     private boolean debug_view = false;
 
 
@@ -99,13 +95,17 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        parseIntent(getIntent());
 
+    }
+
+    private void parseIntent(Intent intent) {
         // ATTENTION: This was auto-generated to handle app links.
-        Intent intent = getIntent();
+
         String appLinkAction = intent.getAction();
         Uri appLinkData = intent.getData();
-        long profileId = -1L;
-        String profileName = "";
+        long profileId;
+        String profileName;
         String url = "";
         if (appLinkData != null) {
             String scheme = appLinkData.getScheme();
@@ -119,12 +119,12 @@ public class ProfileActivity extends AppCompatActivity {
             profileId = getIntent().getExtras().getLong("profile_id", -1L);
             url = JsonManager.USER_JSON + "?id=" + profileId;
         } else {
-            profileId = 1;
+            profileId = 43218; //fdx's profile
             url = JsonManager.USER_JSON + "?id=" + profileId;
         }
 
         Log.i(TAG, url);
-        if (mHttpMode == USE_VOLLEY) {
+        if (mHttpMode == HttpHelper.USE_VOLLEY) {
             StringRequest sr = new StringRequest(url, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -137,8 +137,8 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             });
             VolleyHelper.getInstance().addToRequestQueue(sr);
-        } else if (mHttpMode == USE_OKHTTP) {
-            HttpHelper.okHttpClient.newCall(HttpHelper.baseRequestBuilder.url(url).build()).enqueue(new Callback() {
+        } else if (mHttpMode == HttpHelper.USE_OKHTTP) {
+            HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder.url(url).build()).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
@@ -176,7 +176,13 @@ public class ProfileActivity extends AppCompatActivity {
         if ((TextUtils.isEmpty(((TextView) view).getText().toString()))) {
             return;
         }
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(((TextView) view).getText().toString()));
+        String text;
+        if (!((TextView) view).getText().toString().contains("http")) {
+            text = "http://" + ((TextView) view).getText().toString();
+        } else {
+            text = ((TextView) view).getText().toString();
+        }
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(text));
         startActivity(intent);
     }
 
@@ -216,7 +222,7 @@ public class ProfileActivity extends AppCompatActivity {
         if (debug_view && TextUtils.isEmpty(member.getLocation())) {
             mTvLocation.setVisibility(View.GONE);
         } else {
-            mTvLocation.setText(toAbsLocation(member.getLocation()));
+            mTvLocation.setText(member.getLocation());
         }
 
         if (debug_view && TextUtils.isEmpty(member.getTwitter())) {
@@ -243,4 +249,12 @@ public class ProfileActivity extends AppCompatActivity {
         //// TODO: 2017/3/8
         return null;
     }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        parseIntent(intent);
+
+
+    }
+
 }

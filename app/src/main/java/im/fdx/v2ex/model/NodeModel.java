@@ -8,6 +8,7 @@ import org.w3c.dom.Node;
 /**
  * Created by a708 on 16-1-17.
  * V2ex 节点模型
+ * 其中 name 是 key value
  */
 
 ///api/topics/show.json
@@ -17,8 +18,7 @@ import org.w3c.dom.Node;
 //        node_id	根据节点id取该节点下所有主题
 //        node_name	根据节点名取该节点下所有主题
 
-
-//------------------其中 name 是 key value
+//------------------
 //{
 //        "id" : 90,
 //        "name" : "python",
@@ -51,6 +51,10 @@ public class NodeModel implements Parcelable {
     private int stars;
 
     private long created;
+
+    public void setHeader(String header) {
+        this.header = header;
+    }
 
     private String header;
     private String avatar_mini;

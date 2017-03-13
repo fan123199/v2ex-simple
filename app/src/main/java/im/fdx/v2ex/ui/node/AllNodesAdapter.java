@@ -20,7 +20,7 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.utils.GsonSimple;
+import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.Keys;
 
 import static android.media.CamcorderProfile.get;
@@ -74,7 +74,7 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
      */
     private void getNodeIcon(Long id, final MyViewHolder holder) {
         String url  = JsonManager.NODE_JSON+"?id="+id;
-        GsonSimple<NodeModel> simple = new GsonSimple<>(url, NodeModel.class, new Response.Listener<NodeModel>() {
+        MyGsonRequest<NodeModel> simple = new MyGsonRequest<>(url, NodeModel.class, new Response.Listener<NodeModel>() {
             @Override
             public void onResponse(NodeModel response) {
 

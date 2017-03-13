@@ -145,7 +145,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .url(SIGN_IN_URL)
                 .build();
 
-        HttpHelper.okHttpClient.newCall(requestToGetOnce).enqueue(new Callback() {
+        HttpHelper.OK_CLIENT.newCall(requestToGetOnce).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -185,7 +185,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //            XLog.d(request.isHttps() + request.method() +request.body().toString() );
 
 
-                HttpHelper.okHttpClient.newCall(request).enqueue(new Callback() {
+                HttpHelper.OK_CLIENT.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
 

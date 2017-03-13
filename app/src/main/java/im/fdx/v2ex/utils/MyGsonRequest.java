@@ -13,18 +13,18 @@ import im.fdx.v2ex.network.JsonManager;
 /**
  * Created by a708 on 16-1-19.
  */
-public class GsonSimple<T> extends GsonRequest<T> {
+public class MyGsonRequest<T> extends GsonRequest<T> {
 
-//    public GsonSimple(int method, String url,Class<TopicModel> clazz,
+//    public MyGsonRequest(int method, String url,Class<TopicModel> clazz,
 //                     Map<String, String> headers,
 //                     Response.Listener<TopicModel> listener,
 //                     Response.ErrorListener errorListener) {
 //        super(method, url,  clazz, headers, listener, errorListener);
 //    }
 
-    public GsonSimple(String url, Type type,
-                      Response.Listener<T> listener,
-                      Response.ErrorListener errorListener) {
+    public MyGsonRequest(String url, Type type,
+                         Response.Listener<T> listener,
+                         Response.ErrorListener errorListener) {
         super(Method.GET, url, type, null, listener, errorListener);
         setRetryPolicy(new DefaultRetryPolicy(JsonManager.MY_TIMEOUT_MS,
                 JsonManager.MY_MAX_RETRIES,

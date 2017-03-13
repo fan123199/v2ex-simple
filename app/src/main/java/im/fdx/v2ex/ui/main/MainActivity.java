@@ -31,7 +31,7 @@ import im.fdx.v2ex.utils.Keys;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int LOG_IN_SUCCESSED = 1;
+    private static final int LOG_IN_SUCCEED = 1;
     private static final int LOG_IN_FAILED = 0;
     DrawerLayout mDrawer;
     private Notification mNotificationCompat;
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         MyViewPagerAdapter mAdapter = new MyViewPagerAdapter(getFragmentManager(), MainActivity.this);
         viewPager.setAdapter(mAdapter);
+        viewPager.setOffscreenPageLimit(0);
 
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
 
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        mTabLayout.setTabsFromPagerAdapter(mAdapter);
         assert mTabLayout != null;
         mTabLayout.setupWithViewPager(viewPager);
+
     }
 
     @Override
@@ -102,16 +104,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch (id) {
-//            case R.id.nav_camera:
-//                // Handle the camera action
-//                break;
-//            case R.id.nav_gallery:
-//
-//                break;
             case R.id.nav_node:
                 startActivity(new Intent(this, AllNodesActivity.class));
 
@@ -182,5 +177,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         assert drawer != null;
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }
