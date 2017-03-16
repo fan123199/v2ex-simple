@@ -10,8 +10,10 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
@@ -23,6 +25,8 @@ import im.fdx.v2ex.view.CircleVImage;
 import im.fdx.v2ex.utils.TimeHelper;
 import im.fdx.v2ex.view.GoodTextView;
 
+import static im.fdx.v2ex.MyApp.USE_API;
+
 /**
  * Created by a708 on 15-8-14.
  * 主页的Adapter，就一个普通的RecyclerView
@@ -31,7 +35,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     ;
     private LayoutInflater mInflater;
-    private List<TopicModel> mTopicList;
+    private List<TopicModel> mTopicList = new ArrayList<>();
     private ImageLoader mImageLoader;
     private Context mContext;
 
@@ -48,12 +52,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     // 20150916,可以对View进行Layout的设置。
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        /**
-         * 找到需要显示的xml文件,是通过inflate
-         */
         View view = mInflater.inflate(R.layout.item_topic_view, parent, false);
-
         return new MainViewHolder(view);
 
     }
@@ -65,24 +64,21 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         MyOnClickListener listener = new MyOnClickListener(currentTopic, mContext);
         MainViewHolder holder = (MainViewHolder) holder2;
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mContext, DetailsActivity.class);
-                intent.putExtra("model", currentTopic);
-                mContext.startActivity(intent);
-            }
-        });
+        holder.container.setOnClickListener(listener);
         holder.tvTitle.setText(currentTopic.getTitle());
-        holder.tvContent.setMaxLines(6);
-        holder.tvContent.setText(currentTopic.getContent());
+
+        holder.tvContent.setVisibility(View.GONE);
+        if (MyApp.getInstance().getHttpMode() == USE_API) {
+            holder.tvContent.setMaxLines(6);
+            holder.tvContent.setText(currentTopic.getContent());
+        }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            holder.tvContent.setTransitionName("header");
 //        }
         String sequence = Integer.toString(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
         holder.tvReplyNumber.setText(sequence);
-        holder.tvAuthor.setText(currentTopic.getMember().getUserName()); // 各个模型建立完毕
+        holder.tvAuthor.setText(currentTopic.getMember().getUsername());
         holder.tvNode.setText(currentTopic.getNode().getTitle());
         holder.tvCreated.setText(TimeHelper.getRelativeTime(currentTopic.getCreated()));
         holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormalUrl(), mImageLoader);
@@ -94,10 +90,6 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     }
 
-//    public void setTopic(List<TopicModel> top10){
-//        this.mTopicList = top10;
-//    }
-
     @Override
     public int getItemCount() {
         return mTopicList.size();
@@ -106,6 +98,10 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public long getItemId(int position) {
         return super.getItemId(position);
+    }
+
+    public void updateData(List<TopicModel> tps) {
+        mTopicList = tps;
     }
 
     // 这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来,。
@@ -119,10 +115,11 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView tvAuthor;
         public CircleVImage ivAvatar;
         public TextView tvNode;
+        public View container;
 
         public MainViewHolder(View root) {
             super(root);
-
+            container = root;
             tvTitle = (TextView) root.findViewById(R.id.tv_title);
             tvContent = (GoodTextView) root.findViewById(R.id.tv_content);
             tvReplyNumber = (TextView) root.findViewById(R.id.tv_reply_number);
@@ -130,38 +127,40 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tvAuthor = (TextView) root.findViewById(R.id.tv_author);
             ivAvatar = (CircleVImage) root.findViewById(R.id.iv_avatar_profile);
             tvNode = (TextView) root.findViewById(R.id.tv_node);
-
-//            tvNode.setOnClickListener(listener);
         }
 
 
     }
 
     public static class MyOnClickListener implements View.OnClickListener {
-        private TopicModel current;
+        private TopicModel topic;
         private Context context;
 
-        public MyOnClickListener(TopicModel current, Context context) {
-            this.current = current;
+        public MyOnClickListener(TopicModel topic, Context context) {
+            this.topic = topic;
             this.context = context;
         }
 
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
-                case R.id.iv_avatar_profile:
                 case R.id.tv_author:
+                    break;
+                case R.id.iv_avatar_profile:
                     Intent intent = new Intent(context, ProfileActivity.class);
-                    intent.putExtra(Keys.KEY_MEMBER_ID, current.getMember().getId());
+                    intent.putExtra("username", topic.getMember().getUsername());
                     context.startActivity(intent);
                     break;
-
                 case R.id.tv_node:
                     Intent itNode = new Intent(context, NodeActivity.class);
-                    itNode.putExtra(Keys.KEY_NODE_ID, current.getNode().getId());
+                    itNode.putExtra(Keys.KEY_NODE_NAME, topic.getNode().getName());
                     context.startActivity(itNode);
                     break;
-
+                case R.id.main_text_view:
+                    Intent intentDetail = new Intent(context, DetailsActivity.class);
+                    intentDetail.putExtra("model", topic);
+                    context.startActivity(intentDetail);
+                    break;
             }
 
         }

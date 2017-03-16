@@ -1,28 +1,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/rl_node"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_node"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <RelativeLayout
+        android:id="@+id/rl_node_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/rl_node_header"
         android:elevation="3dp"
-        android:background="#DDDDDD"
         android:paddingBottom="8dp">
 
         <com.android.volley.toolbox.NetworkImageView
             android:id="@+id/iv_node_image"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_gravity="center_horizontal"
             android:layout_margin="12dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:contentDescription="@string/node_image"/>
+            android:contentDescription="@string/node_image" />
 
         <TextView
             android:id="@+id/tv_node_name"
@@ -31,37 +30,51 @@
             android:layout_alignBottom="@+id/iv_node_image"
             android:layout_alignTop="@+id/iv_node_image"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="7dp"
             android:layout_marginEnd="13dp"
             android:layout_marginTop="7dp"
+            android:layout_toEndOf="@+id/iv_node_image"
             android:gravity="center_vertical"
             android:text=""
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:layout_toEndOf="@+id/iv_node_image"/>
+            android:textColor="@color/primary"
+            tools:text="name" />
 
-    <TextView
-        android:id="@+id/tv_node_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/iv_node_image"
-        android:layout_alignStart="@+id/iv_node_image"
-        android:layout_below="@+id/iv_node_image"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="8dp"
-        android:text=""
-        />
+        <TextView
+            android:id="@+id/tv_topic_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/swipe_of_node"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="23dp"
+            android:layout_marginTop="27dp"
+            android:textStyle="bold"
+            tools:text="num" />
+
+        <TextView
+            android:id="@+id/tv_node_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/iv_node_image"
+            android:layout_alignStart="@+id/iv_node_image"
+            android:layout_below="@+id/iv_node_image"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="8dp"
+            tools:text="@string/content" />
     </RelativeLayout>
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_topics_of_node"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_of_node"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignStart="@+id/rl_node_header"
         android:layout_below="@+id/rl_node_header"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        />
+        android:layout_marginStart="8dp">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_topics_of_node"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>

@@ -2,6 +2,7 @@ package im.fdx.v2ex.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import org.w3c.dom.Node;
 
@@ -43,8 +44,10 @@ public class NodeModel implements Parcelable {
 
 
     private long id;
+    @NonNull
     private String name;
     private String url;
+    @NonNull
     private String title;
     private String title_alternative;
     private int topics;
@@ -154,9 +157,14 @@ public class NodeModel implements Parcelable {
         return "http:" + getAvatar_mini();
     }
 
+    public String getAvatarNormalUrl() {
+        return "http:" + getAvatar_normal();
+    }
+
     public String getAvatarLargeUrl() {
         return "http:" + getAvatar_large();
     }
+
 
     public String getHeader() {
         return header;

@@ -14,6 +14,7 @@ import com.android.volley.toolbox.Volley;
 import im.fdx.v2ex.MyApp;
 
 /**
+ * @deprecated
  * Created by fdx on 2015/8/14.
  * Volley网络库的请求队列。使用单例，增加资源利用
  */

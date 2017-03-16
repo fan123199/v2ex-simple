@@ -4,12 +4,17 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -22,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.LoginActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
@@ -36,10 +42,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout mDrawer;
     private Notification mNotificationCompat;
     private NotificationManager mNotificationManager;
+    private ViewPager mViewPager;
+    private MyViewPagerAdapter mAdapter;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+
+        IntentFilter intentFilter = new IntentFilter("im.fdx.v2ex.preference");
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switchFragment();
+            }
+        }, intentFilter);
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -59,13 +77,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         View headView = navigationView.getHeaderView(0);
 
-
-
-
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
-        MyViewPagerAdapter mAdapter = new MyViewPagerAdapter(getFragmentManager(), MainActivity.this);
-        viewPager.setAdapter(mAdapter);
-        viewPager.setOffscreenPageLimit(0);
+        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mAdapter = new MyViewPagerAdapter(getFragmentManager(), MainActivity.this);
+        mViewPager.setAdapter(mAdapter);
 
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
 
@@ -73,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // 忽略自定义，只从pageAdapter中获取title
 //        mTabLayout.setTabsFromPagerAdapter(mAdapter);
         assert mTabLayout != null;
-        mTabLayout.setupWithViewPager(viewPager);
+        mTabLayout.setupWithViewPager(mViewPager);
 
     }
 
@@ -143,8 +157,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .setContentIntent(resultPendingIntent);
                 mNotificationCompat = mBuilder.build();
                 mNotificationManager.notify(notifyID, mNotificationCompat);
-
-
                 break;
             case R.id.nav_share:
                 Uri uri = Uri.parse("market://details?id=" + getPackageName());
@@ -178,6 +190,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+
+    private void switchFragment() {
+
+        mViewPager.removeAllViews();
+        mViewPager.setAdapter(new MyViewPagerAdapter(getFragmentManager(), this));
+//        mAdapter.initFragment();
+//        mAdapter.notifyDataSetChanged();
+
+    }
+
 
     @Override
     protected void onPause() {

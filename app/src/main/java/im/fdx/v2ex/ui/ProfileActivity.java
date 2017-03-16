@@ -4,13 +4,20 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -18,20 +25,32 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
+import com.elvishew.xlog.XLog;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
+import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 
+import static im.fdx.v2ex.network.JsonManager.*;
+
+
+/**
+ * 获取user的主题，依然使用api的方式
+ */
 public class ProfileActivity extends AppCompatActivity {
 
 
@@ -40,7 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mTvUsername;
     private NetworkImageView mIvAvatar;
     private TextView mTvId;
-    private TextView mTvUserCreatedTime;
+    private TextView mTvUserCreated;
     private TextView mTvIntro;
     private TextView mTvLocation;
     private TextView mTvBitcoin;
@@ -49,20 +68,35 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mTvWebsite;
     public int mHttpMode = 2;
     private static final int MSG_GET = 0;
+    private static final int MSG_GET_TOPIC = 1;
     private boolean debug_view = false;
+    private List<TopicModel> mTopics = new ArrayList<>();
 
+    private String username;
+    private ActionBar actionBar;
+    private TopicsRVAdapter mAdapter;
 
     private Handler handler = new Handler(new Handler.Callback() {
-
         @Override
         public boolean handleMessage(Message msg) {
             if (msg.what == MSG_GET) {
-                makeMember((String) msg.obj);
-                return true;
+                showUser((String) msg.obj);
+//                actionBar.setTitle(username);
+//                HintUI.t(ProfileActivity.this,"get member data");
+            } else if (msg.what == MSG_GET_TOPIC) {
+                swipeRefreshLayout.setRefreshing(false);
+//                HintUI.t(ProfileActivity.this,"get topic data");
+                mAdapter.notifyDataSetChanged();
             }
             return false;
         }
     });
+    private Toolbar toolbar;
+    private String urlTopic;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private AppBarLayout appBarLayout;
+    private CardView cardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +106,7 @@ public class ProfileActivity extends AppCompatActivity {
         mTvUsername = (TextView) findViewById(R.id.tv_username_profile);
         mIvAvatar = (NetworkImageView) findViewById(R.id.iv_avatar_profile);
         mTvId = ((TextView) findViewById(R.id.tv_id));
-        mTvUserCreatedTime = (TextView) findViewById(R.id.tv_created);
+        mTvUserCreated = (TextView) findViewById(R.id.tv_created);
         mTvIntro = (TextView) findViewById(R.id.tv_intro);
 
 
@@ -83,11 +117,16 @@ public class ProfileActivity extends AppCompatActivity {
         mTvWebsite = (TextView) findViewById(R.id.tv_website);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        toolbar.setTitle("个人信息");
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.profile);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+//            actionBar.setHomeAsUpIndicator(R.drawable.ic_website);
+            actionBar.setTitle("");
+        }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,8 +134,66 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_of_topic);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getTopicsByUsername(urlTopic);
+            }
+        });
+
+        appBarLayout = (AppBarLayout) findViewById(R.id.al_profile);
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl_profile);
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                int maxScroll = appBarLayout.getTotalScrollRange();
+                float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
+                handleAlphaOnTitle(percentage);
+
+            }
+        });
+
+        cardView = (CardView) findViewById(R.id.cv);
+
+        RecyclerView rv = (RecyclerView) findViewById(R.id.rv_topics_of_user);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ProfileActivity.this);
+
+        rv.setLayoutManager(layoutManager);
+        mAdapter = new TopicsRVAdapter(this, mTopics);
+        rv.setAdapter(mAdapter);
         parseIntent(getIntent());
 
+
+    }
+
+    private void handleAlphaOnTitle(float percentage) {
+        if (percentage == 0) {
+            collapsingToolbarLayout.setTitle("");//设置title为EXPANDED
+        } else if (percentage >= 1) {
+            collapsingToolbarLayout.setTitle(username);//设置title不显示
+        } else if (percentage > 0.8f && percentage < 1f) {
+            cardView.setVisibility(View.INVISIBLE);
+            collapsingToolbarLayout.setTitle(username);//设置title不显示
+        } else if (percentage <= 0.8f && percentage > 0f) {
+            cardView.setVisibility(View.VISIBLE);
+            collapsingToolbarLayout.setTitle("");//设置title不显示
+        }
+
+    }
+
+
+    // 设置渐变的动画
+    public static void startAlphaAnimation(View v, long duration, int visibility) {
+        AlphaAnimation alphaAnimation = (visibility == View.VISIBLE)
+                ? new AlphaAnimation(0f, 1f)
+                : new AlphaAnimation(1f, 0f);
+
+        alphaAnimation.setDuration(duration);
+        alphaAnimation.setFillAfter(true);
+        v.startAnimation(alphaAnimation);
     }
 
     private void parseIntent(Intent intent) {
@@ -104,53 +201,92 @@ public class ProfileActivity extends AppCompatActivity {
 
         String appLinkAction = intent.getAction();
         Uri appLinkData = intent.getData();
-        long profileId;
-        String profileName;
-        String url = "";
+        String urlUserInfo = "";
         if (appLinkData != null) {
             String scheme = appLinkData.getScheme();
             String host = appLinkData.getHost();
             List<String> params = appLinkData.getPathSegments();
             if (host.contains("v2ex.com") && params.get(0).contains("member")) {
-                profileName = params.get(1);
-                url = JsonManager.USER_JSON + "?username=" + profileName;
+                username = params.get(1);
+                urlUserInfo = API_USER + "?username=" + username;
             }
         } else if (intent.getExtras() != null) {
-            profileId = getIntent().getExtras().getLong("profile_id", -1L);
-            url = JsonManager.USER_JSON + "?id=" + profileId;
+            username = getIntent().getExtras().getString("username");
+            urlUserInfo = API_USER + "?username=" + username;
         } else {
-            profileId = 43218; //fdx's profile
-            url = JsonManager.USER_JSON + "?id=" + profileId;
+            username = "fan123199";
+            urlUserInfo = API_USER + "?username=" + username;  //fdx's profile
         }
+        urlTopic = API_TOPIC + "?username=" + username;
 
-        Log.i(TAG, url);
-        if (mHttpMode == HttpHelper.USE_VOLLEY) {
-            StringRequest sr = new StringRequest(url, new Response.Listener<String>() {
+        Log.i(TAG, urlUserInfo + "\n" + urlTopic);
+        if (mHttpMode == MyApp.USE_API) {
+            StringRequest sr = new StringRequest(urlUserInfo, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    makeMember(response);
+                    showUser(response);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    JsonManager.handleVolleyError(ProfileActivity.this, error);
+                    handleVolleyError(ProfileActivity.this, error);
                 }
             });
             VolleyHelper.getInstance().addToRequestQueue(sr);
-        } else if (mHttpMode == HttpHelper.USE_OKHTTP) {
-            HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder.url(url).build()).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                    HintUI.t(ProfileActivity.this, "网络异常");
-                }
+        } else if (mHttpMode == MyApp.USE_WEB) {
+            getUserInfo(urlUserInfo);
 
-                @Override
-                public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                    Message.obtain(handler, MSG_GET, response.body().string()).sendToTarget();
-                }
-            });
+            getTopicsByUsername(urlTopic);
+
         }
+    }
+
+    private void getUserInfo(String urlUserInfo) {
+        HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder.url(urlUserInfo).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                XLog.e("网络异常");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        HintUI.t(ProfileActivity.this, "网络异常");
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                String body = response.body().string();
+                Message.obtain(handler, MSG_GET, body).sendToTarget();
+            }
+        });
+    }
+
+    private void getTopicsByUsername(String requestTopicUrl) {
+
+        HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder
+                .url(requestTopicUrl).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+
+                String body = response.body().string();
+                Type type = new TypeToken<ArrayList<TopicModel>>() {
+                }.getType();
+                List<TopicModel> topicModels = myGson.fromJson(body, type);
+
+                mAdapter.updateData(topicModels);
+//                        mTopics.clear();
+//                        mTopics.addAll(topicModels);
+                XLog.i(topicModels.get(0).getTitle());
+                Message.obtain(handler, MSG_GET_TOPIC).sendToTarget();
+            }
+        });
     }
 
     public void openTwitter(View view) {
@@ -195,10 +331,12 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void makeMember(String response) {
+    private void showUser(String response) {
         //// TODO: 2017/3/8 没有将member 持久化，所以我只能从view中获取当前member的值。
-        MemberModel member = JsonManager.myGson.fromJson(response, MemberModel.class);
-        mTvUsername.setText(member.getUserName());
+        MemberModel member = myGson.fromJson(response, MemberModel.class);
+        mTvUsername.setText(member.getUsername());
+
+//        toolbar.setTitle(member.getUsername());
 
         mIvAvatar.setImageUrl(member.getAvatarLargeUrl(), imageLoader);
 //                Uri uri = Uri.parse(member.getAvatarLargeUrl());
@@ -206,7 +344,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         mTvId.setText(getString(R.string.the_n_member, member.getId()));
         mTvIntro.setText(member.getBio());
-        mTvUserCreatedTime.setText(TimeHelper.getAbsoluteTime(Long.parseLong(member.getCreated())));
+        mTvUserCreated.setText(TimeHelper.getAbsoluteTime(Long.parseLong(member.getCreated())));
 
         if (debug_view && TextUtils.isEmpty(member.getBtc())) {
             mTvBitcoin.setVisibility(View.GONE);
@@ -237,17 +375,6 @@ public class ProfileActivity extends AppCompatActivity {
             mTvWebsite.setText(member.getWebsite());
 
         }
-    }
-
-    /**
-     * 绝对位置
-     *
-     * @param location
-     * @return
-     */
-    private String toAbsLocation(String location) {
-        //// TODO: 2017/3/8
-        return null;
     }
 
     @Override

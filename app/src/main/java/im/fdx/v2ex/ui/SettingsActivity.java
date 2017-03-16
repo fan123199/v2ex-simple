@@ -7,13 +7,20 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.utils.HintUI;
+
+import static android.R.attr.key;
+import static im.fdx.v2ex.MyApp.USE_API;
+import static im.fdx.v2ex.MyApp.USE_WEB;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -48,8 +55,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        public final static String CONF_WIFI = "pref_wifi";
+        public static final String PREF_WIFI = "pref_wifi";
         public static final String PREF_RATES = "pref_rates";
+        public static final String PREF_MODE = "pref_http_mode";
         SharedPreferences sharedPreferences;
 
         public SettingsFragment() {
@@ -62,20 +70,19 @@ public class SettingsActivity extends AppCompatActivity {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
             findPreference(PREF_RATES).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                                                                        public boolean onPreferenceClick(Preference preference) {
-                                                                            try {
-                                                                                Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
-                                                                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                                                                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                                                startActivity(intent);
-                                                                            } catch (Exception e) {
-                                                                                HintUI.t(getActivity(), "没有找到V2EX客户端");
-                                                                            }
-                                                                            return true;
-                                                                        }
-                                                                    }
+                public boolean onPreferenceClick(Preference preference) {
+                    try {
+                        Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    } catch (Exception e) {
+                        HintUI.t(getActivity(), "没有找到V2EX客户端");
+                    }
+                    return true;
+                }
+            });
 
-            );
         }
 
         @Override
@@ -94,8 +101,23 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             // TODO: 2015/9/15
-        }
+            Log.w("PREF", key);
 
+            switch (key) {
+                case PREF_MODE:
+                    boolean useAPI = sharedPreferences.getBoolean(PREF_MODE, false);
+                    MyApp.getInstance().setHttpMode(useAPI ? USE_API : USE_WEB);
+                    Intent noticeChange = new Intent("im.fdx.v2ex.preference");
+
+                    //用多个listener顺序没保证,单个listener代码复杂
+                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(noticeChange);
+
+                    break;
+                case PREF_WIFI:
+
+                    break;
+            }
+        }
 
     }
 

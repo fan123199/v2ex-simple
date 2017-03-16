@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v13.app.FragmentStatePagerAdapter;
 
 import java.util.ArrayList;
@@ -14,14 +13,15 @@ import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.utils.Keys;
 
-import static im.fdx.v2ex.network.HttpHelper.USE_OKHTTP;
-import static im.fdx.v2ex.network.HttpHelper.USE_VOLLEY;
+import static im.fdx.v2ex.MyApp.USE_WEB;
+import static im.fdx.v2ex.MyApp.USE_API;
 
 /**
  * Created by fdx on 2015/10/15.
- * 从MainActivity分离出来
+ * 从MainActivity分离出来. 用了FragmentStatePagerAdapter 替代FragmentPagerAdapter，才可以动态切换Fragment
+ * 目前实现了两种视图。用JsonAPI+Volley 和 模拟web + okhttp
  */
-public class MyViewPagerAdapter extends FragmentPagerAdapter {
+public class MyViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private List<TopicsFragment> mFragments = new ArrayList<>();
     private List<String> mTabTitles = new ArrayList<>();
@@ -31,13 +31,14 @@ public class MyViewPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         this.mContext = context;
         initFragment();
-
     }
 
-    private void initFragment() {
+    public synchronized void initFragment() {
 
-        if (MyApp.getInstance().getHttpMode() == USE_OKHTTP) {
+        if (MyApp.getInstance().getHttpMode() == USE_WEB) {
             //        web homepage tab topic
+            mTabTitles.clear();
+            mFragments.clear();
             String[] tabTitles = mContext.getResources().getStringArray(R.array.v2ex_favorite_tab_titles);
             String[] tabPaths = mContext.getResources().getStringArray(R.array.v2ex_favorite_tab_paths);
             for (int i = 0; i < tabPaths.length; ++i) {
@@ -48,8 +49,10 @@ public class MyViewPagerAdapter extends FragmentPagerAdapter {
                 mFragments.add(fragment);
                 mTabTitles.add(tabTitles[i]);
             }
-        } else if (MyApp.getInstance().getHttpMode() == USE_VOLLEY) {
+        } else if (MyApp.getInstance().getHttpMode() == USE_API) {
             //Latest topic
+            mTabTitles.clear();
+            mFragments.clear();
             TopicsFragment latestTopicsFragment = new TopicsFragment();
             Bundle bundleLatest = new Bundle();
             bundleLatest.putInt(Keys.KEY_COLUMN_ID, TopicsFragment.LATEST_TOPICS);
@@ -73,6 +76,7 @@ public class MyViewPagerAdapter extends FragmentPagerAdapter {
 
         return mFragments.get(position);
     }
+
 
     @Override
     public int getCount() {

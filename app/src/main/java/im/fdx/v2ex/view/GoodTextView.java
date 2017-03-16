@@ -63,7 +63,7 @@ public class GoodTextView extends TextView {
 
     public void setGoodText(String text) {
 
-        String formContent = ContentUtils.formatContent(text);
+        String formContent = ContentUtils.format(text);
         final Spanned spannedText;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             spannedText = Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, new MyImageGetter(), null);

@@ -20,6 +20,20 @@
 
     </shortcut>
 
+
+    <!--需要动态添加-->
+    <!--<shortcut-->
+    <!--android:enabled="true"-->
+    <!--android:shortcutId="day_check"-->
+    <!--android:icon="@mipmap/ic_settings"-->
+    <!--android:shortcutShortLabel="day check"-->
+    <!--android:shortcutLongLabel="day check"-->
+    <!--&gt;-->
+    <!--<intent android:action="android.intent.action.MAIN"-->
+    <!--/>-->
+    <!--</shortcut>-->
+
+
     <!--在这里添加更多的shortcut-->
 
 </shortcuts>

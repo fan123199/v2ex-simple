@@ -31,6 +31,27 @@ public class ReplyModel implements Parcelable {
     private long id;
     private String content;
     private String content_rendered;
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public void setContent_rendered(String content_rendered) {
+        this.content_rendered = content_rendered;
+    }
+
+    public void setThanks(int thanks) {
+        this.thanks = thanks;
+    }
+
+    public void setCreated(long created) {
+        this.created = created;
+    }
+
+    public void setMember(MemberModel member) {
+        this.member = member;
+    }
+
     private int thanks;
     private long created;
     //    private String author;

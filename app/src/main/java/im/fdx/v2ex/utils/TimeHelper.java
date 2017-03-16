@@ -2,6 +2,8 @@ package im.fdx.v2ex.utils;
 
 import android.text.format.DateUtils;
 
+import com.elvishew.xlog.XLog;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -9,6 +11,8 @@ import java.util.Locale;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
+
+import static android.view.View.X;
 
 /**
  * Created by a708 on 15-9-9.
@@ -18,7 +22,7 @@ public class TimeHelper {
 
 
     /**
-     * @param created 若等-1 （目前设定），则为刚刚。
+     * @param created 若等-1 （目前设定），则为没有回复。
      * @return
      */
     public static String getRelativeTime(long created) {
@@ -44,7 +48,7 @@ public class TimeHelper {
     public static String getAbsoluteTime(long created) {
         created *= 1000;
 
-        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM,Locale.CHINA);
+        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
         return format.format(created);
 
 
@@ -52,13 +56,15 @@ public class TimeHelper {
 
     /**
      * 遗憾的是只能通过这样得到一个不准确的时间。
+     * 坑爹的char，让我卡了好久
      * 算出绝对时间是为了保存如缓存，不然可以直接用得到的时间展示。
      *
-     * @param timeStr
+     * @param timeStr 两个点中间的字符串，包括空格
      * @return
      */
-    public static long toLong(String timeStr) {
+    public static long toLong(String timeStr) throws NumberFormatException {
 
+        timeStr = timeStr.trim();
 //       String timeStr = time.replace("&nbsp", "");
 //        44 分钟前用 iPhone 发布
 //         · 1 小时 34 分钟前 · 775 次点击
@@ -72,24 +78,39 @@ public class TimeHelper {
         int minute = timeStr.indexOf("分钟");
         int day = timeStr.indexOf("天");
 
+        try {
         if (second != -1) {
             return created;
         } else if (hour != -1) {
-            created -= Long.parseLong(timeStr.substring(0, hour).split(" ")[1]) * 60 * 60 +
-                    Long.parseLong(timeStr.substring(hour + 2, minute).trim()) * 60;
+            created -= Long.parseLong(getNum(timeStr.substring(0, hour))) * 60 * 60 +
+                    Long.parseLong(getNum(timeStr.substring(hour + 2, minute))) * 60;
         } else if (day != -1) {
-            created -= Long.parseLong(timeStr.substring(0, day).split(" ")[1]) * 60 * 60 * 24;
+            created -= Long.parseLong(getNum(timeStr.substring(0, day))) * 60 * 60 * 24;
         } else if (minute != -1) {
-            created -= Long.parseLong(timeStr.substring(0, minute).split(" ")[1]) * 60;
+            created -= Long.parseLong(getNum(timeStr.substring(0, minute))) * 60;
         } else {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.CHINA);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
                 Date date = sdf.parse(timeStr.split("\\+")[0]);
                 created = date.getTime() / 1000;
-            } catch (Exception ignored) {
-            }
+
+        }
+        } catch (Exception ignored) {
+            XLog.d("timestr" + timeStr);
         }
 
         return created;
+    }
+
+    private static String getNum(String str) {
+        String str2 = "";
+        if (str != null && !"".equals(str)) {
+            for (int i = 0; i < str.length(); i++) {
+                if (str.charAt(i) >= 48 && str.charAt(i) <= 57) {
+                    str2 += str.charAt(i);
+                }
+            }
+        }
+        return str2;
     }
 }

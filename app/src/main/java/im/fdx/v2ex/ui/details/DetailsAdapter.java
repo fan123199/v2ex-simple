@@ -88,40 +88,25 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (getItemViewType(position) == TYPE_HEADER) {
 
             TopicsRVAdapter.MainViewHolder MVHolder = (TopicsRVAdapter.MainViewHolder) holder;
-            final TopicModel thisTopic = mHeader;
+            final TopicModel topic = mHeader;
 //            MVHolder.itemView.setTop(position);
-            MVHolder.tvTitle.setText(thisTopic.getTitle());
-            MVHolder.tvContent.setGoodText(thisTopic.getContent_rendered());
+            MVHolder.tvTitle.setText(topic.getTitle());
+            MVHolder.tvContent.setGoodText(topic.getContent_rendered());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                MVHolder.tvContent.setTransitionName("header");
 //            }
-            String replyNumberString = String.valueOf(thisTopic.getReplies()) +
+            String replyNumberString = String.valueOf(topic.getReplies()) +
                     " " + mContext.getString(R.string.reply);
 
             MVHolder.tvReplyNumber.setText(replyNumberString);
-            MVHolder.tvAuthor.setText(thisTopic.getMember().getUserName());
-            MVHolder.tvNode.setText(thisTopic.getNode().getTitle());
-            MVHolder.tvNode.setOnClickListener(new View.OnClickListener() {
+            MVHolder.tvAuthor.setText(topic.getMember().getUsername());
+            MVHolder.tvNode.setText(topic.getNode().getTitle());
+            TopicsRVAdapter.MyOnClickListener l = new TopicsRVAdapter.MyOnClickListener(topic, mContext);
+            MVHolder.tvNode.setOnClickListener(l);
+            MVHolder.tvCreated.setText(TimeHelper.getRelativeTime(topic.getCreated()));
 
-                @Override
-                public void onClick(View view) {
-                            openNode(thisTopic);
-                }
-
-
-            });
-            MVHolder.tvCreated.setText(TimeHelper.getRelativeTime(thisTopic.getCreated()));
-
-            MVHolder.ivAvatar.setImageUrl(thisTopic.getMember().getAvatarNormalUrl(), mImageLoader);
-            MVHolder.ivAvatar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    openProfile(thisTopic);
-
-                }
-
-
-            });
+            MVHolder.ivAvatar.setImageUrl(topic.getMember().getAvatarNormalUrl(), mImageLoader);
+            MVHolder.ivAvatar.setOnClickListener(l);
 
         } else if (getItemViewType(position) == TYPE_ITEM) {
             ItemViewHolder itemVH = (ItemViewHolder) holder;
@@ -130,23 +115,23 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             //    因为上一个if语句默认了replylist不可能为空
             final ReplyModel replyItem = mReplyList.get(position - 1);
             itemVH.tvReplyTime.setText(TimeHelper.getRelativeTime(replyItem.getCreated()));
-            itemVH.tvReplier.setText(replyItem.getMember().getUserName());
+            itemVH.tvReplier.setText(replyItem.getMember().getUsername());
             itemVH.tvThanks.setText(String.format(mContext.getResources().
                     getString(R.string.show_thanks), replyItem.getThanks()));
             itemVH.tvContent.setSelected(true);
             itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
             itemVH.tvRow.setText(String.valueOf(position));
 
-
             itemVH.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormalUrl(), mImageLoader);
-//            itemVH.ivUserAvatar.setImageURI(Uri.parse(replyItem.getMember().getAvatarNormalUrl()));
 
             itemVH.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     switch (v.getId()) {
                         case R.id.iv_reply_avatar:
-                           openProfile(replyItem);
+                            Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
+                            itProfile.putExtra("username", replyItem.getMember().getUsername());
+                            mContext.startActivity(itProfile);
                             break;
                     }
 
@@ -162,17 +147,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private void openNode(TopicModel topicModel) {
         Intent itNode = new Intent();
         itNode.setAction("im.fdx.v2ex.intent.node");
-        itNode.putExtra(Keys.KEY_NODE_ID, topicModel.getNode().getId());
+        itNode.putExtra(Keys.KEY_NODE_NAME, topicModel.getNode().getName());
         mContext.startActivity(itNode);
     }
 
     private void openProfile(Object model) {
         Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
-        if (model instanceof TopicModel) {
-            itProfile.putExtra("profile_id", ((TopicModel) model).getMember().getId());
-        } else if (model instanceof ReplyModel) {
-            itProfile.putExtra("profile_id", ((ReplyModel) model).getMember().getId());
-        }
+
+        itProfile.putExtra("username", ((ReplyModel) model).getMember().getUsername());
         mContext.startActivity(itProfile);
     }
 
@@ -191,11 +173,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     //我重用了MainAdapter中的MainViewHolder
-//    public static class ViewHolderHeader extends RecyclerView.ViewHolder {
-//        public ViewHolderHeader(View itemView) {
-//            super(itemView);
-//        }
-//    }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 

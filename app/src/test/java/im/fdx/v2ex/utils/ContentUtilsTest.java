@@ -9,7 +9,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static android.view.View.Z;
 import static org.junit.Assert.*;
 
 /**
@@ -21,7 +20,7 @@ public class ContentUtilsTest {
     @Test
     public void formatContent() throws Exception {
         String s  = "href=\"/go/";
-        String out = ContentUtils.formatContent(s);
+        String out = ContentUtils.format(s);
 
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ", Locale.CHINA);

@@ -1,6 +1,8 @@
 package im.fdx.v2ex.network;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -29,37 +31,40 @@ import java.util.Map;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.NodeModel;
+import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeHelper;
 
+import static android.R.attr.defaultHeight;
+import static android.R.attr.foreground;
 import static android.R.attr.name;
+import static android.R.attr.stackFromBottom;
 import static android.R.attr.value;
+import static android.R.string.no;
+import static java.lang.Integer.parseInt;
+import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
 
 /**
  * Created by a708 on 15-8-13.
- * 用于对Json处理的类
+ * 用于对API和网页处理的类
  */
 
-//BasicNetwork.logSlowRequests: HTTP response for request=<[ ]
-//        https://www.v2ex.com/api/topics/latest.json 0xe61fa5b9 NORMAL 1>
-//        // [lifetime=5462], [size=60681], [rc=200], [retryCount=0]
 
 public class JsonManager {
 
     public static final String TAG = JsonManager.class.getSimpleName();
 
-
-    public static final String V2EX_API = "https://www.v2ex.com/api";
     public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
     public static final String HTTP_V2EX_BASE = "http://www.v2ex.com";
-    public static final String HOT_JSON = HTTPS_V2EX_BASE+"/api/topics/hot.json";
-    public static final String LATEST_JSON = HTTPS_V2EX_BASE + "/api/topics/latest.json";
+    public static final String API_HOT = HTTPS_V2EX_BASE + "/api/topics/hot.json";
+    public static final String API_LATEST = HTTPS_V2EX_BASE + "/api/topics/latest.json";
     //以下,接受参数： name: 节点名
-    public static final String NODE_JSON = HTTPS_V2EX_BASE + "/api/nodes/show.json";
+    public static final String API_NODE = HTTPS_V2EX_BASE + "/api/nodes/show.json";
 
 
-    public static final String NODE_TOPIC = HTTPS_V2EX_BASE + "/api/topics/show.json";
+    public static final String API_TOPIC = HTTPS_V2EX_BASE + "/api/topics/show.json";
 
 
     public static final String SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup";
@@ -68,7 +73,7 @@ public class JsonManager {
     //以下,接受以下参数之一：
     //    username: 用户名
     //    id: 用户在 V2EX 的数字 ID
-    public static final String USER_JSON = "https://www.v2ex.com/api/members/show.json";
+    public static final String API_USER = "https://www.v2ex.com/api/members/show.json";
     //以下接收参数：
     //     topic_id: 主题ID
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
@@ -78,6 +83,8 @@ public class JsonManager {
 
     public static final int MY_MAX_RETRIES = 1;
     public static final String URL_ALL_NODE =HTTPS_V2EX_BASE + "/api/nodes/all.json";
+    public static final int FROM_HOME = 0;
+    public static final int FROM_NODE = 1;
 
     public static void handleVolleyError(Context context,VolleyError error) {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
@@ -102,61 +109,264 @@ public class JsonManager {
 
     public static Gson myGson = new Gson();
 
-    public static ArrayList<TopicModel> parseTopics(String string) {
+    public static ArrayList<TopicModel> parseTopicLists(String string, int source) {
         ArrayList<TopicModel> topics = new ArrayList<>();
 
         //用okhttp模拟登录的话获取不到Content内容，必须再一步。
-        Document element = Jsoup.parse(string);
-        Element body = element.body();
-        Elements items = body.getElementsByClass("cell item");
+
+        Document html = Jsoup.parse(string);
+        Element body = html.body();
+
+        Elements items;
+        switch (source) {
+            case FROM_HOME:
+                items = body.getElementsByClass("cell item");
+                break;
+            case FROM_NODE:
+                items = body.getElementsByAttributeValueStarting("class", "cell from");
+                break;
+            default:
+                items = body.getElementsByClass("cell item");
+        }
         for (Element item :
                 items) {
             TopicModel topicModel = new TopicModel();
-
-
             String title = item.getElementsByClass("item_title").first().text();
             String linkWithReply = item.getElementsByClass("item_title").first()
                     .getElementsByTag("a").first().attr("href");
             int replies = Integer.parseInt(linkWithReply.split("reply")[1]);
             long id = Long.parseLong(linkWithReply.substring(3, 9));
 
-//            String content = getContent();
-//            String content_rendered  = getContentRendered();
-
             NodeModel nodeModel = new NodeModel();
+            if (source == FROM_HOME) {
 
-            //  <a class="node" href="/go/career">职场话题</a>
-            String nodeTitle = item.getElementsByClass("node").text();
-            String nodeName = item.getElementsByClass("node").attr("href").substring(4);
-            nodeModel.setTitle(nodeTitle);
-            nodeModel.setName(nodeName);
+
+                //  <a class="node" href="/go/career">职场话题</a>
+                String nodeTitle = item.getElementsByClass("node").text();
+                String nodeName = item.getElementsByClass("node").attr("href").substring(4);
+                nodeModel.setTitle(nodeTitle);
+                nodeModel.setName(nodeName);
+
+            } else if (source == FROM_NODE) {
+                Element header = body.getElementsByClass("header").first();
+                String strHeader = header.text();
+                String nodeTitle = "";
+                if (strHeader.contains("›")) {
+                    nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
+                    XLog.d("nodeTitle: " + nodeTitle);
+                }
+
+                Elements elements = html.head().getElementsByTag("script");
+                Element script = elements.last();
+                //注意，script 的tag 不含 text。
+                String strScript = script.html();
+                String nodeName = strScript.split("\"")[1];
+                nodeModel.setTitle(nodeTitle);
+                nodeModel.setName(nodeName);
+            }
+
+
+            topicModel.setNode(nodeModel);
 
             MemberModel memberModel = new MemberModel();
 //            <a href="/member/wineway">
 // <img src="//v2" class="avatar" border="0" align="default" style="max-width: 48px; max-height: 48px;"></a>
             String username = item.getElementsByTag("a").first().attr("href").substring(8);
+
+            String avatarLarge = item.getElementsByClass("avatar").attr("src");
             memberModel.setUsername(username);
+            memberModel.setAvatar_large(avatarLarge);
+            memberModel.setAvatar_normal(avatarLarge.replace("large", "normal"));
+
 
             String smallItem = item.getElementsByClass("small fade").first().text();
-            XLog.i(smallItem);
+            XLog.d("small: " + smallItem);
             long created;
             if (!smallItem.contains("最后回复")) {
                 created = -1L;
             } else {
-                String createdOriginal = item.getElementsByClass("small fade").first().text()
-                        .split("•")[2].trim();
+                String createdOriginal = smallItem.split("•")[2];
+
                 created = TimeHelper.toLong(createdOriginal);
             }
             topicModel.setReplies(replies);
             topicModel.setContent("");
             topicModel.setContentRendered("");
             topicModel.setTitle(title);
-            topicModel.setNode(nodeModel);
+
             topicModel.setMember(memberModel);
             topicModel.setId(id);
             topicModel.setCreated(created);
             topics.add(topicModel);
         }
         return topics;
+    }
+
+    public static NodeModel parseToNode(String response) {
+
+        NodeModel nodeModel = new NodeModel();
+        Document html = Jsoup.parse(response);
+        Element body = html.body();
+        Element header = body.getElementsByClass("header").first();
+        String content = header.getElementsByClass("f12 gray").first().text();
+        String number = header.getElementsByTag("strong").first().text();
+        String strHeader = header.text();
+        String nodeTitle = "";
+        if (strHeader.contains("›")) {
+            nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
+            XLog.d("nodeTitle: " + nodeTitle);
+        }
+        String avatarLarge = header.getElementsByTag("img").first().attr("src");
+
+        Elements elements = html.head().getElementsByTag("script");
+        Element script = elements.last();
+        //注意，script 的tag 不含 text。
+        String strScript = script.html();
+        String nodeName = strScript.split("\"")[1];
+
+        Log.w("node", "nodeName" + nodeName);
+//
+//
+        nodeModel.setName(nodeName);
+        nodeModel.setTitle(nodeTitle);
+        nodeModel.setTopics(Integer.parseInt(number));
+        nodeModel.setHeader(content);
+        nodeModel.setAvatar_large(avatarLarge);
+        nodeModel.setAvatar_normal(avatarLarge.replace("large", "normal"));
+        return nodeModel;
+    }
+
+    public static int[] parsePage(Element body) {
+
+        int currentPage = 0;
+        int totalPage = 0;
+        Element pageInput = body.getElementsByClass("page_input").first();
+        try {
+            currentPage = Integer.parseInt(pageInput.attr("value"));
+            totalPage = Integer.parseInt(pageInput.attr("max"));
+        } catch (NumberFormatException e) {
+
+        }
+        return new int[]{currentPage, totalPage};
+
+
+    }
+
+    @NonNull
+    public static TopicModel parseResponseToTopic(String bodyString, long topicId) {
+        TopicModel topicModel = new TopicModel(topicId);
+        Document html = Jsoup.parse(bodyString);
+        Element body = html.body();
+
+        String title = body.getElementsByTag("h1").text();
+        String content = body.getElementsByClass("topic_content").first().text();
+        String contentRendered = body.getElementsByClass("topic_content").first().html();
+        String createdUnformed = body.getElementsByClass("header").
+                first().getElementsByClass("gray").first().ownText(); // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
+
+        String time = createdUnformed.split("·")[1];
+        XLog.w("DetailsActivity", createdUnformed + "||| " + time);
+        long created = TimeHelper.toLong(time);
+//long created = -1L;
+
+        String replyNum = "";
+        Elements grays = body.getElementsByClass("gray");
+        boolean flag = false;
+        for (Element gray :
+                grays) {
+            if (gray.text().contains("回复")) {
+                String wholeText = gray.text();
+                int index = wholeText.indexOf("回复");
+                replyNum = wholeText.substring(0, index - 1);
+                if (!TextUtils.isEmpty(replyNum)) {
+                    flag = true;
+                }
+                break;
+            }
+        }
+
+        XLog.d("replyNum  = " + replyNum);
+        int replies;
+        if (!flag) {
+            replies = 0;
+        } else {
+            replies = parseInt(replyNum);
+        }
+
+        topicModel.setContentRendered(ContentUtils.format(contentRendered)); //done
+
+        MemberModel member = new MemberModel();
+
+
+        String username = body.getElementsByClass("header").first()
+                .getElementsByAttributeValueStarting("href", "/member/").text();
+        member.setUsername(username);
+        String largeAvatar = body.getElementsByClass("header").first()
+                .getElementsByClass("avatar").attr("src");
+
+        member.setAvatar_large(largeAvatar);
+        member.setAvatar_normal(largeAvatar.replace("large", "normal"));
+//                            member.setId(0);
+
+        Element nodeElement = body.getElementsByClass("header").first()
+                .getElementsByAttributeValueStarting("href", "/go/").first();
+        String nodeName = nodeElement.attr("href").replace("/href/", "");
+        String nodeTitle = nodeElement.text();
+
+        NodeModel nodeModel = new NodeModel();
+        nodeModel.setName(nodeName);
+        nodeModel.setTitle(nodeTitle);
+
+        topicModel.setMember(member); //done
+        topicModel.setReplies(replies); //done
+        topicModel.setCreated(created); //done
+        topicModel.setTitle(title); //done
+        topicModel.setContent(content); //done
+        topicModel.setNode(nodeModel);//done
+        return topicModel;
+    }
+
+    public static ArrayList<ReplyModel> parseResponseToReplay(String bodyString) {
+
+        ArrayList<ReplyModel> replyModels = new ArrayList<>();
+        Element body = Jsoup.parse(bodyString).body();
+
+        Elements items = body.getElementsByAttributeValueStarting("id", "r_");
+        for (Element item :
+                items) {
+
+            ReplyModel replyModel = new ReplyModel();
+            MemberModel memberModel = new MemberModel();
+            String avatar = item.getElementsByClass("avatar").attr("src");
+            String username = item.getElementsByTag("strong").first().
+                    getElementsByAttributeValueStarting("href", "/member/").first().text();
+
+            XLog.d(avatar);
+            memberModel.setAvatar_large(avatar);
+            memberModel.setAvatar_normal(avatar.replace("large", "normal"));
+            memberModel.setUsername(username);
+
+            String thanksOriginal = item.getElementsByClass("small fade").text();
+            int thanks;
+            if (thanksOriginal.equals("")) {
+                thanks = 0;
+            } else {
+                thanks = parseInt(thanksOriginal.replace("♥ ", ""));
+            }
+
+            String createdOriginal = item.getElementsByClass("fade small").text();
+            XLog.i(createdOriginal);
+            Element replyContent = item.getElementsByClass("reply_content").first();
+//            replyModel.setCreated(-1L);
+            replyModel.setCreated(TimeHelper.toLong(createdOriginal));
+            replyModel.setMember(memberModel);
+            replyModel.setThanks(thanks);
+
+            replyModel.setContent(replyContent.text());
+            replyModel.setContent_rendered(ContentUtils.format(replyContent.html()));
+            replyModels.add(replyModel);
+        }
+        return replyModels;
+
     }
 }

@@ -33,7 +33,7 @@ import static android.media.CamcorderProfile.get;
 public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyViewHolder> {
 
     private List<NodeModel> nodeModels = new ArrayList<>();
-    final ImageLoader imageLoader= VolleyHelper.getInstance().getImageLoader();
+    private final ImageLoader imageLoader = VolleyHelper.getInstance().getImageLoader();
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -57,7 +57,7 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
             public void onClick(View v) {
                 Intent intent = new Intent();
                 intent.setClass(v.getContext(), NodeActivity.class);
-                intent.putExtra(Keys.KEY_NODE_ID, node.getId());
+                intent.putExtra(Keys.KEY_NODE_NAME, node.getName());
                 v.getContext().startActivity(intent);
 
             }
@@ -73,7 +73,7 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
      * @param holder
      */
     private void getNodeIcon(Long id, final MyViewHolder holder) {
-        String url  = JsonManager.NODE_JSON+"?id="+id;
+        String url = JsonManager.API_NODE + "?id=" + id;
         MyGsonRequest<NodeModel> simple = new MyGsonRequest<>(url, NodeModel.class, new Response.Listener<NodeModel>() {
             @Override
             public void onResponse(NodeModel response) {

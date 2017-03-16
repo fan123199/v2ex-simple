@@ -1,27 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/main_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                android:layout_marginTop="6dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_text_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:layout_marginTop="6dp">
 
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/title_font_size"
-        android:text="@string/title"
-        android:textColor="@color/title_color"
         android:layout_alignParentTop="true"
-        android:layout_marginStart="@dimen/md_left_margin"
-        android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_marginRight="@dimen/md_left_margin"
+        android:layout_marginStart="@dimen/md_left_margin"
+        android:text="@string/title"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/title_color"
+        android:textSize="18dp"
 
         />
 
@@ -29,7 +30,7 @@
         android:id="@+id/tv_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/content"
+        tools:text="@string/content"
         android:textSize="@dimen/content_font_size"
         android:ellipsize="end"
         android:textColor="@color/content_font_color"

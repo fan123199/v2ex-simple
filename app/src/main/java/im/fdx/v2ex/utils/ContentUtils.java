@@ -7,7 +7,7 @@ package im.fdx.v2ex.utils;
 
 public class ContentUtils {
 
-    public static String formatContent(String content){
+    public static String format(String content) {
         return content.replace("href=\"/member/", "href=\"https://www.v2ex.com/member/")
                 .replace("href=\"/i/", "href=\"https://i.v2ex.co/")
                 .replace("href=\"/t/", "href=\"https://www.v2ex.com/t/")

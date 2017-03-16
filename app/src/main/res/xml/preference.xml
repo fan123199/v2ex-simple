@@ -4,12 +4,21 @@
     <PreferenceCategory
         android:key="pref_communication"
         android:title="@string/general">
-        <!--<CheckBoxPreference-->
+        <SwitchPreference
 
-            <!--android:key="pref_wifi"-->
-            <!--android:summary="移动网络下不加载图片"-->
-            <!--android:title="节省流量"-->
-            <!--android:defaultValue="false"/>-->
+            android:defaultValue="false"
+            android:key="pref_wifi"
+            android:summaryOff="任何情况下加载图片"
+            android:summaryOn="仅在Wifi下加载图片"
+            android:title="节省流量" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_http_mode"
+            android:summaryOff="now use web"
+            android:summaryOn="now use api"
+            android:title="Switch http mode" />
+
+
     </PreferenceCategory>
 
 
@@ -17,7 +26,13 @@
         android:title="@string/other">
         <Preference
             android:key="pref_rates"
-            android:title="@string/rate" />
+            android:title="@string/rate"></Preference>
     </PreferenceCategory>
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/v2ex_favorite_tab_paths"
+        android:entryValues="@array/v2ex_favorite_tab_titles"
+        android:key="list_preference_1"
+        android:title="List preference" />
 
 </PreferenceScreen>

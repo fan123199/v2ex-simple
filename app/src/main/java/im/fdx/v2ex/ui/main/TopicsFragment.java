@@ -43,6 +43,7 @@ public class TopicsFragment extends Fragment {
 
     public static final int LATEST_TOPICS = 1;
     public static final int TOP_10_TOPICS = 2;
+    private static final int MSG_FAILED = 3;
 
 
     private List<TopicModel> mTopicModels = new ArrayList<>();
@@ -71,6 +72,8 @@ public class TopicsFragment extends Fragment {
                 XLog.d("GET MESSAGE");
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
+            } else if (msg.what == MSG_FAILED) {
+                mSwipeLayout.setRefreshing(false);
             }
 
             return false;
@@ -93,10 +96,10 @@ public class TopicsFragment extends Fragment {
         mTabs = args.getString(Keys.KEY_TAB);
 
         if (mMNodeID == LATEST_TOPICS) {
-            mRequestURL = JsonManager.LATEST_JSON;
+            mRequestURL = JsonManager.API_LATEST;
             getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == TOP_10_TOPICS) {
-            mRequestURL = JsonManager.HOT_JSON;
+            mRequestURL = JsonManager.API_HOT;
             getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == 0) {
             if (mTabs != null && !mTabs.isEmpty())
@@ -158,24 +161,19 @@ public class TopicsFragment extends Fragment {
         HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder.url(requestURL).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+
+                XLog.e("error OK");
+                handler.sendEmptyMessage(MSG_FAILED);
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 mTopicModels.clear();
-                mTopicModels.addAll(JsonManager.parseTopics(response.body().string()));
+                mTopicModels.addAll(JsonManager.parseTopicLists(response.body().string(), 0));
                 XLog.d("done, parse");
                 handler.sendEmptyMessage(MSG_GET_DATA_BY_OK);
             }
         });
-    }
-
-    private String getContentRendered() {
-        return "";
-    }
-
-    private String getContent() {
-        return "";
     }
 
     @Deprecated
@@ -195,7 +193,7 @@ public class TopicsFragment extends Fragment {
                 }
 
                 mTopicModels.clear();
-                mTopicModels.addAll(0, response);
+                mTopicModels.addAll(response);
 
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);

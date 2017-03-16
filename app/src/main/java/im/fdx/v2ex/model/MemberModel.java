@@ -113,10 +113,6 @@ public class MemberModel implements Parcelable {
         return id;
     }
 
-    public String getUserName() {
-        return username;
-    }
-
     public String getTagline() {
         return tagline;
     }

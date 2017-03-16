@@ -73,6 +73,7 @@
     <include
         layout="@layout/divider"
         android:id="@+id/divider"
+        android:visibility="gone"
         android:layout_alignLeft="@+id/tv_replier"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
