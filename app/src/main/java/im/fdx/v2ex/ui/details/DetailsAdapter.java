@@ -1,9 +1,12 @@
 package im.fdx.v2ex.ui.details;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -23,6 +26,8 @@ import im.fdx.v2ex.view.CircleVImage;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
 import im.fdx.v2ex.view.GoodTextView;
+
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 
 /**
  * Created by fdx on 15-9-7.
@@ -111,6 +116,16 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (getItemViewType(position) == TYPE_ITEM) {
             ItemViewHolder itemVH = (ItemViewHolder) holder;
 
+            itemVH.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
+                @Override
+                public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+                    MenuInflater menuInflater = ((Activity) mContext).getMenuInflater();
+                    menuInflater.inflate(R.menu.menu_reply, menu);
+
+
+                }
+            });
+
             // if(!mReplyList.isEmpty()) {
             //    因为上一个if语句默认了replylist不可能为空
             final ReplyModel replyItem = mReplyList.get(position - 1);
@@ -195,6 +210,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ivUserAvatar = (CircleVImage) itemView.findViewById(R.id.iv_reply_avatar);
             tvThanks = (TextView) itemView.findViewById(R.id.tv_thanks);
             divider = itemView.findViewById(R.id.divider);
+
         }
     }
 

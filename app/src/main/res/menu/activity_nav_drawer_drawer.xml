@@ -2,19 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group
-        android:id="@+id/main_nav_item"
-        android:checkableBehavior="single">
+        android:id="@+id/group_nav_main"
+        android:checkableBehavior="single"
+        android:orderInCategory="90">
         <item
             android:id="@+id/nav_node"
             android:icon="@android:drawable/ic_menu_slideshow"
-            android:title="@string/node"/>
+            android:title="@string/all_nodes" />
         <item
             android:id="@+id/nav_testNotify"
             android:icon="@android:drawable/ic_menu_manage"
-            android:title="Test "/>
+            android:title="Test Notify " />
+        <item
+            android:id="@+id/nav_testMenu"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="nav_testMenu " />
+        <item
+            android:id="@+id/nav_testMenu2"
+            android:icon="@android:drawable/ic_menu_manage"
+            android:title="nav_testMenu2 " />
+
     </group>
 
-    <group android:id="@+id/setting_nav_item">
+    <group
+        android:id="@+id/group_nav_setting"
+        android:orderInCategory="95">
 
         <item
             android:id="@+id/nav_share"

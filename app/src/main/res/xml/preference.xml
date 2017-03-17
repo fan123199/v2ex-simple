@@ -26,13 +26,12 @@
         android:title="@string/other">
         <Preference
             android:key="pref_rates"
-            android:title="@string/rate"></Preference>
+            android:title="@string/rate" />
     </PreferenceCategory>
-    <ListPreference
-        android:defaultValue="1"
-        android:entries="@array/v2ex_favorite_tab_paths"
-        android:entryValues="@array/v2ex_favorite_tab_titles"
-        android:key="list_preference_1"
-        android:title="List preference" />
+    <Preference
+        android:key="pref_logout"
+        android:title="@string/logout"
+        android:order="0" />
+
 
 </PreferenceScreen>

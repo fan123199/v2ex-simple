@@ -5,6 +5,7 @@
       <w>httpcode</w>
       <w>jsoup</w>
       <w>paddings</w>
+      <w>persistor</w>
       <w>referer</w>
       <w>topicid</w>
     </words>

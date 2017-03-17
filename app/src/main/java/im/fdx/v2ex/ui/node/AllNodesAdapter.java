@@ -96,7 +96,7 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
     }
 
 
-    void setData(List<NodeModel> nodeModels) {
+    void updateData(List<NodeModel> nodeModels) {
         this.nodeModels = nodeModels;
     }
 

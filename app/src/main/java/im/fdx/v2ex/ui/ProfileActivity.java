@@ -44,7 +44,9 @@ import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Request;
 
+import static com.elvishew.xlog.XLog.tag;
 import static im.fdx.v2ex.network.JsonManager.*;
 
 
@@ -67,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView mTvTwitter;
     private TextView mTvWebsite;
     public int mHttpMode = 2;
-    private static final int MSG_GET = 0;
+    private static final int MSG_GET_USER_INFO = 0;
     private static final int MSG_GET_TOPIC = 1;
     private boolean debug_view = false;
     private List<TopicModel> mTopics = new ArrayList<>();
@@ -79,10 +81,8 @@ public class ProfileActivity extends AppCompatActivity {
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
-            if (msg.what == MSG_GET) {
+            if (msg.what == MSG_GET_USER_INFO) {
                 showUser((String) msg.obj);
-//                actionBar.setTitle(username);
-//                HintUI.t(ProfileActivity.this,"get member data");
             } else if (msg.what == MSG_GET_TOPIC) {
                 swipeRefreshLayout.setRefreshing(false);
 //                HintUI.t(ProfileActivity.this,"get topic data");
@@ -97,6 +97,7 @@ public class ProfileActivity extends AppCompatActivity {
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private AppBarLayout appBarLayout;
     private CardView cardView;
+    private MemberModel member;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,13 +119,11 @@ public class ProfileActivity extends AppCompatActivity {
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle("个人信息");
         setSupportActionBar(toolbar);
 
         actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-//            actionBar.setHomeAsUpIndicator(R.drawable.ic_website);
             actionBar.setTitle("");
         }
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -138,7 +137,7 @@ public class ProfileActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getTopicsByUsername(urlTopic);
+                getTopicsByUsername();
             }
         });
 
@@ -152,7 +151,6 @@ public class ProfileActivity extends AppCompatActivity {
                 int maxScroll = appBarLayout.getTotalScrollRange();
                 float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
                 handleAlphaOnTitle(percentage);
-
             }
         });
 
@@ -197,9 +195,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void parseIntent(Intent intent) {
-        // ATTENTION: This was auto-generated to handle app links.
 
-        String appLinkAction = intent.getAction();
         Uri appLinkData = intent.getData();
         String urlUserInfo = "";
         if (appLinkData != null) {
@@ -235,18 +231,17 @@ public class ProfileActivity extends AppCompatActivity {
             VolleyHelper.getInstance().addToRequestQueue(sr);
         } else if (mHttpMode == MyApp.USE_WEB) {
             getUserInfo(urlUserInfo);
-
-            getTopicsByUsername(urlTopic);
+            getTopicsByUsername();
 
         }
     }
 
     private void getUserInfo(String urlUserInfo) {
-        HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder.url(urlUserInfo).build()).enqueue(new Callback() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders).url(urlUserInfo).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
-                XLog.e("网络异常");
+                tag("profile").e("网络异常");
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -258,15 +253,15 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 String body = response.body().string();
-                Message.obtain(handler, MSG_GET, body).sendToTarget();
+                Message.obtain(handler, MSG_GET_USER_INFO, body).sendToTarget();
             }
         });
     }
 
-    private void getTopicsByUsername(String requestTopicUrl) {
+    private void getTopicsByUsername() {
 
-        HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder
-                .url(requestTopicUrl).build()).enqueue(new Callback() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+                .url(urlTopic).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -281,59 +276,57 @@ public class ProfileActivity extends AppCompatActivity {
                 List<TopicModel> topicModels = myGson.fromJson(body, type);
 
                 mAdapter.updateData(topicModels);
-//                        mTopics.clear();
-//                        mTopics.addAll(topicModels);
-                XLog.i(topicModels.get(0).getTitle());
+                XLog.tag("profile").i(topicModels.get(0).getTitle());
                 Message.obtain(handler, MSG_GET_TOPIC).sendToTarget();
             }
         });
     }
 
     public void openTwitter(View view) {
-        if ((TextUtils.isEmpty(((TextView) view).getText().toString()))) {
+        if (TextUtils.isEmpty(member.getTwitter())) {
             return;
         }
-        Intent intent = null;
+        Intent intent;
         try {
             // get the Twitter app if possible
             this.getPackageManager().getPackageInfo("com.twitter.android", 0);
             intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("twitter://user?screen_name=" + ((TextView) view).getText()));
+                    Uri.parse("twitter://user?screen_name=" + member.getTwitter()));
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         } catch (Exception e) {
             // no Twitter app, revert to browser
             intent = new Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://twitter.com/" + ((TextView) view).getText()));
+                    Uri.parse("https://twitter.com/" + member.getTwitter()));
         }
         this.startActivity(intent);
     }
 
     public void openWeb(View view) {
-        if ((TextUtils.isEmpty(((TextView) view).getText().toString()))) {
+        if (TextUtils.isEmpty(member.getWebsite())) {
             return;
         }
         String text;
-        if (!((TextView) view).getText().toString().contains("http")) {
-            text = "http://" + ((TextView) view).getText().toString();
+        if (!member.getWebsite().contains("http")) {
+            text = "http://" + member.getWebsite();
         } else {
-            text = ((TextView) view).getText().toString();
+            text = member.getWebsite();
         }
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(text));
         startActivity(intent);
     }
 
     public void openGithub(View view) {
-        if ((TextUtils.isEmpty(((TextView) view).getText().toString()))) {
+        if (TextUtils.isEmpty(member.getGithub())) {
             return;
         }
         Intent intent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://www.github.com/" + ((TextView) view).getText().toString()));
+                Uri.parse("https://www.github.com/" + member.getGithub()));
         startActivity(intent);
     }
 
     private void showUser(String response) {
         //// TODO: 2017/3/8 没有将member 持久化，所以我只能从view中获取当前member的值。
-        MemberModel member = myGson.fromJson(response, MemberModel.class);
+        member = myGson.fromJson(response, MemberModel.class);
         mTvUsername.setText(member.getUsername());
 
 //        toolbar.setTitle(member.getUsername());

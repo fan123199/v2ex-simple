@@ -34,6 +34,9 @@ import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.MyGsonRequest;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Request;
+
+import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
@@ -69,7 +72,7 @@ public class TopicsFragment extends Fragment {
         public boolean handleMessage(Message msg) {
 
             if (msg.what == MSG_GET_DATA_BY_OK) {
-                XLog.d("GET MESSAGE");
+                XLog.tag("TopicsFragment").d("GET MESSAGE");
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
             } else if (msg.what == MSG_FAILED) {
@@ -103,7 +106,7 @@ public class TopicsFragment extends Fragment {
             getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == 0) {
             if (mTabs != null && !mTabs.isEmpty())
-                mRequestURL = JsonManager.HTTPS_V2EX_BASE + "/?tab=" + mTabs;
+                mRequestURL = HTTPS_V2EX_BASE + "/?tab=" + mTabs;
             getTopicsByOK(mRequestURL);
         }
 
@@ -158,11 +161,14 @@ public class TopicsFragment extends Fragment {
 
     private void getTopicsByOK(String requestURL) {
 
-        HttpHelper.OK_CLIENT.newCall(HttpHelper.baseRequestBuilder.url(requestURL).build()).enqueue(new Callback() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+                .url(requestURL)
+                .get()
+                .build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
-                XLog.e("error OK");
+                XLog.tag("TopicFragment").e("error OK");
                 handler.sendEmptyMessage(MSG_FAILED);
             }
 
@@ -170,7 +176,7 @@ public class TopicsFragment extends Fragment {
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 mTopicModels.clear();
                 mTopicModels.addAll(JsonManager.parseTopicLists(response.body().string(), 0));
-                XLog.d("done, parse");
+                XLog.tag("TopicFragment").d("done, parse");
                 handler.sendEmptyMessage(MSG_GET_DATA_BY_OK);
             }
         });
@@ -228,7 +234,7 @@ public class TopicsFragment extends Fragment {
     private void refresh() {
         if (mMNodeID == 0) {
             getTopicsByOK(mRequestURL);
-        } else if (mMNodeID != 0) {
+        } else {
             getTopicsJsonByVolley(mRequestURL);
         }
     }

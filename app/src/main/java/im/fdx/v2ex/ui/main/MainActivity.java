@@ -8,10 +8,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
@@ -22,42 +22,69 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.elvishew.xlog.XLog;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+
+import java.io.IOException;
+
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.ui.LoginActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
 import im.fdx.v2ex.ui.node.AllNodesActivity;
+import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
+import im.fdx.v2ex.utils.TimeHelper;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static im.fdx.v2ex.network.JsonManager.DAILY_CHECK;
+import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final String TAG = "MainActivity";
     private static final int LOG_IN_SUCCEED = 1;
-    private static final int LOG_IN_FAILED = 0;
+    private static final int LOG_IN = 0;
+    private static final int ID_ITEM_CHECK = 33;
     DrawerLayout mDrawer;
     private Notification mNotificationCompat;
     private NotificationManager mNotificationManager;
     private ViewPager mViewPager;
     private MyViewPagerAdapter mAdapter;
+    private NavigationView navigationView;
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("im.fdx.v2ex.preference")) {
+                switchFragment();
+            } else if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
+                changeUIWhenLogin();
+            }
+
+        }
+    };
+    private final IntentFilter intentFilter = new IntentFilter("im.fdx.v2ex.preference");
+    private int i = 0;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
 
-        IntentFilter intentFilter = new IntentFilter("im.fdx.v2ex.preference");
-
-        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                switchFragment();
-            }
-        }, intentFilter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -71,9 +98,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawer.addDrawerListener(mDrawToggle);
         mDrawToggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         View headView = navigationView.getHeaderView(0);
 
@@ -110,17 +136,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_login:
-                startActivityForResult(new Intent(MainActivity.this, LoginActivity.class), LOG_IN_FAILED);
+                startActivityForResult(new Intent(MainActivity.this, LoginActivity.class), LOG_IN);
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
 
         switch (id) {
+            case R.id.nav_testMenu:
+                break;
+            case R.id.nav_testMenu2:
+
+//                changeUIWhenLogin();
+                break;
             case R.id.nav_node:
                 startActivity(new Intent(this, AllNodesActivity.class));
 
@@ -202,8 +234,139 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
+    private void changeUIWhenLogin() {
+        MenuItem item2;
+        if (navigationView.getMenu().findItem(ID_ITEM_CHECK) == null) {
+
+            item2 = navigationView.getMenu().add(R.id.group_nav_main, ID_ITEM_CHECK, 88, R.string.daily_check);
+
+            item2.setIcon(android.R.drawable.ic_menu_myplaces);
+            item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    dailyCheck();
+                    return true;
+                }
+            });
+        }
+
+        this.invalidateOptionsMenu();
+
+    }
+
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if (MyApp.getInstance().isLogin()) {
+            menu.findItem(R.id.menu_login).setVisible(false);
+            XLog.tag(TAG).d("INvisible");
+        } else {
+            menu.findItem(R.id.menu_login).setVisible(true);
+            XLog.tag(TAG).d("visible");
+        }
+        return super.onPrepareOptionsMenu(menu);
+
+
+    }
+
+    private void dailyCheck() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                .headers(HttpHelper.baseHeaders)
+                .url(DAILY_CHECK).get().build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("MainActivity", "daily mission failed");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if (response.code() == 302) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HintUI.t(MainActivity.this, " 还未登录，请先登录");
+                        }
+                    });
+                    return;
+                }
+
+                String body = response.body().string();
+
+                if (body.contains("每日登录奖励已领取")) {
+                    XLog.tag("MainActivity").w("已领取");
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HintUI.t(MainActivity.this, "已领取，明天再来");
+                        }
+                    });
+                    return;
+                }
+
+                String once = parseDailyOnce(body);
+
+                if (once == null) {
+                    XLog.tag(TAG).e("null once");
+                    return;
+                }
+                postDailyCheck(once);
+            }
+        });
+    }
+
+    private void postDailyCheck(String once) {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+                .url(HTTPS_V2EX_BASE + "/mission/daily/redeem?once=" + once)
+                .build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.e("MainActivity", "daily mission failed");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.w("MainActivity", "good");
+            }
+        });
+    }
+
+    private String parseDailyOnce(String string) {
+
+        Element body = Jsoup.parse(string).body();
+        Element onceElement = body.getElementsByAttributeValue("value", "领取 X 铜币").first();
+        if (onceElement == null) {
+            return null;
+        }
+//        location.href = '/mission/daily/redeem?once=83270';
+        String onceOriginal = onceElement.attr("onClick");
+        return TimeHelper.getNum(onceOriginal);
+    }
+
+
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        XLog.tag(TAG).d("onRestart");
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        XLog.tag(TAG).d("onStop");
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        XLog.tag(TAG).d("onDestroy");
     }
 }

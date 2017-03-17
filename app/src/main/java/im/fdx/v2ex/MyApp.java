@@ -1,12 +1,12 @@
 package im.fdx.v2ex;
 
 import android.app.Application;
+import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.elvishew.xlog.LogLevel;
 import com.elvishew.xlog.XLog;
-
-import static java.lang.reflect.Array.getInt;
 
 /**
  * Created by fdx on 2015/8/16.
@@ -17,8 +17,20 @@ public class MyApp extends Application {
      * @deprecated in future
      */
     public static final int USE_API = 1;
-    private static MyApp instance;
     public static final int USE_WEB = 2;
+
+    private static MyApp instance;
+    private SharedPreferences mDefaultSharedPrefs;
+
+    public void setLogin(boolean login) {
+        isLogin = login;
+    }
+
+    public boolean isLogin() {
+        return isLogin;
+    }
+
+    private boolean isLogin;
 
     private int httpMode;
 
@@ -29,10 +41,17 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        XLog.init(BuildConfig.DEBUG ? LogLevel.ALL             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
+                : LogLevel.NONE);
         PreferenceManager.setDefaultValues(this, R.xml.preference, false);
-        initHttpMode();
-        XLog.init();
-        Log.d("APP", "onCreate");
+        mDefaultSharedPrefs = getSharedPreferences("DEFAULT", MODE_PRIVATE);
+        isLogin = mDefaultSharedPrefs.getBoolean("is_login", false);
+
+        httpMode = PreferenceManager.getDefaultSharedPreferences(this).
+                getBoolean("pref_http_mode", false) ? USE_API : USE_WEB;
+        Log.d("MyApp", "onCreate\n"
+                + "\nisLogin:" + isLogin
+                + "\nhttp mode :(1api,2web)" + httpMode);
     }
 
     public int getHttpMode() {
@@ -43,12 +62,4 @@ public class MyApp extends Application {
         httpMode = mode;
     }
 
-    private void initHttpMode() {
-        httpMode = PreferenceManager.getDefaultSharedPreferences(this).
-                getBoolean("pref_http_mode", false) ? USE_API : USE_WEB;
-    }
-
-    public void switchHttpMode() {
-        httpMode = httpMode == USE_API ? USE_WEB : USE_API;
-    }
 }

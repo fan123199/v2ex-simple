@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.details;
 
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -10,19 +12,27 @@ import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -33,6 +43,7 @@ import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.utils.HintUI;
@@ -40,27 +51,48 @@ import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.SmoothManager;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
 
 import static im.fdx.v2ex.MyApp.USE_WEB;
 import static im.fdx.v2ex.MyApp.USE_API;
-import static im.fdx.v2ex.network.HttpHelper.baseRequestBuilder;
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
+import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
 public class DetailsActivity extends AppCompatActivity {
 
 
+    private static final String TAG = DetailsActivity.class.getSimpleName();
     public static final int POSITION_START = 0;
-    private static final int MSG_ERROR_AUTH = 1;
     private static final int MSG_OK_GET_TOPIC = 0;
-    private String TAG = DetailsActivity.class.getSimpleName();
+    private static final int MSG_ERROR_AUTH = 1;
+    private static final int MSG_ERROR_IO = 2;
     private SwipeRefreshLayout mSwipe;
+    private ImageView ivSend;
+    private EditText etReply;
     private DetailsAdapter mDetailsAdapter;
     private TopicModel mTopicHeader;
     private List<ReplyModel> replyLists = new ArrayList<>();
     RecyclerView mRCView;
 
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
+                invalidateOptionsMenu();
+                addFootView();
+            }
+        }
+
+    };
+
+    private void addFootView() {
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
+        linearLayout.setVisibility(View.GONE);
+    }
 
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -71,16 +103,22 @@ public class DetailsActivity extends AppCompatActivity {
                     mSwipe.setRefreshing(false);
                     mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mTopicHeader, replyLists);
                     mRCView.setAdapter(mDetailsAdapter);
+
+                    break;
+                case MSG_ERROR_IO:
+                    mSwipe.setRefreshing(false);
                     break;
                 case MSG_ERROR_AUTH:
                     HintUI.t(DetailsActivity.this, "该主题需要登录查看");
                     DetailsActivity.this.finish();
+                    break;
 
             }
             return false;
         }
     });
     private long mTopicId;
+    private String once;
 
 
     @Override
@@ -112,8 +150,6 @@ public class DetailsActivity extends AppCompatActivity {
 //        mLayoutManager.scrollToPosition(0);
 //        mRCView.setLayoutManager(mLayoutManager);
 
-        mRCView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.HORIZONTAL));
-
         LinearLayoutManager mLayoutManager = new SmoothManager(this);
         mRCView.setLayoutManager(mLayoutManager);
         mRCView.smoothScrollToPosition(POSITION_START);
@@ -128,16 +164,42 @@ public class DetailsActivity extends AppCompatActivity {
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new Handler().post(new Runnable() {
-                    @Override
-                    public void run() {
-                        getReplyData();
-                    }
-                });
-
+                getReplyData();
             }
 
         });
+
+
+        etReply = (EditText) findViewById(R.id.et_post_reply);
+
+        etReply.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                XLog.tag(TAG).d(s.toString());
+                if (TextUtils.isEmpty(s)) {
+                    ivSend.setClickable(false);
+                    ivSend.setImageResource(R.drawable.ic_send_unable);
+
+                } else {
+                    ivSend.setClickable(true);
+                    ivSend.setImageResource(R.drawable.ic_send_enable);
+
+                }
+            }
+        });
+        ivSend = (ImageView) findViewById(R.id.iv_send);
+
 
         parseIntent(getIntent());
 
@@ -162,36 +224,39 @@ public class DetailsActivity extends AppCompatActivity {
             List<String> params = data.getPathSegments();
             if (scheme.equals("https") || scheme.equals("http")) {
                 if (host.contains("v2ex.com")) {//不需要判断，在manifest中已指定
-                    long topicId;
-                    topicId = Long.parseLong(params.get(1));
-                    getTopicAndReplyByOk(topicId);
-
+                    mTopicId = Long.parseLong(params.get(1));
+                    getTopicAndReplyByOk(mTopicId);
                 }
             }
         } else {
             TopicModel topicModel = intent.getParcelableExtra("model");
             mTopicId = topicModel.getId();
-
+            mSwipe.setRefreshing(true);
             if (MyApp.getInstance().getHttpMode() == USE_API) {
                 mTopicHeader = topicModel;
-                mSwipe.setRefreshing(true);
+
                 mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mTopicHeader, replyLists);
                 mRCView.setAdapter(mDetailsAdapter);
+
                 getReplyByVolley();
             } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
                 getTopicAndReplyByOk(mTopicId);
 
             }
         }
+
+
     }
 
     private void getTopicAndReplyByOk(final long topicId) {
-        OK_CLIENT.newCall(baseRequestBuilder
+        OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId)
                 .build()).enqueue(new Callback() {
+
             @Override
             public void onFailure(Call call, IOException e) {
-                XLog.d("failed " + e.getMessage());
+                handler.sendEmptyMessage(MSG_ERROR_IO);
+                XLog.tag("DetailsActivity").d("failed " + e.getMessage());
             }
 
             @Override
@@ -203,25 +268,45 @@ public class DetailsActivity extends AppCompatActivity {
                     return;
                 }
 
-                String body = response.body().string();
+                String bodyStr = response.body().string();
+
+                Element body = Jsoup.parse(bodyStr);
                 mTopicHeader = JsonManager.parseResponseToTopic(body, topicId);
 
-                ArrayList<ReplyModel> replies = JsonManager.parseResponseToReplay(body);
+                List<ReplyModel> replies = JsonManager.parseResponseToReplay(body);
+
+                once = parseOnce(body);
                 replyLists.clear();
                 replyLists.addAll(replies);
                 handler.sendEmptyMessage(MSG_OK_GET_TOPIC);
             }
+
         });
+    }
+
+    private String parseOnce(Element body) {
+
+        Element onceElement = body.getElementsByAttributeValue("name", "once").first();
+        if (onceElement != null) {
+            return onceElement.attr("value");
+        }
+
+        return null;
     }
 
     private void getReplyData() {
 
         if (MyApp.getInstance().getHttpMode() == USE_API) {
-            getReplyByVolley();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    getReplyByVolley();
+                }
+            }).start();
+
         } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
             getTopicAndReplyByOk(mTopicId);
         }
-
 
     }
 
@@ -229,7 +314,30 @@ public class DetailsActivity extends AppCompatActivity {
         Type typeofR = new TypeToken<ArrayList<ReplyModel>>() {
         }.getType();
         MyGsonRequest<ArrayList<ReplyModel>> replies = new MyGsonRequest<>(JsonManager.API_REPLIES + "?topic_id="
-                + mTopicHeader.getId(), typeofR, new ArrayListListener(), new MyErrorListener());
+                + mTopicHeader.getId(), typeofR, new Response.Listener<ArrayList<ReplyModel>>() {
+            @Override
+            public void onResponse(ArrayList<ReplyModel> response) {
+                Log.i(TAG, "GSON DONE: " + ((response == null || response.isEmpty()) ? 0 : response.get(0).toString()));
+                if (response == null || response.size() == 0) {
+                    mSwipe.setRefreshing(false);
+                    Log.d(TAG, "no response got");
+                    HintUI.t(DetailsActivity.this, "无法获取回复");
+                    return;
+                }
+                replyLists.clear();
+                replyLists.addAll(response);
+
+                mSwipe.setRefreshing(false);
+                mDetailsAdapter.notifyDataSetChanged();
+                Log.d(TAG, "done with details");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                JsonManager.handleVolleyError(getApplicationContext(), error);
+                mSwipe.setRefreshing(false);
+            }
+        });
         VolleyHelper.getInstance().addToRequestQueue(replies);
     }
 
@@ -239,10 +347,22 @@ public class DetailsActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_reply, menu);
+
+
+        return super.onPrepareOptionsMenu(menu);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.menu_reply:
+//                postReply();
+
+
+                break;
             case R.id.menu_refresh:
                 mSwipe.setRefreshing(true);
                 getReplyData();
@@ -273,33 +393,48 @@ public class DetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class ArrayListListener implements Response.Listener<ArrayList<ReplyModel>> {
-        @Override
-        public void onResponse(ArrayList<ReplyModel> response) {
-            Log.i(TAG, "GSON DONE: " + ((response == null || response.isEmpty()) ? 0 : response.get(0).toString()));
-            if (response == null || response.size() == 0) {
-                mSwipe.setRefreshing(false);
-                return;
-            }
-            replyLists.clear();
-
-            replyLists.addAll(response);
-
-            mDetailsAdapter.notifyDataSetChanged();
-            Log.d(TAG, "done with details");
-            mSwipe.setRefreshing(false);
-        }
-    }
-
-    private class MyErrorListener implements Response.ErrorListener {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            JsonManager.handleVolleyError(getApplicationContext(), error);
-            mSwipe.setRefreshing(false);
-        }
-    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+    }
+
+    public void postReply(View view) {
+        XLog.tag(TAG).d("I clicked");
+        final String content = etReply.getText().toString();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("content", content)
+                .add("once", once)
+                .build();
+
+
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                .headers(baseHeaders)
+                .header("Origin", JsonManager.HTTPS_V2EX_BASE)
+                .header("Referer", JsonManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .post(requestBody)
+                .build()).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if (response.code() == 302) {
+                    XLog.tag(TAG).d("成功发布");
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            getReplyData();
+                            etReply.setText("");
+                            etReply.clearFocus();
+                        }
+                    });
+                }
+            }
+        });
     }
 }

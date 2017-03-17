@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -14,24 +16,38 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
+import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.JsonManager;
-import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.utils.MyGsonRequest;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
 
 import static android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL;
 
 public class AllNodesActivity extends AppCompatActivity {
     private AllNodesAdapter mAdapter;
+
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                mAdapter.notifyDataSetChanged();
+            }
+
+
+        }
+    };
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,39 +59,42 @@ public class AllNodesActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("所有节点");
 
 
+//        Type type = new TypeToken<ArrayList<NodeModel>>(){}.getType();
+//        MyGsonRequest<ArrayList<NodeModel>> nodeModelMyGsonRequest = new MyGsonRequest<>(JsonManager.URL_ALL_NODE, type,
+//                new Response.Listener<ArrayList<NodeModel>>() {
+//                    @Override
+//                    public void onResponse(ArrayList<NodeModel> response) {
+//                        mAdapter.updateData(response);
+//                        mAdapter.notifyDataSetChanged();
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//            }
+//        });
+//        VolleyHelper.getInstance().addToRequestQueue(nodeModelMyGsonRequest);
 
 
-        Type type = new TypeToken<ArrayList<NodeModel>>(){}.getType();
-        MyGsonRequest<ArrayList<NodeModel>> nodeModelMyGsonRequest = new MyGsonRequest<>(JsonManager.URL_ALL_NODE, type,
-                new Response.Listener<ArrayList<NodeModel>>() {
-                    @Override
-                    public void onResponse(ArrayList<NodeModel> response) {
-                        mAdapter.setData(response);
-                        mAdapter.notifyDataSetChanged();
-                    }
-                }, new Response.ErrorListener() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(JsonManager.URL_ALL_NODE).build()).enqueue(new Callback() {
             @Override
-            public void onErrorResponse(VolleyError error) {
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                Type type = new TypeToken<ArrayList<NodeModel>>() {
+                }.getType();
+                ArrayList<NodeModel> nodeModels = JsonManager.myGson.fromJson(response.body().string(), type);
+                mAdapter.updateData(nodeModels);
+                handler.sendEmptyMessage(0);
             }
         });
-        VolleyHelper.getInstance().addToRequestQueue(nodeModelMyGsonRequest);
 
 
         mAdapter = new AllNodesAdapter();
-//        mAdapter.setData(nodeModels);
         RecyclerView rvNode = (RecyclerView) findViewById(R.id.rv_node);
         RecyclerView.LayoutManager  layoutManager = new StaggeredGridLayoutManager(3, VERTICAL);
-        rvNode.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-                super.onDrawOver(c, parent, state);
-            }
-            @Override
-            public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-                super.getItemOffsets(outRect, view, parent, state);
-
-            }
-        });
         rvNode.setLayoutManager(layoutManager);
 
         rvNode.setAdapter(mAdapter);

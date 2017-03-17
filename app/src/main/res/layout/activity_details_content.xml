@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="im.fdx.v2ex.ui.details.DetailsActivity"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:orientation="vertical">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipe_details"
+        android:layout_weight="1">
+
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/detail_recycler_view"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+    <include
+        layout="@layout/divider"
+        android:layout_height="1dp"
+        android:layout_width="match_parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/foot_container">
+
+        <EditText
+            android:layout_weight="1"
+            android:id="@+id/et_post_reply"
+
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:elevation="3dp"
+            app:elevation="6dp"
+            android:textSize="16sp"
+            tools:text=""
+            android:background="@android:color/transparent"
+            android:minLines="1"
+            android:maxLines="5"
+            android:paddingStart="@dimen/md_left_margin"
+            android:paddingEnd="@dimen/md_left_margin"
+            android:textColorHint="@color/list_background"
+            android:hint="@string/post_reply"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:textAllCaps="false"
+
+            />
+
+        <ImageView
+            android:id="@+id/iv_send"
+            android:onClick="postReply"
+            android:layout_width="wrap_content"
+            android:layout_margin="6dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_send_unable" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

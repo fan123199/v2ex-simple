@@ -54,4 +54,8 @@
     <string name="created_on">创建于</string>
     <string name="introduction">个人简介</string>
     <string name="the_n_member">第 %d 个会员</string>
+    <string name="topic_number">主题数 %d</string>
+    <string name="daily_check">每日签到</string>
+    <string name="logout">登出</string>
+    <string name="all_nodes">全部节点</string>
 </resources>

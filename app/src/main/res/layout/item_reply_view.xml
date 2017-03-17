@@ -73,13 +73,13 @@
     <include
         layout="@layout/divider"
         android:id="@+id/divider"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_alignLeft="@+id/tv_replier"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignStart="@+id/tv_replier"
         android:layout_below="@id/tv_reply_content"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:layout_width="match_parent" />
 
     <TextView

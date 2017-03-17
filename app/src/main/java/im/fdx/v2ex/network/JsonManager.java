@@ -9,13 +9,9 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
 import com.android.volley.NoConnectionError;
 import com.android.volley.ParseError;
-import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpStack;
-import com.android.volley.toolbox.StringRequest;
 import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 
@@ -25,8 +21,10 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
@@ -37,14 +35,7 @@ import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeHelper;
 
-import static android.R.attr.defaultHeight;
-import static android.R.attr.foreground;
-import static android.R.attr.name;
-import static android.R.attr.stackFromBottom;
-import static android.R.attr.value;
-import static android.R.string.no;
 import static java.lang.Integer.parseInt;
-import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
 
 /**
  * Created by a708 on 15-8-13.
@@ -54,7 +45,7 @@ import static org.jsoup.nodes.Document.OutputSettings.Syntax.html;
 
 public class JsonManager {
 
-    public static final String TAG = JsonManager.class.getSimpleName();
+    private static final String TAG = JsonManager.class.getSimpleName();
 
     public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
     public static final String HTTP_V2EX_BASE = "http://www.v2ex.com";
@@ -66,6 +57,7 @@ public class JsonManager {
 
     public static final String API_TOPIC = HTTPS_V2EX_BASE + "/api/topics/show.json";
 
+    public static final String DAILY_CHECK = "https://www.v2ex.com/mission/daily";
 
     public static final String SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup";
 
@@ -109,7 +101,7 @@ public class JsonManager {
 
     public static Gson myGson = new Gson();
 
-    public static ArrayList<TopicModel> parseTopicLists(String string, int source) {
+    public static List<TopicModel> parseTopicLists(String string, int source) {
         ArrayList<TopicModel> topics = new ArrayList<>();
 
         //用okhttp模拟登录的话获取不到Content内容，必须再一步。
@@ -132,15 +124,23 @@ public class JsonManager {
                 items) {
             TopicModel topicModel = new TopicModel();
             String title = item.getElementsByClass("item_title").first().text();
+
             String linkWithReply = item.getElementsByClass("item_title").first()
                     .getElementsByTag("a").first().attr("href");
             int replies = Integer.parseInt(linkWithReply.split("reply")[1]);
-            long id = Long.parseLong(linkWithReply.substring(3, 9));
+            Pattern p = Pattern.compile("(?<=/t/)\\d+");
+            Matcher matcher = p.matcher(linkWithReply);
+
+            long id;
+            if (matcher.find()) {
+                id = Long.parseLong(matcher.group());
+            } else {
+                return Collections.emptyList();
+            }
+
 
             NodeModel nodeModel = new NodeModel();
             if (source == FROM_HOME) {
-
-
                 //  <a class="node" href="/go/career">职场话题</a>
                 String nodeTitle = item.getElementsByClass("node").text();
                 String nodeName = item.getElementsByClass("node").attr("href").substring(4);
@@ -153,7 +153,7 @@ public class JsonManager {
                 String nodeTitle = "";
                 if (strHeader.contains("›")) {
                     nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
-                    XLog.d("nodeTitle: " + nodeTitle);
+                    XLog.tag(TAG).d("nodeTitle: " + nodeTitle);
                 }
 
                 Elements elements = html.head().getElementsByTag("script");
@@ -180,13 +180,20 @@ public class JsonManager {
 
 
             String smallItem = item.getElementsByClass("small fade").first().text();
-            XLog.d("small: " + smallItem);
+//            XLog.d("small: " + smallItem);
             long created;
             if (!smallItem.contains("最后回复")) {
                 created = -1L;
             } else {
-                String createdOriginal = smallItem.split("•")[2];
-
+                String createdOriginal = "";
+                switch (source) {
+                    case FROM_HOME:
+                        createdOriginal = smallItem.split("•")[2];
+                        break;
+                    case FROM_NODE:
+                        createdOriginal = smallItem.split("•")[1];
+                        break;
+                }
                 created = TimeHelper.toLong(createdOriginal);
             }
             topicModel.setReplies(replies);
@@ -208,15 +215,20 @@ public class JsonManager {
         Document html = Jsoup.parse(response);
         Element body = html.body();
         Element header = body.getElementsByClass("header").first();
-        String content = header.getElementsByClass("f12 gray").first().text();
+        Element contentElement = header.getElementsByClass("f12 gray").first();
+        String content = contentElement == null ? "" : contentElement.text();
         String number = header.getElementsByTag("strong").first().text();
         String strHeader = header.text();
         String nodeTitle = "";
         if (strHeader.contains("›")) {
             nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
-            XLog.d("nodeTitle: " + nodeTitle);
+            XLog.tag(TAG).d("nodeTitle: " + nodeTitle);
         }
-        String avatarLarge = header.getElementsByTag("img").first().attr("src");
+        if (header.getElementsByTag("img").first() != null) {
+            String avatarLarge = header.getElementsByTag("img").first().attr("src");
+            nodeModel.setAvatar_large(avatarLarge);
+            nodeModel.setAvatar_normal(avatarLarge.replace("large", "normal"));
+        }
 
         Elements elements = html.head().getElementsByTag("script");
         Element script = elements.last();
@@ -231,11 +243,11 @@ public class JsonManager {
         nodeModel.setTitle(nodeTitle);
         nodeModel.setTopics(Integer.parseInt(number));
         nodeModel.setHeader(content);
-        nodeModel.setAvatar_large(avatarLarge);
-        nodeModel.setAvatar_normal(avatarLarge.replace("large", "normal"));
+
         return nodeModel;
     }
 
+    //// TODO: 2017/3/16 只有一页回复，这样是不行的
     public static int[] parsePage(Element body) {
 
         int currentPage = 0;
@@ -253,19 +265,19 @@ public class JsonManager {
     }
 
     @NonNull
-    public static TopicModel parseResponseToTopic(String bodyString, long topicId) {
+    public static TopicModel parseResponseToTopic(Element body, long topicId) {
         TopicModel topicModel = new TopicModel(topicId);
-        Document html = Jsoup.parse(bodyString);
-        Element body = html.body();
 
         String title = body.getElementsByTag("h1").text();
-        String content = body.getElementsByClass("topic_content").first().text();
-        String contentRendered = body.getElementsByClass("topic_content").first().html();
+        Element contentElement = body.getElementsByClass("topic_content").first();
+
+        String content = contentElement == null ? "" : contentElement.text();
+        String contentRendered = contentElement == null ? "" : contentElement.html();
         String createdUnformed = body.getElementsByClass("header").
                 first().getElementsByClass("gray").first().ownText(); // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
         String time = createdUnformed.split("·")[1];
-        XLog.w("DetailsActivity", createdUnformed + "||| " + time);
+        XLog.tag(TAG).d(createdUnformed + "||| " + time);
         long created = TimeHelper.toLong(time);
 //long created = -1L;
 
@@ -285,7 +297,7 @@ public class JsonManager {
             }
         }
 
-        XLog.d("replyNum  = " + replyNum);
+//        XLog.tag(TAG).d("replyNum  = " + replyNum);
         int replies;
         if (!flag) {
             replies = 0;
@@ -326,10 +338,9 @@ public class JsonManager {
         return topicModel;
     }
 
-    public static ArrayList<ReplyModel> parseResponseToReplay(String bodyString) {
+    public static List<ReplyModel> parseResponseToReplay(Element body) {
 
         ArrayList<ReplyModel> replyModels = new ArrayList<>();
-        Element body = Jsoup.parse(bodyString).body();
 
         Elements items = body.getElementsByAttributeValueStarting("id", "r_");
         for (Element item :
@@ -341,7 +352,7 @@ public class JsonManager {
             String username = item.getElementsByTag("strong").first().
                     getElementsByAttributeValueStarting("href", "/member/").first().text();
 
-            XLog.d(avatar);
+//            XLog.d(avatar);
             memberModel.setAvatar_large(avatar);
             memberModel.setAvatar_normal(avatar.replace("large", "normal"));
             memberModel.setUsername(username);
@@ -355,7 +366,7 @@ public class JsonManager {
             }
 
             String createdOriginal = item.getElementsByClass("fade small").text();
-            XLog.i(createdOriginal);
+//            XLog.i(createdOriginal);
             Element replyContent = item.getElementsByClass("reply_content").first();
 //            replyModel.setCreated(-1L);
             replyModel.setCreated(TimeHelper.toLong(createdOriginal));

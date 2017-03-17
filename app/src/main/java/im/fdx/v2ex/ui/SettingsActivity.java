@@ -1,7 +1,10 @@
 package im.fdx.v2ex.ui;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.Preference;
@@ -16,13 +19,17 @@ import android.view.View;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.network.HttpHelper;
+import im.fdx.v2ex.network.cookie.MyCookieJar;
 import im.fdx.v2ex.utils.HintUI;
+import okhttp3.CookieJar;
 
-import static android.R.attr.key;
+import static android.os.Build.VERSION_CODES.M;
 import static im.fdx.v2ex.MyApp.USE_API;
 import static im.fdx.v2ex.MyApp.USE_WEB;
 
 public class SettingsActivity extends AppCompatActivity {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +65,18 @@ public class SettingsActivity extends AppCompatActivity {
         public static final String PREF_WIFI = "pref_wifi";
         public static final String PREF_RATES = "pref_rates";
         public static final String PREF_MODE = "pref_http_mode";
+        private static final String PREF_LOGOUT = "pref_logout";
         SharedPreferences sharedPreferences;
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
+                    findPreference(PREF_LOGOUT).setEnabled(true);
+                }
+            }
+        };
+
 
         public SettingsFragment() {
         }
@@ -83,6 +101,30 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             });
 
+            findPreference(PREF_LOGOUT).setShouldDisableView(true);
+            findPreference(PREF_LOGOUT).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    removeCookie();
+                    notifyAllActivities();
+                    findPreference(PREF_LOGOUT).setEnabled(false);
+
+                    return true;
+                }
+            });
+
+        }
+
+        private void notifyAllActivities() {
+
+            MyApp.getInstance().setLogin(false);
+            Intent intent = new Intent("im.fdx.v2ex.event.logout");
+            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
+
+        }
+
+        private void removeCookie() {
+            HttpHelper.myCookieJar.clear();
         }
 
         @Override
@@ -100,7 +142,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            // TODO: 2015/9/15
             Log.w("PREF", key);
 
             switch (key) {
@@ -113,9 +154,7 @@ public class SettingsActivity extends AppCompatActivity {
                     LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(noticeChange);
 
                     break;
-                case PREF_WIFI:
 
-                    break;
             }
         }
 

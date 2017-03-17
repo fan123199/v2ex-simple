@@ -96,13 +96,13 @@ public class TimeHelper {
 
         }
         } catch (Exception ignored) {
-            XLog.d("timestr" + timeStr);
+            XLog.tag("TimeHelper").d("timestr error: |" + timeStr);
         }
 
         return created;
     }
 
-    private static String getNum(String str) {
+    public static String getNum(String str) {
         String str2 = "";
         if (str != null && !"".equals(str)) {
             for (int i = 0; i < str.length(); i++) {

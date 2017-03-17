@@ -1,5 +1,6 @@
 package im.fdx.v2ex.view;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,9 +8,11 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
@@ -55,6 +58,7 @@ public class GoodTextView extends TextView {
         this.context = context;
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public GoodTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         this.context = context;
@@ -62,7 +66,9 @@ public class GoodTextView extends TextView {
 
 
     public void setGoodText(String text) {
-
+        if (TextUtils.isEmpty(text)) {
+            return;
+        }
         String formContent = ContentUtils.format(text);
         final Spanned spannedText;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -138,8 +144,9 @@ public class GoodTextView extends TextView {
 
         @Override
         public Drawable getDrawable(String source) {
-            Log.i(TAG, "before got Image" + source);
-            ImageLoader.ImageContainer response = VolleyHelper.getInstance().getImageLoader().get(source, new ImageLoader.ImageListener() {
+            Log.i(TAG, "before got Image: " + source);
+            ImageLoader.ImageContainer response = VolleyHelper.getInstance().getImageLoader()
+                    .get(source, new ImageLoader.ImageListener() {
                 @Override
                 public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                     if (response != null) {

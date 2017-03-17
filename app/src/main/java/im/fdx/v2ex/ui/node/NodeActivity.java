@@ -30,19 +30,21 @@ import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.ui.main.MainActivity;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.Request;
 
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 import static im.fdx.v2ex.MyApp.USE_WEB;
 import static im.fdx.v2ex.MyApp.USE_API;
-import static im.fdx.v2ex.network.HttpHelper.baseRequestBuilder;
 import static im.fdx.v2ex.network.JsonManager.API_TOPIC;
 
 
@@ -50,6 +52,7 @@ public class NodeActivity extends AppCompatActivity {
     private static final String TAG = NodeActivity.class.getSimpleName();
     private static final int MSG_GET_TOPICS = 1;
     private static final int MSG_GET_NODE_INFO = 0;
+    private static final int MSG_ERROR_AUTH = 2;
     RelativeLayout rlNode;
     NetworkImageView ivNodeIcon;
     TextView tvNodeName;
@@ -72,9 +75,12 @@ public class NodeActivity extends AppCompatActivity {
                 ivNodeIcon.setImageUrl(mNodeModel.getAvatarLargeUrl(), imageloader);
                 tvNodeName.setText(mNodeModel.getTitle());
                 tvNodeHeader.setText(mNodeModel.getHeader());
-                tvNodeNum.setText((String.valueOf(mNodeModel.getTopics())));
+                tvNodeNum.setText(getString(R.string.topic_number, mNodeModel.getTopics()));
             } else if (msg.what == MSG_GET_TOPICS) {
                 mAdapter.notifyDataSetChanged();
+            } else if (msg.what == MSG_ERROR_AUTH) {
+                HintUI.t(NodeActivity.this, "需要登录");
+                finish();
             }
         }
     };
@@ -96,7 +102,7 @@ public class NodeActivity extends AppCompatActivity {
 
 
         RecyclerView rvTopicsOfNode = (RecyclerView) findViewById(R.id.rv_topics_of_node);
-//        mAdapter.setData(mTopicModels);
+//        mAdapter.updateData(mTopicModels);
 
 
         mAdapter = new TopicsRVAdapter(this, mTopicModels);
@@ -110,6 +116,7 @@ public class NodeActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                getNodeInfoAndTopicByOK(nodeName);
 
             }
         });
@@ -128,13 +135,10 @@ public class NodeActivity extends AppCompatActivity {
             nodeName = intent.getStringExtra(Keys.KEY_NODE_NAME);
 
             if (MyApp.getInstance().getHttpMode() == USE_API) {
-                String requestURL = JsonManager.API_NODE + "?name=" + nodeName;
-                Log.i(TAG, requestURL);
-                getNodeInfoJson(requestURL);
+                getNodeInfoJson(JsonManager.API_NODE + "?name=" + nodeName);
                 String url = API_TOPIC + "?node_name=" + nodeName;
                 getTopicsJsonByVolley(url);
             } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
-
                 getNodeInfoAndTopicByOK(nodeName);
             }
         }
@@ -144,13 +148,18 @@ public class NodeActivity extends AppCompatActivity {
     private void getNodeInfoAndTopicByOK(final String nodeName) {
         String requestURL = JsonManager.HTTPS_V2EX_BASE + "/go/" + nodeName;
         XLog.d("url:" + requestURL);
-        OK_CLIENT.newCall(baseRequestBuilder.url(requestURL).build()).enqueue(new Callback() {
+        OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders).url(requestURL).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
+
+                if (response.code() == 302) {
+                    handler.sendEmptyMessage(MSG_ERROR_AUTH);
+                    return;
+                }
                 String body = response.body().string();
 
                 mNodeModel = JsonManager.parseToNode(body);
@@ -176,20 +185,16 @@ public class NodeActivity extends AppCompatActivity {
             public void onResponse(ArrayList<TopicModel> response) {
                 if (mTopicModels.equals(response)) {
                     mAdapter.notifyDataSetChanged();
-//                    mSwipeLayout.setRefreshing(false);
                     return;
                 }
                 mTopicModels.clear();
                 mTopicModels.addAll(0, response);
-//                mAdapter.setData(mTopicModels);
                 mAdapter.notifyDataSetChanged();
-//                mSwipeLayout.setRefreshing(false);
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 JsonManager.handleVolleyError(NodeActivity.this, error);
-//                mSwipeLayout.setRefreshing(false);
             }
         });
 
