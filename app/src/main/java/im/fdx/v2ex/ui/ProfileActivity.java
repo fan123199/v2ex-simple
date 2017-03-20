@@ -33,6 +33,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
@@ -41,6 +42,7 @@ import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
+import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -84,9 +86,9 @@ public class ProfileActivity extends AppCompatActivity {
             if (msg.what == MSG_GET_USER_INFO) {
                 showUser((String) msg.obj);
             } else if (msg.what == MSG_GET_TOPIC) {
+                mAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
 //                HintUI.t(ProfileActivity.this,"get topic data");
-                mAdapter.notifyDataSetChanged();
             }
             return false;
         }
@@ -168,14 +170,10 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void handleAlphaOnTitle(float percentage) {
-        if (percentage == 0) {
-            collapsingToolbarLayout.setTitle("");//设置title为EXPANDED
-        } else if (percentage >= 1) {
-            collapsingToolbarLayout.setTitle(username);//设置title不显示
-        } else if (percentage > 0.8f && percentage < 1f) {
+        if (percentage > 0.8f && percentage <= 1f) {
             cardView.setVisibility(View.INVISIBLE);
             collapsingToolbarLayout.setTitle(username);//设置title不显示
-        } else if (percentage <= 0.8f && percentage > 0f) {
+        } else if (percentage <= 0.8f && percentage >= 0f) {
             cardView.setVisibility(View.VISIBLE);
             collapsingToolbarLayout.setTitle("");//设置title不显示
         }
@@ -207,9 +205,9 @@ public class ProfileActivity extends AppCompatActivity {
                 urlUserInfo = API_USER + "?username=" + username;
             }
         } else if (intent.getExtras() != null) {
-            username = getIntent().getExtras().getString("username");
+            username = getIntent().getExtras().getString(Keys.KEY_USERNAME);
             urlUserInfo = API_USER + "?username=" + username;
-        } else {
+        } else if (BuildConfig.DEBUG) {
             username = "fan123199";
             urlUserInfo = API_USER + "?username=" + username;  //fdx's profile
         }

@@ -26,7 +26,7 @@ import android.os.Parcelable;
 //        "last_modified" : 1453030169
 //        }
 
-public class ReplyModel implements Parcelable {
+public class ReplyModel extends BaseModel implements Parcelable {
 
     private long id;
     private String content;

@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:key="pref_communication"
+        android:key="group_general"
         android:title="@string/general">
         <SwitchPreference
 
@@ -22,16 +22,11 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory
-        android:title="@string/other">
+    <PreferenceCategory android:title="@string/other">
         <Preference
             android:key="pref_rates"
             android:title="@string/rate" />
     </PreferenceCategory>
-    <Preference
-        android:key="pref_logout"
-        android:title="@string/logout"
-        android:order="0" />
 
 
 </PreferenceScreen>

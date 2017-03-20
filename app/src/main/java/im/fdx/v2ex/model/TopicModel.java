@@ -47,7 +47,7 @@ import im.fdx.v2ex.R;
 //        },
 //        {some of above}
 //    ]
-public class TopicModel implements Parcelable {
+public class TopicModel extends BaseModel implements Parcelable {
 
     private long id;
     private String title;

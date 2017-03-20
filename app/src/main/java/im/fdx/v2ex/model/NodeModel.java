@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
 //        "avatar_large" : "//cdn.v2ex.co/navatar/8613/985e/90_large.png?m=1452823690"
 //        }
 
-public class NodeModel implements Parcelable {
+public class NodeModel extends BaseModel implements Parcelable {
 
 
     private long id;
@@ -154,15 +154,15 @@ public class NodeModel implements Parcelable {
     }
 
     public String getAvatarMiniUrl() {
-        return "http:" + getAvatar_mini();
+        return "http:" + avatar_mini;
     }
 
     public String getAvatarNormalUrl() {
-        return "http:" + getAvatar_normal();
+        return "http:" + avatar_normal;
     }
 
     public String getAvatarLargeUrl() {
-        return "http:" + getAvatar_large();
+        return "http:" + avatar_large;
     }
 
 
@@ -195,6 +195,11 @@ public class NodeModel implements Parcelable {
         dest.writeString(this.avatar_mini);
         dest.writeString(this.avatar_normal);
         dest.writeString(this.avatar_large);
+    }
+
+    @Override
+    public String toString() {
+        return title + "/ " + name;
     }
 
     protected NodeModel(Parcel in) {

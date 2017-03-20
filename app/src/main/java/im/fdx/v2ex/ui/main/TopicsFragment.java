@@ -20,6 +20,9 @@ import com.android.volley.VolleyError;
 import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -174,9 +177,12 @@ public class TopicsFragment extends Fragment {
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
+
+                Document html = Jsoup.parse(response.body().string());
+                List<TopicModel> c = JsonManager.parseTopicLists(html, 0);
                 mTopicModels.clear();
-                mTopicModels.addAll(JsonManager.parseTopicLists(response.body().string(), 0));
-                XLog.tag("TopicFragment").d("done, parse");
+                mTopicModels.addAll(c);
+                XLog.tag("TopicFragment").d("done, get topic models");
                 handler.sendEmptyMessage(MSG_GET_DATA_BY_OK);
             }
         });
@@ -242,6 +248,5 @@ public class TopicsFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-
     }
 }

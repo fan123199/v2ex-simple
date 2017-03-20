@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import com.elvishew.xlog.XLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ import im.fdx.v2ex.utils.ContentUtils;
  * fdx will maintain it
  */
 
-public class GoodTextView extends TextView {
+public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
     private Context context;
     private static final String TAG = GoodTextView.class.getSimpleName();
@@ -58,11 +59,6 @@ public class GoodTextView extends TextView {
         this.context = context;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public GoodTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        this.context = context;
-    }
 
 
     public void setGoodText(String text) {
@@ -79,26 +75,29 @@ public class GoodTextView extends TextView {
 
 
         SpannableStringBuilder htmlSpannable = new SpannableStringBuilder(spannedText);
-//        SpannableStringBuilder htmlSpannable = (SpannableStringBuilder)spannedText;
-
 //
         //分离 图片 span
         ImageSpan[] imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length(), ImageSpan.class);
 
 
-        final List<String> imageUrls = new ArrayList<>();
-        List<String> imagePositions = new ArrayList<>();
+//        final List<String> imageUrls = new ArrayList<>();
+//        List<String> imagePositions = new ArrayList<>();
         for (final ImageSpan imageSpan : imageSpans) {
-            final String imageUrl = imageSpan.getSource();
-            int start = htmlSpannable.getSpanStart(imageSpan);
-            int end = htmlSpannable.getSpanEnd(imageSpan);
 
-            imagePositions.add(start + "/" + end);
-            imageUrls.add(imageUrl);
+            final String imageUrl = imageSpan.getSource();
+            final int start = htmlSpannable.getSpanStart(imageSpan);
+            final int end = htmlSpannable.getSpanEnd(imageSpan);
+
+            XLog.tag("GoodTextView-fdx").d(imageSpan.getSource());
+            XLog.tag("GoodTextView-fdx").d(start + "|" + end);
+
+//            imageUrls.add(imageUrl);
             ClickableSpan clickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
-                    getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl)));
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl));
+                    context.startActivity(intent);
                 }
             };
 
@@ -108,13 +107,10 @@ public class GoodTextView extends TextView {
                         clickableSpans) {
                     htmlSpannable.removeSpan(span2);
                 }
-                htmlSpannable.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
             }
-
+            htmlSpannable.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
-        setText(spannedText);
-
-
+        setText(htmlSpannable);
         //不设置这一句，点击图片会跑动。
         setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -140,10 +136,12 @@ public class GoodTextView extends TextView {
 
     private class MyImageGetter implements Html.ImageGetter {
 
-        final BitmapHolder bitmapHolder = new BitmapHolder();
+
 
         @Override
         public Drawable getDrawable(String source) {
+            //怪不得一样的图片。放在了类里。
+            final BitmapHolder bitmapHolder = new BitmapHolder();
             Log.i(TAG, "before got Image: " + source);
             ImageLoader.ImageContainer response = VolleyHelper.getInstance().getImageLoader()
                     .get(source, new ImageLoader.ImageListener() {
@@ -161,10 +159,8 @@ public class GoodTextView extends TextView {
                             bitmapHolder.setBounds(0, 0, width, height);
 
                             //很关键，然而我一无所知,必须先invalidate，然后setText
-                            invalidate();
+//                            postInvalidate();
                             setText(getText());
-//                                        postInvalidate();
-//                                    drawable.invalidateSelf();
 
                             Log.i(TAG, "got Image");
                         }
@@ -177,8 +173,6 @@ public class GoodTextView extends TextView {
                 }
             }, getWidth(), getHeight(), ImageView.ScaleType.FIT_CENTER);
 
-
-            Log.i(TAG, "before return");
             return bitmapHolder;
         }
     }

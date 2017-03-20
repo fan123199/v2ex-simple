@@ -101,12 +101,12 @@ public class JsonManager {
 
     public static Gson myGson = new Gson();
 
-    public static List<TopicModel> parseTopicLists(String string, int source) {
+    public static List<TopicModel> parseTopicLists(Document html, int source) {
         ArrayList<TopicModel> topics = new ArrayList<>();
 
         //用okhttp模拟登录的话获取不到Content内容，必须再一步。
 
-        Document html = Jsoup.parse(string);
+//        Document html = Jsoup.parse(string);
         Element body = html.body();
 
         Elements items;
@@ -209,10 +209,10 @@ public class JsonManager {
         return topics;
     }
 
-    public static NodeModel parseToNode(String response) {
+    public static NodeModel parseToNode(Document html) {
 
         NodeModel nodeModel = new NodeModel();
-        Document html = Jsoup.parse(response);
+//        Document html = Jsoup.parse(response);
         Element body = html.body();
         Element header = body.getElementsByClass("header").first();
         Element contentElement = header.getElementsByClass("f12 gray").first();
@@ -283,15 +283,15 @@ public class JsonManager {
 
         String replyNum = "";
         Elements grays = body.getElementsByClass("gray");
-        boolean flag = false;
+        boolean hasReply = false;
         for (Element gray :
                 grays) {
-            if (gray.text().contains("回复")) {
+            if (gray.text().contains("回复") && gray.text().contains("|")) {
                 String wholeText = gray.text();
                 int index = wholeText.indexOf("回复");
                 replyNum = wholeText.substring(0, index - 1);
                 if (!TextUtils.isEmpty(replyNum)) {
-                    flag = true;
+                    hasReply = true;
                 }
                 break;
             }
@@ -299,7 +299,7 @@ public class JsonManager {
 
 //        XLog.tag(TAG).d("replyNum  = " + replyNum);
         int replies;
-        if (!flag) {
+        if (!hasReply) {
             replies = 0;
         } else {
             replies = parseInt(replyNum);

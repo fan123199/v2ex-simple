@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.model.BaseModel;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
@@ -28,6 +29,7 @@ import im.fdx.v2ex.utils.TimeHelper;
 import im.fdx.v2ex.view.GoodTextView;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
+import static android.media.CamcorderProfile.get;
 
 /**
  * Created by fdx on 15-9-7.
@@ -42,22 +44,26 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     private TopicModel mHeader;
     private List<ReplyModel> mReplyList = new ArrayList<>();
-    private ImageLoader mImageLoader;
+    private ImageLoader mImageLoader = VolleyHelper.getInstance().getImageLoader();
     private Context mContext;
+    private List<BaseModel> mAllList;
     private int mTopicId;
 
     public DetailsAdapter(Context context, TopicModel header, List<ReplyModel> replyList) {
         mContext = context;
         mHeader = header;
         mReplyList = replyList;
-        mImageLoader = VolleyHelper.getInstance().getImageLoader();
+    }
+
+    public DetailsAdapter(Context context, List<BaseModel> allList) {
+        mContext = context;
+        mAllList = allList;
     }
 
     public DetailsAdapter(Context context, int topicId, List<ReplyModel> replyList) {
         mContext = context;
         mTopicId = topicId;
         mReplyList = replyList;
-        mImageLoader = VolleyHelper.getInstance().getImageLoader();
 
     }
 
@@ -93,9 +99,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (getItemViewType(position) == TYPE_HEADER) {
 
             TopicsRVAdapter.MainViewHolder MVHolder = (TopicsRVAdapter.MainViewHolder) holder;
-            final TopicModel topic = mHeader;
+            final TopicModel topic = ((TopicModel) mAllList.get(position));
 //            MVHolder.itemView.setTop(position);
             MVHolder.tvTitle.setText(topic.getTitle());
+            MVHolder.tvContent.setSelected(true);
             MVHolder.tvContent.setGoodText(topic.getContent_rendered());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                MVHolder.tvContent.setTransitionName("header");
@@ -128,12 +135,12 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             // if(!mReplyList.isEmpty()) {
             //    因为上一个if语句默认了replylist不可能为空
-            final ReplyModel replyItem = mReplyList.get(position - 1);
+            final ReplyModel replyItem = (ReplyModel) mAllList.get(position);
             itemVH.tvReplyTime.setText(TimeHelper.getRelativeTime(replyItem.getCreated()));
             itemVH.tvReplier.setText(replyItem.getMember().getUsername());
             itemVH.tvThanks.setText(String.format(mContext.getResources().
                     getString(R.string.show_thanks), replyItem.getThanks()));
-            itemVH.tvContent.setSelected(true);
+//            itemVH.tvContent.setSelected(true);
             itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
             itemVH.tvRow.setText(String.valueOf(position));
 
@@ -159,24 +166,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
 
     }
-    private void openNode(TopicModel topicModel) {
-        Intent itNode = new Intent();
-        itNode.setAction("im.fdx.v2ex.intent.node");
-        itNode.putExtra(Keys.KEY_NODE_NAME, topicModel.getNode().getName());
-        mContext.startActivity(itNode);
-    }
-
-    private void openProfile(Object model) {
-        Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
-
-        itProfile.putExtra("username", ((ReplyModel) model).getMember().getUsername());
-        mContext.startActivity(itProfile);
-    }
-
 
     @Override
     public int getItemCount() {
-        return mReplyList.size() + 1;
+        return mAllList.size();
     }
 
     @Override

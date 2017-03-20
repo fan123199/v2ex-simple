@@ -23,6 +23,8 @@ public class Keys {
     public static final String KEY_TAB = "tab";
     public static final String KEY_COLUMN_ID = "column_id";
 
+    public static final String KEY_TOPIC_ID = "topic_id";
+
     //node API
     public static final String  KEY_NODE_ID = "id";
     public static final String KEY_NODE_NAME = "name";
@@ -40,7 +42,7 @@ public class Keys {
     //user API
     String KEY_STATUS = "status";
     String KEY_USER_ID = "id";
-    String KEY_USERNAME = "username";
+    public static final String KEY_USERNAME = "username";
     String KEY_WEBSITE = "website";
     String KEY_TWITTER = "twitter";
     String KEY_PSN = "psn";

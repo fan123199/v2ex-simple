@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
@@ -49,6 +50,7 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.icu.lang.UCharacter.JoiningGroup.DAL;
 import static im.fdx.v2ex.network.JsonManager.DAILY_CHECK;
 import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 
@@ -68,21 +70,35 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            XLog.tag(TAG).d("getAction: " + intent.getAction());
             if (intent.getAction().equals("im.fdx.v2ex.preference")) {
                 switchFragment();
             } else if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
                 changeUIWhenLogin();
+                setUserInfo();
             }
 
         }
     };
-    private final IntentFilter intentFilter = new IntentFilter("im.fdx.v2ex.preference");
+    private ViewPager.OnPageChangeListener listener;
+
+    private void setUserInfo() {
+
+
+    }
+
     private int i = 0;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+
+
+        IntentFilter intentFilter = new IntentFilter("im.fdx.v2ex.preference");
+        intentFilter.addAction(LoginActivity.action_login);
+        intentFilter.addAction("im.fdx.v2ex.event.logout");
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
@@ -98,22 +114,66 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mDrawer.addDrawerListener(mDrawToggle);
         mDrawToggle.syncState();
 
+        mDrawer.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                Menu menu = navigationView.getMenu();
+                for (int j = 0; j < menu.size(); j++) {
+                    menu.getItem(j).setChecked(false);
+                }
+            }
+        });
+
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        if (MyApp.getInstance().isLogin()) {
+            changeUIWhenLogin();
+        }
         View headView = navigationView.getHeaderView(0);
 
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mAdapter = new MyViewPagerAdapter(getFragmentManager(), MainActivity.this);
         mViewPager.setAdapter(mAdapter);
 
+        listener = new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        };
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        mViewPager.addOnPageChangeListener(listener);
+
 
         //这句话可以省略，主要用于如果在其他地方对tablayout自定义title的话，
         // 忽略自定义，只从pageAdapter中获取title
 //        mTabLayout.setTabsFromPagerAdapter(mAdapter);
-        assert mTabLayout != null;
-        mTabLayout.setupWithViewPager(mViewPager);
+        if (mTabLayout != null) {
+            //内部实现就是加入一堆的listener给viewpager，不用自己实现
+            mTabLayout.setupWithViewPager(mViewPager);
+
+        }
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_main);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CreateTopicActivity.class));
+
+            }
+        });
 
     }
 
@@ -147,10 +207,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
 
         switch (id) {
+
+            case ID_ITEM_CHECK:
+
+                dailyCheck();
+                break;
             case R.id.nav_testMenu:
                 break;
             case R.id.nav_testMenu2:
 
+//                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("im.fdx.v2ex.test"));
 //                changeUIWhenLogin();
                 break;
             case R.id.nav_node:
@@ -228,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         mViewPager.removeAllViews();
         mViewPager.setAdapter(new MyViewPagerAdapter(getFragmentManager(), this));
+
 //        mAdapter.initFragment();
 //        mAdapter.notifyDataSetChanged();
 
@@ -239,15 +306,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (navigationView.getMenu().findItem(ID_ITEM_CHECK) == null) {
 
             item2 = navigationView.getMenu().add(R.id.group_nav_main, ID_ITEM_CHECK, 88, R.string.daily_check);
-
             item2.setIcon(android.R.drawable.ic_menu_myplaces);
-            item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                @Override
-                public boolean onMenuItemClick(MenuItem item) {
-                    dailyCheck();
-                    return true;
-                }
-            });
+            item2.setCheckable(true);
+//            item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//                @Override
+//                public boolean onMenuItemClick(MenuItem item) {
+//                    dailyCheck();
+//                    return true;
+//                }
+//            });
         }
 
         this.invalidateOptionsMenu();
@@ -260,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (MyApp.getInstance().isLogin()) {
             menu.findItem(R.id.menu_login).setVisible(false);
-            XLog.tag(TAG).d("INvisible");
+            XLog.tag(TAG).d("Invisible");
         } else {
             menu.findItem(R.id.menu_login).setVisible(true);
             XLog.tag(TAG).d("visible");
@@ -327,7 +394,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                Log.w("MainActivity", "good");
+                Log.w("MainActivity", "daily check ok");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        HintUI.t(MainActivity.this, "领取成功");
+                    }
+                });
             }
         });
     }
@@ -348,25 +421,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onPause() {
         super.onPause();
+        XLog.tag(TAG).d("onRestart");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         XLog.tag(TAG).d("onRestart");
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         XLog.tag(TAG).d("onStop");
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         XLog.tag(TAG).d("onDestroy");
+        mViewPager.clearOnPageChangeListeners();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 }

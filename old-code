@@ -1,0 +1,74 @@
+
+## get all node
+
+//        Type type = new TypeToken<ArrayList<NodeModel>>(){}.getType();
+//        MyGsonRequest<ArrayList<NodeModel>> nodeModelMyGsonRequest = new MyGsonRequest<>(JsonManager.URL_ALL_NODE, type,
+//                new Response.Listener<ArrayList<NodeModel>>() {
+//                    @Override
+//                    public void onResponse(ArrayList<NodeModel> response) {
+//                        mAdapter.updateData(response);
+//                        mAdapter.notifyDataSetChanged();
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//            }
+//        });
+//        VolleyHelper.getInstance().addToRequestQueue(nodeModelMyGsonRequest);
+
+
+
+
+## getTopics in NodeActivity adapter
+    @Deprecated
+    private void getTopicsJsonByVolley(String requestURL) {
+        Log.w(TAG, requestURL);
+
+        Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
+        }.getType();
+        MyGsonRequest<ArrayList<TopicModel>> topicGson = new MyGsonRequest<>(requestURL, typeOfT, new Response.Listener<ArrayList<TopicModel>>() {
+            @Override
+            public void onResponse(ArrayList<TopicModel> response) {
+                if (mTopicModels.equals(response)) {
+                    mAdapter.notifyDataSetChanged();
+                    return;
+                }
+                mTopicModels.clear();
+                mTopicModels.addAll(0, response);
+                mAdapter.notifyDataSetChanged();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                JsonManager.handleVolleyError(NodeActivity.this, error);
+            }
+        });
+
+        VolleyHelper.getInstance().addToRequestQueue(topicGson);
+    }
+
+
+
+## get Node Info
+    @Deprecated
+    private void getNodeInfoJson(String url) {
+        StringRequest stringRequest = new StringRequest(
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        NodeModel nodeModel = JsonManager.myGson.fromJson(response, NodeModel.class);
+                        ivNodeIcon.setImageUrl(nodeModel.getAvatarLargeUrl(), imageloader);
+                        tvNodeName.setText(nodeModel.getTitle());
+                        tvNodeHeader.setText(nodeModel.getHeader());
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        HintUI.S(rlNodeList, "getNothing");
+                    }
+                }
+        );
+        VolleyHelper.getInstance().addToRequestQueue(stringRequest);
+    }

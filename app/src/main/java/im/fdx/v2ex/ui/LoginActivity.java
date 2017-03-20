@@ -6,15 +6,13 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -27,26 +25,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.UnrecoverableEntryException;
-import java.security.cert.CertificateException;
-import java.util.Arrays;
 import java.util.Objects;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.GCMParameterSpec;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.network.HttpHelper;
@@ -60,8 +39,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.security.keystore.KeyProperties.BLOCK_MODE_ECB;
-import static android.util.Base64.DEFAULT;
 import static android.util.Base64.encodeToString;
 import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 import static im.fdx.v2ex.network.JsonManager.SIGN_IN_URL;
@@ -78,6 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String username;
     private String password;
     private SecureUtils secureUtils;
+    public static final String action_login = "im.fdx.v2ex.event.login";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,12 +63,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         secureUtils = new SecureUtils();
-        mSharedPreference = getSharedPreferences("DEFAULT", MODE_PRIVATE);
+        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
 
 
         String encryptedKey = mSharedPreference.getString("password", "");
         String passwordPref = "";
-        if (!Objects.equals(encryptedKey, "")) {
+        if (!encryptedKey.equals("")) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 passwordPref = secureUtils.decrypt(encryptedKey);
             }
@@ -249,8 +227,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     case 302:
 
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                            String enCrypted = secureUtils.encrypt(password);
-                            mSharedPreference.edit().putString("password", enCrypted).apply();
+                            String encrypted = secureUtils.encrypt(password);
+                            mSharedPreference.edit().putString("password", encrypted).apply();
                         }
 
                         mSharedPreference.edit()
@@ -258,7 +236,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 .putBoolean("is_login", true)
                                 .apply();
                         LoginActivity.this.setResult(LOG_IN_SUCCEED);
-                        LocalBroadcastManager.getInstance(LoginActivity.this).sendBroadcast(new Intent("im.fdx.v2ex.event.login"));
+
+                        Intent intent = new Intent(action_login);
+                        intent.putExtra("username", username);
+                        LocalBroadcastManager.getInstance(LoginActivity.this)
+                                .sendBroadcast(intent);
 
                         runOnUiThread(new Runnable() {
                             @Override

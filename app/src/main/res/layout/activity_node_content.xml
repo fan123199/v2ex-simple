@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rl_node"
+    android:id="@+id/rl_node_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -43,23 +43,21 @@
             android:id="@+id/tv_topic_num"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="23dp"
-            android:layout_marginTop="27dp"
+            android:layout_marginEnd="9dp"
             android:textStyle="bold"
-            tools:text="num" />
+            tools:text="num"
+            android:layout_alignBaseline="@+id/tv_node_name"
+            android:layout_alignBottom="@+id/tv_node_name"
+            android:layout_alignEnd="@+id/tv_node_header" />
 
         <TextView
             android:id="@+id/tv_node_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/iv_node_image"
-            android:layout_alignStart="@+id/iv_node_image"
             android:layout_below="@+id/iv_node_image"
             android:layout_marginEnd="16dp"
-            android:layout_marginStart="8dp"
-            tools:text="@string/content" />
+            tools:text="@string/content"
+            android:layout_alignStart="@+id/iv_node_image" />
     </RelativeLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -69,8 +67,8 @@
         android:layout_alignStart="@+id/rl_node_header"
         android:layout_below="@+id/rl_node_header"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp">
+        android:layout_marginEnd="@dimen/md_left_margin"
+        android:layout_marginStart="@dimen/md_left_margin">
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_topics_of_node"

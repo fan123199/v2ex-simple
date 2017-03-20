@@ -49,7 +49,7 @@
             android:maxLines="5"
             android:paddingStart="@dimen/md_left_margin"
             android:paddingEnd="@dimen/md_left_margin"
-            android:textColorHint="@color/list_background"
+            android:textColorHint="#ba7e7e7e"
             android:hint="@string/post_reply"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -59,11 +59,11 @@
 
         <ImageView
             android:id="@+id/iv_send"
-            android:onClick="postReply"
             android:layout_width="wrap_content"
-            android:layout_margin="6dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_gravity="bottom"
+            android:layout_margin="6dp"
+            android:onClick="postReply"
             android:src="@drawable/ic_send_unable" />
 
     </LinearLayout>

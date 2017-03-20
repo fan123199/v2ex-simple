@@ -34,7 +34,7 @@ import org.greenrobot.greendao.annotation.Generated;
 //        }
 
 @Entity
-public class MemberModel implements Parcelable {
+public class MemberModel extends BaseModel implements Parcelable {
 
     @Id
     long id;

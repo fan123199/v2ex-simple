@@ -86,7 +86,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         holder.tvNode.setOnClickListener(listener);
         holder.ivAvatar.setOnClickListener(listener);
-        holder.tvAuthor.setOnClickListener(listener);
+//        holder.tvAuthor.setOnClickListener(listener);
 
     }
 
@@ -148,7 +148,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     break;
                 case R.id.iv_avatar_profile:
                     Intent intent = new Intent(context, ProfileActivity.class);
-                    intent.putExtra("username", topic.getMember().getUsername());
+                    intent.putExtra(Keys.KEY_USERNAME, topic.getMember().getUsername());
                     context.startActivity(intent);
                     break;
                 case R.id.tv_node:

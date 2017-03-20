@@ -44,7 +44,7 @@ public class MyApp extends Application {
         XLog.init(BuildConfig.DEBUG ? LogLevel.ALL             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
                 : LogLevel.NONE);
         PreferenceManager.setDefaultValues(this, R.xml.preference, false);
-        mDefaultSharedPrefs = getSharedPreferences("DEFAULT", MODE_PRIVATE);
+        mDefaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         isLogin = mDefaultSharedPrefs.getBoolean("is_login", false);
 
         httpMode = PreferenceManager.getDefaultSharedPreferences(this).

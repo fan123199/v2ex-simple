@@ -101,6 +101,8 @@
     <string name="daily_check">Daily Check</string>
     <string name="logout">Logout</string>
     <string name="all_nodes">All Nodes</string>
-    <string name="post_reply">发布回复</string>
+    <string name="post_reply">send reply</string>
+    <string name="user">User</string>
+    <string name="choose_node">Please choose node</string>
 
 </resources>

@@ -58,4 +58,7 @@
     <string name="daily_check">每日签到</string>
     <string name="logout">登出</string>
     <string name="all_nodes">全部节点</string>
+    <string name="user">用户</string>
+    <string name="choose_node">请选择节点</string>
+    <string name="post_reply">发表回复</string>
 </resources>

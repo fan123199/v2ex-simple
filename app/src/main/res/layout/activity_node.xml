@@ -3,17 +3,127 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="im.fdx.v2ex.ui.node.NodeActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appbar_node"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
 
-        <include layout="@layout/app_toolbar" />
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/ctl_node"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+            <RelativeLayout
+                android:id="@+id/rl_node_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:elevation="5dp"
+                android:paddingBottom="8dp"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.7">
+
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/iv_node_image"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="61dp"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/node_image" />
+
+                <TextView
+                    android:id="@+id/tv_topic_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_node_name"
+                    android:layout_alignBottom="@+id/tv_node_name"
+                    android:layout_alignEnd="@+id/tv_node_header"
+                    android:layout_marginEnd="9dp"
+                    android:textStyle="bold"
+                    tools:text="num" />
+
+                <TextView
+                    android:id="@+id/tv_node_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/iv_node_image"
+                    android:layout_alignTop="@+id/iv_node_image"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginEnd="13dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="7dp"
+                    android:layout_toEndOf="@+id/iv_node_image"
+                    android:gravity="center_vertical"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/primary"
+                    tools:text="name" />
+
+                <TextView
+                    android:id="@+id/tv_node_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/tv_node_name"
+                    android:layout_marginEnd="@dimen/md_left_margin"
+                    android:layout_marginStart="@dimen/md_left_margin"
+                    android:layout_marginTop="8dp"
+                    tools:text="@string/content" />
+            </RelativeLayout>
+
+            <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+
+        </android.support.design.widget.CollapsingToolbarLayout>
+
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/activity_node_content" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/rl_node_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_of_node"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="8dp">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_topics_of_node"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:fabSize="normal"
+        android:src="@drawable/ic_add_white_24dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:scaleType="fitXY" />
 
 </android.support.design.widget.CoordinatorLayout>

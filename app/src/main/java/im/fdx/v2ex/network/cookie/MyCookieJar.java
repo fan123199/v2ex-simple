@@ -48,7 +48,7 @@ public class MyCookieJar implements CookieJar {
             cookies = cookieStore.get(url.host());
 
 
-        XLog.e(cookies);
+//        XLog.tag("MyCookieJar").d(cookies);
 
         return cookies == null ? new ArrayList<Cookie>() : cookies;
     }

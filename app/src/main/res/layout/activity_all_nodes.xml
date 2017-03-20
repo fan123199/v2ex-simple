@@ -16,7 +16,8 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <include layout="@layout/app_toolbar"
-            android:id="@+id/toolbar"/>
+            android:id="@+id/toolbar"
+            app:layout_scrollFlags="scroll|enterAlways" />
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView

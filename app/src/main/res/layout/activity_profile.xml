@@ -59,7 +59,7 @@
                         android:layout_marginStart="40dp"
                         android:layout_marginTop="0dp"
                         android:minWidth="10dp"
-                        android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                        android:textSize="18sp"
                         android:textColor="@color/primary"
                         app:layout_constraintLeft_toRightOf="@+id/iv_avatar_profile"
                         app:layout_constraintTop_toTopOf="@+id/iv_avatar_profile" />
@@ -121,7 +121,7 @@
                         android:layout_marginRight="8dp"
                         android:drawableLeft="@drawable/ic_location"
                         android:drawablePadding="16dp"
-                        android:minWidth="10dp"
+                        tools:text="location"
                         app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_github" />
@@ -171,8 +171,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
                         android:layout_marginTop="8dp"
-                        android:hint=""
-                        android:minWidth="10dp"
+                        tools:text="id"
                         app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
                         app:layout_constraintTop_toBottomOf="@+id/tv_username_profile" />
 
@@ -185,7 +184,7 @@
                         android:layout_marginRight="8dp"
                         android:drawableLeft="@drawable/ic_website"
                         android:drawablePadding="16dp"
-                        android:minWidth="40dp"
+                        tools:text="website"
                         android:onClick="openWeb"
                         app:layout_constraintLeft_toLeftOf="@+id/tv_bitcoin"
                         app:layout_constraintRight_toRightOf="parent"

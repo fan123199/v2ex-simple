@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,6 +23,9 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -33,7 +39,6 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.ui.main.MainActivity;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.HintUI;
@@ -53,7 +58,8 @@ public class NodeActivity extends AppCompatActivity {
     private static final int MSG_GET_TOPICS = 1;
     private static final int MSG_GET_NODE_INFO = 0;
     private static final int MSG_ERROR_AUTH = 2;
-    RelativeLayout rlNode;
+    RelativeLayout rlNodeList;
+    RelativeLayout rlNodeHeader;
     NetworkImageView ivNodeIcon;
     TextView tvNodeName;
     TextView tvNodeHeader;
@@ -71,13 +77,14 @@ public class NodeActivity extends AppCompatActivity {
 
             XLog.i("get handler msg " + msg.what);
             if (msg.what == MSG_GET_NODE_INFO) {
-                mSwipeRefreshLayout.setRefreshing(false);
+
                 ivNodeIcon.setImageUrl(mNodeModel.getAvatarLargeUrl(), imageloader);
                 tvNodeName.setText(mNodeModel.getTitle());
                 tvNodeHeader.setText(mNodeModel.getHeader());
                 tvNodeNum.setText(getString(R.string.topic_number, mNodeModel.getTopics()));
             } else if (msg.what == MSG_GET_TOPICS) {
                 mAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
             } else if (msg.what == MSG_ERROR_AUTH) {
                 HintUI.t(NodeActivity.this, "需要登录");
                 finish();
@@ -86,6 +93,8 @@ public class NodeActivity extends AppCompatActivity {
     };
     private String nodeName;
     private NodeModel mNodeModel;
+    private AppBarLayout appBarLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +102,36 @@ public class NodeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_node);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (toolbar != null) {
 
-        rlNode = (RelativeLayout) findViewById(R.id.rl_node);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
+
+
+        appBarLayout = (AppBarLayout) findViewById(R.id.appbar_node);
+
+        collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl_node);
+
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+
+                int maxScroll = appBarLayout.getTotalScrollRange();
+                double percentage = (double) Math.abs(verticalOffset) / (double) maxScroll;
+                handleAlphaOnTitle(percentage);
+            }
+        });
+
+        rlNodeHeader = (RelativeLayout) findViewById(R.id.rl_node_header);
+
+
+        rlNodeList = (RelativeLayout) findViewById(R.id.rl_node_list);
         ivNodeIcon = (NetworkImageView) findViewById(R.id.iv_node_image);
         tvNodeName = (TextView) findViewById(R.id.tv_node_name);
         tvNodeHeader = (TextView) findViewById(R.id.tv_node_header);
@@ -124,24 +161,26 @@ public class NodeActivity extends AppCompatActivity {
 
     }
 
+    private void handleAlphaOnTitle(double percentage) {
+        XLog.tag("collapse").d(percentage);
+        if (percentage > 0.8 && percentage <= 1) {
+            rlNodeHeader.setVisibility(View.INVISIBLE);  //View隐藏
+            collapsingToolbarLayout.setTitle(nodeName);
+        } else if (percentage <= 0.8 && percentage >= 0) {
+            rlNodeHeader.setVisibility(View.VISIBLE); //view 显示
+            collapsingToolbarLayout.setTitle("");//设置title不显示
+        }
+    }
+
     private void parseIntent(Intent intent) {
 
         if (intent.getData() != null) {
             List<String> params = intent.getData().getPathSegments();
             nodeName = params.get(1);
-            getNodeInfoAndTopicByOK(nodeName);
-
-        } else {
+        } else if (intent.getStringExtra(Keys.KEY_NODE_NAME) != null) {
             nodeName = intent.getStringExtra(Keys.KEY_NODE_NAME);
-
-            if (MyApp.getInstance().getHttpMode() == USE_API) {
-                getNodeInfoJson(JsonManager.API_NODE + "?name=" + nodeName);
-                String url = API_TOPIC + "?node_name=" + nodeName;
-                getTopicsJsonByVolley(url);
-            } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
-                getNodeInfoAndTopicByOK(nodeName);
-            }
         }
+        getNodeInfoAndTopicByOK(nodeName);
 
     }
 
@@ -162,65 +201,17 @@ public class NodeActivity extends AppCompatActivity {
                 }
                 String body = response.body().string();
 
-                mNodeModel = JsonManager.parseToNode(body);
+                Document html = Jsoup.parse(body);
 
+                mNodeModel = JsonManager.parseToNode(html);
                 Message.obtain(handler, MSG_GET_NODE_INFO).sendToTarget();
 
-
                 mTopicModels.clear();
-                mTopicModels.addAll(JsonManager.parseTopicLists(body, 1));
+                mTopicModels.addAll(JsonManager.parseTopicLists(html, 1));
 //                Message.obtain(handler, MSG_GET_TOPICS, mTopicModels).sendToTarget();
                 handler.sendEmptyMessage(MSG_GET_TOPICS);
             }
         });
-    }
-
-    private void getTopicsJsonByVolley(String requestURL) {
-        Log.w(TAG, requestURL);
-
-        Type typeOfT = new TypeToken<ArrayList<TopicModel>>() {
-        }.getType();
-        MyGsonRequest<ArrayList<TopicModel>> topicGson = new MyGsonRequest<>(requestURL, typeOfT, new Response.Listener<ArrayList<TopicModel>>() {
-            @Override
-            public void onResponse(ArrayList<TopicModel> response) {
-                if (mTopicModels.equals(response)) {
-                    mAdapter.notifyDataSetChanged();
-                    return;
-                }
-                mTopicModels.clear();
-                mTopicModels.addAll(0, response);
-                mAdapter.notifyDataSetChanged();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                JsonManager.handleVolleyError(NodeActivity.this, error);
-            }
-        });
-
-        VolleyHelper.getInstance().addToRequestQueue(topicGson);
-    }
-
-    private void getNodeInfoJson(String url) {
-        StringRequest stringRequest = new StringRequest(
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        NodeModel nodeModel = JsonManager.myGson.fromJson(response, NodeModel.class);
-                        ivNodeIcon.setImageUrl(nodeModel.getAvatarLargeUrl(), imageloader);
-                        tvNodeName.setText(nodeModel.getTitle());
-                        tvNodeHeader.setText(nodeModel.getHeader());
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        HintUI.S(rlNode, "getNothing");
-                    }
-                }
-        );
-        VolleyHelper.getInstance().addToRequestQueue(stringRequest);
     }
 
 }

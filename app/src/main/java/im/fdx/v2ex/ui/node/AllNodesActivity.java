@@ -57,22 +57,7 @@ public class AllNodesActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("所有节点");
-
-
-//        Type type = new TypeToken<ArrayList<NodeModel>>(){}.getType();
-//        MyGsonRequest<ArrayList<NodeModel>> nodeModelMyGsonRequest = new MyGsonRequest<>(JsonManager.URL_ALL_NODE, type,
-//                new Response.Listener<ArrayList<NodeModel>>() {
-//                    @Override
-//                    public void onResponse(ArrayList<NodeModel> response) {
-//                        mAdapter.updateData(response);
-//                        mAdapter.notifyDataSetChanged();
-//                    }
-//                }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//            }
-//        });
-//        VolleyHelper.getInstance().addToRequestQueue(nodeModelMyGsonRequest);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(JsonManager.URL_ALL_NODE).build()).enqueue(new Callback() {

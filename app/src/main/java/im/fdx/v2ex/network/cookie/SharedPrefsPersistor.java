@@ -60,7 +60,7 @@ public class SharedPrefsPersistor implements CookiePersistor {
         for (Cookie cookie : cookies) {
 //            String encode = new CookiesSerializable().encode(cookie);
             String encode = JsonManager.myGson.toJson(cookie);
-            XLog.d("fdx:cookiePersist: " + encode);
+//            XLog.d("fdx:cookiePersist: " + encode);
             editor.putString(createCookieKey(cookie), encode);
         }
         editor.apply();

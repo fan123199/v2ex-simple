@@ -4,11 +4,14 @@ import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +25,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,12 +45,14 @@ import java.util.List;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.model.BaseModel;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.utils.HintUI;
+import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.SmoothManager;
 import okhttp3.Call;
@@ -70,28 +76,38 @@ public class DetailsActivity extends AppCompatActivity {
     private static final int MSG_OK_GET_TOPIC = 0;
     private static final int MSG_ERROR_AUTH = 1;
     private static final int MSG_ERROR_IO = 2;
+    private static final int MSG_GO_TO_BOTTOM = 3;
     private SwipeRefreshLayout mSwipe;
     private ImageView ivSend;
     private EditText etReply;
     private DetailsAdapter mDetailsAdapter;
-    private TopicModel mTopicHeader;
-    private List<ReplyModel> replyLists = new ArrayList<>();
+    private List<BaseModel> mAllContent = new ArrayList<>();
     RecyclerView mRCView;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            XLog.tag(TAG).d("get in lbc:" + intent.getAction());
             if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
                 invalidateOptionsMenu();
                 addFootView();
+            } else if (intent.getAction().equals("im.fdx.v2ex.event.logout")) {
+                invalidateOptionsMenu();
+                removeFootView();
             }
         }
 
     };
 
-    private void addFootView() {
+    private void removeFootView() {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
         linearLayout.setVisibility(View.GONE);
+    }
+
+    private void addFootView() {
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
+        linearLayout.setVisibility(View.VISIBLE);
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -101,9 +117,6 @@ public class DetailsActivity extends AppCompatActivity {
             switch (msg.what) {
                 case MSG_OK_GET_TOPIC:
                     mSwipe.setRefreshing(false);
-                    mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mTopicHeader, replyLists);
-                    mRCView.setAdapter(mDetailsAdapter);
-
                     break;
                 case MSG_ERROR_IO:
                     mSwipe.setRefreshing(false);
@@ -112,12 +125,14 @@ public class DetailsActivity extends AppCompatActivity {
                     HintUI.t(DetailsActivity.this, "该主题需要登录查看");
                     DetailsActivity.this.finish();
                     break;
+                case MSG_GO_TO_BOTTOM:
+                    mRCView.scrollToPosition(mAllContent.size() - 1);
 
             }
             return false;
         }
     });
-    private long mTopicId;
+    private long mTopicId = -1L;
     private String once;
 
 
@@ -126,24 +141,33 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        IntentFilter filter = new IntentFilter("im.fdx.v2ex.event.login");
+
+        filter.addAction("im.fdx.v2ex.event.logout");
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+        if (MyApp.getInstance().isLogin()) {
+            addFootView();
+        } else {
+            removeFootView();
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar mToolbar = getSupportActionBar();
         if (mToolbar != null) {
             mToolbar.setDisplayHomeAsUpEnabled(true);
-//            getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        //I add parentActivity in Manifest, so I do not need below code ? NEED
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
+        //I add parentActivity in Manifest, so I do not need below code ? NONONONONO---NEEDED
+//        if (toolbar != null) {
+//            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    onBackPressed();
+//                }
+//            });
+//        }
 
         mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
 //        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -154,6 +178,25 @@ public class DetailsActivity extends AppCompatActivity {
         mRCView.setLayoutManager(mLayoutManager);
         mRCView.smoothScrollToPosition(POSITION_START);
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
+        mRCView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etReply.hasFocus()) {
+//                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+//                    inputMethodManager.hideSoftInputFromWindow(recyclerView.getWindowToken(), 0);
+                    etReply.clearFocus();
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+
+            }
+        });
+        mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent);
+        mRCView.setAdapter(mDetailsAdapter);
 
         mSwipe = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
         mSwipe.setColorSchemeResources(
@@ -171,6 +214,17 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         etReply = (EditText) findViewById(R.id.et_post_reply);
+        etReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                XLog.tag(TAG).d("hasFocus" + hasFocus);
+                if (!hasFocus) {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        });
 
         etReply.addTextChangedListener(new TextWatcher() {
             @Override
@@ -186,7 +240,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-                XLog.tag(TAG).d(s.toString());
+//                XLog.tag(TAG).d(s.toString());
                 if (TextUtils.isEmpty(s)) {
                     ivSend.setClickable(false);
                     ivSend.setImageResource(R.drawable.ic_send_unable);
@@ -199,7 +253,6 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
         ivSend = (ImageView) findViewById(R.id.iv_send);
-
 
         parseIntent(getIntent());
 
@@ -217,6 +270,9 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void parseIntent(Intent intent) {
+
+        mSwipe.setRefreshing(true);
+
         Uri data = intent.getData();
         if (data != null) {
             String scheme = data.getScheme();
@@ -225,30 +281,31 @@ public class DetailsActivity extends AppCompatActivity {
             if (scheme.equals("https") || scheme.equals("http")) {
                 if (host.contains("v2ex.com")) {//不需要判断，在manifest中已指定
                     mTopicId = Long.parseLong(params.get(1));
-                    getTopicAndReplyByOk(mTopicId);
+
+                    getTopicAndReplyByOk(mTopicId, false);
                 }
             }
-        } else {
+        } else if (intent.getParcelableExtra("model") != null) {
             TopicModel topicModel = intent.getParcelableExtra("model");
             mTopicId = topicModel.getId();
-            mSwipe.setRefreshing(true);
+
             if (MyApp.getInstance().getHttpMode() == USE_API) {
-                mTopicHeader = topicModel;
-
-                mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mTopicHeader, replyLists);
-                mRCView.setAdapter(mDetailsAdapter);
-
+                mAllContent.add(0, topicModel);
                 getReplyByVolley();
             } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
-                getTopicAndReplyByOk(mTopicId);
+                getTopicAndReplyByOk(mTopicId, false);
 
             }
+        } else if (intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L) != -1L) {
+            mTopicId = intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L);
+            getTopicAndReplyByOk(mTopicId, false);
         }
+        XLog.tag(TAG).d(mTopicId);
 
 
     }
 
-    private void getTopicAndReplyByOk(final long topicId) {
+    private void getTopicAndReplyByOk(final long topicId, final boolean scrolltoBottom) {
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId)
                 .build()).enqueue(new Callback() {
@@ -271,14 +328,26 @@ public class DetailsActivity extends AppCompatActivity {
                 String bodyStr = response.body().string();
 
                 Element body = Jsoup.parse(bodyStr);
-                mTopicHeader = JsonManager.parseResponseToTopic(body, topicId);
+                BaseModel topicHeader = JsonManager.parseResponseToTopic(body, topicId);
 
                 List<ReplyModel> replies = JsonManager.parseResponseToReplay(body);
 
                 once = parseOnce(body);
-                replyLists.clear();
-                replyLists.addAll(replies);
-                handler.sendEmptyMessage(MSG_OK_GET_TOPIC);
+                mAllContent.clear();
+                mAllContent.add(topicHeader);
+                mAllContent.addAll(replies);
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDetailsAdapter.notifyDataSetChanged();
+                        mSwipe.setRefreshing(false);
+                        if (scrolltoBottom) {
+                            handler.sendEmptyMessage(MSG_GO_TO_BOTTOM);
+                        }
+
+                    }
+                });
             }
 
         });
@@ -305,31 +374,35 @@ public class DetailsActivity extends AppCompatActivity {
             }).start();
 
         } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
-            getTopicAndReplyByOk(mTopicId);
+            getTopicAndReplyByOk(mTopicId, false);
         }
 
     }
 
+    @Deprecated
     private void getReplyByVolley() {
         Type typeofR = new TypeToken<ArrayList<ReplyModel>>() {
         }.getType();
         MyGsonRequest<ArrayList<ReplyModel>> replies = new MyGsonRequest<>(JsonManager.API_REPLIES + "?topic_id="
-                + mTopicHeader.getId(), typeofR, new Response.Listener<ArrayList<ReplyModel>>() {
+                + mTopicId, typeofR, new Response.Listener<ArrayList<ReplyModel>>() {
             @Override
             public void onResponse(ArrayList<ReplyModel> response) {
-                Log.i(TAG, "GSON DONE: " + ((response == null || response.isEmpty()) ? 0 : response.get(0).toString()));
+                XLog.tag(TAG).i(TAG, "GSON DONE: " + ((response == null || response.isEmpty()) ? 0 : response.get(0).toString()));
                 if (response == null || response.size() == 0) {
                     mSwipe.setRefreshing(false);
-                    Log.d(TAG, "no response got");
+                    XLog.tag(TAG).d(TAG, "no response got");
                     HintUI.t(DetailsActivity.this, "无法获取回复");
                     return;
                 }
-                replyLists.clear();
-                replyLists.addAll(response);
 
-                mSwipe.setRefreshing(false);
+                mAllContent.clear();
+                mAllContent.addAll(1, response);
+//                replyLists.clear();
+//                replyLists.addAll(response);
+
                 mDetailsAdapter.notifyDataSetChanged();
-                Log.d(TAG, "done with details");
+                mSwipe.setRefreshing(false);
+                XLog.tag(TAG).d(TAG, "done with details");
             }
         }, new Response.ErrorListener() {
             @Override
@@ -370,14 +443,17 @@ public class DetailsActivity extends AppCompatActivity {
             case R.id.menu_item_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + mTopicHeader.getTitle() + "   "
-                        + JsonManager.HTTPS_V2EX_BASE + "/t/" + mTopicHeader.getId());
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + ((TopicModel) mAllContent.get(0)).getTitle() + "   "
+                        + JsonManager.HTTPS_V2EX_BASE + "/t/" + ((TopicModel) mAllContent.get(0)).getId());
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent, "分享到"));
                 break;
             case R.id.menu_item_open_in_browser:
-                Uri uri = Uri.parse(mTopicHeader.getUrl());
+
+                Long topicId = ((TopicModel) mAllContent.get(0)).getId();
+                String url = JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId;
+                Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("com.android.chrome");
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -398,14 +474,13 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void postReply(View view) {
+        etReply.clearFocus();
         XLog.tag(TAG).d("I clicked");
         final String content = etReply.getText().toString();
         RequestBody requestBody = new FormBody.Builder()
                 .add("content", content)
                 .add("once", once)
                 .build();
-
-
         HttpHelper.OK_CLIENT.newCall(new Request.Builder()
                 .headers(baseHeaders)
                 .header("Origin", JsonManager.HTTPS_V2EX_BASE)
@@ -418,6 +493,13 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call call, IOException e) {
 
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        HintUI.t(DetailsActivity.this, "未知原因，回复失败");
+                    }
+                });
+
             }
 
             @Override
@@ -428,13 +510,27 @@ public class DetailsActivity extends AppCompatActivity {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            getReplyData();
+
                             etReply.setText("");
-                            etReply.clearFocus();
+
+
                         }
                     });
+                    getTopicAndReplyByOk(mTopicId, true);
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 }
