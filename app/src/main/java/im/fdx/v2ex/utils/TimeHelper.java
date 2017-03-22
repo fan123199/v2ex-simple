@@ -65,11 +65,12 @@ public class TimeHelper {
     public static long toLong(String timeStr) throws NumberFormatException {
 
         timeStr = timeStr.trim();
-//       String timeStr = time.replace("&nbsp", "");
-//        44 分钟前用 iPhone 发布
-//         · 1 小时 34 分钟前 · 775 次点击
-//         · 100 天前 · 775 次点击
-        //1992.02.03 12:22:22 +0800
+        //       String timeStr = time.replace("&nbsp", "");
+        //        44 分钟前用 iPhone 发布
+        //         · 1 小时 34 分钟前 · 775 次点击
+        //         · 100 天前 · 775 次点击
+        //       1992.02.03 12:22:22 +0800
+        //      刚刚
         //其中可能出现一些奇怪的字符，你可能以为是空格。
         long created = System.currentTimeMillis() / 1000; // ms -> second
 
@@ -88,15 +89,17 @@ public class TimeHelper {
             created -= Long.parseLong(getNum(timeStr.substring(0, day))) * 60 * 60 * 24;
         } else if (minute != -1) {
             created -= Long.parseLong(getNum(timeStr.substring(0, minute))) * 60;
+        } else if (timeStr.contains("刚刚")) {
+            return created;
         } else {
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
-                Date date = sdf.parse(timeStr.split("\\+")[0]);
-                created = date.getTime() / 1000;
+            Date date = sdf.parse(timeStr.split("\\+")[0]);
+            created = date.getTime() / 1000;
 
         }
         } catch (Exception ignored) {
-            XLog.tag("TimeHelper").d("timestr error: |" + timeStr);
+            XLog.tag("TimeHelper").e("timestr error: |" + timeStr);
         }
 
         return created;

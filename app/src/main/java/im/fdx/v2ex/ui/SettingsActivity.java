@@ -36,6 +36,8 @@ import static android.os.Build.VERSION_CODES.M;
 import static im.fdx.v2ex.MyApp.USE_API;
 import static im.fdx.v2ex.MyApp.USE_WEB;
 import static im.fdx.v2ex.R.string.username;
+import static im.fdx.v2ex.ui.LoginActivity.action_login;
+import static im.fdx.v2ex.ui.LoginActivity.action_logout;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -80,7 +82,8 @@ public class SettingsActivity extends AppCompatActivity {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
+                if (intent.getAction().equals(action_login)) {
+
                 }
             }
         };
@@ -110,20 +113,25 @@ public class SettingsActivity extends AppCompatActivity {
                     public boolean onPreferenceClick(Preference preference) {
                         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity())
                                 .setTitle("确定要退出吗")
-                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+
                                         dialog.dismiss();
+
                                     }
                                 })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
                                         removeCookie();
                                         notifyAllActivities();
                                         findPreference(PREF_LOGOUT).setEnabled(false);
+                                        sharedPreferences.edit().remove("is_login").apply();
                                         dialog.dismiss();
+
+                                        HintUI.t(getActivity(), "已注销登录");
 
                                     }
                                 });
@@ -170,7 +178,7 @@ public class SettingsActivity extends AppCompatActivity {
         private void notifyAllActivities() {
 
             MyApp.getInstance().setLogin(false);
-            Intent intent = new Intent("im.fdx.v2ex.event.logout");
+            Intent intent = new Intent(action_logout);
             LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
 
         }

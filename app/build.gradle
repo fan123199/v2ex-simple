@@ -60,12 +60,11 @@ dependencies {
     //    androidTestCompile 'com.android.support.test.uiautomator:uiautomator-v18:2.1.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //    compile 'com.belerweb:pinyin4j:2.5.0'
-    // TinyPinyin核心包，约80KB
-    //okhttp 查看器
-    //图片库之一
-//    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0'
-//    compile 'com.github.bumptech.glide:glide:3.7.0'
-//    compile 'com.facebook.fresco:imagepipeline-okhttp3:1.1.0'
+
+
+    compile 'com.github.bumptech.glide:glide:3.7.0' //图片加载库glide
+//    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0' //图片加载库 glide 居然还要设置
+    compile 'com.facebook.fresco:imagepipeline-okhttp3:1.1.0'
     compile 'com.android.support:design:25.3.0'
     compile 'com.android.support:cardview-v7:25.3.0'
     compile 'com.android.support:recyclerview-v7:25.3.0'
@@ -82,15 +81,15 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'com.elvishew:xlog:1.3.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
-    compile 'com.github.promeg:tinypinyin:2.0.2'
+    compile 'com.github.promeg:tinypinyin:2.0.2'    // TinyPinyin核心包，约80KB
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'    //图片库之一
+    compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'  //cookie 保存，已经弄懂
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
-    debugCompile 'com.readystatesoftware.chuck:library:1.0.4'
-    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'
+    debugCompile 'com.readystatesoftware.chuck:library:1.0.4'     //okhttp 查看器
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.4'    //okhttp 查看器
     compile 'com.toptoche.searchablespinner:searchablespinnerlibrary:1.3.1' //带搜索的Spinner
 }
 

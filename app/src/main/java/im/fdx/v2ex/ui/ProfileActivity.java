@@ -208,30 +208,15 @@ public class ProfileActivity extends AppCompatActivity {
             username = getIntent().getExtras().getString(Keys.KEY_USERNAME);
             urlUserInfo = API_USER + "?username=" + username;
         } else if (BuildConfig.DEBUG) {
-            username = "fan123199";
-            urlUserInfo = API_USER + "?username=" + username;  //fdx's profile
+            username = "Livid";
+            urlUserInfo = API_USER + "?username=" + username;  //Livid's profile
         }
         urlTopic = API_TOPIC + "?username=" + username;
 
         Log.i(TAG, urlUserInfo + "\n" + urlTopic);
-        if (mHttpMode == MyApp.USE_API) {
-            StringRequest sr = new StringRequest(urlUserInfo, new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                    showUser(response);
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    handleVolleyError(ProfileActivity.this, error);
-                }
-            });
-            VolleyHelper.getInstance().addToRequestQueue(sr);
-        } else if (mHttpMode == MyApp.USE_WEB) {
+        //// TODO: 2017/3/20 可以改成一步，分析下性能
             getUserInfo(urlUserInfo);
             getTopicsByUsername();
-
-        }
     }
 
     private void getUserInfo(String urlUserInfo) {
@@ -323,7 +308,6 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void showUser(String response) {
-        //// TODO: 2017/3/8 没有将member 持久化，所以我只能从view中获取当前member的值。
         member = myGson.fromJson(response, MemberModel.class);
         mTvUsername.setText(member.getUsername());
 

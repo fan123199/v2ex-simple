@@ -8,7 +8,6 @@
     <include
         android:id="@+id/toolbar"
         layout="@layout/app_toolbar"
-        app:layout_scrollFlags="scroll|enterAlways"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize" />
 
@@ -22,16 +21,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!--<Spinner-->
-            <!--android:id="@+id/spinner_node"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="8dp"/>-->
             <com.toptoche.searchablespinnerlibrary.SearchableSpinner
                 android:id="@+id/search_spinner_node"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:hintText="@string/choose_node"
                 android:layout_marginTop="16dp"
                 android:layout_margin="8dp" />
 
@@ -51,7 +44,8 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:gravity="top"
-                android:minLines="6" />
+                android:minLines="6"
+                android:inputType="textMultiLine" />
 
         </LinearLayout>
     </ScrollView>

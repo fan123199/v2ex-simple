@@ -8,9 +8,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -23,12 +25,16 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
 
 import org.jsoup.Jsoup;
@@ -36,9 +42,12 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 
+import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.UpdateService;
 import im.fdx.v2ex.network.HttpHelper;
+import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.LoginActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
 import im.fdx.v2ex.ui.node.AllNodesActivity;
@@ -50,9 +59,12 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static android.icu.lang.UCharacter.JoiningGroup.DAL;
+import static im.fdx.v2ex.R.id.nav_testNotify;
+import static im.fdx.v2ex.R.string.username;
 import static im.fdx.v2ex.network.JsonManager.DAILY_CHECK;
 import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
+import static im.fdx.v2ex.ui.LoginActivity.action_login;
+import static im.fdx.v2ex.ui.LoginActivity.action_logout;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -74,22 +86,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             XLog.tag(TAG).d("getAction: " + intent.getAction());
             if (intent.getAction().equals("im.fdx.v2ex.preference")) {
                 switchFragment();
-            } else if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
-                changeUIWhenLogin();
-                setUserInfo();
+            } else if (intent.getAction().equals(action_login)) {
+                addDailyCheckMenu();
+                MainActivity.this.invalidateOptionsMenu();
+                String username = intent.getStringExtra(Keys.KEY_USERNAME);
+                String avatar = intent.getStringExtra("avatar");
+                setUserInfo(username, avatar);
+            } else if (intent.getAction().equals(action_logout)) {
+                MainActivity.this.invalidateOptionsMenu();
+                navigationView.getMenu().removeItem(ID_ITEM_CHECK); //remove item
+                removeUserInfo();
             }
 
         }
     };
+
     private ViewPager.OnPageChangeListener listener;
-
-    private void setUserInfo() {
-
-
-    }
-
-    private int i = 0;
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,8 +109,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         IntentFilter intentFilter = new IntentFilter("im.fdx.v2ex.preference");
-        intentFilter.addAction(LoginActivity.action_login);
-        intentFilter.addAction("im.fdx.v2ex.event.logout");
+        intentFilter.addAction(action_login);
+        intentFilter.addAction(action_logout);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
@@ -128,9 +140,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         if (MyApp.getInstance().isLogin()) {
-            changeUIWhenLogin();
+            addDailyCheckMenu();
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            String username = sharedPreferences.getString("username", "");
+            String avatar = sharedPreferences.getString("avatar", "");
+            if (TextUtils.isEmpty(username) && TextUtils.isEmpty(avatar)) {
+                setUserInfo(username, avatar);
+            }
         }
-        View headView = navigationView.getHeaderView(0);
 
         mViewPager = (ViewPager) findViewById(R.id.viewPager);
         mAdapter = new MyViewPagerAdapter(getFragmentManager(), MainActivity.this);
@@ -139,18 +157,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         listener = new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
             public void onPageSelected(int position) {
-
-
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         };
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
@@ -175,6 +189,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        if (!BuildConfig.DEBUG) {
+            navigationView.getMenu().removeItem(R.id.nav_testNotify);
+            navigationView.getMenu().removeItem(R.id.nav_testMenu);
+            navigationView.getMenu().removeItem(R.id.nav_testMenu2);
+        }
+
+    }
+
+
+    private void setUserInfo(String username, String avatar) {
+        TextView tvMyName = (TextView) findViewById(R.id.tv_my_username);
+        tvMyName.setText(username);
+        NetworkImageView imageView = (NetworkImageView) findViewById(R.id.iv_my_avatar);
+        imageView.setImageUrl(avatar, VolleyHelper.getInstance().getImageLoader());
+
+    }
+
+    private void removeUserInfo() {
+        TextView tvMyName = (TextView) findViewById(R.id.tv_my_username);
+        tvMyName.setText("");
+        NetworkImageView imageView = (NetworkImageView) findViewById(R.id.iv_my_avatar);
+        imageView.setImageUrl("", null);
     }
 
     @Override
@@ -190,6 +226,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if (MyApp.getInstance().isLogin()) {
+            menu.findItem(R.id.menu_login).setVisible(false);
+            XLog.tag(TAG).d("Invisible");
+        } else {
+            menu.findItem(R.id.menu_login).setVisible(true);
+            XLog.tag(TAG).d("visible");
+        }
+        return true;
+
+
     }
 
     @Override
@@ -217,13 +268,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_testMenu2:
 
 //                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("im.fdx.v2ex.test"));
-//                changeUIWhenLogin();
+//                addDailyCheckMenu();
                 break;
             case R.id.nav_node:
                 startActivity(new Intent(this, AllNodesActivity.class));
 
                 break;
-            case R.id.nav_testNotify:
+            case nav_testNotify:
                 Intent itNoti = new Intent();
                 PendingIntent pdit = PendingIntent.getActivity(this, 0, itNoti, 0);
 
@@ -295,45 +346,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mViewPager.removeAllViews();
         mViewPager.setAdapter(new MyViewPagerAdapter(getFragmentManager(), this));
 
-//        mAdapter.initFragment();
-//        mAdapter.notifyDataSetChanged();
-
     }
 
 
-    private void changeUIWhenLogin() {
+    private void addDailyCheckMenu() {
         MenuItem item2;
         if (navigationView.getMenu().findItem(ID_ITEM_CHECK) == null) {
 
             item2 = navigationView.getMenu().add(R.id.group_nav_main, ID_ITEM_CHECK, 88, R.string.daily_check);
             item2.setIcon(android.R.drawable.ic_menu_myplaces);
             item2.setCheckable(true);
-//            item2.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//                @Override
-//                public boolean onMenuItemClick(MenuItem item) {
-//                    dailyCheck();
-//                    return true;
-//                }
-//            });
         }
 
         this.invalidateOptionsMenu();
-
-    }
-
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-
-        if (MyApp.getInstance().isLogin()) {
-            menu.findItem(R.id.menu_login).setVisible(false);
-            XLog.tag(TAG).d("Invisible");
-        } else {
-            menu.findItem(R.id.menu_login).setVisible(true);
-            XLog.tag(TAG).d("visible");
-        }
-        return super.onPrepareOptionsMenu(menu);
-
 
     }
 
@@ -417,11 +442,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return TimeHelper.getNum(onceOriginal);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        XLog.tag(TAG).d("onResume");
+        Intent intent = new Intent(MainActivity.this, UpdateService.class);
+        startService(intent);
+//        bindService(intent);
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
-        XLog.tag(TAG).d("onRestart");
+        XLog.tag(TAG).d("onPause");
     }
 
     @Override

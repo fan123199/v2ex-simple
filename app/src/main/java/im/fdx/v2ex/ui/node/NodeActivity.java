@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,6 +40,7 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.ui.main.CreateTopicActivity;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.HintUI;
@@ -125,6 +127,17 @@ public class NodeActivity extends AppCompatActivity {
                 int maxScroll = appBarLayout.getTotalScrollRange();
                 double percentage = (double) Math.abs(verticalOffset) / (double) maxScroll;
                 handleAlphaOnTitle(percentage);
+            }
+        });
+
+
+        FloatingActionButton fabNode = (FloatingActionButton) findViewById(R.id.fab_node);
+        fabNode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NodeActivity.this, CreateTopicActivity.class);
+                intent.putExtra(Keys.KEY_NODE_NAME, nodeName);
+                startActivity(intent);
             }
         });
 

@@ -72,3 +72,28 @@
         );
         VolleyHelper.getInstance().addToRequestQueue(stringRequest);
     }
+
+    ## text watcher for indicator
+
+     @Deprecated
+        private class MyTextWatcher implements TextWatcher {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (etContent.toString().isEmpty() && etTitle.toString().isEmpty()) {
+                    item.setIcon(R.drawable.ic_send_white_24dp);
+                } else {
+                    item.setIcon(R.drawable.ic_send_black_24dp);
+                }
+            }
+        }

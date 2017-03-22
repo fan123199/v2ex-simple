@@ -14,34 +14,26 @@
                 android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <TextView
-        android:id="@+id/tv_email"
+        android:id="@+id/tv_my_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp"
-        android:layout_marginStart="23dp"
-        android:layout_alignTop="@+id/imageView"
-        android:layout_toEndOf="@+id/imageView"/>
-
-    <TextView
-        android:id="@+id/tv_username"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/imageView"
-        android:layout_alignStart="@+id/tv_email"/>
+        tools:text="@string/username"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/iv_my_avatar"
+        android:layout_marginBottom="14dp" />
 
     <im.fdx.v2ex.view.CircleVImage
-        android:id="@+id/imageView"
+        android:id="@+id/iv_my_avatar"
         app:civ_border_width="2dp"
         app:civ_border_color="@color/white"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:contentDescription="@string/feature"
         android:background="@drawable/ic_person_outline_black_48dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="17dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginBottom="41dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

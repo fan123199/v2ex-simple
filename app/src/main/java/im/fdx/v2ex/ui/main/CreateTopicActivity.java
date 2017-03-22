@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +52,7 @@ public class CreateTopicActivity extends AppCompatActivity {
     private EditText etTitle;
     private EditText etContent;
     private MenuItem item;
+    private SearchableSpinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +74,23 @@ public class CreateTopicActivity extends AppCompatActivity {
 //        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twitter);
 
 
-        SearchableSpinner spinner = (SearchableSpinner) findViewById(R.id.search_spinner_node);
+        spinner = (SearchableSpinner) findViewById(R.id.search_spinner_node);
         spinner.setTitle(getString(R.string.choose_node));
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, nodeModels);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        spinner.setPositiveButton(getString(R.string.close));
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mNodename = ((NodeModel) parent.getItemAtPosition(position)).getName();
+                XLog.tag(TAG).d(mNodename);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
 
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(JsonManager.URL_ALL_NODE).build()).enqueue(new Callback() {
@@ -93,43 +104,39 @@ public class CreateTopicActivity extends AppCompatActivity {
                 Type type = new TypeToken<ArrayList<NodeModel>>() {
                 }.getType();
                 final ArrayList<NodeModel> nodes = JsonManager.myGson.fromJson(response.body().string(), type);
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         adapter.addAll(nodes);
-//                        adapter.sort(new Comparator<NodeModel>() {
-//                            @Override
-//                            public int compare(NodeModel o1, NodeModel o2) {
-//                                if (o1.getName().compareTo(o2.getName()) > 0) {
-//                                    return 1;
-//                                } else if (o1.getName().compareTo(o2.getName()) < 0) {
-//                                    return -1;
-//                                } else {
-//                                    return 0;
-//                                }
-//                            }
-//                        });
-
-
                         adapter.notifyDataSetChanged();
+                        setNode(getIntent());
                     }
                 });
             }
         });
 
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mNodename = ((NodeModel) parent.getItemAtPosition(position)).getName();
-                XLog.tag("Create").d(mNodename);
-            }
+    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+    private void setNode(Intent intent) {
+        if (intent.getStringExtra(Keys.KEY_NODE_NAME) != null) {
+            mNodename = intent.getStringExtra(Keys.KEY_NODE_NAME);
+            XLog.d(mNodename + "|" + spinner.getCount() + "|" + adapter.getCount());
+            String nodeTitle = "";
+            for (int i = 0; i < adapter.getCount(); i++) {
+                if (mNodename.equals(adapter.getItem(i).getName())) {
+
+                    XLog.d("yes, " + i);
+                    nodeTitle = adapter.getItem(i).getTitle();
+                    XLog.d(nodeTitle);
+
+                    //有个bug，设了hint之后，setSelection就失效了。
+                    spinner.setSelection(i);
+                    XLog.d(spinner.getSelectedItemPosition());
+                    break;
+                }
             }
-        });
+        }
     }
 
     @Override
@@ -264,28 +271,5 @@ public class CreateTopicActivity extends AppCompatActivity {
 
     private void handleError() {
 
-    }
-
-    @Deprecated
-    private class MyTextWatcher implements TextWatcher {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            if (etContent.toString().isEmpty() && etTitle.toString().isEmpty()) {
-                item.setIcon(R.drawable.ic_send_white_24dp);
-            } else {
-                item.setIcon(R.drawable.ic_send_black_24dp);
-            }
-        }
     }
 }

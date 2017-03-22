@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.details;
 
+import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -21,7 +21,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,7 +40,10 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
@@ -65,6 +67,7 @@ import static im.fdx.v2ex.MyApp.USE_WEB;
 import static im.fdx.v2ex.MyApp.USE_API;
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
+import static im.fdx.v2ex.ui.LoginActivity.action_logout;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
@@ -77,9 +80,11 @@ public class DetailsActivity extends AppCompatActivity {
     private static final int MSG_ERROR_AUTH = 1;
     private static final int MSG_ERROR_IO = 2;
     private static final int MSG_GO_TO_BOTTOM = 3;
+    public static final String ACTION_GET_REPLY = "im.fdx.v2ex.action.GET_REPLY";
+    private static final int MSG_GET_MORE_REPLY = 4;
     private SwipeRefreshLayout mSwipe;
     private ImageView ivSend;
-    private EditText etReply;
+    private EditText etSendReply;
     private DetailsAdapter mDetailsAdapter;
     private List<BaseModel> mAllContent = new ArrayList<>();
     RecyclerView mRCView;
@@ -95,6 +100,11 @@ public class DetailsActivity extends AppCompatActivity {
             } else if (intent.getAction().equals("im.fdx.v2ex.event.logout")) {
                 invalidateOptionsMenu();
                 removeFootView();
+            } else if (intent.getAction().equals("im.fdx.v2ex.reply")) {
+                XLog.tag("HEHE").d("MSG_GET  LocalBroadCast");
+                List<ReplyModel> rm = intent.getParcelableArrayListExtra("replies");
+                mAllContent.addAll(rm);
+                mDetailsAdapter.notifyDataSetChanged();
             }
         }
 
@@ -127,7 +137,13 @@ public class DetailsActivity extends AppCompatActivity {
                     break;
                 case MSG_GO_TO_BOTTOM:
                     mRCView.scrollToPosition(mAllContent.size() - 1);
-
+                    break;
+                case MSG_GET_MORE_REPLY:
+                    XLog.tag("HEHE").d("MSG_GET_MORE_REPLY");
+                    List<ReplyModel> rm = (List<ReplyModel>) msg.obj;
+                    mAllContent.addAll(rm);
+                    mDetailsAdapter.notifyDataSetChanged();
+                    break;
             }
             return false;
         }
@@ -143,7 +159,8 @@ public class DetailsActivity extends AppCompatActivity {
 
         IntentFilter filter = new IntentFilter("im.fdx.v2ex.event.login");
 
-        filter.addAction("im.fdx.v2ex.event.logout");
+        filter.addAction(action_logout);
+        filter.addAction("im.fdx.v2ex.reply");
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         if (MyApp.getInstance().isLogin()) {
@@ -182,10 +199,10 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etReply.hasFocus()) {
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etSendReply.hasFocus()) {
 //                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 //                    inputMethodManager.hideSoftInputFromWindow(recyclerView.getWindowToken(), 0);
-                    etReply.clearFocus();
+                    etSendReply.clearFocus();
                 }
             }
 
@@ -195,6 +212,8 @@ public class DetailsActivity extends AppCompatActivity {
 
             }
         });
+
+
         mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent);
         mRCView.setAdapter(mDetailsAdapter);
 
@@ -213,8 +232,8 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
 
-        etReply = (EditText) findViewById(R.id.et_post_reply);
-        etReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        etSendReply = (EditText) findViewById(R.id.et_post_reply);
+        etSendReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
 
@@ -226,7 +245,8 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        etReply.addTextChangedListener(new TextWatcher() {
+
+        etSendReply.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -300,14 +320,19 @@ public class DetailsActivity extends AppCompatActivity {
             mTopicId = intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L);
             getTopicAndReplyByOk(mTopicId, false);
         }
+        mDetailsAdapter.setTopicId(mTopicId);
         XLog.tag(TAG).d(mTopicId);
 
 
     }
 
     private void getTopicAndReplyByOk(final long topicId, final boolean scrolltoBottom) {
+        getPageOne(topicId, scrolltoBottom);
+    }
+
+    private void getPageOne(final long topicId, final boolean scrolltoBottom) {
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
-                .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId)
+                .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
                 .build()).enqueue(new Callback() {
 
             @Override
@@ -318,24 +343,35 @@ public class DetailsActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-
                 //权限问题，需要登录
                 if (response.code() == 302) {
                     handler.sendEmptyMessage(MSG_ERROR_AUTH);
                     return;
                 }
+                if (response.code() != 200) {
+                    JsonManager.handleError();
+                    return;
+                }
 
                 String bodyStr = response.body().string();
-
                 Element body = Jsoup.parse(bodyStr);
+
                 BaseModel topicHeader = JsonManager.parseResponseToTopic(body, topicId);
+                List<ReplyModel> repliesOne = JsonManager.parseResponseToReplay(body);
 
-                List<ReplyModel> replies = JsonManager.parseResponseToReplay(body);
+                if (MyApp.getInstance().isLogin()) {
+                    String replyVerifyCode = parseToVerifyCode(body);
+                    XLog.tag(TAG).d("verify" + replyVerifyCode);
+                    if (replyVerifyCode != null) {
+                        mDetailsAdapter.setVerifyCode(replyVerifyCode);
+                    }
+                }
 
-                once = parseOnce(body);
+
+                once = JsonManager.parseOnce(body);
                 mAllContent.clear();
                 mAllContent.add(topicHeader);
-                mAllContent.addAll(replies);
+                mAllContent.addAll(repliesOne);
 
                 handler.post(new Runnable() {
                     @Override
@@ -345,22 +381,45 @@ public class DetailsActivity extends AppCompatActivity {
                         if (scrolltoBottom) {
                             handler.sendEmptyMessage(MSG_GO_TO_BOTTOM);
                         }
-
                     }
                 });
+
+                XLog.tag(TAG).d("get first page done, next is get more page");
+                int totalPage = JsonManager.getTotalPage(body);  // [2,3]
+                if (totalPage != -1) {
+
+                    XLog.tag(TAG).d(totalPage);
+                    getMoreRepliesByOrder(totalPage);
+                }
             }
 
         });
     }
 
-    private String parseOnce(Element body) {
+    private String parseToVerifyCode(Element body) {
 
-        Element onceElement = body.getElementsByAttributeValue("name", "once").first();
-        if (onceElement != null) {
-            return onceElement.attr("value");
+//        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
+        Element element = body.getElementsByClass("topic_buttons").first().getElementsByTag("a").first();
+        if (element != null) {
+            Pattern p = Pattern.compile("(?<=/favorite/topic/\\d{1,10}\\?t=)\\w+");
+//            XLog.tag(TAG).d(element.outerHtml());
+
+            Matcher matcher = p.matcher(element.outerHtml());
+            if (matcher.find()) {
+//                XLog.tag(TAG).d(matcher.group());
+                return matcher.group();
+            }
         }
-
         return null;
+    }
+
+    private void getMoreRepliesByOrder(int page) {
+        Intent intentGetMoreReply = new Intent(DetailsActivity.this, getMoreReplyService.class);
+//        intentGetMoreReply.setAction(ACTION_GET_REPLY);
+        intentGetMoreReply.putExtra("page", page);
+        intentGetMoreReply.putExtra("topic_id", mTopicId);
+        startService(intentGetMoreReply);
+        XLog.tag(TAG).d("yes I startIntentService");
     }
 
     private void getReplyData() {
@@ -417,22 +476,25 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_details, menu);
+        if (MyApp.getInstance().isLogin()) {
+            getMenuInflater().inflate(R.menu.menu_reply, menu);
+        }
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_reply, menu);
-
-
-        return super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_reply:
-//                postReply();
+                etSendReply.requestFocus();
+                ObjectAnimator animator = ObjectAnimator.ofFloat(etSendReply, "translationX", 0, 50, -50, 0, 50, 0);
+                animator.setDuration(600);
+                animator.start();
 
 
                 break;
@@ -443,7 +505,7 @@ public class DetailsActivity extends AppCompatActivity {
             case R.id.menu_item_share:
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子： " + ((TopicModel) mAllContent.get(0)).getTitle() + "   "
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子：" + ((TopicModel) mAllContent.get(0)).getTitle() + "   "
                         + JsonManager.HTTPS_V2EX_BASE + "/t/" + ((TopicModel) mAllContent.get(0)).getId());
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
@@ -474,9 +536,9 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     public void postReply(View view) {
-        etReply.clearFocus();
+        etSendReply.clearFocus();
         XLog.tag(TAG).d("I clicked");
-        final String content = etReply.getText().toString();
+        final String content = etSendReply.getText().toString();
         RequestBody requestBody = new FormBody.Builder()
                 .add("content", content)
                 .add("once", once)
@@ -511,7 +573,7 @@ public class DetailsActivity extends AppCompatActivity {
                         @Override
                         public void run() {
 
-                            etReply.setText("");
+                            etSendReply.setText("");
 
 
                         }
@@ -531,6 +593,11 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        XLog.tag(TAG).d("onDestroy");
+
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
+
+
 }

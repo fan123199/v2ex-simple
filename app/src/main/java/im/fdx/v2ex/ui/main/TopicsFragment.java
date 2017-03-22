@@ -55,7 +55,6 @@ public class TopicsFragment extends Fragment {
     private List<TopicModel> mTopicModels = new ArrayList<>();
 
     private TopicsRVAdapter mAdapter;
-    RecyclerView.LayoutManager mLayoutManger;//TODO
     private int MSG_GET_DATA_BY_OK = 1;
 
 

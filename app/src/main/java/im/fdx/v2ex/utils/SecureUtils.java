@@ -33,6 +33,8 @@ import static im.fdx.v2ex.ui.LoginActivity.ANDROID_KEY_STORE;
 
 /**
  * Created by fdx on 2017/3/17.
+ *
+ * 还有一些bug，无法保证可靠性，暂时不用
  */
 
 @SuppressWarnings("TryWithIdenticalCatches")

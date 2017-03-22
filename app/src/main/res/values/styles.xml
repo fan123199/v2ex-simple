@@ -31,8 +31,8 @@
         <item name="tabIndicatorColor">?attr/colorAccent</item>
         <!--<item name="tabBackground">?attr/colorPrimary</item>-->
 
-        <item name="tabPaddingStart">16dp</item>
-        <item name="tabPaddingEnd">16dp</item>
+        <item name="tabPaddingStart">8dp</item>
+        <item name="tabPaddingEnd">8dp</item>
     </style>
 
     <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">

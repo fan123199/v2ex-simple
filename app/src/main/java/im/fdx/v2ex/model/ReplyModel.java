@@ -29,12 +29,18 @@ import android.os.Parcelable;
 public class ReplyModel extends BaseModel implements Parcelable {
 
     private long id;
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     private String content;
-    private String content_rendered;
 
     public void setContent(String content) {
         this.content = content;
     }
+
+    private String content_rendered;
 
     public void setContent_rendered(String content_rendered) {
         this.content_rendered = content_rendered;

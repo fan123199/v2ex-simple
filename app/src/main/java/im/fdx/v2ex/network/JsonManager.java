@@ -248,22 +248,31 @@ public class JsonManager {
     }
 
     //// TODO: 2017/3/16 只有一页回复，这样是不行的
-    public static int[] parsePage(Element body) {
+    public static int getTotalPage(Element body) {
 
         int currentPage = 0;
         int totalPage = 0;
         Element pageInput = body.getElementsByClass("page_input").first();
+        if (pageInput == null) {
+            return -1;
+
+        }
         try {
             currentPage = Integer.parseInt(pageInput.attr("value"));
             totalPage = Integer.parseInt(pageInput.attr("max"));
         } catch (NumberFormatException e) {
 
         }
-        return new int[]{currentPage, totalPage};
+        return totalPage;
 
 
     }
 
+    /**
+     * @param body
+     * @param topicId todo 可以省略
+     * @return
+     */
     @NonNull
     public static TopicModel parseResponseToTopic(Element body, long topicId) {
         TopicModel topicModel = new TopicModel(topicId);
@@ -338,13 +347,17 @@ public class JsonManager {
         return topicModel;
     }
 
-    public static List<ReplyModel> parseResponseToReplay(Element body) {
+    public static ArrayList<ReplyModel> parseResponseToReplay(Element body) {
 
         ArrayList<ReplyModel> replyModels = new ArrayList<>();
 
         Elements items = body.getElementsByAttributeValueStarting("id", "r_");
         for (Element item :
                 items) {
+
+//            <div id="r_4157549" class="cell">
+            String idStr = item.id();
+            long id = Long.parseLong(idStr.substring(2));
 
             ReplyModel replyModel = new ReplyModel();
             MemberModel memberModel = new MemberModel();
@@ -373,11 +386,27 @@ public class JsonManager {
             replyModel.setMember(memberModel);
             replyModel.setThanks(thanks);
 
+
+            replyModel.setId(id);
             replyModel.setContent(replyContent.text());
             replyModel.setContent_rendered(ContentUtils.format(replyContent.html()));
             replyModels.add(replyModel);
         }
         return replyModels;
 
+    }
+
+    public static void handleError() {
+
+    }
+
+    public static String parseOnce(Element body) {
+
+        Element onceElement = body.getElementsByAttributeValue("name", "once").first();
+        if (onceElement != null) {
+            return onceElement.attr("value");
+        }
+
+        return null;
     }
 }

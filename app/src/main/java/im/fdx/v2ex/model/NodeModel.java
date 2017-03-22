@@ -199,7 +199,7 @@ public class NodeModel extends BaseModel implements Parcelable {
 
     @Override
     public String toString() {
-        return title + "/ " + name;
+        return title + " / " + name;
     }
 
     protected NodeModel(Parcel in) {

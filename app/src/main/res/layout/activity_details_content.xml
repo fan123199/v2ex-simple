@@ -40,10 +40,8 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:elevation="3dp"
-            app:elevation="6dp"
+            app:elevation="3dp"
             android:textSize="16sp"
-            tools:text=""
             android:background="@android:color/transparent"
             android:minLines="1"
             android:maxLines="5"

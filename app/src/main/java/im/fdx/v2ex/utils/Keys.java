@@ -6,19 +6,10 @@ package im.fdx.v2ex.utils;
  */
 public class Keys {
 
-    // top and latest API
 
-    public static final String KEY_MEMBER_ID = "profile_id";
-    String KEY_POST_ID = "id";
-    String KEY_POST_TITLE = "title";
-    String KEY_CONTENT = "content";
-    String KEY_CONTENT_RENDERED = "content_rendered";
-    String KEY_REPLIES = "replies";
-    String KEY_MEMBER = "member";
-    String KEY_NODE = "node";
-    String KEY_CREATED = "created";
-    String KEY_LAST_MODIFIED = "last_modified";
-    String KEY_LAST_TOUCHED = "last_touched";
+    public static final String AUTHOR_EMAIL = "fan123199@gmail.com";
+
+    public static final String KEY_MEMBER_ID = "member_id";
 
     public static final String KEY_TAB = "tab";
     public static final String KEY_COLUMN_ID = "column_id";
@@ -26,32 +17,12 @@ public class Keys {
     public static final String KEY_TOPIC_ID = "topic_id";
 
     //node API
-    public static final String  KEY_NODE_ID = "id";
+    public static final String KEY_NODE_ID = "node_id";
     public static final String KEY_NODE_NAME = "name";
-    String KEY_URL = "url";
-    String KEY_NODE_TITLE = "title";
-    String KEY_NODE_TITLE_ALTERNATIVE = "title_alternative";
-    String KEY_TOPICS = "topics";
-    String KEY_STARS = "stars";
-    String KEY_HEADER = "header";
-    String KEY_FOOTER = "footer";
-    String KEY_AVATAR_MINI = "avatar_mini";
-    String KEY_AVATAR_NORMAL = "avatar_normal";
-    String KEY_AVATAR_LARGE = "avatar_large";
+    public static final String KEY_AVATAR = "avatar";
 
     //user API
-    String KEY_STATUS = "status";
-    String KEY_USER_ID = "id";
     public static final String KEY_USERNAME = "username";
-    String KEY_WEBSITE = "website";
-    String KEY_TWITTER = "twitter";
-    String KEY_PSN = "psn";
-    String KEY_GITHUB = "github";
-    String KEY_BTC = "btc";
-    String KEY_LOCATION = "location";
-    String KEY_TAGLINE = "tagline";
-    String KEY_BIO = "bio";
 
-    //Author's const
-    public static final String AUTHOR_EMAIL = "fan123199@gmail.com";
+
 }

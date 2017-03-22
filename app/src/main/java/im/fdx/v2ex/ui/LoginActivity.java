@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
@@ -27,10 +28,13 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.Objects;
 
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.utils.HintUI;
+import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.SecureUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -38,12 +42,16 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.internal.http2.Header;
 
 import static android.util.Base64.encodeToString;
+import static im.fdx.v2ex.network.JsonManager.API_USER;
 import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 import static im.fdx.v2ex.network.JsonManager.SIGN_IN_URL;
+import static im.fdx.v2ex.network.JsonManager.myGson;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final String TAG = LoginActivity.class.getSimpleName();
 
     public static final int LOG_IN_SUCCEED = 2;
     private static final int LOG_IN_FAILED = 3;
@@ -54,25 +62,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private SharedPreferences mSharedPreference;
     private String username;
     private String password;
-    private SecureUtils secureUtils;
+    String avatar;
     public static final String action_login = "im.fdx.v2ex.event.login";
+    public static final String action_logout = "im.fdx.v2ex.event.logout";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        secureUtils = new SecureUtils();
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this);
 
-
-        String encryptedKey = mSharedPreference.getString("password", "");
-        String passwordPref = "";
-        if (!encryptedKey.equals("")) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                passwordPref = secureUtils.decrypt(encryptedKey);
-            }
-        }
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -106,10 +106,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (!TextUtils.isEmpty(usernamePref)) {
             etUsername.setText(usernamePref);
-            etPassword.requestFocus();
-        }
-        if (!TextUtils.isEmpty(passwordPref)) {
-            etPassword.setText(passwordPref);
             etPassword.requestFocus();
         }
 
@@ -215,32 +211,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
                 final int httpcode = response.code();
-                XLog.tag("LoginActivity").d("http code: " + response.code());
-//                XLog.tag("LoginActivity").d("Headers:  " + response.headers().toString());
-//                XLog.tag("LoginActivity").d("Requests: " + response.request());
-//                XLog.tag("LoginActivity").d(response.request().headers());
-//                XLog.tag("LoginActivity").d("response String: " + response.toString());
                 final String errorMsg = getErrorMsg(response.body().string());
+                XLog.tag("LoginActivity").d("http code: " + response.code());
                 XLog.tag("LoginActivity").d("errorMsg" + errorMsg);
 
                 switch (httpcode) {
                     case 302:
 
-                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                            String encrypted = secureUtils.encrypt(password);
-                            mSharedPreference.edit().putString("password", encrypted).apply();
-                        }
-
+                        MyApp.getInstance().setLogin(true);
                         mSharedPreference.edit()
                                 .putString("username", username)
                                 .putBoolean("is_login", true)
                                 .apply();
-                        LoginActivity.this.setResult(LOG_IN_SUCCEED);
+//                        LoginActivity.this.setResult(LOG_IN_SUCCEED);
 
-                        Intent intent = new Intent(action_login);
-                        intent.putExtra("username", username);
-                        LocalBroadcastManager.getInstance(LoginActivity.this)
-                                .sendBroadcast(intent);
+
+                        goMyHomePage();
 
                         runOnUiThread(new Runnable() {
                             @Override
@@ -253,12 +239,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         finish();
                         break;
                     case 200:
-                        LoginActivity.this.setResult(LOG_IN_FAILED);
+//                        LoginActivity.this.setResult(LOG_IN_FAILED);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                HintUI.T(LoginActivity.this, String.valueOf(httpcode) + " | " + errorMsg + "登录失败");
-                                // TODO: 2017/3/17 加入网页的提示语
+                                progressDialog.dismiss();
+                                HintUI.T(LoginActivity.this, "登录失败\n " + errorMsg);
                             }
                         });
                         break;
@@ -271,15 +257,46 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
+    private void goMyHomePage() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                .headers(HttpHelper.baseHeaders)
+                .url(API_USER + "?username=" + username).build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if (response.code() != 200) {
+                    return;
+                }
+                String body = response.body().string();
+                MemberModel member = myGson.fromJson(body, MemberModel.class);
+                avatar = member.getAvatarLargeUrl();
+
+                mSharedPreference.edit().putString("avatar", avatar).apply();
+                Intent intent = new Intent(action_login);
+                intent.putExtra(Keys.KEY_USERNAME, username);
+                intent.putExtra(Keys.KEY_AVATAR, avatar);
+                LocalBroadcastManager.getInstance(LoginActivity.this)
+                        .sendBroadcast(intent);
+            }
+        });
+    }
+
 
     private String getErrorMsg(String body) {
+
+        XLog.tag(TAG).d(body);
         Element element = Jsoup.parse(body).body();
         Elements message = element.getElementsByClass("problem");
         if (message == null) {
             return "";
         }
 
-        return message.text();
+        return message.text().trim();
     }
 
     private boolean isValidated() {

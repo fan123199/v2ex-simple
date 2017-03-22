@@ -104,5 +104,8 @@
     <string name="post_reply">send reply</string>
     <string name="user">User</string>
     <string name="choose_node">Please choose node</string>
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

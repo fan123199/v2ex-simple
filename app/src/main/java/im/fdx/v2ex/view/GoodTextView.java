@@ -1,13 +1,17 @@
 package im.fdx.v2ex.view;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -25,10 +29,16 @@ import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import im.fdx.v2ex.R;
+import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.ContentUtils;
 
@@ -42,6 +52,7 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
     private Context context;
     private static final String TAG = GoodTextView.class.getSimpleName();
+    private MyImageGetter imageGetter;
 
 
     public GoodTextView(Context context) {
@@ -59,18 +70,31 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         this.context = context;
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+
+
+        super.onDetachedFromWindow();
+    }
+
+    public void recycleImage() {
+
+    }
 
 
     public void setGoodText(String text) {
         if (TextUtils.isEmpty(text)) {
             return;
         }
+
+//        XLog.tag(TAG).d( "early in setGoodTest" + getWidth());
         String formContent = ContentUtils.format(text);
         final Spanned spannedText;
+        imageGetter = new MyImageGetter();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            spannedText = Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, new MyImageGetter(), null);
+            spannedText = Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, imageGetter, null);
         } else {
-            spannedText = Html.fromHtml(formContent, new MyImageGetter(), null);
+            spannedText = Html.fromHtml(formContent, imageGetter, null);
         }
 
 
@@ -88,8 +112,8 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
             final int start = htmlSpannable.getSpanStart(imageSpan);
             final int end = htmlSpannable.getSpanEnd(imageSpan);
 
-            XLog.tag("GoodTextView-fdx").d(imageSpan.getSource());
-            XLog.tag("GoodTextView-fdx").d(start + "|" + end);
+//            XLog.tag("GoodTextView-fdx").d(imageSpan.getSource());
+//            XLog.tag("GoodTextView-fdx").d(start + "|" + end);
 
 //            imageUrls.add(imageUrl);
             ClickableSpan clickableSpan = new ClickableSpan() {
@@ -115,13 +139,13 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         setMovementMethod(LinkMovementMethod.getInstance());
     }
 
-    private static class BitmapHolder extends BitmapDrawable {
+    private class BitmapHolder extends BitmapDrawable {
 
         protected Drawable drawable;
 
 
         @Override
-        public void draw(final Canvas canvas) {
+        public void draw(Canvas canvas) {
             if (drawable != null) {
                 drawable.draw(canvas);
             }
@@ -133,35 +157,103 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
     }
 
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+
+        return inSampleSize;
+    }
+
+    public static Bitmap decodeSampledBitmapFromFile(String path, int reqWidth, int reqHeight) {
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(path, options);
+    }
+
 
     private class MyImageGetter implements Html.ImageGetter {
 
-
-
         @Override
-        public Drawable getDrawable(String source) {
+        public Drawable getDrawable(final String source) {
             //怪不得一样的图片。放在了类里。
             final BitmapHolder bitmapHolder = new BitmapHolder();
-            Log.i(TAG, "before got Image: " + source);
+
+            final BitmapDrawable bitmapDrawable = new BitmapDrawable();
+            Log.i(TAG, " Image url: " + source);
             ImageLoader.ImageContainer response = VolleyHelper.getInstance().getImageLoader()
                     .get(source, new ImageLoader.ImageListener() {
                 @Override
                 public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                     if (response != null) {
 
+
+                        BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inSampleSize = 2;
+
+
                         Bitmap bp = response.getBitmap();
+
+
                         if (bp != null) {
-                            int height = bp.getHeight();
-                            int width = bp.getWidth();
+
+                            XLog.tag(TAG).d("bp.getByteCount() " + bp.getByteCount()
+                                    + "\nbp.getAllocationByteCount() = " + bp.getAllocationByteCount()
+                                    + "\nbp.getWidth() = " + bp.getWidth()
+                                    + "\nbp.getHeight() =" + bp.getHeight()
+                                    + "\nbp.getDensity() = " + bp.getDensity()
+                                    + "\ngetWidth() = " + GoodTextView.this.getWidth()
+                                    + "\ngetHeight() = " + GoodTextView.this.getHeight()
+                                    + "\ngetMeasuredWidth()" + getMeasuredWidth()
+                                    + "\ngetMeasuredHeight()" + getMeasuredHeight()
+                            );
+
                             Drawable dr = new BitmapDrawable(getResources(), bp);
-                            dr.setBounds(0, 0, width, height);
+
+                            Point point = new Point();
+                            int theMaxWitheasy = 500;
+                            ((Activity) context).getWindowManager().getDefaultDisplay().getSize(point);
+                            int theMaxWith = point.y - 100;
+
+                            int bpheight;
+                            int bpwidth;
+
+                            if (bp.getWidth() > theMaxWith) {
+                                bpwidth = theMaxWith;
+                                bpheight = (int) (bp.getHeight() * ((float) theMaxWith / bp.getWidth()));
+                            } else {
+                                bpheight = bp.getHeight();
+                                bpwidth = bp.getWidth();
+                            }
+
+                            dr.setBounds(0, 0, bpwidth, bpheight);
                             bitmapHolder.setDrawable(dr);
-                            bitmapHolder.setBounds(0, 0, width, height);
+                            bitmapHolder.setBounds(0, 0, bpwidth, bpheight);
 
-                            //很关键，然而我一无所知,必须先invalidate，然后setText
-//                            postInvalidate();
+                            //很关键，然而我一无所知,必须setText
                             setText(getText());
-
                             Log.i(TAG, "got Image");
                         }
                     }
@@ -176,4 +268,38 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
             return bitmapHolder;
         }
     }
+
+    private class NewGetter implements Html.ImageGetter {
+        @Override
+        public Drawable getDrawable(String source) {
+            return null;
+        }
+    }
+
+    private class task extends AsyncTask<GoodTextView, Void, Bitmap> {
+
+        String source;
+        Context context;
+
+        public task(Context context, String source) {
+            this.context = context;
+            this.source = source;
+        }
+
+        @Override
+        protected Bitmap doInBackground(GoodTextView... params) {
+
+            try {
+                return Picasso.with(this.context).load(source).get();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+        }
+    }
+
 }
