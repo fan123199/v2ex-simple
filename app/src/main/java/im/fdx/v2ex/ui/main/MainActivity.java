@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -46,9 +47,11 @@ import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.UpdateService;
+import im.fdx.v2ex.WebViewActivity;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.LoginActivity;
+import im.fdx.v2ex.ui.ProfileActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
 import im.fdx.v2ex.ui.node.AllNodesActivity;
 import im.fdx.v2ex.utils.HintUI;
@@ -60,7 +63,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static im.fdx.v2ex.R.id.nav_testNotify;
-import static im.fdx.v2ex.R.string.username;
 import static im.fdx.v2ex.network.JsonManager.DAILY_CHECK;
 import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
 import static im.fdx.v2ex.ui.LoginActivity.action_login;
@@ -143,32 +145,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             addDailyCheckMenu();
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-            String username = sharedPreferences.getString("username", "");
+            String username = sharedPreferences.getString(Keys.KEY_USERNAME, "");
             String avatar = sharedPreferences.getString("avatar", "");
-            if (TextUtils.isEmpty(username) && TextUtils.isEmpty(avatar)) {
+            XLog.tag(TAG).d(username + "//// " + avatar);
+            if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(avatar)) {
                 setUserInfo(username, avatar);
             }
         }
 
-        mViewPager = (ViewPager) findViewById(R.id.viewPager);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager_main);
         mAdapter = new MyViewPagerAdapter(getFragmentManager(), MainActivity.this);
         mViewPager.setAdapter(mAdapter);
 
-        listener = new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        };
         TabLayout mTabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        mViewPager.addOnPageChangeListener(listener);
 
 
         //这句话可以省略，主要用于如果在其他地方对tablayout自定义title的话，
@@ -177,6 +166,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (mTabLayout != null) {
             //内部实现就是加入一堆的listener给viewpager，不用自己实现
             mTabLayout.setupWithViewPager(mViewPager);
+
+            mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    XLog.tag("tablayout").d("selected");
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+                    XLog.tag("tablayout").d("unselected");
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+                    XLog.tag("tablayout").d("reselected");
+                    ((TopicsFragment) mAdapter.getItem(tab.getPosition())).scrollToTop();
+                }
+            });
 
         }
 
@@ -190,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         if (!BuildConfig.DEBUG) {
-            navigationView.getMenu().removeItem(R.id.nav_testNotify);
+            navigationView.getMenu().removeItem(nav_testNotify);
             navigationView.getMenu().removeItem(R.id.nav_testMenu);
             navigationView.getMenu().removeItem(R.id.nav_testMenu2);
         }
@@ -198,10 +205,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    private void setUserInfo(String username, String avatar) {
-        TextView tvMyName = (TextView) findViewById(R.id.tv_my_username);
+    private void setUserInfo(final String username, String avatar) {
+        TextView tvMyName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_my_username);
         tvMyName.setText(username);
-        NetworkImageView imageView = (NetworkImageView) findViewById(R.id.iv_my_avatar);
+        tvMyName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                intent.putExtra(Keys.KEY_USERNAME, username);
+                startActivity(intent);
+            }
+        });
+        NetworkImageView imageView = (NetworkImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar);
         imageView.setImageUrl(avatar, VolleyHelper.getInstance().getImageLoader());
 
     }
@@ -233,10 +248,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (MyApp.getInstance().isLogin()) {
             menu.findItem(R.id.menu_login).setVisible(false);
-            XLog.tag(TAG).d("Invisible");
+//            XLog.tag(TAG).d("invisible");
         } else {
             menu.findItem(R.id.menu_login).setVisible(true);
-            XLog.tag(TAG).d("visible");
+//            XLog.tag(TAG).d("visible");
         }
         return true;
 
@@ -267,16 +282,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_testMenu2:
 
-//                LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent("im.fdx.v2ex.test"));
-//                addDailyCheckMenu();
+                startActivity(new Intent(this, WebViewActivity.class));
                 break;
             case R.id.nav_node:
                 startActivity(new Intent(this, AllNodesActivity.class));
 
                 break;
-            case nav_testNotify:
-                Intent itNoti = new Intent();
-                PendingIntent pdit = PendingIntent.getActivity(this, 0, itNoti, 0);
+            case R.id.nav_testNotify:
 
                 Intent resultIntent = new Intent(MainActivity.this, SettingsActivity.class);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
@@ -285,12 +297,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 PendingIntent resultPendingIntent = stackBuilder
                         .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
                 int notifyID = 1;
-                int color = Color.argb(127, 255, 0, 255);
                 int c;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     c = getResources().getColor(R.color.primary, getTheme());
                 } else {
-                    c = color;
+                    c = getResources().getColor(R.color.primary);
                 }
                 NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
                 mBuilder.setContentTitle("fdx")
@@ -308,24 +319,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 mNotificationManager.notify(notifyID, mNotificationCompat);
                 break;
             case R.id.nav_share:
-                Uri uri = Uri.parse("market://details?id=" + getPackageName());
+//                Uri uri = Uri.parse("market://details?id=" + getPackageName());
                 Intent intentShare = new Intent(Intent.ACTION_SEND);
                 intentShare.setType("text/plain");
-                intentShare.putExtra(Intent.EXTRA_TEXT, "这是真正的内容");
-//                intentShare.putExtra(Intent.EXTRA_TITLE, "这是Title");
+                intentShare.putExtra(Intent.EXTRA_TEXT, "V2ex:" + "market://details?id=" + getPackageName());
                 startActivity(Intent.createChooser(intentShare, getString(R.string.share_to)));
                 break;
             case R.id.nav_feedback:
+
+
                 Intent intentData = new Intent(Intent.ACTION_SEND);
+
                 intentData.setType("message/rfc822");
                 intentData.putExtra(Intent.EXTRA_EMAIL, new String[]{Keys.AUTHOR_EMAIL});
                 intentData.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
                 intentData.putExtra(Intent.EXTRA_TEXT, getString(R.string.feedback_hint) + "\n");
                 try {
-                    startActivity(Intent.createChooser(intentData, getString(R.string.send_email)));
+                    intentData.setPackage("com.google.android.apps.inbox");
+                    startActivity(intentData);
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(MainActivity.this, "There are no email clients installed.",
-                            Toast.LENGTH_SHORT).show();
+                    intentData.setPackage(null);
+                    intentData.setData(Uri.parse("mailto:" + Keys.AUTHOR_EMAIL));
+                    startActivity(intentData);
+//                    Toast.makeText(MainActivity.this, "There are no email clients installed.",
+//                            Toast.LENGTH_SHORT).show();
                 }
 
                 break;

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/coordinator"
     >
 
     <android.support.design.widget.AppBarLayout
@@ -13,10 +14,15 @@
         android:elevation="3dp"
         tools:ignore="UnusedAttribute">
 
-        <include
+        <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/toolbar"
-            layout="@layout/app_toolbar"
-            app:layout_scrollFlags="scroll|enterAlways" />
+            app:layout_scrollFlags="scroll|enterAlways"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/sliding_tabs"
@@ -27,10 +33,9 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
     <!--if not contain layout_behavior,it shows buggy-->
     <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
+        android:id="@+id/viewpager_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -40,10 +45,9 @@
         android:id="@+id/fab_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_anchor="@id/viewPager"
         app:fabSize="normal"
         android:src="@drawable/ic_add_white_24dp"
-        app:layout_anchorGravity="bottom|right|end"
+        android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
         android:scaleType="fitXY" />

@@ -196,6 +196,13 @@
         </activity>
 
         <service android:name=".ui.details.getMoreReplyService" />
+
+        <activity android:name=".WebViewActivity" />
+
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

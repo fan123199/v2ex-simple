@@ -30,9 +30,8 @@
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">?attr/colorAccent</item>
         <!--<item name="tabBackground">?attr/colorPrimary</item>-->
-
-        <item name="tabPaddingStart">8dp</item>
-        <item name="tabPaddingEnd">8dp</item>
+        <item name="tabPaddingStart">6dp</item>
+        <item name="tabPaddingEnd">6dp</item>
     </style>
 
     <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">
@@ -50,6 +49,12 @@
         <item name="android:background">@drawable/select_background</item>
         <item name="android:paddingTop">6dp</item>
         <item name="android:paddingBottom">6dp</item>
+    </style>
+
+    <style name="ExpendedCollapseTitle">
+        <item name="android:textSize">24sp</item>
+        <item name="android:maxEms">5</item>
+        <item name="android:ellipsize">start</item>
     </style>
 
 </resources>

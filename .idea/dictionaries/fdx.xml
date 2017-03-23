@@ -9,6 +9,7 @@
       <w>persistor</w>
       <w>referer</w>
       <w>topicid</w>
+      <w>webview</w>
     </words>
   </dictionary>
 </component>

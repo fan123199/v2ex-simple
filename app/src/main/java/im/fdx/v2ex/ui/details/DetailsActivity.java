@@ -29,18 +29,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.elvishew.xlog.XLog;
-import com.google.gson.reflect.TypeToken;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,11 +46,9 @@ import im.fdx.v2ex.model.BaseModel;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.SmoothManager;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -63,8 +56,6 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 
-import static im.fdx.v2ex.MyApp.USE_WEB;
-import static im.fdx.v2ex.MyApp.USE_API;
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
 import static im.fdx.v2ex.ui.LoginActivity.action_logout;
@@ -213,7 +204,6 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-
         mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent);
         mRCView.setAdapter(mDetailsAdapter);
 
@@ -226,12 +216,13 @@ public class DetailsActivity extends AppCompatActivity {
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getReplyData();
+                getPageOne(mTopicId, false);
             }
 
         });
 
 
+        ivSend = (ImageView) findViewById(R.id.iv_send);
         etSendReply = (EditText) findViewById(R.id.et_post_reply);
         etSendReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -249,12 +240,10 @@ public class DetailsActivity extends AppCompatActivity {
         etSendReply.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -272,8 +261,6 @@ public class DetailsActivity extends AppCompatActivity {
                 }
             }
         });
-        ivSend = (ImageView) findViewById(R.id.iv_send);
-
         parseIntent(getIntent());
 
         //以下是设置刷新按钮的位置，暂时不用
@@ -282,12 +269,6 @@ public class DetailsActivity extends AppCompatActivity {
 //        mSwipe.setProgressViewOffset(false, -start, (int) (start*1.5));
     }
 
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        parseIntent(intent);
-    }
 
     private void parseIntent(Intent intent) {
 
@@ -302,35 +283,32 @@ public class DetailsActivity extends AppCompatActivity {
                 if (host.contains("v2ex.com")) {//不需要判断，在manifest中已指定
                     mTopicId = Long.parseLong(params.get(1));
 
-                    getTopicAndReplyByOk(mTopicId, false);
+                    getPageOne(mTopicId, false);
                 }
             }
         } else if (intent.getParcelableExtra("model") != null) {
             TopicModel topicModel = intent.getParcelableExtra("model");
+
+            mAllContent.add(0, topicModel);
             mTopicId = topicModel.getId();
 
-            if (MyApp.getInstance().getHttpMode() == USE_API) {
-                mAllContent.add(0, topicModel);
-                getReplyByVolley();
-            } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
-                getTopicAndReplyByOk(mTopicId, false);
-
-            }
+            getPageOne(mTopicId, false);
         } else if (intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L) != -1L) {
             mTopicId = intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L);
-            getTopicAndReplyByOk(mTopicId, false);
+            getPageOne(mTopicId, false);
         }
-        mDetailsAdapter.setTopicId(mTopicId);
         XLog.tag(TAG).d(mTopicId);
 
 
     }
 
-    private void getTopicAndReplyByOk(final long topicId, final boolean scrolltoBottom) {
-        getPageOne(topicId, scrolltoBottom);
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        parseIntent(intent);
     }
 
-    private void getPageOne(final long topicId, final boolean scrolltoBottom) {
+    private void getPageOne(final long topicId, final boolean scrollToBottom) {
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
                 .build()).enqueue(new Callback() {
@@ -349,7 +327,7 @@ public class DetailsActivity extends AppCompatActivity {
                     return;
                 }
                 if (response.code() != 200) {
-                    JsonManager.handleError();
+                    JsonManager.dealError();
                     return;
                 }
 
@@ -370,7 +348,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                 once = JsonManager.parseOnce(body);
                 mAllContent.clear();
-                mAllContent.add(topicHeader);
+                mAllContent.add(0, topicHeader);
                 mAllContent.addAll(repliesOne);
 
                 handler.post(new Runnable() {
@@ -378,7 +356,7 @@ public class DetailsActivity extends AppCompatActivity {
                     public void run() {
                         mDetailsAdapter.notifyDataSetChanged();
                         mSwipe.setRefreshing(false);
-                        if (scrolltoBottom) {
+                        if (scrollToBottom) {
                             handler.sendEmptyMessage(MSG_GO_TO_BOTTOM);
                         }
                     }
@@ -422,56 +400,7 @@ public class DetailsActivity extends AppCompatActivity {
         XLog.tag(TAG).d("yes I startIntentService");
     }
 
-    private void getReplyData() {
 
-        if (MyApp.getInstance().getHttpMode() == USE_API) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    getReplyByVolley();
-                }
-            }).start();
-
-        } else if (MyApp.getInstance().getHttpMode() == USE_WEB) {
-            getTopicAndReplyByOk(mTopicId, false);
-        }
-
-    }
-
-    @Deprecated
-    private void getReplyByVolley() {
-        Type typeofR = new TypeToken<ArrayList<ReplyModel>>() {
-        }.getType();
-        MyGsonRequest<ArrayList<ReplyModel>> replies = new MyGsonRequest<>(JsonManager.API_REPLIES + "?topic_id="
-                + mTopicId, typeofR, new Response.Listener<ArrayList<ReplyModel>>() {
-            @Override
-            public void onResponse(ArrayList<ReplyModel> response) {
-                XLog.tag(TAG).i(TAG, "GSON DONE: " + ((response == null || response.isEmpty()) ? 0 : response.get(0).toString()));
-                if (response == null || response.size() == 0) {
-                    mSwipe.setRefreshing(false);
-                    XLog.tag(TAG).d(TAG, "no response got");
-                    HintUI.t(DetailsActivity.this, "无法获取回复");
-                    return;
-                }
-
-                mAllContent.clear();
-                mAllContent.addAll(1, response);
-//                replyLists.clear();
-//                replyLists.addAll(response);
-
-                mDetailsAdapter.notifyDataSetChanged();
-                mSwipe.setRefreshing(false);
-                XLog.tag(TAG).d(TAG, "done with details");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                JsonManager.handleVolleyError(getApplicationContext(), error);
-                mSwipe.setRefreshing(false);
-            }
-        });
-        VolleyHelper.getInstance().addToRequestQueue(replies);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -500,7 +429,7 @@ public class DetailsActivity extends AppCompatActivity {
                 break;
             case R.id.menu_refresh:
                 mSwipe.setRefreshing(true);
-                getReplyData();
+                getPageOne(mTopicId, false);
                 break;
             case R.id.menu_item_share:
                 Intent sendIntent = new Intent();
@@ -578,7 +507,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                         }
                     });
-                    getTopicAndReplyByOk(mTopicId, true);
+                    getPageOne(mTopicId, true);
                 }
             }
         });

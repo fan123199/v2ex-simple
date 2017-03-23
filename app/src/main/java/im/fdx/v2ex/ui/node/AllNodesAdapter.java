@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui.node;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +33,9 @@ import static android.media.CamcorderProfile.get;
 
 public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyViewHolder> {
 
-    private List<NodeModel> nodeModels = new ArrayList<>();
+    private List<NodeModel> mNodeModels = new ArrayList<>();
+
+    private List<NodeModel> realAllNodes = new ArrayList<>();
     private final ImageLoader imageLoader = VolleyHelper.getInstance().getImageLoader();
 
     @Override
@@ -45,11 +48,11 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final NodeModel node = nodeModels.get(position);
+        final NodeModel node = mNodeModels.get(position);
 
 //        getNodeIcon(node.getId(),holder);
 
-        String a = String.format(Locale.CHINA,"%s (%s)",node.getTitle(),node.getTopics());
+        String a = String.format(Locale.CHINA, "%s (%s)", node.getTitle(), node.getTopics());
         holder.tvNodeName.setText(a);
 
         holder.tvNodeName.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +72,7 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
 
     /**
      * get node icon because of api of all node sucks.
+     *
      * @param id
      * @param holder
      */
@@ -92,12 +96,35 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
 
     @Override
     public int getItemCount() {
-        return nodeModels.size();
+        return mNodeModels.size();
     }
 
 
-    void updateData(List<NodeModel> nodeModels) {
-        this.nodeModels = nodeModels;
+    public void setAllData(List<NodeModel> nodeModels) {
+        mNodeModels = nodeModels;
+        realAllNodes = nodeModels;
+    }
+
+    public void filter(String newText) {
+
+        if (TextUtils.isEmpty(newText)) {
+            mNodeModels = realAllNodes;
+            notifyDataSetChanged();
+            return;
+        }
+        ArrayList<NodeModel> newNodeModels = new ArrayList<>();
+        for (NodeModel nodeModel : realAllNodes) {
+            if (nodeModel.getName().contains(newText)
+                    || nodeModel.getTitle().contains(newText) ||
+                    (nodeModel.getTitle_alternative() != null && nodeModel.getTitle_alternative().contains(newText))) {
+                newNodeModels.add(nodeModel);
+            }
+        }
+
+        mNodeModels = newNodeModels;
+        notifyDataSetChanged();
+
+
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {

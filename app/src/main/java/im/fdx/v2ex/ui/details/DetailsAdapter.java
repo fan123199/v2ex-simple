@@ -21,8 +21,6 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 
-import org.jsoup.Connection;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +36,6 @@ import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.view.CircleVImage;
-import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeHelper;
 import im.fdx.v2ex.view.GoodTextView;
 import okhttp3.Call;
@@ -48,8 +45,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.R.attr.value;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
 import static android.media.CamcorderProfile.get;
 
 /**
@@ -68,7 +63,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private ImageLoader mImageLoader = VolleyHelper.getInstance().getImageLoader();
     private Context mContext;
     private List<BaseModel> mAllList;
-    private long mTopicId;
     private int maxWith;
     private String verifyCode;
 
@@ -83,9 +77,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mAllList = allList;
     }
 
-    public void setTopicId(long topicId) {
-        mTopicId = topicId;
-    }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -140,7 +131,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             MVHolder.tvReplyNumber.setText(replyNumberString);
             MVHolder.tvAuthor.setText(topic.getMember().getUsername());
             MVHolder.tvNode.setText(topic.getNode().getTitle());
-            TopicsRVAdapter.MyOnClickListener l = new TopicsRVAdapter.MyOnClickListener(topic, mContext);
+            TopicsRVAdapter.MyOnClickListener l = new TopicsRVAdapter.MyOnClickListener(mContext, topic);
             MVHolder.tvNode.setOnClickListener(l);
             MVHolder.tvCreated.setText(TimeHelper.getRelativeTime(topic.getCreated()));
 
@@ -169,13 +160,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
 
                                         EditText editText = (EditText) ((Activity) mContext).findViewById(R.id.et_post_reply);
-
-
                                         String text = String.format("@%s ", replyItem.getMember().getUsername());
-
                                         if (!editText.getText().toString().contains(text)) {
                                             SpannableString spanString = new SpannableString(text);
-
                                             ForegroundColorSpan span = null;
                                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                                 span = new ForegroundColorSpan(mContext.getColor(R.color.primary));
@@ -187,13 +174,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                             editText.append(spanString);
                                         }
 
-                                        //span // TODO: 2017/3/22
-//                                    int length  =editText.length();
-//                                    XLog.tag(TAG).d("length" +length);
-//                                    Object name = new Object();
-//                                    editText.getText().setSpan(name,length,length + text.length(), (int) replyItem.getId());
                                         editText.setSelection(editText.length());
-
                                         editText.requestFocus();
 
                                         return true;
@@ -212,7 +193,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 .build()).enqueue(new Callback() {
                                             @Override
                                             public void onFailure(Call call, IOException e) {
-                                                JsonManager.handleError();
+                                                JsonManager.dealError();
                                             }
 
                                             @Override
@@ -228,7 +209,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         }
                                                     });
                                                 } else {
-                                                    JsonManager.handleError();
+                                                    JsonManager.dealError();
                                                 }
                                             }
                                         });

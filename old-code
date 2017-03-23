@@ -97,3 +97,39 @@
                 }
             }
         }
+
+
+##     @Deprecated
+       private void getReplyByVolley() {
+           Type typeofR = new TypeToken<ArrayList<ReplyModel>>() {
+           }.getType();
+           MyGsonRequest<ArrayList<ReplyModel>> replies = new MyGsonRequest<>(JsonManager.API_REPLIES + "?topic_id="
+                   + mTopicId, typeofR, new Response.Listener<ArrayList<ReplyModel>>() {
+               @Override
+               public void onResponse(ArrayList<ReplyModel> response) {
+                   XLog.tag(TAG).i(TAG, "GSON DONE: " + ((response == null || response.isEmpty()) ? 0 : response.get(0).toString()));
+                   if (response == null || response.size() == 0) {
+                       mSwipe.setRefreshing(false);
+                       XLog.tag(TAG).d(TAG, "no response got");
+                       HintUI.t(DetailsActivity.this, "无法获取回复");
+                       return;
+                   }
+
+                   mAllContent.clear();
+                   mAllContent.addAll(1, response);
+   //                replyLists.clear();
+   //                replyLists.addAll(response);
+
+                   mDetailsAdapter.notifyDataSetChanged();
+                   mSwipe.setRefreshing(false);
+                   XLog.tag(TAG).d(TAG, "done with details");
+               }
+           }, new Response.ErrorListener() {
+               @Override
+               public void onErrorResponse(VolleyError error) {
+                   JsonManager.handleVolleyError(getApplicationContext(), error);
+                   mSwipe.setRefreshing(false);
+               }
+           });
+           VolleyHelper.getInstance().addToRequestQueue(replies);
+       }

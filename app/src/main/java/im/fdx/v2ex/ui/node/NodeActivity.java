@@ -12,28 +12,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.StringRequest;
 import com.elvishew.xlog.XLog;
-import com.google.gson.reflect.TypeToken;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.model.TopicModel;
@@ -42,17 +35,16 @@ import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.CreateTopicActivity;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
-import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 
+import static android.view.Gravity.CENTER;
+import static android.view.Gravity.CENTER_HORIZONTAL;
+import static android.view.Gravity.CENTER_VERTICAL;
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
-import static im.fdx.v2ex.MyApp.USE_WEB;
-import static im.fdx.v2ex.MyApp.USE_API;
-import static im.fdx.v2ex.network.JsonManager.API_TOPIC;
 
 
 public class NodeActivity extends AppCompatActivity {
@@ -81,7 +73,10 @@ public class NodeActivity extends AppCompatActivity {
             if (msg.what == MSG_GET_NODE_INFO) {
 
                 ivNodeIcon.setImageUrl(mNodeModel.getAvatarLargeUrl(), imageloader);
-                tvNodeName.setText(mNodeModel.getTitle());
+                XLog.d(mNodeModel.getTitle());
+//                tvNodeName.setText(mNodeModel.getTitle());
+                collapsingToolbarLayout.setTitle(mNodeModel.getTitle());
+                collapsingToolbarLayout.setTitleEnabled(true);
                 tvNodeHeader.setText(mNodeModel.getHeader());
                 tvNodeNum.setText(getString(R.string.topic_number, mNodeModel.getTopics()));
             } else if (msg.what == MSG_GET_TOPICS) {
@@ -97,6 +92,7 @@ public class NodeActivity extends AppCompatActivity {
     private NodeModel mNodeModel;
     private AppBarLayout appBarLayout;
     private CollapsingToolbarLayout collapsingToolbarLayout;
+    private String nodeTile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +101,8 @@ public class NodeActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); //很关键，不会一闪而过一个东西
         if (toolbar != null) {
-
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -152,8 +148,6 @@ public class NodeActivity extends AppCompatActivity {
 
 
         RecyclerView rvTopicsOfNode = (RecyclerView) findViewById(R.id.rv_topics_of_node);
-//        mAdapter.updateData(mTopicModels);
-
 
         mAdapter = new TopicsRVAdapter(this, mTopicModels);
         rvTopicsOfNode.setAdapter(mAdapter);
@@ -178,10 +172,10 @@ public class NodeActivity extends AppCompatActivity {
         XLog.tag("collapse").d(percentage);
         if (percentage > 0.8 && percentage <= 1) {
             rlNodeHeader.setVisibility(View.INVISIBLE);  //View隐藏
-            collapsingToolbarLayout.setTitle(nodeName);
+            collapsingToolbarLayout.setTitle(mNodeModel != null ? mNodeModel.getTitle() : "");
         } else if (percentage <= 0.8 && percentage >= 0) {
             rlNodeHeader.setVisibility(View.VISIBLE); //view 显示
-            collapsingToolbarLayout.setTitle("");//设置title不显示
+//            collapsingToolbarLayout.setTitle("");//设置title不显示
         }
     }
 
@@ -203,6 +197,7 @@ public class NodeActivity extends AppCompatActivity {
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders).url(requestURL).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+                JsonManager.dealError();
             }
 
             @Override
@@ -211,11 +206,12 @@ public class NodeActivity extends AppCompatActivity {
                 if (response.code() == 302) {
                     handler.sendEmptyMessage(MSG_ERROR_AUTH);
                     return;
+                } else if (response.code() != 200) {
+                    JsonManager.dealError();
+                    return;
                 }
                 String body = response.body().string();
-
                 Document html = Jsoup.parse(body);
-
                 mNodeModel = JsonManager.parseToNode(html);
                 Message.obtain(handler, MSG_GET_NODE_INFO).sendToTarget();
 

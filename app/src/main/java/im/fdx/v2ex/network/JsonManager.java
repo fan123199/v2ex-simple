@@ -153,7 +153,7 @@ public class JsonManager {
                 String nodeTitle = "";
                 if (strHeader.contains("›")) {
                     nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
-                    XLog.tag(TAG).d("nodeTitle: " + nodeTitle);
+//                    XLog.tag(TAG).d("nodeTitle: " + nodeTitle);
                 }
 
                 Elements elements = html.head().getElementsByTag("script");
@@ -236,7 +236,7 @@ public class JsonManager {
         String strScript = script.html();
         String nodeName = strScript.split("\"")[1];
 
-        Log.w("node", "nodeName" + nodeName);
+//        Log.w("node", "nodeName" + nodeName);
 //
 //
         nodeModel.setName(nodeName);
@@ -331,7 +331,7 @@ public class JsonManager {
 
         Element nodeElement = body.getElementsByClass("header").first()
                 .getElementsByAttributeValueStarting("href", "/go/").first();
-        String nodeName = nodeElement.attr("href").replace("/href/", "");
+        String nodeName = nodeElement.attr("href").replace("/go/", "");
         String nodeTitle = nodeElement.text();
 
         NodeModel nodeModel = new NodeModel();
@@ -396,7 +396,7 @@ public class JsonManager {
 
     }
 
-    public static void handleError() {
+    public static void dealError() {
 
     }
 

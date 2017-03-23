@@ -2,8 +2,6 @@ package im.fdx.v2ex.ui.node;
 
 import android.app.SearchManager;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -14,8 +12,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
+import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -71,7 +69,7 @@ public class AllNodesActivity extends AppCompatActivity {
                 Type type = new TypeToken<ArrayList<NodeModel>>() {
                 }.getType();
                 ArrayList<NodeModel> nodeModels = JsonManager.myGson.fromJson(response.body().string(), type);
-                mAdapter.updateData(nodeModels);
+                mAdapter.setAllData(nodeModels);
                 handler.sendEmptyMessage(0);
             }
         });
@@ -99,17 +97,22 @@ public class AllNodesActivity extends AppCompatActivity {
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                XLog.tag("ALLNODE").d("lala" + newText);
+                mAdapter.filter(newText);
+
+                return false;
+            }
+        });
         return true;
     }
 

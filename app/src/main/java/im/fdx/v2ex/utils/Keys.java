@@ -25,4 +25,5 @@ public class Keys {
     public static final String KEY_USERNAME = "username";
 
 
+    public static final String KEY_NODE_TITLE = "node_title";
 }

@@ -1,7 +1,7 @@
 package im.fdx.v2ex.view;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,7 +12,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -20,25 +19,18 @@ import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.text.style.ImageSpan;
+import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import im.fdx.v2ex.R;
-import im.fdx.v2ex.network.HttpHelper;
+import im.fdx.v2ex.WebViewActivity;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.ContentUtils;
 
@@ -50,6 +42,7 @@ import im.fdx.v2ex.utils.ContentUtils;
 
 public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
+    public static final int REQUEST_CODE = 200;
     private Context context;
     private static final String TAG = GoodTextView.class.getSimpleName();
     private MyImageGetter imageGetter;
@@ -104,6 +97,40 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         ImageSpan[] imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length(), ImageSpan.class);
 
 
+        URLSpan[] urlSpans = htmlSpannable.getSpans(0, htmlSpannable.length(), URLSpan.class);
+
+
+        for (URLSpan urlSpan : urlSpans) {
+
+            int spanStart = htmlSpannable.getSpanStart(urlSpan);
+            int spanEnd = htmlSpannable.getSpanEnd(urlSpan);
+            URLSpan newUrlSpan = new URLSpan(urlSpan.getURL()) {
+                @Override
+                public void onClick(View widget) {
+                    if (false) {
+                        Context context = widget.getContext();
+                        Intent intent = new Intent(context, WebViewActivity.class);
+                        intent.putExtra("url", getURL());
+                        try {
+                            context.startActivity(intent);
+                        } catch (ActivityNotFoundException e) {
+                            Log.w("URLSpan", "Activity was not found for intent, " + intent.toString());
+                        }
+                    }
+
+                    CustomChrome.getInstance(context).load(getURL());
+                }
+            };
+
+            htmlSpannable.removeSpan(urlSpan);
+
+            htmlSpannable.setSpan(newUrlSpan, spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+        }
+
+
+
 //        final List<String> imageUrls = new ArrayList<>();
 //        List<String> imagePositions = new ArrayList<>();
         for (final ImageSpan imageSpan : imageSpans) {
@@ -115,8 +142,9 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 //            XLog.tag("GoodTextView-fdx").d(imageSpan.getSource());
 //            XLog.tag("GoodTextView-fdx").d(start + "|" + end);
 
-//            imageUrls.add(imageUrl);
-            ClickableSpan clickableSpan = new ClickableSpan() {
+
+            //生成自定义可点击的span
+            ClickableSpan newClickableSpan = new ClickableSpan() {
                 @Override
                 public void onClick(View widget) {
 
@@ -125,14 +153,16 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
                 }
             };
 
+            //替换原来的ImageSpan
             ClickableSpan[] clickableSpans = htmlSpannable.getSpans(start, end, ClickableSpan.class);
+
             if (clickableSpans != null && clickableSpans.length != 0) {
                 for (ClickableSpan span2 :
                         clickableSpans) {
                     htmlSpannable.removeSpan(span2);
                 }
             }
-            htmlSpannable.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            htmlSpannable.setSpan(newClickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
         setText(htmlSpannable);
         //不设置这一句，点击图片会跑动。
@@ -200,7 +230,10 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         public Drawable getDrawable(final String source) {
             //怪不得一样的图片。放在了类里。
             final BitmapHolder bitmapHolder = new BitmapHolder();
-
+            Point point = new Point();
+            ((Activity) context).getWindowManager().getDefaultDisplay().getSize(point);
+            final int theMaxWith = point.x - 100;
+            final int theMaxHeight = point.y - 100;
             final BitmapDrawable bitmapDrawable = new BitmapDrawable();
             Log.i(TAG, " Image url: " + source);
             ImageLoader.ImageContainer response = VolleyHelper.getInstance().getImageLoader()
@@ -232,10 +265,6 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
                             Drawable dr = new BitmapDrawable(getResources(), bp);
 
-                            Point point = new Point();
-                            int theMaxWitheasy = 500;
-                            ((Activity) context).getWindowManager().getDefaultDisplay().getSize(point);
-                            int theMaxWith = point.y - 100;
 
                             int bpheight;
                             int bpwidth;
@@ -263,7 +292,7 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
                 public void onErrorResponse(VolleyError error) {
 
                 }
-            }, getWidth(), getHeight(), ImageView.ScaleType.FIT_CENTER);
+                    }, theMaxWith, theMaxHeight, ImageView.ScaleType.FIT_CENTER);
 
             return bitmapHolder;
         }

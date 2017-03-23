@@ -61,7 +61,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder2, int position) {
         final TopicModel currentTopic = mTopicList.get(position);
-        MyOnClickListener listener = new MyOnClickListener(currentTopic, mContext);
+        MyOnClickListener listener = new MyOnClickListener(mContext, currentTopic);
         MainViewHolder holder = (MainViewHolder) holder2;
 
         holder.container.setOnClickListener(listener);
@@ -136,9 +136,9 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TopicModel topic;
         private Context context;
 
-        public MyOnClickListener(TopicModel topic, Context context) {
-            this.topic = topic;
+        public MyOnClickListener(Context context, TopicModel topic) {
             this.context = context;
+            this.topic = topic;
         }
 
         @Override

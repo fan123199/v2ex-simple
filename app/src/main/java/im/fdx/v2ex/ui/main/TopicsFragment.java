@@ -35,6 +35,7 @@ import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.MyGsonRequest;
+import im.fdx.v2ex.utils.SmoothManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -62,6 +63,7 @@ public class TopicsFragment extends Fragment {
     private String mRequestURL;
     private int mMNodeID;
     private String mTabs;
+    private RecyclerView mRecyclerView;
 
     //    private OnFragmentInteractionListener mListener;
 
@@ -127,9 +129,10 @@ public class TopicsFragment extends Fragment {
         mSwipeLayout.setRefreshing(true);
 
         //找出recyclerview,并赋予变量
-        RecyclerView mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
+        mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
         //这里用线性显示 类似于listView
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView.setLayoutManager(new SmoothManager(getActivity()));
 
         mAdapter = new TopicsRVAdapter(getActivity(), mTopicModels);
         mRecyclerView.setAdapter(mAdapter); //大工告成
@@ -242,6 +245,10 @@ public class TopicsFragment extends Fragment {
         } else {
             getTopicsJsonByVolley(mRequestURL);
         }
+    }
+
+    public void scrollToTop() {
+        mRecyclerView.smoothScrollToPosition(0);
     }
 
     @Override

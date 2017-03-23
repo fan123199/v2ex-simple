@@ -9,15 +9,14 @@
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:id="@+id/swipe_details"
         android:layout_weight="1">
 
         <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/detail_recycler_view"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
@@ -26,7 +25,6 @@
         layout="@layout/divider"
         android:layout_height="1dp"
         android:layout_width="match_parent" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +38,7 @@
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:elevation="3dp"
+            android:elevation="3dp"
             android:textSize="16sp"
             android:background="@android:color/transparent"
             android:minLines="1"
@@ -62,7 +60,8 @@
             android:layout_gravity="bottom"
             android:layout_margin="6dp"
             android:onClick="postReply"
-            android:src="@drawable/ic_send_unable" />
+            android:src="@drawable/ic_send_unable"
+            android:contentDescription="@string/reply" />
 
     </LinearLayout>
 
