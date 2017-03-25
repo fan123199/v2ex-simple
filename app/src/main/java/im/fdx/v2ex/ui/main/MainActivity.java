@@ -89,9 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (intent.getAction().equals("im.fdx.v2ex.preference")) {
 //                switchFragment();
             } else if (intent.getAction().equals(action_login)) {
-                addDailyCheckMenu();
-                MainActivity.this.invalidateOptionsMenu();
-
+                showDailyAndNotification(true);
                 String username = intent.getStringExtra(Keys.KEY_USERNAME);
                 String avatar = intent.getStringExtra("avatar");
                 setUserInfo(username, avatar);
@@ -101,8 +99,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
                 }
             } else if (intent.getAction().equals(action_logout)) {
-                MainActivity.this.invalidateOptionsMenu();
-                navigationView.getMenu().removeItem(ID_ITEM_CHECK); //remove item
+                showDailyAndNotification(false);
                 removeUserInfo();
                 fab.hide();
 
@@ -183,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         if (MyApp.getInstance().isLogin()) {
-            addDailyCheckMenu();
+            showDailyAndNotification(true);
 
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             String username = sharedPreferences.getString(Keys.KEY_USERNAME, "");
@@ -196,6 +193,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             shrinkFab();
 
         } else {
+
+            showDailyAndNotification(false);
             fab.hide();
         }
 
@@ -236,13 +235,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.getMenu().removeItem(R.id.nav_testMenu2);
         }
 
+        intent = new Intent(MainActivity.this, UpdateService.class);
+        intent.setAction("im.fdx.v2ex.notification");
         if (MyApp.getInstance().isLogin()) {
-            intent = new Intent(MainActivity.this, UpdateService.class);
-            intent.setAction("im.fdx.v2ex.notification");
             startService(intent);
         }
 
     }
+
+    private void showDailyAndNotification(boolean visible) {
+        navigationView.getMenu().findItem(R.id.nav_notification).setVisible(visible);
+        navigationView.getMenu().findItem(R.id.nav_daily).setVisible(visible);
+        MainActivity.this.invalidateOptionsMenu();
+    }
+
+    //    private void addDailyCheckMenu() {
+//        MenuItem item2;
+//        if (navigationView.getMenu().findItem(ID_ITEM_CHECK) == null) {
+//
+//            item2 = navigationView.getMenu().add(R.id.group_nav_main, ID_ITEM_CHECK, 88, R.string.daily_check);
+//            item2.setIcon(R.drawable.ic_check_black_24dp);
+//            item2.setCheckable(true);
+//        }
+//
+//        this.invalidateOptionsMenu();
+//
+//    }
 
     private void shrinkFab() {
         fab.animate().rotation(360f)
@@ -319,8 +337,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         switch (id) {
 
-            case ID_ITEM_CHECK:
-
+            case R.id.nav_daily:
                 dailyCheck();
                 break;
             case R.id.nav_node:
@@ -387,19 +404,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-
-    private void addDailyCheckMenu() {
-        MenuItem item2;
-        if (navigationView.getMenu().findItem(ID_ITEM_CHECK) == null) {
-
-            item2 = navigationView.getMenu().add(R.id.group_nav_main, ID_ITEM_CHECK, 88, R.string.daily_check);
-            item2.setIcon(R.drawable.ic_check_black_24dp);
-            item2.setCheckable(true);
-        }
-
-        this.invalidateOptionsMenu();
-
-    }
 
     private void dailyCheck() {
         HttpHelper.OK_CLIENT.newCall(new Request.Builder()

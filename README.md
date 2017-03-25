@@ -1,48 +1,58 @@
 # V2ex-simple
-An V2ex simple android client
+An simple android client for exploring V2EX.
 
 [![Build Status](https://travis-ci.org/fan123199/V2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/V2ex-simple)
 
 ## main function
 
-+ 获取json数据并显示,包括节点，热门主题，最新主题，以及用户信息
++ 浏览V2ex的内容,包括节点、热门主题、最新主题、以及用户信息
++ 登录，发表文章等账户相关功能
 + UI遵循Material Design
 + 主题以及详情浏览
 + 从web打开应用
 
-
 ## next feature
 
 + 后台获取更新（jobScheduler），以及通知
-+ 账户系列：登录，评论，发表，赞，签到
 + UI系列：颜色自定义
-
 
 ## libraries
 
++ Picasso
++ Volley
 + OkHttp3
 + Gson
 + CircleImageView
 + Jsoup
 
+## thanks
+
++ [greatyao/v2ex-android](https://github.com/greatyao/v2ex-android/tree/master)
+The project guide me to start my project from zero.
++ learn *twitter/google+/v2ex+/weico/...* for user experience
+
 ##Change log
 
+### v0.99 (2017.03.25)
+
+the last version before release on google play,
+ all account-related function is added.
 
 ### 2017.3.8
 
-使用OkHttp模拟http获取信息
+use OkHttp to fetch data
 
 ### 2016.12.8
 
-加入travis
+add travis CI
 
 ### 2016.8.1
 
-重启该项目
+restart the project
 
 ### 2015.12.17
 
-加入了圆形头像
+add Circle image view
 
 ## License
 

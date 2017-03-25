@@ -5,6 +5,11 @@
         android:id="@+id/group_nav_main"
         android:checkableBehavior="single"
         android:orderInCategory="90">
+
+        <item
+            android:id="@+id/nav_daily"
+            android:icon="@drawable/ic_check_black_24dp"
+            android:title="@string/daily_check" />
         <item
             android:id="@+id/nav_node"
             android:icon="@drawable/ic_zoom_out_map_black_24dp"

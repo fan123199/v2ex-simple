@@ -29,10 +29,10 @@ public class WebViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        String url = "http://www.jd.com";
-        if (getIntent().getExtras() != null) {
-            url = getIntent().getStringExtra("url");
-        }
+//        String url = "http://www.jd.com";
+//        if (getIntent().getExtras() != null) {
+//            url = getIntent().getStringExtra("url");
+//        }
 
 
 //        CustomChrome.getInstance(this).load(url);
