@@ -94,7 +94,7 @@ public class TimeHelper {
         } else {
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
-            Date date = sdf.parse(timeStr.split("\\+")[0]);
+            Date date = sdf.parse(timeStr.split(" \\+")[0]);
             created = date.getTime() / 1000;
 
         }

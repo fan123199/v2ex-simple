@@ -85,7 +85,7 @@
             android:textColor="@color/content_font_color"
             android:textStyle="normal|bold" />
 
-        <im.fdx.v2ex.view.CircleVImage xmlns:app="http://schemas.android.com/apk/res-auto"
+        <im.fdx.v2ex.view.CircleVImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/iv_avatar_profile"
             android:layout_width="@dimen/md_avatar_size"
             android:layout_height="@dimen/md_avatar_size"

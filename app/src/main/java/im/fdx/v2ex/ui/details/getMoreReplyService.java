@@ -2,7 +2,6 @@ package im.fdx.v2ex.ui.details;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import okhttp3.Request;
 
 /**
@@ -51,10 +50,10 @@ public class getMoreReplyService extends IntentService {
             for (int i = 2; i <= page; i++) {
                 okhttp3.Response response = HttpHelper.OK_CLIENT.newCall(new Request.Builder()
                         .headers(HttpHelper.baseHeaders)
-                        .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + i)
+                        .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + i)
                         .build()).execute();
                 Document body = Jsoup.parse(response.body().string());
-                ArrayList<ReplyModel> replies = JsonManager.parseResponseToReplay(body);
+                ArrayList<ReplyModel> replies = NetManager.parseResponseToReplay(body);
 
                 XLog.tag("DetailsActivity").d(replies.get(0).getContent());
                 Intent it = new Intent();

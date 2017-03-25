@@ -2,9 +2,6 @@ package im.fdx.v2ex.network.cookie;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
-
-import com.elvishew.xlog.XLog;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import okhttp3.Cookie;
 
 /**
@@ -59,7 +56,7 @@ public class SharedPrefsPersistor implements CookiePersistor {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         for (Cookie cookie : cookies) {
 //            String encode = new CookiesSerializable().encode(cookie);
-            String encode = JsonManager.myGson.toJson(cookie);
+            String encode = NetManager.myGson.toJson(cookie);
 //            XLog.d("fdx:cookiePersist: " + encode);
             editor.putString(createCookieKey(cookie), encode);
         }
@@ -82,7 +79,7 @@ public class SharedPrefsPersistor implements CookiePersistor {
             String strCookie = (String) stringEntry.getValue();
 //            Cookie cookie = new CookiesSerializable().decode(strCookie);
 
-            Cookie cookie = JsonManager.myGson.fromJson(strCookie, Cookie.class);
+            Cookie cookie = NetManager.myGson.fromJson(strCookie, Cookie.class);
             cookies.add(cookie);
         }
 

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">V2ex</string>
+    <string name="app_name">V2EX</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="settings">Settings</string>
@@ -93,7 +93,7 @@
     <string name="show_thanks">♥ %d</string>
     <string name="profile">profile</string>
     <string name="log_in_v2ex">Log in V2EX</string>
-    <string name="app_simple_name">V2ex</string>
+    <string name="app_simple_name">V2EX</string>
     <string name="created_on">Created on</string>
     <string name="introduction">Introduction</string>
     <string name="the_n_member">the %d member</string>
@@ -107,5 +107,9 @@
     <string name="close">Close</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="notification">Notification</string>
+    <string name="copy_content">copy content</string>
+    <string name="create_topic">Create Topic</string>
+    <string name="you_have_notifications">it is %s unread message</string>
 
 </resources>

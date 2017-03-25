@@ -34,8 +34,8 @@
     <string name="rate">对应用评分</string>
     <string name="just_now">刚刚</string>
     <string name="menu_open_in_browser">在浏览器打开</string>
-    <string name="app_name">探索路V2ex</string>
-    <string name="app_simple_name">V2ex</string>
+    <string name="app_name">探索路V2EX</string>
+    <string name="app_simple_name">V2EX</string>
     <string name="error_timeout">连接超时</string>
     <string name="error_auth_failure">验证失败</string>
     <string name="error_network">网络错误</string>
@@ -61,4 +61,11 @@
     <string name="user">用户</string>
     <string name="choose_node">请选择节点</string>
     <string name="post_reply">发表回复</string>
+    <string name="notification">提醒</string>
+    <string name="copy_content">复制评论内容</string>
+    <string name="close">关闭</string>
+    <string name="cancel">取消</string>
+    <string name="create_topic">创建主题</string>
+    <string name="ok">确认</string>
+    <string name="you_have_notifications">你有%s条未读消息</string>
 </resources>

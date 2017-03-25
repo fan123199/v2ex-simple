@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:key="group_general"
-        android:title="@string/general">
-        <SwitchPreference
+    <!--<PreferenceCategory-->
+    <!--android:key="group_general"-->
+    <!--android:title="@string/general">-->
+    <!--<SwitchPreference-->
 
-            android:defaultValue="false"
-            android:key="pref_wifi"
-            android:summaryOff="任何情况下加载图片"
-            android:summaryOn="仅在Wifi下加载图片"
-            android:title="节省流量" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="pref_http_mode"
-            android:summaryOff="now use web"
-            android:summaryOn="now use api"
-            android:title="Switch http mode" />
+    <!--android:defaultValue="false"-->
+    <!--android:key="pref_wifi"-->
+    <!--android:summaryOff="任何情况下加载图片"-->
+    <!--android:summaryOn="仅在Wifi下加载图片"-->
+    <!--android:title="节省流量" />-->
 
 
-    </PreferenceCategory>
+    <!--</PreferenceCategory>-->
 
 
     <PreferenceCategory android:title="@string/other">

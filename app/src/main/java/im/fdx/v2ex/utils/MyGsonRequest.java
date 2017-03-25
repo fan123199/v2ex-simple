@@ -1,14 +1,11 @@
 package im.fdx.v2ex.utils;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 
 import java.lang.reflect.Type;
 
-import im.fdx.v2ex.model.TopicModel;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 
 /**
  * Created by a708 on 16-1-19.
@@ -26,8 +23,8 @@ public class MyGsonRequest<T> extends GsonRequest<T> {
                          Response.Listener<T> listener,
                          Response.ErrorListener errorListener) {
         super(Method.GET, url, type, null, listener, errorListener);
-        setRetryPolicy(new DefaultRetryPolicy(JsonManager.MY_TIMEOUT_MS,
-                JsonManager.MY_MAX_RETRIES,
+        setRetryPolicy(new DefaultRetryPolicy(NetManager.MY_TIMEOUT_MS,
+                NetManager.MY_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
     }
 

@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.details;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,11 +33,11 @@ import im.fdx.v2ex.model.BaseModel;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
-import im.fdx.v2ex.view.CircleVImage;
+import im.fdx.v2ex.view.CircleVImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 import im.fdx.v2ex.view.GoodTextView;
 import okhttp3.Call;
@@ -158,7 +160,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 switch (item.getItemId()) {
                                     case R.id.menu_reply:
 
-
                                         EditText editText = (EditText) ((Activity) mContext).findViewById(R.id.et_post_reply);
                                         String text = String.format("@%s ", replyItem.getMember().getUsername());
                                         if (!editText.getText().toString().contains(text)) {
@@ -193,7 +194,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 .build()).enqueue(new Callback() {
                                             @Override
                                             public void onFailure(Call call, IOException e) {
-                                                JsonManager.dealError();
+                                                NetManager.dealError();
                                             }
 
                                             @Override
@@ -209,11 +210,16 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         }
                                                     });
                                                 } else {
-                                                    JsonManager.dealError();
+                                                    NetManager.dealError();
                                                 }
                                             }
                                         });
 
+                                        break;
+                                    case R.id.menu_copy:
+                                        XLog.d("I click menu copy");
+                                        ClipboardManager manager = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+                                        manager.setPrimaryClip(ClipData.newPlainText("wtf", replyItem.getContent()));
                                         break;
                                 }
                                 return false;
@@ -221,8 +227,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         };
 
                         menu.findItem(R.id.menu_reply).setOnMenuItemClickListener(menuListener);
-
                         menu.findItem(R.id.menu_thank).setOnMenuItemClickListener(menuListener);
+                        menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener);
 
 
                     }
@@ -296,7 +302,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         GoodTextView tvContent;
         TextView tvRow;
         TextView tvThanks;
-        CircleVImage ivUserAvatar;
+        CircleVImageView ivUserAvatar;
         View divider;
 
 
@@ -307,7 +313,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvReplyTime = (TextView) itemView.findViewById(R.id.tv_reply_time);
             tvContent = (GoodTextView) itemView.findViewById(R.id.tv_reply_content);
             tvRow = (TextView) itemView.findViewById(R.id.tv_reply_row);
-            ivUserAvatar = (CircleVImage) itemView.findViewById(R.id.iv_reply_avatar);
+            ivUserAvatar = (CircleVImageView) itemView.findViewById(R.id.iv_reply_avatar);
             tvThanks = (TextView) itemView.findViewById(R.id.tv_thanks);
             divider = itemView.findViewById(R.id.divider);
 

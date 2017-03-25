@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.ui.details.DetailsActivity;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
@@ -93,7 +93,7 @@ public class CreateTopicActivity extends AppCompatActivity {
         });
 
 
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(JsonManager.URL_ALL_NODE).build()).enqueue(new Callback() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -103,7 +103,7 @@ public class CreateTopicActivity extends AppCompatActivity {
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 Type type = new TypeToken<ArrayList<NodeModel>>() {
                 }.getType();
-                final ArrayList<NodeModel> nodes = JsonManager.myGson.fromJson(response.body().string(), type);
+                final ArrayList<NodeModel> nodes = NetManager.myGson.fromJson(response.body().string(), type);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

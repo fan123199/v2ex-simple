@@ -15,7 +15,6 @@ import com.android.volley.VolleyError;
 import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -43,9 +42,9 @@ import static java.lang.Integer.parseInt;
  */
 
 
-public class JsonManager {
+public class NetManager {
 
-    private static final String TAG = JsonManager.class.getSimpleName();
+    private static final String TAG = NetManager.class.getSimpleName();
 
     public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
     public static final String HTTP_V2EX_BASE = "http://www.v2ex.com";

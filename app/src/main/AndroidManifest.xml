@@ -145,7 +145,7 @@
         </provider>
 
         <activity
-            android:name=".ui.ProfileActivity"
+            android:name=".ui.MemberActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="im.fdx.v2ex.intent.profile" />
@@ -191,6 +191,7 @@
             android:name=".ui.main.CreateTopicActivity"
             android:exported="true">
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -202,7 +203,16 @@
         <receiver
             android:name=".MyReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
+
+        <activity
+            android:name=".ui.NotificationActivity"
+            android:exported="true"
+            android:parentActivityName=".ui.main.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

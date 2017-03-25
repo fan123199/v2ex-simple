@@ -75,7 +75,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         public static final String PREF_WIFI = "pref_wifi";
         public static final String PREF_RATES = "pref_rates";
-        public static final String PREF_MODE = "pref_http_mode";
+        //        public static final String PREF_MODE = "pref_http_mode";
         private static final String PREF_LOGOUT = "pref_logout";
         SharedPreferences sharedPreferences;
 
@@ -205,16 +205,6 @@ public class SettingsActivity extends AppCompatActivity {
             Log.w("PREF", key);
 
             switch (key) {
-                case PREF_MODE:
-                    boolean useAPI = sharedPreferences.getBoolean(PREF_MODE, false);
-                    MyApp.getInstance().setHttpMode(useAPI ? USE_API : USE_WEB);
-                    Intent noticeChange = new Intent("im.fdx.v2ex.preference");
-
-                    //用多个listener顺序没保证,单个listener代码复杂
-                    LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(noticeChange);
-
-                    break;
-
             }
         }
 

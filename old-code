@@ -133,3 +133,30 @@
            });
            VolleyHelper.getInstance().addToRequestQueue(replies);
        }
+
+
+
+       ## get node icon
+    /**
+     * get node icon because of api of all node sucks.
+     *
+     * @param id
+     * @param holder
+     */
+    private void getNodeIcon(Long id, final MyViewHolder holder) {
+        String url = JsonManager.API_NODE + "?id=" + id;
+        MyGsonRequest<NodeModel> simple = new MyGsonRequest<>(url, NodeModel.class, new Response.Listener<NodeModel>() {
+            @Override
+            public void onResponse(NodeModel response) {
+
+                holder.nivNodeIcon.setImageUrl(response.getAvatarLargeUrl(), imageLoader);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        VolleyHelper.getInstance().addToRequestQueue(simple);
+
+    }

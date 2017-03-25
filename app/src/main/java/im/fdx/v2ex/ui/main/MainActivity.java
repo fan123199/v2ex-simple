@@ -1,20 +1,20 @@
 package im.fdx.v2ex.ui.main;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -24,16 +24,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
@@ -42,6 +39,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.MyApp;
@@ -51,7 +50,8 @@ import im.fdx.v2ex.WebViewActivity;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.LoginActivity;
-import im.fdx.v2ex.ui.ProfileActivity;
+import im.fdx.v2ex.ui.MemberActivity;
+import im.fdx.v2ex.ui.NotificationActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
 import im.fdx.v2ex.ui.node.AllNodesActivity;
 import im.fdx.v2ex.utils.HintUI;
@@ -63,8 +63,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static im.fdx.v2ex.R.id.nav_testNotify;
-import static im.fdx.v2ex.network.JsonManager.DAILY_CHECK;
-import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
+import static im.fdx.v2ex.network.NetManager.DAILY_CHECK;
+import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
 import static im.fdx.v2ex.ui.LoginActivity.action_login;
 import static im.fdx.v2ex.ui.LoginActivity.action_logout;
 
@@ -76,34 +76,50 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int LOG_IN = 0;
     private static final int ID_ITEM_CHECK = 33;
     DrawerLayout mDrawer;
-    private Notification mNotificationCompat;
-    private NotificationManager mNotificationManager;
+
     private ViewPager mViewPager;
     private MyViewPagerAdapter mAdapter;
     private NavigationView navigationView;
+    private final String shortcutId = "create_topic";
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             XLog.tag(TAG).d("getAction: " + intent.getAction());
             if (intent.getAction().equals("im.fdx.v2ex.preference")) {
-                switchFragment();
+//                switchFragment();
             } else if (intent.getAction().equals(action_login)) {
                 addDailyCheckMenu();
                 MainActivity.this.invalidateOptionsMenu();
+
                 String username = intent.getStringExtra(Keys.KEY_USERNAME);
                 String avatar = intent.getStringExtra("avatar");
                 setUserInfo(username, avatar);
+                fab.show();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                    shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
+                }
             } else if (intent.getAction().equals(action_logout)) {
                 MainActivity.this.invalidateOptionsMenu();
                 navigationView.getMenu().removeItem(ID_ITEM_CHECK); //remove item
                 removeUserInfo();
+                fab.hide();
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+                    shortcutManager.removeDynamicShortcuts(shortcutIds);
+                }
             }
 
         }
     };
 
     private ViewPager.OnPageChangeListener listener;
+    private Intent intent;
+    private FloatingActionButton fab;
+    private ShortcutManager shortcutManager;
+    private List<String> shortcutIds = Collections.singletonList("create_topic");
+    private ShortcutInfo createTopicInfo;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,10 +132,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
-        mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
         Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+            shortcutManager = (ShortcutManager) getSystemService(SHORTCUT_SERVICE);
+            Intent intent = new Intent(this, CreateTopicActivity.class);
+            intent.setAction("android.intent.action.MAIN");
+            createTopicInfo = new ShortcutInfo.Builder(this, shortcutId)
+                    .setActivity(ComponentName.createRelative(this, ".ui.main.MainActivity"))
+                    .setShortLabel(getString(R.string.create_topic))
+                    .setLongLabel(getString(R.string.create_topic))
+                    .setIntent(intent)
+                    .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
+                    .build();
+            if (MyApp.getInstance().isLogin()) {
+                shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
+
+            } else {
+                shortcutManager.removeDynamicShortcuts(shortcutIds);
+            }
+        }
 
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -140,6 +173,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        fab = (FloatingActionButton) findViewById(R.id.fab_main);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, CreateTopicActivity.class));
+
+            }
+        });
 
         if (MyApp.getInstance().isLogin()) {
             addDailyCheckMenu();
@@ -151,6 +192,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(avatar)) {
                 setUserInfo(username, avatar);
             }
+
+            shrinkFab();
+
+        } else {
+            fab.hide();
         }
 
         mViewPager = (ViewPager) findViewById(R.id.viewpager_main);
@@ -170,38 +216,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
                 @Override
                 public void onTabSelected(TabLayout.Tab tab) {
-                    XLog.tag("tablayout").d("selected");
                 }
 
                 @Override
                 public void onTabUnselected(TabLayout.Tab tab) {
-                    XLog.tag("tablayout").d("unselected");
                 }
 
                 @Override
                 public void onTabReselected(TabLayout.Tab tab) {
-                    XLog.tag("tablayout").d("reselected");
                     ((TopicsFragment) mAdapter.getItem(tab.getPosition())).scrollToTop();
                 }
             });
 
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_main);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, CreateTopicActivity.class));
-
-            }
-        });
 
         if (!BuildConfig.DEBUG) {
             navigationView.getMenu().removeItem(nav_testNotify);
-            navigationView.getMenu().removeItem(R.id.nav_testMenu);
             navigationView.getMenu().removeItem(R.id.nav_testMenu2);
         }
 
+        if (MyApp.getInstance().isLogin()) {
+            intent = new Intent(MainActivity.this, UpdateService.class);
+            intent.setAction("im.fdx.v2ex.notification");
+            startService(intent);
+        }
+
+    }
+
+    private void shrinkFab() {
+        fab.animate().rotation(360f)
+                .setDuration(500).start();
     }
 
 
@@ -211,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvMyName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                Intent intent = new Intent(MainActivity.this, MemberActivity.class);
                 intent.putExtra(Keys.KEY_USERNAME, username);
                 startActivity(intent);
             }
@@ -278,45 +323,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 dailyCheck();
                 break;
-            case R.id.nav_testMenu:
+            case R.id.nav_node:
+                startActivity(new Intent(this, AllNodesActivity.class));
+                break;
+            case R.id.nav_notification:
+
+                Intent intent = new Intent(this, NotificationActivity.class);
+//                intent.setAction("im.fdx.v2ex.notification");
+                startActivity(intent);
                 break;
             case R.id.nav_testMenu2:
 
                 startActivity(new Intent(this, WebViewActivity.class));
                 break;
-            case R.id.nav_node:
-                startActivity(new Intent(this, AllNodesActivity.class));
-
-                break;
             case R.id.nav_testNotify:
 
-                Intent resultIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-                stackBuilder.addParentStack(SettingsActivity.class);
-                stackBuilder.addNextIntent(resultIntent);
-                PendingIntent resultPendingIntent = stackBuilder
-                        .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-                int notifyID = 1;
-                int c;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    c = getResources().getColor(R.color.primary, getTheme());
-                } else {
-                    c = getResources().getColor(R.color.primary);
-                }
-                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-                mBuilder.setContentTitle("fdx")
-                        .setContentText("shinishinijiushi")
-                        .setSubText("subtext")
-                        .setTicker("this is from others")
-                        .setWhen(System.currentTimeMillis() / 1000)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-//                        .setLargeIcon(R.drawable.logo2x)
-                        .setLights(c, 2000, 1000)
-                        .setDefaults(Notification.DEFAULT_SOUND)
-                        .setAutoCancel(true)
-                        .setContentIntent(resultPendingIntent);
-                mNotificationCompat = mBuilder.build();
-                mNotificationManager.notify(notifyID, mNotificationCompat);
+                UpdateService.putNotification(this, "199");
                 break;
             case R.id.nav_share:
 //                Uri uri = Uri.parse("market://details?id=" + getPackageName());
@@ -337,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 try {
                     intentData.setPackage("com.google.android.apps.inbox");
                     startActivity(intentData);
-                } catch (android.content.ActivityNotFoundException ex) {
+                } catch (ActivityNotFoundException ex) {
                     intentData.setPackage(null);
                     intentData.setData(Uri.parse("mailto:" + Keys.AUTHOR_EMAIL));
                     startActivity(intentData);
@@ -371,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (navigationView.getMenu().findItem(ID_ITEM_CHECK) == null) {
 
             item2 = navigationView.getMenu().add(R.id.group_nav_main, ID_ITEM_CHECK, 88, R.string.daily_check);
-            item2.setIcon(android.R.drawable.ic_menu_myplaces);
+            item2.setIcon(R.drawable.ic_check_black_24dp);
             item2.setCheckable(true);
         }
 
@@ -463,8 +485,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         XLog.tag(TAG).d("onResume");
-        Intent intent = new Intent(MainActivity.this, UpdateService.class);
-        startService(intent);
+
 //        bindService(intent);
     }
 
@@ -483,6 +504,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
+        if (MyApp.getInstance().isLogin()) {
+            stopService(intent);
+        }
         XLog.tag(TAG).d("onStop");
 
     }
@@ -494,4 +518,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         mViewPager.clearOnPageChangeListeners();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
+
 }
+

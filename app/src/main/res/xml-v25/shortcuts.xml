@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <shortcut
-        android:enabled="true"
-        android:shortcutId="show_settings"
-        android:icon="@mipmap/ic_settings"
-        android:shortcutShortLabel="@string/settings"
-        android:shortcutLongLabel="@string/settings">
+    <!--<shortcut-->
+    <!--android:enabled="true"-->
+    <!--android:shortcutId="create_topic"-->
+    <!--android:icon="@drawable/ic_shortcut_create"-->
+    <!--android:shortcutShortLabel="@string/create_topic"-->
+    <!--android:shortcutLongLabel="@string/create_topic">-->
 
-        <intent
-            android:action="android.intent.action.MAIN"
-            android:targetPackage="im.fdx.v2ex"
-            android:targetClass="im.fdx.v2ex.ui.SettingsActivity" />
+    <!--<intent-->
+    <!--android:action="android.intent.action.MAIN"-->
+    <!--android:targetPackage="im.fdx.v2ex"-->
+    <!--android:targetClass="im.fdx.v2ex.ui.main.CreateTopicActivity" />-->
 
-        <!--如果你的一个shortcut关联着多个intent，你可以在这里继续添
-            加。最后一个intent决定着用户在加载这个shortcut时会看到什么-->
+    <!--&lt;!&ndash;如果你的一个shortcut关联着多个intent，你可以在这里继续添-->
+    <!--加。最后一个intent决定着用户在加载这个shortcut时会看到什么&ndash;&gt;-->
 
-        <categories android:name="android.shortcut.conversation" />
+    <!--<categories android:name="android.shortcut.conversation" />-->
 
-    </shortcut>
+    <!--</shortcut>-->
 
 
     <!--需要动态添加-->

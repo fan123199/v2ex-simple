@@ -4,9 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.content.LocalBroadcastManager;
@@ -26,29 +24,26 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.SecureUtils;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.internal.http2.Header;
 
 import static android.util.Base64.encodeToString;
-import static im.fdx.v2ex.network.JsonManager.API_USER;
-import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
-import static im.fdx.v2ex.network.JsonManager.SIGN_IN_URL;
-import static im.fdx.v2ex.network.JsonManager.myGson;
+import static im.fdx.v2ex.network.NetManager.API_USER;
+import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
+import static im.fdx.v2ex.network.NetManager.SIGN_IN_URL;
+import static im.fdx.v2ex.network.NetManager.myGson;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = LoginActivity.class.getSimpleName();
@@ -126,7 +121,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 login();
                 break;
             case R.id.link_sign_up:
-                Intent openUrl = new Intent(Intent.ACTION_VIEW, Uri.parse(JsonManager.SIGN_UP_URL));
+                Intent openUrl = new Intent(Intent.ACTION_VIEW, Uri.parse(NetManager.SIGN_UP_URL));
                 startActivity(openUrl);
                 break;
         }

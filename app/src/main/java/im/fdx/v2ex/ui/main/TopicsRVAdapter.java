@@ -17,11 +17,11 @@ import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.ui.ProfileActivity;
+import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.details.DetailsActivity;
 import im.fdx.v2ex.ui.node.NodeActivity;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.view.CircleVImage;
+import im.fdx.v2ex.view.CircleVImageView;
 import im.fdx.v2ex.utils.TimeHelper;
 import im.fdx.v2ex.view.GoodTextView;
 
@@ -113,7 +113,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView tvReplyNumber;
         public TextView tvCreated;
         public TextView tvAuthor;
-        public CircleVImage ivAvatar;
+        public CircleVImageView ivAvatar;
         public TextView tvNode;
         public View container;
 
@@ -125,7 +125,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tvReplyNumber = (TextView) root.findViewById(R.id.tv_reply_number);
             tvCreated = (TextView) root.findViewById(R.id.tv_created);
             tvAuthor = (TextView) root.findViewById(R.id.tv_author);
-            ivAvatar = (CircleVImage) root.findViewById(R.id.iv_avatar_profile);
+            ivAvatar = (CircleVImageView) root.findViewById(R.id.iv_avatar_profile);
             tvNode = (TextView) root.findViewById(R.id.tv_node);
         }
 
@@ -147,7 +147,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 case R.id.tv_author:
                     break;
                 case R.id.iv_avatar_profile:
-                    Intent intent = new Intent(context, ProfileActivity.class);
+                    Intent intent = new Intent(context, MemberActivity.class);
                     intent.putExtra(Keys.KEY_USERNAME, topic.getMember().getUsername());
                     context.startActivity(intent);
                     break;

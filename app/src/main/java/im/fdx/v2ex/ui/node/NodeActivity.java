@@ -27,11 +27,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.CreateTopicActivity;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
@@ -41,9 +42,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.CENTER_HORIZONTAL;
-import static android.view.Gravity.CENTER_VERTICAL;
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 
 
@@ -136,6 +134,9 @@ public class NodeActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        if (!MyApp.getInstance().isLogin()) {
+            fabNode.hide();
+        }
 
         rlNodeHeader = (RelativeLayout) findViewById(R.id.rl_node_header);
 
@@ -192,12 +193,12 @@ public class NodeActivity extends AppCompatActivity {
     }
 
     private void getNodeInfoAndTopicByOK(final String nodeName) {
-        String requestURL = JsonManager.HTTPS_V2EX_BASE + "/go/" + nodeName;
+        String requestURL = NetManager.HTTPS_V2EX_BASE + "/go/" + nodeName;
         XLog.d("url:" + requestURL);
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders).url(requestURL).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                JsonManager.dealError();
+                NetManager.dealError();
             }
 
             @Override
@@ -207,16 +208,16 @@ public class NodeActivity extends AppCompatActivity {
                     handler.sendEmptyMessage(MSG_ERROR_AUTH);
                     return;
                 } else if (response.code() != 200) {
-                    JsonManager.dealError();
+                    NetManager.dealError();
                     return;
                 }
                 String body = response.body().string();
                 Document html = Jsoup.parse(body);
-                mNodeModel = JsonManager.parseToNode(html);
+                mNodeModel = NetManager.parseToNode(html);
                 Message.obtain(handler, MSG_GET_NODE_INFO).sendToTarget();
 
                 mTopicModels.clear();
-                mTopicModels.addAll(JsonManager.parseTopicLists(html, 1));
+                mTopicModels.addAll(NetManager.parseTopicLists(html, 1));
 //                Message.obtain(handler, MSG_GET_TOPICS, mTopicModels).sendToTarget();
                 handler.sendEmptyMessage(MSG_GET_TOPICS);
             }

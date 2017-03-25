@@ -17,8 +17,6 @@ import android.webkit.WebViewClient;
 import android.widget.TextView;
 
 
-import im.fdx.v2ex.view.CustomChrome;
-
 import static android.R.attr.key;
 import static im.fdx.v2ex.view.GoodTextView.REQUEST_CODE;
 
@@ -37,7 +35,7 @@ public class WebViewActivity extends AppCompatActivity {
         }
 
 
-        CustomChrome.getInstance(this).load(url);
+//        CustomChrome.getInstance(this).load(url);
 
 //        myWebView = (WebView) findViewById(R.id.webview);
 //        WebChromeClient chromeClient = new myChromeClient();

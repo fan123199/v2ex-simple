@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -58,7 +58,7 @@ public class AllNodesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(JsonManager.URL_ALL_NODE).build()).enqueue(new Callback() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -68,7 +68,7 @@ public class AllNodesActivity extends AppCompatActivity {
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 Type type = new TypeToken<ArrayList<NodeModel>>() {
                 }.getType();
-                ArrayList<NodeModel> nodeModels = JsonManager.myGson.fromJson(response.body().string(), type);
+                ArrayList<NodeModel> nodeModels = NetManager.myGson.fromJson(response.body().string(), type);
                 mAdapter.setAllData(nodeModels);
                 handler.sendEmptyMessage(0);
             }

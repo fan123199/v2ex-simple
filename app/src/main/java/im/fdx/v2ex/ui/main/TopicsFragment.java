@@ -1,11 +1,13 @@
 package im.fdx.v2ex.ui.main;
 
+import android.animation.ValueAnimator;
 import android.app.Fragment;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -31,7 +35,7 @@ import java.util.List;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.MyGsonRequest;
@@ -40,7 +44,7 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 
-import static im.fdx.v2ex.network.JsonManager.HTTPS_V2EX_BASE;
+import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
 
 // 2015/10/12 How and When to receive the params in fragment's lifecycle
 // simplify it, receive in onCreateView
@@ -64,6 +68,7 @@ public class TopicsFragment extends Fragment {
     private int mMNodeID;
     private String mTabs;
     private RecyclerView mRecyclerView;
+    private FloatingActionButton fab;
 
     //    private OnFragmentInteractionListener mListener;
 
@@ -76,7 +81,7 @@ public class TopicsFragment extends Fragment {
         public boolean handleMessage(Message msg) {
 
             if (msg.what == MSG_GET_DATA_BY_OK) {
-                XLog.tag("TopicsFragment").d("GET MESSAGE");
+//                XLog.tag("TopicsFragment").d("GET MESSAGE");
                 mAdapter.notifyDataSetChanged();
                 mSwipeLayout.setRefreshing(false);
             } else if (msg.what == MSG_FAILED) {
@@ -103,10 +108,10 @@ public class TopicsFragment extends Fragment {
         mTabs = args.getString(Keys.KEY_TAB);
 
         if (mMNodeID == LATEST_TOPICS) {
-            mRequestURL = JsonManager.API_LATEST;
+            mRequestURL = NetManager.API_LATEST;
             getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == TOP_10_TOPICS) {
-            mRequestURL = JsonManager.API_HOT;
+            mRequestURL = NetManager.API_HOT;
             getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == 0) {
             if (mTabs != null && !mTabs.isEmpty())
@@ -133,6 +138,59 @@ public class TopicsFragment extends Fragment {
         //这里用线性显示 类似于listView
 //        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setLayoutManager(new SmoothManager(getActivity()));
+
+
+        fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_main);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            boolean isFabShowing = true;
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+                ValueAnimator animator = ValueAnimator.ofInt(100, 200, 300, 400);
+                animator.setDuration(1000);
+
+                Animation animation = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE, Animation.ABSOLUTE, 100);
+                Animation animation2 = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE, Animation.ABSOLUTE, 100);
+
+                animation.setRepeatCount(1);
+                if (dy > 0) {
+                    hideFab();
+                }
+
+                if (dy < 0) {
+                    showFab();
+
+                }
+            }
+
+            private void hideFab() {
+                if (isFabShowing) {
+                    isFabShowing = false;
+                    final Point point = new Point();
+                    getActivity().getWindow().getWindowManager().getDefaultDisplay().getSize(point);
+                    final float translation = fab.getY() - point.y;
+                    fab.animate().translationYBy(-translation).setDuration(500).start();
+                }
+            }
+
+            private void showFab() {
+                if (!isFabShowing) {
+                    isFabShowing = true;
+                    fab.animate().translationY(0).setDuration(500).start();
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+//                    fab.hide();
+                }
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
         mAdapter = new TopicsRVAdapter(getActivity(), mTopicModels);
         mRecyclerView.setAdapter(mAdapter); //大工告成
@@ -164,6 +222,7 @@ public class TopicsFragment extends Fragment {
         return layout;
     }
 
+
     private void getTopicsByOK(String requestURL) {
 
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
@@ -181,10 +240,10 @@ public class TopicsFragment extends Fragment {
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
 
                 Document html = Jsoup.parse(response.body().string());
-                List<TopicModel> c = JsonManager.parseTopicLists(html, 0);
+                List<TopicModel> c = NetManager.parseTopicLists(html, 0);
                 mTopicModels.clear();
                 mTopicModels.addAll(c);
-                XLog.tag("TopicFragment").d("done, get topic models");
+//                XLog.tag("TopicFragment").d("done, get topic models");
                 handler.sendEmptyMessage(MSG_GET_DATA_BY_OK);
             }
         });
@@ -198,7 +257,7 @@ public class TopicsFragment extends Fragment {
         MyGsonRequest<ArrayList<TopicModel>> topicGson = new MyGsonRequest<>(requestURL, typeOfT, new Response.Listener<ArrayList<TopicModel>>() {
             @Override
             public void onResponse(ArrayList<TopicModel> response) {
-                Log.i(TAG,"I refresh" + mMNodeID);
+                Log.i(TAG, "I refresh" + mMNodeID);
 
                 if (mTopicModels.equals(response)) {
                     mAdapter.notifyDataSetChanged();
@@ -215,7 +274,7 @@ public class TopicsFragment extends Fragment {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                JsonManager.handleVolleyError(getActivity(), error);
+                NetManager.handleVolleyError(getActivity(), error);
                 mSwipeLayout.setRefreshing(false);
             }
         });

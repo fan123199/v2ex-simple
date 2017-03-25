@@ -46,7 +46,7 @@ import im.fdx.v2ex.model.BaseModel;
 import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.JsonManager;
+import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.SmoothManager;
@@ -76,7 +76,7 @@ public class DetailsActivity extends AppCompatActivity {
     private SwipeRefreshLayout mSwipe;
     private ImageView ivSend;
     private EditText etSendReply;
-    private DetailsAdapter mDetailsAdapter;
+    private DetailsAdapter mAdapter;
     private List<BaseModel> mAllContent = new ArrayList<>();
     RecyclerView mRCView;
 
@@ -95,7 +95,7 @@ public class DetailsActivity extends AppCompatActivity {
                 XLog.tag("HEHE").d("MSG_GET  LocalBroadCast");
                 List<ReplyModel> rm = intent.getParcelableArrayListExtra("replies");
                 mAllContent.addAll(rm);
-                mDetailsAdapter.notifyDataSetChanged();
+                mAdapter.notifyDataSetChanged();
             }
         }
 
@@ -133,7 +133,7 @@ public class DetailsActivity extends AppCompatActivity {
                     XLog.tag("HEHE").d("MSG_GET_MORE_REPLY");
                     List<ReplyModel> rm = (List<ReplyModel>) msg.obj;
                     mAllContent.addAll(rm);
-                    mDetailsAdapter.notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                     break;
             }
             return false;
@@ -204,8 +204,8 @@ public class DetailsActivity extends AppCompatActivity {
             }
         });
 
-        mDetailsAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent);
-        mRCView.setAdapter(mDetailsAdapter);
+        mAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent);
+        mRCView.setAdapter(mAdapter);
 
         mSwipe = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
         mSwipe.setColorSchemeResources(
@@ -310,7 +310,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void getPageOne(final long topicId, final boolean scrollToBottom) {
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
-                .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
+                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
                 .build()).enqueue(new Callback() {
 
             @Override
@@ -327,26 +327,26 @@ public class DetailsActivity extends AppCompatActivity {
                     return;
                 }
                 if (response.code() != 200) {
-                    JsonManager.dealError();
+                    NetManager.dealError();
                     return;
                 }
 
                 String bodyStr = response.body().string();
                 Element body = Jsoup.parse(bodyStr);
 
-                BaseModel topicHeader = JsonManager.parseResponseToTopic(body, topicId);
-                List<ReplyModel> repliesOne = JsonManager.parseResponseToReplay(body);
+                BaseModel topicHeader = NetManager.parseResponseToTopic(body, topicId);
+                List<ReplyModel> repliesOne = NetManager.parseResponseToReplay(body);
 
                 if (MyApp.getInstance().isLogin()) {
                     String replyVerifyCode = parseToVerifyCode(body);
                     XLog.tag(TAG).d("verify" + replyVerifyCode);
                     if (replyVerifyCode != null) {
-                        mDetailsAdapter.setVerifyCode(replyVerifyCode);
+                        mAdapter.setVerifyCode(replyVerifyCode);
                     }
                 }
 
 
-                once = JsonManager.parseOnce(body);
+                once = NetManager.parseOnce(body);
                 mAllContent.clear();
                 mAllContent.add(0, topicHeader);
                 mAllContent.addAll(repliesOne);
@@ -354,7 +354,7 @@ public class DetailsActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mDetailsAdapter.notifyDataSetChanged();
+                        mAdapter.notifyDataSetChanged();
                         mSwipe.setRefreshing(false);
                         if (scrollToBottom) {
                             handler.sendEmptyMessage(MSG_GO_TO_BOTTOM);
@@ -363,7 +363,7 @@ public class DetailsActivity extends AppCompatActivity {
                 });
 
                 XLog.tag(TAG).d("get first page done, next is get more page");
-                int totalPage = JsonManager.getTotalPage(body);  // [2,3]
+                int totalPage = NetManager.getTotalPage(body);  // [2,3]
                 if (totalPage != -1) {
 
                     XLog.tag(TAG).d(totalPage);
@@ -406,7 +406,7 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_details, menu);
         if (MyApp.getInstance().isLogin()) {
-            getMenuInflater().inflate(R.menu.menu_reply, menu);
+//            getMenuInflater().inflate(R.menu.menu_reply, menu);//会把感谢给弄进来
         }
         return true;
     }
@@ -435,7 +435,7 @@ public class DetailsActivity extends AppCompatActivity {
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, "来自V2EX的帖子：" + ((TopicModel) mAllContent.get(0)).getTitle() + "   "
-                        + JsonManager.HTTPS_V2EX_BASE + "/t/" + ((TopicModel) mAllContent.get(0)).getId());
+                        + NetManager.HTTPS_V2EX_BASE + "/t/" + ((TopicModel) mAllContent.get(0)).getId());
                 sendIntent.setType("text/plain");
                 // createChooser 中有三大好处，自定义title
                 startActivity(Intent.createChooser(sendIntent, "分享到"));
@@ -443,7 +443,7 @@ public class DetailsActivity extends AppCompatActivity {
             case R.id.menu_item_open_in_browser:
 
                 Long topicId = ((TopicModel) mAllContent.get(0)).getId();
-                String url = JsonManager.HTTPS_V2EX_BASE + "/t/" + topicId;
+                String url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId;
                 Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 intent.setPackage("com.android.chrome");
@@ -474,10 +474,10 @@ public class DetailsActivity extends AppCompatActivity {
                 .build();
         HttpHelper.OK_CLIENT.newCall(new Request.Builder()
                 .headers(baseHeaders)
-                .header("Origin", JsonManager.HTTPS_V2EX_BASE)
-                .header("Referer", JsonManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .header("Origin", NetManager.HTTPS_V2EX_BASE)
+                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
                 .header("Content-Type", "application/x-www-form-urlencoded")
-                .url(JsonManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
                 .post(requestBody)
                 .build()).enqueue(new Callback() {
 

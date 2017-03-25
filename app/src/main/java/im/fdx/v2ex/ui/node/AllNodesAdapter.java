@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 
@@ -19,9 +17,7 @@ import java.util.Locale;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.NodeModel;
-import im.fdx.v2ex.network.JsonManager;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.utils.MyGsonRequest;
 import im.fdx.v2ex.utils.Keys;
 
 import static android.media.CamcorderProfile.get;
@@ -31,7 +27,7 @@ import static android.media.CamcorderProfile.get;
  * fdx will maintain it
  */
 
-public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyViewHolder> {
+public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder> {
 
     private List<NodeModel> mNodeModels = new ArrayList<>();
 
@@ -39,15 +35,15 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
     private final ImageLoader imageLoader = VolleyHelper.getInstance().getImageLoader();
 
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AllNodeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_all_nodes, parent, false);
 
-        return new MyViewHolder(view);
+        return new AllNodeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(AllNodeViewHolder holder, int position) {
         final NodeModel node = mNodeModels.get(position);
 
 //        getNodeIcon(node.getId(),holder);
@@ -70,29 +66,7 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
 
     }
 
-    /**
-     * get node icon because of api of all node sucks.
-     *
-     * @param id
-     * @param holder
-     */
-    private void getNodeIcon(Long id, final MyViewHolder holder) {
-        String url = JsonManager.API_NODE + "?id=" + id;
-        MyGsonRequest<NodeModel> simple = new MyGsonRequest<>(url, NodeModel.class, new Response.Listener<NodeModel>() {
-            @Override
-            public void onResponse(NodeModel response) {
 
-                holder.nivNodeIcon.setImageUrl(response.getAvatarLargeUrl(), imageLoader);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
-        VolleyHelper.getInstance().addToRequestQueue(simple);
-
-    }
 
     @Override
     public int getItemCount() {
@@ -127,13 +101,13 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.MyView
 
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public static class AllNodeViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvNodeName;
 
         public NetworkImageView nivNodeIcon;
 
-        public MyViewHolder(View itemView) {
+        public AllNodeViewHolder(View itemView) {
             super(itemView);
             tvNodeName = (TextView) itemView.findViewById(R.id.tv_node_name);
 //            nivNodeIcon = (NetworkImageView) itemView.findViewById(R.id.iv_node_image);

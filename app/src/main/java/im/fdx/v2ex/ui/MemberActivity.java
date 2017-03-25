@@ -20,11 +20,8 @@ import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.StringRequest;
 import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
 
@@ -34,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import im.fdx.v2ex.BuildConfig;
-import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.TopicModel;
@@ -49,16 +45,16 @@ import okhttp3.Callback;
 import okhttp3.Request;
 
 import static com.elvishew.xlog.XLog.tag;
-import static im.fdx.v2ex.network.JsonManager.*;
+import static im.fdx.v2ex.network.NetManager.*;
 
 
 /**
  * 获取user的主题，依然使用api的方式
  */
-public class ProfileActivity extends AppCompatActivity {
+public class MemberActivity extends AppCompatActivity {
 
 
-    public static final String TAG = ProfileActivity.class.getSimpleName();
+    public static final String TAG = MemberActivity.class.getSimpleName();
     private final ImageLoader imageLoader = VolleyHelper.getInstance().getImageLoader();
     private TextView mTvUsername;
     private NetworkImageView mIvAvatar;
@@ -159,7 +155,7 @@ public class ProfileActivity extends AppCompatActivity {
         cardView = (CardView) findViewById(R.id.cv);
 
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv_topics_of_user);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(ProfileActivity.this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MemberActivity.this);
 
         rv.setLayoutManager(layoutManager);
         mAdapter = new TopicsRVAdapter(this, mTopics);
@@ -228,7 +224,7 @@ public class ProfileActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        HintUI.t(ProfileActivity.this, "网络异常");
+                        HintUI.t(MemberActivity.this, "网络异常");
                     }
                 });
             }
