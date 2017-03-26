@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.elvishew.xlog.LogLevel;
 import com.elvishew.xlog.XLog;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by fdx on 2015/8/16.

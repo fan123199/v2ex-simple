@@ -30,7 +30,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 
-import im.fdx.v2ex.WebViewActivity;
+import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.ContentUtils;
 

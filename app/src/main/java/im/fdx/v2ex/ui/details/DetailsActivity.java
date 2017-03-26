@@ -55,6 +55,7 @@ import okhttp3.Callback;
 import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
@@ -100,6 +101,10 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
     };
+    private String token;
+    private String mTopicUrl;
+    private Menu mMenu;
+    private boolean isFavored;
 
     private void removeFootView() {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
@@ -191,8 +196,6 @@ public class DetailsActivity extends AppCompatActivity {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etSendReply.hasFocus()) {
-//                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-//                    inputMethodManager.hideSoftInputFromWindow(recyclerView.getWindowToken(), 0);
                     etSendReply.clearFocus();
                 }
             }
@@ -282,7 +285,7 @@ public class DetailsActivity extends AppCompatActivity {
             if (scheme.equals("https") || scheme.equals("http")) {
                 if (host.contains("v2ex.com")) {//不需要判断，在manifest中已指定
                     mTopicId = Long.parseLong(params.get(1));
-
+                    mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
                     getPageOne(mTopicId, false);
                 }
             }
@@ -291,10 +294,11 @@ public class DetailsActivity extends AppCompatActivity {
 
             mAllContent.add(0, topicModel);
             mTopicId = topicModel.getId();
-
+            mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
             getPageOne(mTopicId, false);
         } else if (intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L) != -1L) {
             mTopicId = intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L);
+            mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
             getPageOne(mTopicId, false);
         }
         XLog.tag(TAG).d(mTopicId);
@@ -337,12 +341,26 @@ public class DetailsActivity extends AppCompatActivity {
                 BaseModel topicHeader = NetManager.parseResponseToTopic(body, topicId);
                 List<ReplyModel> repliesOne = NetManager.parseResponseToReplay(body);
 
+
                 if (MyApp.getInstance().isLogin()) {
-                    String replyVerifyCode = parseToVerifyCode(body);
-                    XLog.tag(TAG).d("verify" + replyVerifyCode);
-                    if (replyVerifyCode != null) {
-                        mAdapter.setVerifyCode(replyVerifyCode);
+                    token = parseToVerifyCode(body);
+                    XLog.tag(TAG).d("verify" + token);
+                    if (token != null) {
+                        mAdapter.setVerifyCode(token);
                     }
+                    isFavored = parseIsFavored(body);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isFavored) {
+                                mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_white_24dp);
+                            } else {
+                                mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_border_white_24dp);
+                            }
+                        }
+                    });
+
                 }
 
 
@@ -369,6 +387,14 @@ public class DetailsActivity extends AppCompatActivity {
                     XLog.tag(TAG).d(totalPage);
                     getMoreRepliesByOrder(totalPage);
                 }
+
+
+            }
+
+            private boolean parseIsFavored(Element body) {
+                Pattern p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?t=)");
+                Matcher matcher = p.matcher(body.outerHtml());
+                return matcher.find();
             }
 
         });
@@ -379,7 +405,7 @@ public class DetailsActivity extends AppCompatActivity {
 //        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
         Element element = body.getElementsByClass("topic_buttons").first().getElementsByTag("a").first();
         if (element != null) {
-            Pattern p = Pattern.compile("(?<=/favorite/topic/\\d{1,10}\\?t=)\\w+");
+            Pattern p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+");
 //            XLog.tag(TAG).d(element.outerHtml());
 
             Matcher matcher = p.matcher(element.outerHtml());
@@ -401,24 +427,38 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_details, menu);
         if (MyApp.getInstance().isLogin()) {
-//            getMenuInflater().inflate(R.menu.menu_reply, menu);//会把感谢给弄进来
+            menu.findItem(R.id.menu_favor).setVisible(true);
+        } else {
+            menu.findItem(R.id.menu_favor).setVisible(false);
         }
+        mMenu = menu;
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+
+            case R.id.menu_favor:
+
+                if (isFavored) {
+                    unFavor();
+                } else {
+                    favor();
+                }
+
+
+                break;
             case R.id.menu_reply:
                 etSendReply.requestFocus();
                 ObjectAnimator animator = ObjectAnimator.ofFloat(etSendReply, "translationX", 0, 50, -50, 0, 50, 0);
@@ -458,6 +498,59 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void unFavor() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                .headers(HttpHelper.baseHeaders)
+                .url(NetManager.HTTPS_V2EX_BASE + "/unfavorite/topic/" + mTopicId + "?t=" + token)
+                .get().build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() == 302) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HintUI.t(DetailsActivity.this, "取消收藏成功");
+
+                            getPageOne(mTopicId, false);
+//                            mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_border_white_24dp);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void favor() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                .headers(HttpHelper.baseHeaders)
+                .url(NetManager.HTTPS_V2EX_BASE + "/favorite/topic/" + mTopicId + "?t=" + token)
+                .get().build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() == 302) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HintUI.t(DetailsActivity.this, "收藏成功");
+//                            mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_white_24dp);
+                            getPageOne(mTopicId, false);
+                        }
+                    });
+                }
+            }
+        });
     }
 
     @Override
@@ -503,7 +596,6 @@ public class DetailsActivity extends AppCompatActivity {
                         public void run() {
 
                             etSendReply.setText("");
-
 
                         }
                     });

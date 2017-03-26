@@ -130,20 +130,6 @@
             android:enabled="true"
             android:exported="false" />
 
-        <provider
-            android:name=".provider.MyProvider"
-            android:authorities="im.fdx.v2ex.provider.documents"
-            android:exported="true"
-            android:grantUriPermissions="true"
-            android:icon="@drawable/ic_profile"
-            android:label="@string/menu_share"
-            android:permission="android.permission.MANAGE_DOCUMENTS"
-            android:readPermission="">
-            <intent-filter>
-                <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
-            </intent-filter>
-        </provider>
-
         <activity
             android:name=".ui.MemberActivity"
             android:launchMode="singleTop">
@@ -198,7 +184,7 @@
 
         <service android:name=".ui.details.getMoreReplyService" />
 
-        <activity android:name=".WebViewActivity" />
+        <activity android:name=".ui.WebViewActivity" />
 
         <receiver
             android:name=".MyReceiver"

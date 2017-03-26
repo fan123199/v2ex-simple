@@ -111,5 +111,6 @@
     <string name="copy_content">copy content</string>
     <string name="create_topic">Create Topic</string>
     <string name="you_have_notifications">it is %s unread message</string>
+    <string name="favor">Favor</string>
 
 </resources>

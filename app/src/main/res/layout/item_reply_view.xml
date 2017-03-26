@@ -7,12 +7,11 @@
                 tools:ignore="UnusedAttribute">
 
 
-    <im.fdx.v2ex.view.CircleVImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_reply_avatar"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="@dimen/md_avatar_size"
         android:layout_height="@dimen/md_avatar_size"
-        android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_marginStart="@dimen/md_left_margin"
         android:layout_marginTop="9dp"
         android:contentDescription="@string/it_is_avatar"
@@ -24,12 +23,10 @@
         android:id="@+id/tv_reply_content"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tv_replier"
         android:layout_alignStart="@+id/tv_replier"
         android:layout_below="@+id/tv_replier"
         android:layout_marginBottom="9dp"
         android:layout_marginEnd="@dimen/md_left_margin"
-        android:layout_marginRight="@dimen/md_left_margin"
         android:layout_marginTop="6dp"
         android:text="@string/content"
         android:textIsSelectable="true"/>
@@ -39,10 +36,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/iv_reply_avatar"
-        android:layout_marginLeft="@dimen/md_left_margin"
         android:layout_marginStart="@dimen/md_left_margin"
         android:layout_toEndOf="@+id/iv_reply_avatar"
-        android:layout_toRightOf="@+id/iv_reply_avatar"
         android:text="@string/author"
         android:textColor="#333333"
         android:textStyle="bold"/>

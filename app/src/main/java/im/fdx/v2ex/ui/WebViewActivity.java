@@ -1,4 +1,4 @@
-package im.fdx.v2ex;
+package im.fdx.v2ex.ui;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+
+import im.fdx.v2ex.R;
 
 import static android.R.attr.key;
 import static im.fdx.v2ex.view.GoodTextView.REQUEST_CODE;

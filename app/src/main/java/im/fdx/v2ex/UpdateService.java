@@ -29,7 +29,7 @@ import okhttp3.Response;
 public class UpdateService extends Service {
 
     private AlarmManager alarmManager;
-    private static final long INTERVAL = 1000 * 120;
+    private static long INTERVAL = 1000 * 120;
 
 
     public UpdateService() {
@@ -42,9 +42,14 @@ public class UpdateService extends Service {
         //// TODO: 2017/3/24 JobScheduler or period settings.
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-//                System.currentTimeMillis() + 2500, INTERVAL,
-//                getOperationIntent());
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                System.currentTimeMillis() + 2500, INTERVAL,
+                getOperationIntent());
+    }
+
+    private PendingIntent getOperationIntent() {
+        Intent intent = new Intent("im.fdx.v2ex.get.notification");
+        return PendingIntent.getBroadcast(this, 199, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
 
@@ -142,7 +147,7 @@ public class UpdateService extends Service {
     public void onDestroy() {
         super.onDestroy();
         XLog.d("service onDestroy");
-//        alarmManager.cancel();
+        alarmManager.cancel(getOperationIntent());
     }
 }
 

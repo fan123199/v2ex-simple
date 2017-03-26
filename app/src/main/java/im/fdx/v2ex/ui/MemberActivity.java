@@ -18,12 +18,14 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -57,7 +59,7 @@ public class MemberActivity extends AppCompatActivity {
     public static final String TAG = MemberActivity.class.getSimpleName();
     private final ImageLoader imageLoader = VolleyHelper.getInstance().getImageLoader();
     private TextView mTvUsername;
-    private NetworkImageView mIvAvatar;
+    private ImageView mIvAvatar;
     private TextView mTvId;
     private TextView mTvUserCreated;
     private TextView mTvIntro;
@@ -69,7 +71,7 @@ public class MemberActivity extends AppCompatActivity {
     public int mHttpMode = 2;
     private static final int MSG_GET_USER_INFO = 0;
     private static final int MSG_GET_TOPIC = 1;
-    private boolean debug_view = false;
+    private boolean debug_view = true;
     private List<TopicModel> mTopics = new ArrayList<>();
 
     private String username;
@@ -103,7 +105,7 @@ public class MemberActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         mTvUsername = (TextView) findViewById(R.id.tv_username_profile);
-        mIvAvatar = (NetworkImageView) findViewById(R.id.iv_avatar_profile);
+        mIvAvatar = (ImageView) findViewById(R.id.iv_avatar_profile);
         mTvId = ((TextView) findViewById(R.id.tv_id));
         mTvUserCreated = (TextView) findViewById(R.id.tv_created);
         mTvIntro = (TextView) findViewById(R.id.tv_intro);
@@ -114,6 +116,14 @@ public class MemberActivity extends AppCompatActivity {
         mTvGithub = (TextView) findViewById(R.id.tv_github);
         mTvTwitter = (TextView) findViewById(R.id.tv_twitter);
         mTvWebsite = (TextView) findViewById(R.id.tv_website);
+
+        {
+            mTvLocation.setVisibility(View.GONE);
+            mTvBitcoin.setVisibility(View.GONE);
+            mTvGithub.setVisibility(View.GONE);
+            mTvTwitter.setVisibility(View.GONE);
+            mTvWebsite.setVisibility(View.GONE);
+        }
 
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -309,10 +319,7 @@ public class MemberActivity extends AppCompatActivity {
 
 //        toolbar.setTitle(member.getUsername());
 
-        mIvAvatar.setImageUrl(member.getAvatarLargeUrl(), imageLoader);
-//                Uri uri = Uri.parse(member.getAvatarLargeUrl());
-//                mIvAvatar.setImageURI(uri);
-
+        Picasso.with(this).load(member.getAvatarLargeUrl()).into(mIvAvatar);
         mTvId.setText(getString(R.string.the_n_member, member.getId()));
         mTvIntro.setText(member.getBio());
         mTvUserCreated.setText(TimeHelper.getAbsoluteTime(Long.parseLong(member.getCreated())));

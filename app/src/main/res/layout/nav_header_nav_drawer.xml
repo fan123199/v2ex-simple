@@ -22,7 +22,7 @@
         android:layout_alignStart="@+id/iv_my_avatar"
         android:layout_marginBottom="14dp" />
 
-    <im.fdx.v2ex.view.CircleVImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_my_avatar"
         app:civ_border_width="2dp"
         app:civ_border_color="@color/white"

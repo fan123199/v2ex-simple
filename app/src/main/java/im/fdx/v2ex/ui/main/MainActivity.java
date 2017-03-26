@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -42,11 +43,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.UpdateService;
-import im.fdx.v2ex.WebViewActivity;
+import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.LoginActivity;
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent intent = new Intent(this, CreateTopicActivity.class);
             intent.setAction("android.intent.action.MAIN");
             createTopicInfo = new ShortcutInfo.Builder(this, shortcutId)
-                    .setActivity(ComponentName.createRelative(this, ".ui.main.MainActivity"))
+                    .setActivity(getComponentName())
                     .setShortLabel(getString(R.string.create_topic))
                     .setLongLabel(getString(R.string.create_topic))
                     .setIntent(intent)
@@ -271,7 +273,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void setUserInfo(final String username, String avatar) {
         TextView tvMyName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_my_username);
         tvMyName.setText(username);
-        tvMyName.setOnClickListener(new View.OnClickListener() {
+        CircleImageView ivMyAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar);
+//        ivMyAvatar.setImageUrl(avatar, VolleyHelper.getInstance().getImageLoader());
+        ivMyAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, MemberActivity.class);
@@ -279,16 +283,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intent);
             }
         });
-        NetworkImageView imageView = (NetworkImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar);
-        imageView.setImageUrl(avatar, VolleyHelper.getInstance().getImageLoader());
+
+        Picasso.with(MainActivity.this).load(avatar).into(ivMyAvatar);
 
     }
 
     private void removeUserInfo() {
         TextView tvMyName = (TextView) findViewById(R.id.tv_my_username);
         tvMyName.setText("");
-        NetworkImageView imageView = (NetworkImageView) findViewById(R.id.iv_my_avatar);
-        imageView.setImageUrl("", null);
+        CircleImageView imageView = (CircleImageView) findViewById(R.id.iv_my_avatar);
+//        imageView.setImageUrl("", null);
+        imageView.setImageDrawable(null);
+        imageView.setVisibility(View.INVISIBLE);
+
     }
 
     @Override

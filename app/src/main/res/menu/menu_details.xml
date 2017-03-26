@@ -9,6 +9,12 @@
         android:title="@string/menu_refresh"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/menu_favor"
+        android:icon="@drawable/ic_favorite_border_white_24dp"
+        android:orderInCategory="90"
+        android:title="@string/favor"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/menu_item_share"
         android:orderInCategory="98"
         android:title="@string/menu_share"

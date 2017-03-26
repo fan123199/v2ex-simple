@@ -16,12 +16,10 @@ public class Keys {
 
     public static final String KEY_TOPIC_ID = "topic_id";
 
-    //node API
     public static final String KEY_NODE_ID = "node_id";
     public static final String KEY_NODE_NAME = "name";
     public static final String KEY_AVATAR = "avatar";
 
-    //user API
     public static final String KEY_USERNAME = "username";
 
 

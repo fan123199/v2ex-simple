@@ -22,11 +22,13 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.BaseModel;
@@ -118,27 +120,28 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         //采用更直观的选择语句
         if (getItemViewType(position) == TYPE_HEADER) {
 
-            TopicsRVAdapter.MainViewHolder MVHolder = (TopicsRVAdapter.MainViewHolder) holder;
+            TopicsRVAdapter.MainViewHolder mainHolder = (TopicsRVAdapter.MainViewHolder) holder;
             final TopicModel topic = ((TopicModel) mAllList.get(position));
-//            MVHolder.itemView.setTop(position);
-            MVHolder.tvTitle.setText(topic.getTitle());
-            MVHolder.tvContent.setSelected(true);
-            MVHolder.tvContent.setGoodText(topic.getContent_rendered());
+//            mainHolder.itemView.setTop(position);
+            mainHolder.tvTitle.setText(topic.getTitle());
+            mainHolder.tvContent.setSelected(true);
+            mainHolder.tvContent.setGoodText(topic.getContent_rendered());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                MVHolder.tvContent.setTransitionName("header");
+//                mainHolder.tvContent.setTransitionName("header");
 //            }
             String replyNumberString = String.valueOf(topic.getReplies()) +
                     " " + mContext.getString(R.string.reply);
 
-            MVHolder.tvReplyNumber.setText(replyNumberString);
-            MVHolder.tvAuthor.setText(topic.getMember().getUsername());
-            MVHolder.tvNode.setText(topic.getNode().getTitle());
+            mainHolder.tvReplyNumber.setText(replyNumberString);
+            mainHolder.tvAuthor.setText(topic.getMember().getUsername());
+            mainHolder.tvNode.setText(topic.getNode().getTitle());
             TopicsRVAdapter.MyOnClickListener l = new TopicsRVAdapter.MyOnClickListener(mContext, topic);
-            MVHolder.tvNode.setOnClickListener(l);
-            MVHolder.tvCreated.setText(TimeHelper.getRelativeTime(topic.getCreated()));
+            mainHolder.tvNode.setOnClickListener(l);
+            mainHolder.tvCreated.setText(TimeHelper.getRelativeTime(topic.getCreated()));
 
-            MVHolder.ivAvatar.setImageUrl(topic.getMember().getAvatarNormalUrl(), mImageLoader);
-            MVHolder.ivAvatar.setOnClickListener(l);
+//            mainHolder.ivAvatar.setImageUrl(topic.getMember().getAvatarNormalUrl(), mImageLoader);
+            Picasso.with(mContext).load(topic.getMember().getAvatarNormalUrl()).into(mainHolder.ivAvatar);
+            mainHolder.ivAvatar.setOnClickListener(l);
 
         } else if (getItemViewType(position) == TYPE_ITEM) {
             final ItemViewHolder itemVH = (ItemViewHolder) holder;
@@ -245,7 +248,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
             itemVH.tvRow.setText(String.valueOf(position));
 
-            itemVH.ivUserAvatar.setImageUrl(replyItem.getMember().getAvatarNormalUrl(), mImageLoader);
+            Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
 
             itemVH.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -302,7 +305,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         GoodTextView tvContent;
         TextView tvRow;
         TextView tvThanks;
-        CircleVImageView ivUserAvatar;
+        CircleImageView ivUserAvatar;
         View divider;
 
 
@@ -313,7 +316,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             tvReplyTime = (TextView) itemView.findViewById(R.id.tv_reply_time);
             tvContent = (GoodTextView) itemView.findViewById(R.id.tv_reply_content);
             tvRow = (TextView) itemView.findViewById(R.id.tv_reply_row);
-            ivUserAvatar = (CircleVImageView) itemView.findViewById(R.id.iv_reply_avatar);
+            ivUserAvatar = (CircleImageView) itemView.findViewById(R.id.iv_reply_avatar);
             tvThanks = (TextView) itemView.findViewById(R.id.tv_thanks);
             divider = itemView.findViewById(R.id.divider);
 

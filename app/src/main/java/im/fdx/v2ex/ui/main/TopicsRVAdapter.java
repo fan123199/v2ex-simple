@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.TopicModel;
@@ -81,8 +83,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.tvAuthor.setText(currentTopic.getMember().getUsername());
         holder.tvNode.setText(currentTopic.getNode().getTitle());
         holder.tvCreated.setText(TimeHelper.getRelativeTime(currentTopic.getCreated()));
-        holder.ivAvatar.setImageUrl(currentTopic.getMember().getAvatarNormalUrl(), mImageLoader);
-
+        Picasso.with(mContext).load(currentTopic.getMember().getAvatarNormalUrl()).into(holder.ivAvatar);
 
         holder.tvNode.setOnClickListener(listener);
         holder.ivAvatar.setOnClickListener(listener);
@@ -113,7 +114,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         public TextView tvReplyNumber;
         public TextView tvCreated;
         public TextView tvAuthor;
-        public CircleVImageView ivAvatar;
+        public CircleImageView ivAvatar;
         public TextView tvNode;
         public View container;
 
@@ -125,7 +126,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             tvReplyNumber = (TextView) root.findViewById(R.id.tv_reply_number);
             tvCreated = (TextView) root.findViewById(R.id.tv_created);
             tvAuthor = (TextView) root.findViewById(R.id.tv_author);
-            ivAvatar = (CircleVImageView) root.findViewById(R.id.iv_avatar_profile);
+            ivAvatar = (CircleImageView) root.findViewById(R.id.iv_avatar_profile);
             tvNode = (TextView) root.findViewById(R.id.tv_node);
         }
 
