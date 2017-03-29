@@ -3,6 +3,9 @@ An simple android client for exploring V2EX.
 
 [![Build Status](https://travis-ci.org/fan123199/V2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/V2ex-simple)
 
+
+[![Download on Google Play](https://play.google.com/intl/en_us/badges/images/generic/zh-cn_badge_web_generic.png)](https://play.google.com/store/apps/details?id=im.fdx.v2ex&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+
 ## main function
 
 + 浏览V2ex的内容,包括节点、热门主题、最新主题、以及用户信息
@@ -33,7 +36,14 @@ The project guide me to start my project from zero.
 
 ##Change log
 
-### v0.99 (2017.03.25)
+
+### v1.1 (2017.03.29)
+
+add notification
+
+
+
+### v0.9 (2017.03.25)
 
 the last version before release on google play,
  all account-related function is added.
