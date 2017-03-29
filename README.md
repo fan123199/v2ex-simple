@@ -3,8 +3,9 @@ An simple android client for exploring V2EX.
 
 [![Build Status](https://travis-ci.org/fan123199/V2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/V2ex-simple)
 
+## Google Play
 
-[![Download on Google Play](https://play.google.com/intl/en_us/badges/images/generic/zh-cn_badge_web_generic.png)](https://play.google.com/store/apps/details?id=im.fdx.v2ex&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+[![Download on Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=im.fdx.v2ex&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
 
 ## main function
 
