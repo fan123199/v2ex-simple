@@ -67,6 +67,6 @@
     <string name="cancel">取消</string>
     <string name="create_topic">创建主题</string>
     <string name="ok">确认</string>
-    <string name="you_have_notifications">你有%s条未读消息</string>
+    <string name="you_have_notifications">你有%d条未读消息</string>
     <string name="favor">收藏</string>
 </resources>

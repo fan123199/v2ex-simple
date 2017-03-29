@@ -58,8 +58,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private String username;
     private String password;
     String avatar;
-    public static final String action_login = "im.fdx.v2ex.event.login";
-    public static final String action_logout = "im.fdx.v2ex.event.logout";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -272,7 +270,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 avatar = member.getAvatarLargeUrl();
 
                 mSharedPreference.edit().putString("avatar", avatar).apply();
-                Intent intent = new Intent(action_login);
+                Intent intent = new Intent(Keys.ACTION_LOGIN);
                 intent.putExtra(Keys.KEY_USERNAME, username);
                 intent.putExtra(Keys.KEY_AVATAR, avatar);
                 LocalBroadcastManager.getInstance(LoginActivity.this)

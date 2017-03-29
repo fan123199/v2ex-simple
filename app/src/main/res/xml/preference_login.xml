@@ -8,4 +8,27 @@
             android:key="pref_logout"
             android:title="@string/logout" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="消息"
+        android:key="group_msg">
+        <SwitchPreference
+            android:title="是否启用未读信息通知"
+            android:key="pref_msg"
+            android:defaultValue="true"
+            android:summaryOn="启用通知"
+            android:summaryOff="关闭通知" />
+        <SwitchPreference
+            android:key="pref_background_msg"
+            android:title="后台接收未读信息"
+            android:summaryOn="接收"
+            android:summaryOff="不接收"
+            android:defaultValue="false" />
+        <ListPreference
+            android:defaultValue="60"
+            android:entries="@array/period_string"
+            android:entryValues="@array/period_int"
+            android:key="pref_msg_period"
+            android:title="获取消息间隔" />
+    </PreferenceCategory>
 </PreferenceScreen>

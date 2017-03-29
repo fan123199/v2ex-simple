@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public List<NotificationModel> mModels;
 
 
+    private int number = -1;
+
+    public void setNumber(int num) {
+        this.number = num;
+
+    }
+
+
     public NotificationAdapter(Context context, List<NotificationModel> models) {
         mContext = context;
         mModels = models;
@@ -46,6 +55,10 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         NotificationViewHolder nholder = (NotificationViewHolder) holder;
+
+        if (position >= number) {
+            nholder.itemView.setBackgroundColor(mContext.getResources().getColor(R.color.list_background));
+        }
 
         final NotificationModel model = mModels.get(position);
 
@@ -76,6 +89,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
 
     }
+
 
     @Override
     public int getItemCount() {

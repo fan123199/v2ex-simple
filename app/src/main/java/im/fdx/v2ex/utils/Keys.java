@@ -24,4 +24,11 @@ public class Keys {
 
 
     public static final String KEY_NODE_TITLE = "node_title";
+
+
+    public static final String ACTION_GET_NOTIFICATION = "im.fdx.v2ex.get.notification";
+    public static final String ACTION_LOGIN = "im.fdx.v2ex.event.login";
+    public static final String ACTION_LOGOUT = "im.fdx.v2ex.event.logout";
+    public static final String ACTION_START_NOTIFICATION = "im.fdx.v2ex.notification";
+    public static final String ACTION_PREFERENCE_CHANGED = "im.fdx.v2ex.preference";
 }

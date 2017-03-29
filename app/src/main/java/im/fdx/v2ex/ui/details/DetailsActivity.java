@@ -59,7 +59,7 @@ import okhttp3.Response;
 
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
-import static im.fdx.v2ex.ui.LoginActivity.action_logout;
+import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 
@@ -72,7 +72,6 @@ public class DetailsActivity extends AppCompatActivity {
     private static final int MSG_ERROR_AUTH = 1;
     private static final int MSG_ERROR_IO = 2;
     private static final int MSG_GO_TO_BOTTOM = 3;
-    public static final String ACTION_GET_REPLY = "im.fdx.v2ex.action.GET_REPLY";
     private static final int MSG_GET_MORE_REPLY = 4;
     private SwipeRefreshLayout mSwipe;
     private ImageView ivSend;
@@ -155,7 +154,7 @@ public class DetailsActivity extends AppCompatActivity {
 
         IntentFilter filter = new IntentFilter("im.fdx.v2ex.event.login");
 
-        filter.addAction(action_logout);
+        filter.addAction(ACTION_LOGOUT);
         filter.addAction("im.fdx.v2ex.reply");
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
@@ -350,6 +349,7 @@ public class DetailsActivity extends AppCompatActivity {
                     }
                     isFavored = parseIsFavored(body);
 
+                    XLog.tag(TAG).d("isfavored" + String.valueOf(isFavored));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -391,13 +391,15 @@ public class DetailsActivity extends AppCompatActivity {
 
             }
 
-            private boolean parseIsFavored(Element body) {
-                Pattern p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?t=)");
-                Matcher matcher = p.matcher(body.outerHtml());
-                return matcher.find();
-            }
+
 
         });
+    }
+
+    private boolean parseIsFavored(Element body) {
+        Pattern p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?t=)");
+        Matcher matcher = p.matcher(body.outerHtml());
+        return matcher.find();
     }
 
     private String parseToVerifyCode(Element body) {

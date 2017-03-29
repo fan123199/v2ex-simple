@@ -47,8 +47,8 @@
 
     <style name="Text.Bg" parent="TextAppearance.AppCompat">
         <item name="android:background">@drawable/select_background</item>
-        <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingBottom">6dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
     </style>
 
     <style name="ExpendedCollapseTitle">

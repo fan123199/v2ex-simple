@@ -5,6 +5,8 @@ import android.text.format.DateUtils;
 import com.elvishew.xlog.XLog;
 
 import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -12,6 +14,7 @@ import java.util.Locale;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 
+import static android.R.attr.format;
 import static android.view.View.X;
 
 /**
@@ -48,8 +51,9 @@ public class TimeHelper {
     public static String getAbsoluteTime(long created) {
         created *= 1000;
 
-        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
-        return format.format(created);
+//        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
+        DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+        return format1.format(created);
 
 
     }

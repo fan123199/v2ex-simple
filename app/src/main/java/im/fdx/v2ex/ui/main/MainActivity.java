@@ -2,7 +2,6 @@ package im.fdx.v2ex.ui.main;
 
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -32,7 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 
@@ -50,7 +48,6 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.UpdateService;
 import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.LoginActivity;
 import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.NotificationActivity;
@@ -67,8 +64,9 @@ import okhttp3.Response;
 import static im.fdx.v2ex.R.id.nav_testNotify;
 import static im.fdx.v2ex.network.NetManager.DAILY_CHECK;
 import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
-import static im.fdx.v2ex.ui.LoginActivity.action_login;
-import static im.fdx.v2ex.ui.LoginActivity.action_logout;
+import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
+import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
+import static im.fdx.v2ex.utils.Keys.ACTION_PREFERENCE_CHANGED;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -83,14 +81,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private MyViewPagerAdapter mAdapter;
     private NavigationView navigationView;
     private final String shortcutId = "create_topic";
+    private Intent intent;
+
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
             XLog.tag(TAG).d("getAction: " + intent.getAction());
-            if (intent.getAction().equals("im.fdx.v2ex.preference")) {
-//                switchFragment();
-            } else if (intent.getAction().equals(action_login)) {
+            if (intent.getAction().equals(ACTION_PREFERENCE_CHANGED)) {
+
+            } else if (intent.getAction().equals(ACTION_LOGIN)) {
                 showDailyAndNotification(true);
                 String username = intent.getStringExtra(Keys.KEY_USERNAME);
                 String avatar = intent.getStringExtra("avatar");
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
                 }
-            } else if (intent.getAction().equals(action_logout)) {
+            } else if (intent.getAction().equals(ACTION_LOGOUT)) {
                 showDailyAndNotification(false);
                 removeUserInfo();
                 fab.hide();
@@ -112,22 +112,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         }
     };
-
     private ViewPager.OnPageChangeListener listener;
-    private Intent intent;
     private FloatingActionButton fab;
     private ShortcutManager shortcutManager;
     private List<String> shortcutIds = Collections.singletonList("create_topic");
     private ShortcutInfo createTopicInfo;
+    private SharedPreferences sharedPreferences;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+        XLog.tag(TAG).d("onCreate");
 
-
-        IntentFilter intentFilter = new IntentFilter("im.fdx.v2ex.preference");
-        intentFilter.addAction(action_login);
-        intentFilter.addAction(action_logout);
+        IntentFilter intentFilter = new IntentFilter(ACTION_PREFERENCE_CHANGED);
+        intentFilter.addAction(ACTION_LOGIN);
+        intentFilter.addAction(ACTION_LOGOUT);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
@@ -180,11 +179,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (MyApp.getInstance().isLogin()) {
             showDailyAndNotification(true);
 
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             String username = sharedPreferences.getString(Keys.KEY_USERNAME, "");
             String avatar = sharedPreferences.getString("avatar", "");
             XLog.tag(TAG).d(username + "//// " + avatar);
@@ -238,8 +237,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         intent = new Intent(MainActivity.this, UpdateService.class);
-        intent.setAction("im.fdx.v2ex.notification");
-        if (MyApp.getInstance().isLogin()) {
+        intent.setAction(Keys.ACTION_START_NOTIFICATION);
+        if (MyApp.getInstance().isLogin() && isOpenMessage()) {
             startService(intent);
         }
 
@@ -362,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_testNotify:
 
-                UpdateService.putNotification(this, "199");
+//                UpdateService.putNotification(this, 199);
                 break;
             case R.id.nav_share:
 //                Uri uri = Uri.parse("market://details?id=" + getPackageName());
@@ -515,9 +514,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStop() {
         super.onStop();
-        if (MyApp.getInstance().isLogin()) {
-            stopService(intent);
-        }
         XLog.tag(TAG).d("onStop");
 
     }
@@ -525,9 +521,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (MyApp.getInstance().isLogin() && isOpenMessage() && !isBackground()) {
+            stopService(intent);
+        }
         XLog.tag(TAG).d("onDestroy");
         mViewPager.clearOnPageChangeListeners();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
+
+    private boolean isBackground() {
+        return sharedPreferences.getBoolean("pref_background_msg", false);
+    }
+
+    private boolean isOpenMessage() {
+        return sharedPreferences.getBoolean("pref_msg", true);
     }
 
 }

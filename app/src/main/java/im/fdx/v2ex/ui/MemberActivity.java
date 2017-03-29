@@ -22,21 +22,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
+import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
@@ -45,6 +50,7 @@ import im.fdx.v2ex.utils.TimeHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.elvishew.xlog.XLog.tag;
 import static im.fdx.v2ex.network.NetManager.*;
@@ -71,7 +77,6 @@ public class MemberActivity extends AppCompatActivity {
     public int mHttpMode = 2;
     private static final int MSG_GET_USER_INFO = 0;
     private static final int MSG_GET_TOPIC = 1;
-    private boolean debug_view = true;
     private List<TopicModel> mTopics = new ArrayList<>();
 
     private String username;
@@ -98,6 +103,10 @@ public class MemberActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private CardView cardView;
     private MemberModel member;
+    private String tBlock;
+    private String onceForFollow;
+    private Boolean isBlock;
+    private Boolean isFollowed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,10 +232,78 @@ public class MemberActivity extends AppCompatActivity {
         //// TODO: 2017/3/20 可以改成一步，分析下性能
             getUserInfo(urlUserInfo);
             getTopicsByUsername();
+        getBlockAndFollow();
+    }
+
+    private void getBlockAndFollow() {
+        String webUrl = "https://www.v2ex.com/member/" + username;
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+                .url(webUrl)
+                .get().build()).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                NetManager.dealError();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.code() == 200) {
+                    String html = response.body().string();
+                    Element body = Jsoup.parse(html).body();
+
+                    isBlock = parseIsBlock(html);
+                    isFollowed = parseIsFollowed(html);
+                    tBlock = parseToBlock(html);
+                    onceForFollow = parseToOnce(html);
+                }
+            }
+        });
+    }
+
+    private Boolean parseIsFollowed(String html) {
+
+
+        Pattern pFollow = Pattern.compile("un(?=follow/\\d{1,8}\\?once=)");
+        Matcher matcher = pFollow.matcher(html);
+        return matcher.find();
+
+    }
+
+    private Boolean parseIsBlock(String html) {
+        Pattern pFollow = Pattern.compile("un(?=block/\\d{1,8}\\?t=)");
+        Matcher matcher = pFollow.matcher(html);
+        return matcher.find();
+    }
+
+    private String parseToOnce(String html) {
+
+//        <input type="button" value="加入特别关注"
+// onclick="if (confirm('确认要开始关注 SoulGem？'))
+// { location.href = '/follow/209351?once=61676'; }" class="super special button">
+
+        Pattern pFollow = Pattern.compile("(?<=follow/\\d{1,8}\\?once=)//d{1,10}");
+        Matcher matcher = pFollow.matcher(html);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
+
+    private String parseToBlock(String html) {
+//        <input type="button" value="Block" onclick="if (confirm('确认要屏蔽 SoulGem？'))
+// { location.href = '/block/209351?t=1490028444'; }" class="super normal button">
+        Pattern pFollow = Pattern.compile("(?<=block/\\d{1,8}\\?t=)//d{1,20}");
+        Matcher matcher = pFollow.matcher(html);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
     }
 
     private void getUserInfo(String urlUserInfo) {
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders).url(urlUserInfo).build()).enqueue(new Callback() {
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+                .url(urlUserInfo).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 e.printStackTrace();
@@ -324,32 +401,38 @@ public class MemberActivity extends AppCompatActivity {
         mTvIntro.setText(member.getBio());
         mTvUserCreated.setText(TimeHelper.getAbsoluteTime(Long.parseLong(member.getCreated())));
 
-        if (debug_view && TextUtils.isEmpty(member.getBtc())) {
+        boolean debug_view = false;
+        if (debug_view || TextUtils.isEmpty(member.getBtc())) {
             mTvBitcoin.setVisibility(View.GONE);
         } else {
+            mTvBitcoin.setVisibility(View.VISIBLE);
             mTvBitcoin.setText(member.getBtc());
         }
-        if (debug_view && TextUtils.isEmpty(member.getGithub())) {
+        if (debug_view || TextUtils.isEmpty(member.getGithub())) {
             mTvGithub.setVisibility(View.GONE);
         } else {
+            mTvGithub.setVisibility(View.VISIBLE);
             mTvGithub.setText(member.getGithub());
         }
 
-        if (debug_view && TextUtils.isEmpty(member.getLocation())) {
+        if (debug_view || TextUtils.isEmpty(member.getLocation())) {
             mTvLocation.setVisibility(View.GONE);
         } else {
+            mTvLocation.setVisibility(View.VISIBLE);
             mTvLocation.setText(member.getLocation());
         }
 
-        if (debug_view && TextUtils.isEmpty(member.getTwitter())) {
+        if (debug_view || TextUtils.isEmpty(member.getTwitter())) {
             mTvTwitter.setVisibility(View.GONE);
         } else {
+            mTvTwitter.setVisibility(View.VISIBLE);
             mTvTwitter.setText(member.getTwitter());
         }
 
-        if (debug_view && TextUtils.isEmpty(member.getWebsite())) {
+        if (debug_view || TextUtils.isEmpty(member.getWebsite())) {
             mTvWebsite.setVisibility(View.GONE);
         } else {
+            mTvWebsite.setVisibility(View.VISIBLE);
             mTvWebsite.setText(member.getWebsite());
 
         }

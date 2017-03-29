@@ -7,9 +7,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-
-import com.elvishew.xlog.XLog;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,8 +29,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import static im.fdx.v2ex.R.string.node;
 
 public class NotificationActivity extends AppCompatActivity {
 
@@ -79,6 +74,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void parseIntent(Intent intent) {
+        adapter.setNumber(intent.getIntExtra("number", -1));
         fetchNotification();
     }
 
@@ -99,7 +95,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                 if (response.code() == 200) {
                     Document html = Jsoup.parse(response.body().string());
-                    notifications.addAll(parseIt(html));
+                    notifications.addAll(parseToNotifications(html));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -113,7 +109,7 @@ public class NotificationActivity extends AppCompatActivity {
 
     }
 
-    private static List<NotificationModel> parseIt(Document html) {
+    private static List<NotificationModel> parseToNotifications(Document html) {
         Element body = html.body();
         Elements items = body.getElementsByAttributeValueStarting("id", "n_");
         if (items == null) {

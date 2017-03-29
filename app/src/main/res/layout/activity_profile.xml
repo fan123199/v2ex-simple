@@ -8,6 +8,7 @@
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/al_profile"
+        android:theme="@style/AppTheme.AppBarOverlay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,6 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:contentScrim="@color/primary"
+
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 
@@ -36,7 +38,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
                 app:layout_collapseMode="none"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -46,23 +47,24 @@
                     xmlns:tools="http://schemas.android.com/tools"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true">
+                    android:layout_alignParentStart="true"
+                    android:layout_marginBottom="10dp">
 
                     <TextView
                         android:id="@+id/tv_username_profile"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginStart="40dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="0dp"
-                        android:minWidth="10dp"
-                        android:textSize="18sp"
                         android:textColor="@color/primary"
+                        android:textSize="18sp"
                         app:layout_constraintLeft_toRightOf="@+id/iv_avatar_profile"
-                        app:layout_constraintTop_toTopOf="@+id/iv_avatar_profile" />
+                        app:layout_constraintTop_toTopOf="@+id/iv_avatar_profile"
+                        tools:text="@string/username" />
 
                     <ImageView
                         android:id="@+id/iv_avatar_profile"
@@ -100,13 +102,16 @@
 
                     <TextView
                         android:id="@+id/tv_intro"
-                        android:layout_width="368dp"
-                        android:layout_height="17dp"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="8dp"
                         android:layout_marginTop="8dp"
                         app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
+                        app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile" />
 
                     <TextView
@@ -118,13 +123,17 @@
                         android:layout_alignStart="@+id/tv_username_profile"
                         android:layout_below="@+id/iv_avatar_profile"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="0dp"
                         android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="0dp"
                         android:drawableLeft="@drawable/ic_location"
                         android:drawablePadding="16dp"
-                        tools:text="location"
+                        app:layout_constraintHorizontal_bias="1.0"
                         app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_github" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_github"
+                        tools:text="location" />
 
                     <TextView
                         android:id="@+id/tv_bitcoin"
@@ -135,11 +144,14 @@
                         android:layout_alignRight="@+id/tv_created"
                         android:layout_below="@+id/tv_github"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
                         android:clickable="true"
                         android:drawableLeft="@drawable/ic_bitcoin"
                         android:drawablePadding="16dp"
-                        app:layout_constraintLeft_toLeftOf="@+id/tv_twitter"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_twitter"
                         tools:layout_constraintLeft_creator="1" />
@@ -153,12 +165,16 @@
                         android:layout_alignRight="@+id/tv_username_profile"
                         android:layout_below="@+id/tv_bitcoin"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="0dp"
                         android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="0dp"
                         android:clickable="true"
                         android:drawableLeft="@drawable/ic_twitter"
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
                         android:onClick="openTwitter"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_location" />
@@ -170,10 +186,11 @@
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginTop="8dp"
-                        tools:text="id"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="3dp"
                         app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_username_profile" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_username_profile"
+                        tools:text="id" />
 
                     <TextView
                         android:id="@+id/tv_website"
@@ -181,26 +198,32 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="0dp"
                         android:drawableLeft="@drawable/ic_website"
                         android:drawablePadding="16dp"
-                        tools:text="website"
                         android:onClick="openWeb"
-                        app:layout_constraintLeft_toLeftOf="@+id/tv_bitcoin"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_bitcoin"
-                        tools:layout_constraintLeft_creator="1" />
+                        tools:layout_constraintLeft_creator="1"
+                        tools:text="website" />
 
                     <TextView
                         android:id="@+id/tv_prefix_created"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="0dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginTop="16dp"
                         android:text="@string/created_on"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_profile"
                         app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
                         app:layout_constraintTop_toBottomOf="@+id/tv_id"
-                        app:layout_constraintVertical_bias="0.25" />
+                        app:layout_constraintVertical_bias="1.0" />
 
                     <TextView
                         android:id="@+id/tv_github"
@@ -211,14 +234,44 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginLeft="0dp"
                         android:layout_marginRight="8dp"
+                        android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:drawableLeft="@drawable/ic_github"
                         android:drawablePadding="16dp"
                         android:onClick="openGithub"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_intro" />
+
+                    <Button
+                        android:id="@+id/button"
+                        android:layout_width="89dp"
+                        android:layout_height="40dp"
+                        android:minHeight="36dp"
+                        android:minWidth="36dp"
+                        android:text="Button"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginRight="16dp"
+                        app:layout_constraintRight_toRightOf="parent" />
+
+                    <Button
+                        android:id="@+id/button2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minHeight="36dp"
+                        android:minWidth="36dp"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:text="Button"
+                        app:layout_anchor="@+id/al_profile"
+                        app:layout_anchorGravity="top|left"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_marginTop="16dp"
+                        app:layout_constraintRight_toLeftOf="@+id/button"
+                        android:layout_marginRight="16dp" />
 
                 </android.support.constraint.ConstraintLayout>
 
