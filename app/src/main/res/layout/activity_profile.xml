@@ -8,7 +8,6 @@
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/al_profile"
-        android:theme="@style/AppTheme.AppBarOverlay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -18,37 +17,23 @@
             android:id="@+id/ctl_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:contentScrim="@color/primary"
-
+            app:collapsedTitleTextAppearance="@style/MemberCollapseTitle"
+            app:expandedTitleMarginStart="126dp"
+            app:expandedTitleMarginTop="16dp"
+            app:expandedTitleGravity="top"
+            app:expandedTitleTextAppearance="@style/ExpendedCollapseTitle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-
-            <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/primary"
-                android:theme="@style/AppTheme.AppBarOverlay"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/cv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                app:layout_collapseMode="none"
-                app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
 
                 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:app="http://schemas.android.com/apk/res-auto"
                     xmlns:tools="http://schemas.android.com/tools"
+                    android:id="@+id/constraint_member"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:layout_marginBottom="10dp">
+                    app:layout_collapseMode="parallax"
+                    app:layout_collapseParallaxMultiplier="0.3"
+                    android:paddingBottom="10dp">
 
                     <TextView
                         android:id="@+id/tv_username_profile"
@@ -70,17 +55,12 @@
                         android:id="@+id/iv_avatar_profile"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginTop="24dp"
-                        android:background="@drawable/radio"
+                        android:layout_marginTop="16dp"
                         android:cropToPadding="false"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_person_black_48dp" />
+                        android:layout_marginLeft="48dp" />
 
                     <TextView
                         android:id="@+id/tv_created"
@@ -123,14 +103,14 @@
                         android:layout_alignStart="@+id/tv_username_profile"
                         android:layout_below="@+id/iv_avatar_profile"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="0dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="0dp"
                         android:drawableLeft="@drawable/ic_location"
                         android:drawablePadding="16dp"
                         app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
+                        app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_github"
                         tools:text="location" />
@@ -151,10 +131,11 @@
                         android:drawableLeft="@drawable/ic_bitcoin"
                         android:drawablePadding="16dp"
                         app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
+                        app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_twitter"
-                        tools:layout_constraintLeft_creator="1" />
+                        tools:layout_constraintLeft_creator="1"
+                        android:layout_marginTop="0dp" />
 
                     <TextView
                         android:id="@+id/tv_twitter"
@@ -165,7 +146,7 @@
                         android:layout_alignRight="@+id/tv_username_profile"
                         android:layout_below="@+id/tv_bitcoin"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="0dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="0dp"
@@ -174,8 +155,8 @@
                         android:drawablePadding="16dp"
                         android:gravity="center_vertical"
                         android:onClick="openTwitter"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_location" />
 
@@ -206,7 +187,7 @@
                         android:drawablePadding="16dp"
                         android:onClick="openWeb"
                         app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
+                        app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_bitcoin"
                         tools:layout_constraintLeft_creator="1"
@@ -234,49 +215,28 @@
                         android:layout_alignParentStart="true"
                         android:layout_alignParentTop="true"
                         android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="0dp"
+                        android:layout_marginLeft="8dp"
                         android:layout_marginRight="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:drawableLeft="@drawable/ic_github"
                         android:drawablePadding="16dp"
                         android:onClick="openGithub"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_intro" />
 
-                    <Button
-                        android:id="@+id/button"
-                        android:layout_width="89dp"
-                        android:layout_height="40dp"
-                        android:minHeight="36dp"
-                        android:minWidth="36dp"
-                        android:text="Button"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
-                        app:layout_constraintRight_toRightOf="parent" />
-
-                    <Button
-                        android:id="@+id/button2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:minHeight="36dp"
-                        android:minWidth="36dp"
-                        android:layout_gravity="center_vertical|center_horizontal"
-                        android:text="Button"
-                        app:layout_anchor="@+id/al_profile"
-                        app:layout_anchorGravity="top|left"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginTop="16dp"
-                        app:layout_constraintRight_toLeftOf="@+id/button"
-                        android:layout_marginRight="16dp" />
-
                 </android.support.constraint.ConstraintLayout>
 
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppTheme.AppBarOverlay"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-            </android.support.v7.widget.CardView>
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 

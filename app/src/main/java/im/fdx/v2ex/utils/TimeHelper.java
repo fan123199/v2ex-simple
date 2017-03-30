@@ -52,7 +52,7 @@ public class TimeHelper {
         created *= 1000;
 
 //        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
-        DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a");
+        DateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return format1.format(created);
 
 

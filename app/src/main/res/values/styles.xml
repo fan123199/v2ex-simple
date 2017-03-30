@@ -52,9 +52,13 @@
     </style>
 
     <style name="ExpendedCollapseTitle">
-        <item name="android:textSize">24sp</item>
-        <item name="android:maxEms">5</item>
-        <item name="android:ellipsize">start</item>
+        <item name="android:textSize">22sp</item>
+        <!--<item name="android:maxWidth">20dp</item> not working-->
     </style>
+
+    <style name="MemberCollapseTitle">
+        <item name="android:textColor">@color/white</item>
+    </style>
+
 
 </resources>

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -16,6 +18,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
@@ -93,7 +97,7 @@ public class MemberActivity extends AppCompatActivity {
                 swipeRefreshLayout.setRefreshing(false);
 //                HintUI.t(ProfileActivity.this,"get topic data");
             }
-            return false;
+            return true;
         }
     });
     private Toolbar toolbar;
@@ -103,10 +107,13 @@ public class MemberActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private CardView cardView;
     private MemberModel member;
-    private String tBlock;
-    private String onceForFollow;
-    private Boolean isBlock;
+    private String blockOfT;
+    private String followOfOnce;
+    private Boolean isBlocked;
     private Boolean isFollowed;
+    private ConstraintLayout constraintLayout;
+    private Menu mMenu;
+    private RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +167,7 @@ public class MemberActivity extends AppCompatActivity {
 
         appBarLayout = (AppBarLayout) findViewById(R.id.al_profile);
 
+
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl_profile);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -171,9 +179,9 @@ public class MemberActivity extends AppCompatActivity {
             }
         });
 
-        cardView = (CardView) findViewById(R.id.cv);
+        constraintLayout = (ConstraintLayout) findViewById(R.id.constraint_member);
 
-        RecyclerView rv = (RecyclerView) findViewById(R.id.rv_topics_of_user);
+        rv = (RecyclerView) findViewById(R.id.rv_topics_of_user);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MemberActivity.this);
 
         rv.setLayoutManager(layoutManager);
@@ -181,16 +189,17 @@ public class MemberActivity extends AppCompatActivity {
         rv.setAdapter(mAdapter);
         parseIntent(getIntent());
 
-
     }
 
     private void handleAlphaOnTitle(float percentage) {
         if (percentage > 0.8f && percentage <= 1f) {
-            cardView.setVisibility(View.INVISIBLE);
-            collapsingToolbarLayout.setTitle(username);//设置title不显示
+            constraintLayout.setVisibility(View.INVISIBLE);
+//            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_primary_24dp);
+//            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_primary_24dp);
         } else if (percentage <= 0.8f && percentage >= 0f) {
-            cardView.setVisibility(View.VISIBLE);
-            collapsingToolbarLayout.setTitle("");//设置title不显示
+            constraintLayout.setVisibility(View.VISIBLE);
+//            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp);
+//            collapsingToolbarLayout.setTitle("");//设置title不显示
         }
 
     }
@@ -226,16 +235,23 @@ public class MemberActivity extends AppCompatActivity {
             username = "Livid";
             urlUserInfo = API_USER + "?username=" + username;  //Livid's profile
         }
+        collapsingToolbarLayout.setTitle(username);
+
         urlTopic = API_TOPIC + "?username=" + username;
 
         Log.i(TAG, urlUserInfo + "\n" + urlTopic);
         //// TODO: 2017/3/20 可以改成一步，分析下性能
-            getUserInfo(urlUserInfo);
-            getTopicsByUsername();
+        getUserInfo(urlUserInfo);
+        getTopicsByUsername();
         getBlockAndFollow();
     }
 
     private void getBlockAndFollow() {
+
+        if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, ""))) {
+            return;
+        }
+
         String webUrl = "https://www.v2ex.com/member/" + username;
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(webUrl)
@@ -252,18 +268,40 @@ public class MemberActivity extends AppCompatActivity {
                     String html = response.body().string();
                     Element body = Jsoup.parse(html).body();
 
-                    isBlock = parseIsBlock(html);
+                    isBlocked = parseIsBlock(html);
+
                     isFollowed = parseIsFollowed(html);
-                    tBlock = parseToBlock(html);
-                    onceForFollow = parseToOnce(html);
+
+                    XLog.d("isBlocked" + isBlocked + "|" + "isFollowed" + isFollowed);
+
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (isBlocked) {
+                                mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_primary_24dp);
+                            } else {
+                                mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_white_24dp);
+                            }
+
+                            if (isFollowed) {
+                                mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp);
+                            } else {
+                                mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp);
+                            }
+
+                        }
+                    });
+
+
+                    blockOfT = parseToBlock(html);
+                    followOfOnce = parseToOnce(html);
                 }
             }
         });
     }
 
     private Boolean parseIsFollowed(String html) {
-
-
         Pattern pFollow = Pattern.compile("un(?=follow/\\d{1,8}\\?once=)");
         Matcher matcher = pFollow.matcher(html);
         return matcher.find();
@@ -282,7 +320,7 @@ public class MemberActivity extends AppCompatActivity {
 // onclick="if (confirm('确认要开始关注 SoulGem？'))
 // { location.href = '/follow/209351?once=61676'; }" class="super special button">
 
-        Pattern pFollow = Pattern.compile("(?<=follow/\\d{1,8}\\?once=)//d{1,10}");
+        Pattern pFollow = Pattern.compile("follow/\\d{1,8}\\?once=\\d{1,10}");
         Matcher matcher = pFollow.matcher(html);
         if (matcher.find()) {
             return matcher.group();
@@ -290,10 +328,14 @@ public class MemberActivity extends AppCompatActivity {
         return null;
     }
 
+    /**
+     * @param html
+     * @return the whole path url
+     */
     private String parseToBlock(String html) {
 //        <input type="button" value="Block" onclick="if (confirm('确认要屏蔽 SoulGem？'))
 // { location.href = '/block/209351?t=1490028444'; }" class="super normal button">
-        Pattern pFollow = Pattern.compile("(?<=block/\\d{1,8}\\?t=)//d{1,20}");
+        Pattern pFollow = Pattern.compile("block/\\d{1,8}\\?t=\\d{1,20}");
         Matcher matcher = pFollow.matcher(html);
         if (matcher.find()) {
             return matcher.group();
@@ -340,7 +382,15 @@ public class MemberActivity extends AppCompatActivity {
                 Type type = new TypeToken<ArrayList<TopicModel>>() {
                 }.getType();
                 List<TopicModel> topicModels = myGson.fromJson(body, type);
-
+                if (topicModels == null || topicModels.size() == 0) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HintUI.t(MemberActivity.this, "该用户没有主题");
+                        }
+                    });
+                    return;
+                }
                 mAdapter.updateData(topicModels);
                 XLog.tag("profile").i(topicModels.get(0).getTitle());
                 Message.obtain(handler, MSG_GET_TOPIC).sendToTarget();
@@ -396,7 +446,7 @@ public class MemberActivity extends AppCompatActivity {
 
 //        toolbar.setTitle(member.getUsername());
 
-        Picasso.with(this).load(member.getAvatarLargeUrl()).into(mIvAvatar);
+        Picasso.with(this).load(member.getAvatarLargeUrl()).error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar);
         mTvId.setText(getString(R.string.the_n_member, member.getId()));
         mTvIntro.setText(member.getBio());
         mTvUserCreated.setText(TimeHelper.getAbsoluteTime(Long.parseLong(member.getCreated())));
@@ -435,6 +485,145 @@ public class MemberActivity extends AppCompatActivity {
             mTvWebsite.setVisibility(View.VISIBLE);
             mTvWebsite.setText(member.getWebsite());
 
+        }
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_member, menu);
+        this.mMenu = menu;
+        if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, ""))) {
+            menu.findItem(R.id.menu_block).setVisible(false);
+            menu.findItem(R.id.menu_follow).setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        XLog.d("onOptionsItemSelected");
+
+        switch (item.getItemId()) {
+            case R.id.menu_follow:
+                switchFollowAndRefresh(isFollowed);
+
+
+                break;
+            case R.id.menu_block:
+
+                switchBlockAndRefresh(isBlocked);
+
+
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+
+    }
+
+    private void switchFollowAndRefresh(boolean isFollowed) {
+        if (isFollowed) {
+            HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+                    .url(NetManager.HTTPS_V2EX_BASE + "/un" + followOfOnce)
+                    .build()).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.code() == 302) {
+                        getBlockAndFollow();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp);
+                                HintUI.t(MemberActivity.this, "取消关注成功");
+                            }
+                        });
+
+                    }
+                }
+            });
+        } else {
+            HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+                    .url(NetManager.HTTPS_V2EX_BASE + "/" + followOfOnce)
+                    .build()).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.code() == 302) {
+                        getBlockAndFollow();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp);
+                                HintUI.t(MemberActivity.this, "关注成功");
+                            }
+                        });
+                    }
+                }
+            });
+
+        }
+    }
+
+    private void switchBlockAndRefresh(Boolean isBlocked) {
+        if (isBlocked) {
+            HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                    .headers(HttpHelper.baseHeaders)
+                    .url(HTTPS_V2EX_BASE + "/un" + blockOfT).build()).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.code() == 302) {
+                        getBlockAndFollow();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_white_24dp);
+                                HintUI.t(MemberActivity.this, "取消屏蔽成功");
+                            }
+                        });
+                    }
+
+                }
+            });
+        } else {
+            HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                    .headers(HttpHelper.baseHeaders)
+                    .url(HTTPS_V2EX_BASE + "/" + blockOfT).build()).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    if (response.code() == 302) {
+                        getBlockAndFollow();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+//                                mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_primary_24dp);
+                                HintUI.t(MemberActivity.this, "屏蔽成功");
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 
