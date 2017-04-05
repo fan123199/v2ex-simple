@@ -48,6 +48,7 @@
     <string-array name="v2ex_favorite_tab_titles" translatable="false">
         <item>最热</item>
         <item>全部</item>
+        <item>最近</item>
         <item>技术</item>
         <item>创意</item>
         <item>好玩</item>
@@ -83,6 +84,7 @@
     <string-array name="v2ex_favorite_tab_paths" translatable="false">
         <item>hot</item>
         <item>all</item>
+        <item>recent</item>
         <item>tech</item>
         <item>creative</item>
         <item>play</item>

@@ -30,8 +30,9 @@
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">?attr/colorAccent</item>
         <!--<item name="tabBackground">?attr/colorPrimary</item>-->
-        <item name="tabPaddingStart">6dp</item>
-        <item name="tabPaddingEnd">6dp</item>
+        <item name="tabPaddingStart">1dp</item>
+        <item name="tabPaddingEnd">1dp</item>
+        <item name="tabMode">scrollable</item>
     </style>
 
     <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">
@@ -56,7 +57,7 @@
         <!--<item name="android:maxWidth">20dp</item> not working-->
     </style>
 
-    <style name="MemberCollapseTitle">
+    <style name="CollapseTitle">
         <item name="android:textColor">@color/white</item>
     </style>
 

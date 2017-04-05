@@ -21,6 +21,7 @@
             app:expandedTitleMarginTop="30dp"
             app:expandedTitleMarginStart="115dp"
             app:expandedTitleTextAppearance="@style/ExpendedCollapseTitle"
+            app:collapsedTitleTextAppearance="@style/CollapseTitle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <RelativeLayout

@@ -17,7 +17,7 @@
             android:id="@+id/ctl_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:collapsedTitleTextAppearance="@style/MemberCollapseTitle"
+            app:collapsedTitleTextAppearance="@style/CollapseTitle"
             app:expandedTitleMarginStart="126dp"
             app:expandedTitleMarginTop="16dp"
             app:expandedTitleGravity="top"

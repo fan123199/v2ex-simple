@@ -12,7 +12,7 @@
     <!--use for background-->
     <color name="list_background">#e8e8e8</color>
     <color name="colorDivider">#B6B6B6</color>
-    <color name="title_color">#00BCD4</color>
+    <color name="title_color">@color/black</color>
 
     <color name="black">#000000</color>
 

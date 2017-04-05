@@ -115,7 +115,11 @@ public class TopicsFragment extends Fragment {
             getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == 0) {
             if (mTabs != null && !mTabs.isEmpty())
-                mRequestURL = HTTPS_V2EX_BASE + "/?tab=" + mTabs;
+                if (mTabs.equals("recent")) {
+                    mRequestURL = HTTPS_V2EX_BASE + "/recent";
+                } else {
+                    mRequestURL = HTTPS_V2EX_BASE + "/?tab=" + mTabs;
+                }
             getTopicsByOK(mRequestURL);
         }
 

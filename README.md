@@ -38,6 +38,15 @@ The project guide me to start my project from zero.
 ##Change log
 
 
+### v1.3
+
+add recent tab. title color change
+
+### v1.2
+
+add 
+
+
 ### v1.1 (2017.03.29)
 
 add notification

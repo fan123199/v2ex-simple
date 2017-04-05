@@ -105,7 +105,7 @@
             android:paddingBottom="8dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
-            android:background="@drawable/radio_with_color"
+            android:background="@drawable/radio_border"
             android:text="@string/login" />
     </FrameLayout>
 
