@@ -15,6 +15,10 @@
             android:icon="@drawable/ic_zoom_out_map_black_24dp"
             android:title="@string/all_nodes" />
         <item
+            android:id="@+id/nav_favor"
+            android:icon="@drawable/ic_favorite_border_black_24dp"
+            android:title="@string/my_follow" />
+        <item
             android:id="@+id/nav_notification"
             android:icon="@drawable/ic_notifications_none_black_24dp"
             android:title="@string/notification" />

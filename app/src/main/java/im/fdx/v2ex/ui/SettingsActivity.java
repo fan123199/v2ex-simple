@@ -5,6 +5,8 @@ import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -76,6 +78,8 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences;
         private ListPreference listPreference;
 
+        private int count;
+
         public SettingsFragment() {
         }
 
@@ -103,23 +107,18 @@ public class SettingsActivity extends AppCompatActivity {
                                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-
                                         dialog.dismiss();
-
                                     }
                                 })
                                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-
                                         removeCookie();
                                         notifyAllActivities();
                                         findPreference(PREF_LOGOUT).setEnabled(false);
                                         sharedPreferences.edit().remove("is_login").apply();
                                         dialog.dismiss();
-
-                                        HintUI.t(getActivity(), "已注销登录");
-
+                                        HintUI.t(getActivity(), "已退出登录");
                                     }
                                 });
                         alert.create().show();
@@ -133,6 +132,12 @@ public class SettingsActivity extends AppCompatActivity {
                 listPreference.setSummary(listPreference.getEntry());//初始化时设置summary
             }
 
+            if (!sharedPreferences.getBoolean("pref_msg", false)) {
+                findPreference("pref_msg_period").setEnabled(false);
+                findPreference("pref_background_msg").setEnabled(false);
+
+            }
+
             findPreference(PREF_RATES).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 public boolean onPreferenceClick(Preference preference) {
                     try {
@@ -143,6 +148,30 @@ public class SettingsActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         HintUI.t(getActivity(), "没有找到V2EX客户端");
                     }
+                    return true;
+                }
+            });
+
+            PackageManager manager = getActivity().getPackageManager();
+            PackageInfo info;
+            try {
+                info = manager.getPackageInfo(getActivity().getPackageName(), 0);
+                findPreference("pref_version").setSummary(info.versionName);
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
+
+            final String[] jiang = getResources().getStringArray(R.array.j);
+            count = 7;
+            findPreference("pref_version").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    if (count < 0) {
+                        count = 7;
+                        HintUI.t(getActivity(), jiang[(int) ((System.currentTimeMillis() / 100) % 3)]);
+                    }
+                    count--;
                     return true;
                 }
             });

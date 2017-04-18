@@ -135,4 +135,12 @@
     <string name="you_have_notifications">it is %d unread message</string>
     <string name="favor">Favor</string>
 
+    <string name="my_follow">My Follow</string>
+
+    <string-array name="j" translatable="false">
+        <item>一颗赛艇</item>
+        <item>不要搞个大新闻</item>
+        <item>无可奉告</item>
+    </string-array>
+
 </resources>

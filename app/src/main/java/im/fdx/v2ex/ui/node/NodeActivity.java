@@ -13,12 +13,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
+import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -52,7 +54,7 @@ public class NodeActivity extends AppCompatActivity {
     private static final int MSG_ERROR_AUTH = 2;
     RelativeLayout rlNodeList;
     RelativeLayout rlNodeHeader;
-    NetworkImageView ivNodeIcon;
+    ImageView ivNodeIcon;
     TextView tvNodeName;
     TextView tvNodeHeader;
     TextView tvNodeNum;
@@ -70,9 +72,8 @@ public class NodeActivity extends AppCompatActivity {
             XLog.i("get handler msg " + msg.what);
             if (msg.what == MSG_GET_NODE_INFO) {
 
-                ivNodeIcon.setImageUrl(mNodeModel.getAvatarLargeUrl(), imageloader);
+                Picasso.with(NodeActivity.this).load(mNodeModel.getAvatarLargeUrl()).into(ivNodeIcon);
                 XLog.d(mNodeModel.getTitle());
-//                tvNodeName.setText(mNodeModel.getTitle());
                 collapsingToolbarLayout.setTitle(mNodeModel.getTitle());
                 collapsingToolbarLayout.setTitleEnabled(true);
                 tvNodeHeader.setText(mNodeModel.getHeader());
@@ -88,7 +89,6 @@ public class NodeActivity extends AppCompatActivity {
     };
     private String nodeName;
     private NodeModel mNodeModel;
-    private AppBarLayout appBarLayout;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private String nodeTile;
 
@@ -110,7 +110,7 @@ public class NodeActivity extends AppCompatActivity {
         }
 
 
-        appBarLayout = (AppBarLayout) findViewById(R.id.appbar_node);
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.appbar_node);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl_node);
 
@@ -142,7 +142,7 @@ public class NodeActivity extends AppCompatActivity {
 
 
         rlNodeList = (RelativeLayout) findViewById(R.id.rl_node_list);
-        ivNodeIcon = (NetworkImageView) findViewById(R.id.iv_node_image);
+        ivNodeIcon = (ImageView) findViewById(R.id.iv_node_image);
         tvNodeName = (TextView) findViewById(R.id.tv_node_name);
         tvNodeHeader = (TextView) findViewById(R.id.tv_node_header);
         tvNodeNum = (TextView) findViewById(R.id.tv_topic_num);

@@ -209,6 +209,10 @@
                 <action android:name="im.fdx.v2ex.get.notificaiton" />
             </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".ui.favor.FavorActivity"
+            android:exported="true"></activity>
     </application>
 
 </manifest>

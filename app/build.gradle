@@ -10,8 +10,8 @@ android {
         applicationId "im.fdx.v2ex"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.3"
+        versionCode 5
+        versionName "1.4"
 
     }
     lintOptions {
@@ -35,23 +35,12 @@ android {
         }
     }
 
-//    productFlavors {
-//        pro {
-//            applicationId "im.fdx.v2ex.pro"
-//            signingConfig signingConfigs.KeyForRelease
-//        }
-//        free {
-//            applicationId "im.fdx.v2ex.free"
-//            signingConfig signingConfigs.KeyForRelease
-//        }
-//    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
-//noinspection SpellCheckingInspection
 dependencies {
     //    androidTestCompile 'com.android.support.test:runner:0.5'
     // Set this dependency to use JUnit 4 rules
@@ -63,8 +52,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     //    compile 'com.belerweb:pinyin4j:2.5.0'
-//    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0' //图片加载库 glide 居然还要设置
-
 
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.facebook.fresco:imagepipeline-okhttp3:1.1.0'

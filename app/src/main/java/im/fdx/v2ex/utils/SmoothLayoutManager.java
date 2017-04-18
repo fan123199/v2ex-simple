@@ -6,13 +6,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 
-public class SmoothManager extends LinearLayoutManager {
+public class SmoothLayoutManager extends LinearLayoutManager {
 
-    public SmoothManager(Context context) {
+    public SmoothLayoutManager(Context context) {
         super(context, VERTICAL, false);
     }
 
-    public SmoothManager(Context context, int orientation, boolean reverseLayout) {
+    public SmoothLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
     }
 
@@ -32,7 +32,7 @@ public class SmoothManager extends LinearLayoutManager {
 
         @Override
         public PointF computeScrollVectorForPosition(int targetPosition) {
-            return SmoothManager.this
+            return SmoothLayoutManager.this
                     .computeScrollVectorForPosition(targetPosition);
         }
 

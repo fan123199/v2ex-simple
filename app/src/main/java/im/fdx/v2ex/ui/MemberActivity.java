@@ -50,7 +50,7 @@ import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.TimeHelper;
+import im.fdx.v2ex.utils.TimeUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -449,7 +449,7 @@ public class MemberActivity extends AppCompatActivity {
         Picasso.with(this).load(member.getAvatarLargeUrl()).error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar);
         mTvId.setText(getString(R.string.the_n_member, member.getId()));
         mTvIntro.setText(member.getBio());
-        mTvUserCreated.setText(TimeHelper.getAbsoluteTime(Long.parseLong(member.getCreated())));
+        mTvUserCreated.setText(TimeUtil.getAbsoluteTime(Long.parseLong(member.getCreated())));
 
         boolean debug_view = false;
         if (debug_view || TextUtils.isEmpty(member.getBtc())) {

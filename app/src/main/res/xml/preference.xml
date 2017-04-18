@@ -16,10 +16,15 @@
     <!--</PreferenceCategory>-->
 
 
-    <PreferenceCategory android:title="@string/other">
+    <PreferenceCategory
+        android:title="@string/other"
+        android:order="99">
         <Preference
             android:key="pref_rates"
             android:title="@string/rate" />
+        <Preference
+            android:key="pref_version"
+            android:title="版本" />
     </PreferenceCategory>
 
 

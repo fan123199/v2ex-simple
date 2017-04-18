@@ -39,8 +39,7 @@ import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
-import im.fdx.v2ex.view.CircleVImageView;
-import im.fdx.v2ex.utils.TimeHelper;
+import im.fdx.v2ex.utils.TimeUtil;
 import im.fdx.v2ex.view.GoodTextView;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -137,7 +136,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             mainHolder.tvNode.setText(topic.getNode().getTitle());
             TopicsRVAdapter.MyOnClickListener l = new TopicsRVAdapter.MyOnClickListener(mContext, topic);
             mainHolder.tvNode.setOnClickListener(l);
-            mainHolder.tvCreated.setText(TimeHelper.getRelativeTime(topic.getCreated()));
+            mainHolder.tvCreated.setText(TimeUtil.getRelativeTime(topic.getCreated()));
 
 //            mainHolder.ivAvatar.setImageUrl(topic.getMember().getAvatarNormalUrl(), mImageLoader);
             Picasso.with(mContext).load(topic.getMember().getAvatarNormalUrl()).into(mainHolder.ivAvatar);
@@ -239,8 +238,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
 
-
-            itemVH.tvReplyTime.setText(TimeHelper.getRelativeTime(replyItem.getCreated()));
+            itemVH.tvReplyTime.setText(TimeUtil.getRelativeTime(replyItem.getCreated()));
             itemVH.tvReplier.setText(replyItem.getMember().getUsername());
             itemVH.tvThanks.setText(String.format(mContext.getResources().
                     getString(R.string.show_thanks), replyItem.getThanks()));

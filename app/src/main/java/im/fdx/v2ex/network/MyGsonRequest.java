@@ -1,11 +1,9 @@
-package im.fdx.v2ex.utils;
+package im.fdx.v2ex.network;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 
 import java.lang.reflect.Type;
-
-import im.fdx.v2ex.network.NetManager;
 
 /**
  * Created by a708 on 16-1-19.

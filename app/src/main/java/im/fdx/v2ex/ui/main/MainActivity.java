@@ -52,10 +52,11 @@ import im.fdx.v2ex.ui.LoginActivity;
 import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.NotificationActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
+import im.fdx.v2ex.ui.favor.FavorActivity;
 import im.fdx.v2ex.ui.node.AllNodesActivity;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.TimeHelper;
+import im.fdx.v2ex.utils.TimeUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -247,6 +248,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void showDailyAndNotification(boolean visible) {
         navigationView.getMenu().findItem(R.id.nav_notification).setVisible(visible);
         navigationView.getMenu().findItem(R.id.nav_daily).setVisible(visible);
+        navigationView.getMenu().findItem(R.id.nav_favor).setVisible(visible);
         MainActivity.this.invalidateOptionsMenu();
     }
 
@@ -265,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void shrinkFab() {
         fab.animate().rotation(360f)
-                .setDuration(500).start();
+                .setDuration(1000).start();
     }
 
 
@@ -354,6 +356,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intent = new Intent(this, NotificationActivity.class);
 //                intent.setAction("im.fdx.v2ex.notification");
                 startActivity(intent);
+                break;
+
+            case R.id.nav_favor:
+                Intent intentFavor = new Intent(this, FavorActivity.class);
+                startActivity(intentFavor);
+
                 break;
             case R.id.nav_testMenu2:
 
@@ -488,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 //        location.href = '/mission/daily/redeem?once=83270';
         String onceOriginal = onceElement.attr("onClick");
-        return TimeHelper.getNum(onceOriginal);
+        return TimeUtil.getNum(onceOriginal);
     }
 
     @Override

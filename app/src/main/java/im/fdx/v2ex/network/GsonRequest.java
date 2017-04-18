@@ -1,4 +1,4 @@
-package im.fdx.v2ex.utils;
+package im.fdx.v2ex.network;
 
 import android.util.Log;
 import android.widget.LinearLayout;

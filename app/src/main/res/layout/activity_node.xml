@@ -32,7 +32,7 @@
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.3">
 
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/iv_node_image"
                     android:layout_width="48dp"
                     android:layout_height="48dp"

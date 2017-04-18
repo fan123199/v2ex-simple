@@ -38,6 +38,12 @@ The project guide me to start my project from zero.
 ##Change log
 
 
+
+### v 1.4
+
+
+add followings
+
 ### v1.3
 
 add recent tab. title color change

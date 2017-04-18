@@ -75,7 +75,7 @@ public class AllNodesActivity extends AppCompatActivity {
         });
 
 
-        mAdapter = new AllNodesAdapter();
+        mAdapter = new AllNodesAdapter(this, false);
         RecyclerView rvNode = (RecyclerView) findViewById(R.id.rv_node);
         RecyclerView.LayoutManager  layoutManager = new StaggeredGridLayoutManager(3, VERTICAL);
         rvNode.setLayoutManager(layoutManager);

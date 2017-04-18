@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,13 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
 
         nholder.tvAction.setText(model.getType());
-        nholder.tvContent.setText(model.getContent());
+
+        if (TextUtils.isEmpty(model.getContent())) {
+            nholder.tvContent.setVisibility(View.GONE);
+        } else {
+            nholder.tvContent.setText(model.getContent());
+        }
+
         Picasso.with(mContext).load(model.getMember().getAvatarNormalUrl()).into(nholder.ivAvatar);
         nholder.tvUsername.setText(model.getMember().getUsername());
         nholder.tvTime.setText(model.getTime());

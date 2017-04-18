@@ -49,7 +49,7 @@ import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.SmoothManager;
+import im.fdx.v2ex.utils.SmoothLayoutManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -186,7 +186,7 @@ public class DetailsActivity extends AppCompatActivity {
 //        mLayoutManager.scrollToPosition(0);
 //        mRCView.setLayoutManager(mLayoutManager);
 
-        LinearLayoutManager mLayoutManager = new SmoothManager(this);
+        LinearLayoutManager mLayoutManager = new SmoothLayoutManager(this);
         mRCView.setLayoutManager(mLayoutManager);
         mRCView.smoothScrollToPosition(POSITION_START);
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager

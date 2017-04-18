@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -38,8 +40,8 @@ import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.utils.MyGsonRequest;
-import im.fdx.v2ex.utils.SmoothManager;
+import im.fdx.v2ex.network.MyGsonRequest;
+import im.fdx.v2ex.utils.SmoothLayoutManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -66,9 +68,9 @@ public class TopicsFragment extends Fragment {
     private SwipeRefreshLayout mSwipeLayout;
     private String mRequestURL;
     private int mMNodeID;
-    private String mTabs;
     private RecyclerView mRecyclerView;
     private FloatingActionButton fab;
+    private RelativeLayout container;
 
     //    private OnFragmentInteractionListener mListener;
 
@@ -101,13 +103,17 @@ public class TopicsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
         Bundle args = getArguments();
         mMNodeID = args.getInt(Keys.KEY_COLUMN_ID, 0);
-        mTabs = args.getString(Keys.KEY_TAB);
-
-        if (mMNodeID == LATEST_TOPICS) {
+        String mTabs = args.getString(Keys.KEY_TAB);
+        if (args.getInt("type", -1) == 1) {
+            mRequestURL = HTTPS_V2EX_BASE + "/my/topics";
+            getTopicsByOK(mRequestURL);
+        } else if (args.getInt("type", -1) == 2) {
+            mRequestURL = HTTPS_V2EX_BASE + "/my/following";
+            getTopicsByOK(mRequestURL);
+        } else if (mMNodeID == LATEST_TOPICS) {
             mRequestURL = NetManager.API_LATEST;
             getTopicsJsonByVolley(mRequestURL);
         } else if (mMNodeID == TOP_10_TOPICS) {
@@ -141,7 +147,7 @@ public class TopicsFragment extends Fragment {
         mRecyclerView = (RecyclerView) layout.findViewById(R.id.main_recycler_view);
         //这里用线性显示 类似于listView
 //        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mRecyclerView.setLayoutManager(new SmoothManager(getActivity()));
+        mRecyclerView.setLayoutManager(new SmoothLayoutManager(getActivity()));
 
 
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_main);
@@ -156,7 +162,6 @@ public class TopicsFragment extends Fragment {
                 animator.setDuration(1000);
 
                 Animation animation = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE, Animation.ABSOLUTE, 100);
-                Animation animation2 = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE, Animation.ABSOLUTE, 100);
 
                 animation.setRepeatCount(1);
                 if (dy > 0) {
@@ -188,10 +193,6 @@ public class TopicsFragment extends Fragment {
 
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-//                    fab.hide();
-                }
                 super.onScrollStateChanged(recyclerView, newState);
             }
         });
@@ -199,6 +200,8 @@ public class TopicsFragment extends Fragment {
         mAdapter = new TopicsRVAdapter(getActivity(), mTopicModels);
         mRecyclerView.setAdapter(mAdapter); //大工告成
 
+
+        this.container = (RelativeLayout) layout.findViewById(R.id.rv_container);
 
         // TODO: 16/4/30 不用自定义的Listener。 因为子视图的点击问题，无法屏蔽父视图的点击。
 //        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
@@ -244,9 +247,26 @@ public class TopicsFragment extends Fragment {
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
 
                 Document html = Jsoup.parse(response.body().string());
-                List<TopicModel> c = NetManager.parseTopicLists(html, 0);
+                List<TopicModel> topicList = NetManager.parseTopicLists(html, 0);
+
+                if (topicList == null || topicList.isEmpty()) {
+                    final TextView child = new TextView(getActivity());
+                    child.setText("没有内容");
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSwipeLayout.setRefreshing(false);
+                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                            params.addRule(RelativeLayout.CENTER_VERTICAL);
+                            container.addView(child, params);
+                        }
+                    });
+                    return;
+                }
+
                 mTopicModels.clear();
-                mTopicModels.addAll(c);
+                mTopicModels.addAll(topicList);
 //                XLog.tag("TopicFragment").d("done, get topic models");
                 handler.sendEmptyMessage(MSG_GET_DATA_BY_OK);
             }

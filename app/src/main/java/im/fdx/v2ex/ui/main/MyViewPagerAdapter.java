@@ -21,7 +21,7 @@ import static im.fdx.v2ex.MyApp.USE_API;
  * 从MainActivity分离出来. 用了FragmentStatePagerAdapter 替代FragmentPagerAdapter，才可以动态切换Fragment
  * 目前实现了两种视图。用JsonAPI+Volley 和 模拟web + okhttp
  */
-public class MyViewPagerAdapter extends FragmentStatePagerAdapter {
+class MyViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private List<TopicsFragment> mFragments = new ArrayList<>();
     private List<String> mTabTitles = new ArrayList<>();

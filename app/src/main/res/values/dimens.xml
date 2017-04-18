@@ -12,4 +12,5 @@
     <dimen name="nav_header_height">160dp</dimen>
     <dimen name="margin_up_down">6dp</dimen>
     <dimen name="margin_between_log_in_item">6dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

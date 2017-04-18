@@ -23,8 +23,7 @@ import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.details.DetailsActivity;
 import im.fdx.v2ex.ui.node.NodeActivity;
 import im.fdx.v2ex.utils.Keys;
-import im.fdx.v2ex.view.CircleVImageView;
-import im.fdx.v2ex.utils.TimeHelper;
+import im.fdx.v2ex.utils.TimeUtil;
 import im.fdx.v2ex.view.GoodTextView;
 
 import static im.fdx.v2ex.MyApp.USE_API;
@@ -82,7 +81,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.tvReplyNumber.setText(sequence);
         holder.tvAuthor.setText(currentTopic.getMember().getUsername());
         holder.tvNode.setText(currentTopic.getNode().getTitle());
-        holder.tvCreated.setText(TimeHelper.getRelativeTime(currentTopic.getCreated()));
+        holder.tvCreated.setText(TimeUtil.getRelativeTime(currentTopic.getCreated()));
         Picasso.with(mContext).load(currentTopic.getMember().getAvatarNormalUrl()).into(holder.ivAvatar);
 
         holder.tvNode.setOnClickListener(listener);

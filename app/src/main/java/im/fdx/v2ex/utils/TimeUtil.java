@@ -21,7 +21,7 @@ import static android.view.View.X;
  * Created by a708 on 15-9-9.
  * 获取相对时间
  */
-public class TimeHelper {
+public class TimeUtil {
 
 
     /**

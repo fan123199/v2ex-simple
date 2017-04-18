@@ -32,7 +32,7 @@ import im.fdx.v2ex.model.ReplyModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.HintUI;
-import im.fdx.v2ex.utils.TimeHelper;
+import im.fdx.v2ex.utils.TimeUtil;
 
 import static java.lang.Integer.parseInt;
 
@@ -193,7 +193,7 @@ public class NetManager {
                         createdOriginal = smallItem.split("•")[1];
                         break;
                 }
-                created = TimeHelper.toLong(createdOriginal);
+                created = TimeUtil.toLong(createdOriginal);
             }
             topicModel.setReplies(replies);
             topicModel.setContent("");
@@ -246,7 +246,6 @@ public class NetManager {
         return nodeModel;
     }
 
-    //// TODO: 2017/3/16 只有一页回复，这样是不行的
     public static int getTotalPage(Element body) {
 
         int currentPage = 0;
@@ -286,7 +285,7 @@ public class NetManager {
 
         String time = createdUnformed.split("·")[1];
         XLog.tag(TAG).d(createdUnformed + "||| " + time);
-        long created = TimeHelper.toLong(time);
+        long created = TimeUtil.toLong(time);
 //long created = -1L;
 
         String replyNum = "";
@@ -381,7 +380,7 @@ public class NetManager {
 //            XLog.i(createdOriginal);
             Element replyContent = item.getElementsByClass("reply_content").first();
 //            replyModel.setCreated(-1L);
-            replyModel.setCreated(TimeHelper.toLong(createdOriginal));
+            replyModel.setCreated(TimeUtil.toLong(createdOriginal));
             replyModel.setMember(memberModel);
             replyModel.setThanks(thanks);
 
