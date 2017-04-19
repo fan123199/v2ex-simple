@@ -125,17 +125,17 @@ public class SettingsActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-            }
 
-            listPreference = (ListPreference) findPreference("pref_msg_period");
-            if (listPreference.getEntry() != null) {
-                listPreference.setSummary(listPreference.getEntry());//初始化时设置summary
-            }
+                listPreference = (ListPreference) findPreference("pref_msg_period");
+                if (listPreference.getEntry() != null) {
+                    listPreference.setSummary(listPreference.getEntry());//初始化时设置summary
+                }
 
-            if (!sharedPreferences.getBoolean("pref_msg", false)) {
-                findPreference("pref_msg_period").setEnabled(false);
-                findPreference("pref_background_msg").setEnabled(false);
+                if (!sharedPreferences.getBoolean("pref_msg", false)) {
+                    findPreference("pref_msg_period").setEnabled(false);
+                    findPreference("pref_background_msg").setEnabled(false);
 
+                }
             }
 
             findPreference(PREF_RATES).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
