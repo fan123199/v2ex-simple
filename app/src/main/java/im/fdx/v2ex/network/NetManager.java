@@ -407,4 +407,26 @@ public class NetManager {
 
         return null;
     }
+
+
+    /**
+     * @param body
+     * @return token
+     */
+    public static String parseToVerifyCode(Element body) {
+
+//        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
+        Element element = body.getElementsByClass("topic_buttons").first().getElementsByTag("a").first();
+        if (element != null) {
+            Pattern p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+");
+//            XLog.tag(TAG).d(element.outerHtml());
+
+            Matcher matcher = p.matcher(element.outerHtml());
+            if (matcher.find()) {
+//                XLog.tag(TAG).d(matcher.group());
+                return matcher.group();
+            }
+        }
+        return null;
+    }
 }

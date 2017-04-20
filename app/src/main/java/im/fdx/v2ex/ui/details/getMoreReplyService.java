@@ -22,11 +22,7 @@ import okhttp3.Request;
  * 为什么不用Thread？感觉Thread不高级
  */
 public class getMoreReplyService extends IntentService {
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
+
     public getMoreReplyService(String name) {
         super(name);
     }
@@ -38,29 +34,38 @@ public class getMoreReplyService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
-        int page = intent != null ? intent.getIntExtra("page", -1) : -1;
-        long topicId = intent != null ? intent.getLongExtra("topic_id", -1) : -1;
+        if (intent == null) {
+            return;
+        }
+        int totalPage = intent.getIntExtra("page", -1);
+        long topicId = intent.getLongExtra("topic_id", -1);
+        boolean isToBottom = intent.getBooleanExtra("bottom", false);
 
-        XLog.tag("DetailsActivity").d(page + " | " + topicId);
-        if (page == -1 || topicId == -1L) {
+        XLog.tag("DetailsActivity").d(totalPage + " | " + topicId);
+        if (totalPage == -1 || topicId == -1L) {
             return;
         }
 
         try {
-            for (int i = 2; i <= page; i++) {
+            for (int i = 2; i <= totalPage; i++) {
                 okhttp3.Response response = HttpHelper.OK_CLIENT.newCall(new Request.Builder()
                         .headers(HttpHelper.baseHeaders)
                         .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + i)
                         .build()).execute();
                 Document body = Jsoup.parse(response.body().string());
                 ArrayList<ReplyModel> replies = NetManager.parseResponseToReplay(body);
+                String token = NetManager.parseToVerifyCode(body);
 
                 XLog.tag("DetailsActivity").d(replies.get(0).getContent());
                 Intent it = new Intent();
                 it.setAction("im.fdx.v2ex.reply");
+                it.putExtra("token", token);
                 it.putParcelableArrayListExtra("replies", replies);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(it);
 
+                if (i == totalPage && isToBottom) {
+                    it.putExtra("bottom", true);
+                }
+                LocalBroadcastManager.getInstance(this).sendBroadcast(it);
             }
 
         } catch (IOException e) {

@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,6 +58,7 @@ import okhttp3.Response;
 
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
+import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
@@ -78,7 +78,7 @@ public class DetailsActivity extends AppCompatActivity {
     private EditText etSendReply;
     private DetailsAdapter mAdapter;
     private List<BaseModel> mAllContent = new ArrayList<>();
-    RecyclerView mRCView;
+    RecyclerView rvDetail;
 
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -93,9 +93,14 @@ public class DetailsActivity extends AppCompatActivity {
                 removeFootView();
             } else if (intent.getAction().equals("im.fdx.v2ex.reply")) {
                 XLog.tag("HEHE").d("MSG_GET  LocalBroadCast");
+                token = intent.getStringExtra("token");
                 List<ReplyModel> rm = intent.getParcelableArrayListExtra("replies");
                 mAllContent.addAll(rm);
                 mAdapter.notifyDataSetChanged();
+
+                if (intent.getBooleanExtra("bottom", false)) {
+                    rvDetail.scrollToPosition(mAllContent.size() - 1);
+                }
             }
         }
 
@@ -131,7 +136,7 @@ public class DetailsActivity extends AppCompatActivity {
                     DetailsActivity.this.finish();
                     break;
                 case MSG_GO_TO_BOTTOM:
-                    mRCView.scrollToPosition(mAllContent.size() - 1);
+                    rvDetail.scrollToPosition(mAllContent.size() - 1);
                     break;
                 case MSG_GET_MORE_REPLY:
                     XLog.tag("HEHE").d("MSG_GET_MORE_REPLY");
@@ -152,7 +157,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        IntentFilter filter = new IntentFilter("im.fdx.v2ex.event.login");
+        IntentFilter filter = new IntentFilter(ACTION_LOGIN);
 
         filter.addAction(ACTION_LOGOUT);
         filter.addAction("im.fdx.v2ex.reply");
@@ -166,27 +171,27 @@ public class DetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar mToolbar = getSupportActionBar();
-        if (mToolbar != null) {
-            mToolbar.setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
         //I add parentActivity in Manifest, so I do not need below code ? NONONONONO---NEEDED
-//        if (toolbar != null) {
-//            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    onBackPressed();
-//                }
-//            });
-//        }
+        if (toolbar != null) {
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        }
 
-        mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
+        rvDetail = (RecyclerView) findViewById(R.id.detail_recycler_view);
         LinearLayoutManager mLayoutManager = new SmoothLayoutManager(this);
-        mRCView.setLayoutManager(mLayoutManager);
-        mRCView.smoothScrollToPosition(POSITION_START);
+        rvDetail.setLayoutManager(mLayoutManager);
+        rvDetail.smoothScrollToPosition(POSITION_START);
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
-        mRCView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        rvDetail.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
@@ -203,7 +208,7 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         mAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent);
-        mRCView.setAdapter(mAdapter);
+        rvDetail.setAdapter(mAdapter);
 
         mSwipe = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
         mSwipe.setColorSchemeResources(
@@ -337,7 +342,7 @@ public class DetailsActivity extends AppCompatActivity {
 
 
                 if (MyApp.getInstance().isLogin()) {
-                    token = parseToVerifyCode(body);
+                    token = NetManager.parseToVerifyCode(body);
                     XLog.tag(TAG).d("verify" + token);
                     if (token != null) {
                         mAdapter.setVerifyCode(token);
@@ -364,23 +369,23 @@ public class DetailsActivity extends AppCompatActivity {
                 mAllContent.add(0, topicHeader);
                 mAllContent.addAll(repliesOne);
 
+                XLog.tag(TAG).d("get first page done, next is get more page");
+                final int totalPage = NetManager.getTotalPage(body);  // [2,3]
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         mAdapter.notifyDataSetChanged();
                         mSwipe.setRefreshing(false);
-                        if (scrollToBottom) {
+                        if (totalPage == 1 && scrollToBottom) {
                             handler.sendEmptyMessage(MSG_GO_TO_BOTTOM);
                         }
                     }
                 });
 
-                XLog.tag(TAG).d("get first page done, next is get more page");
-                int totalPage = NetManager.getTotalPage(body);  // [2,3]
                 if (totalPage != -1) {
 
                     XLog.tag(TAG).d(totalPage);
-                    getMoreRepliesByOrder(totalPage);
+                    getMoreRepliesByOrder(totalPage, scrollToBottom);
                 }
 
 
@@ -397,28 +402,12 @@ public class DetailsActivity extends AppCompatActivity {
         return matcher.find();
     }
 
-    private String parseToVerifyCode(Element body) {
-
-//        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
-        Element element = body.getElementsByClass("topic_buttons").first().getElementsByTag("a").first();
-        if (element != null) {
-            Pattern p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+");
-//            XLog.tag(TAG).d(element.outerHtml());
-
-            Matcher matcher = p.matcher(element.outerHtml());
-            if (matcher.find()) {
-//                XLog.tag(TAG).d(matcher.group());
-                return matcher.group();
-            }
-        }
-        return null;
-    }
-
-    private void getMoreRepliesByOrder(int page) {
+    private void getMoreRepliesByOrder(int page, boolean scrollToBottom) {
         Intent intentGetMoreReply = new Intent(DetailsActivity.this, getMoreReplyService.class);
 //        intentGetMoreReply.setAction(ACTION_GET_REPLY);
         intentGetMoreReply.putExtra("page", page);
         intentGetMoreReply.putExtra("topic_id", mTopicId);
+        intentGetMoreReply.putExtra("bottom", scrollToBottom);
         startService(intentGetMoreReply);
         XLog.tag(TAG).d("yes I startIntentService");
     }
@@ -516,7 +505,6 @@ public class DetailsActivity extends AppCompatActivity {
                             HintUI.t(DetailsActivity.this, "取消收藏成功");
 
                             getPageOne(mTopicId, false);
-//                            mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_border_white_24dp);
                         }
                     });
                 }
@@ -541,7 +529,6 @@ public class DetailsActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             HintUI.t(DetailsActivity.this, "收藏成功");
-//                            mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_white_24dp);
                             getPageOne(mTopicId, false);
                         }
                     });
@@ -550,9 +537,6 @@ public class DetailsActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-    }
 
     public void postReply(View view) {
         etSendReply.clearFocus();
@@ -611,9 +595,7 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         XLog.tag(TAG).d("onDestroy");
-
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
