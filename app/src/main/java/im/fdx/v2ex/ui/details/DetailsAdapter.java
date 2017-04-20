@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -91,10 +92,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0, 0, 0, 30);
             view.setLayoutParams(lp);
-//            HintUI.m("align : " + String.valueOf(lp.alignWithParent));
-//            HintUI.m(String.valueOf(view.isScrollContainer()));
-//            HintUI.m(String.valueOf(parent.isScrollContainer()));
-//            view.stopNestedScroll();
 
             return new TopicsRVAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {

@@ -28,7 +28,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import im.fdx.v2ex.R;
 
 /**
- * Created by a708 on 15-12-17.
+ * Created by fdx on 15-12-17.
  */
 public class CircleVImageView extends NetworkImageView {
 

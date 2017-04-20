@@ -1,7 +1,10 @@
 package im.fdx.v2ex.ui.main;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -157,6 +160,7 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     context.startActivity(itNode);
                     break;
                 case R.id.main_text_view:
+
                     Intent intentDetail = new Intent(context, DetailsActivity.class);
                     intentDetail.putExtra("model", topic);
                     context.startActivity(intentDetail);

@@ -1,7 +1,9 @@
 package im.fdx.v2ex.ui.main;
 
 import android.animation.ValueAnimator;
+import android.app.ActivityOptions;
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -39,8 +41,11 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
+import im.fdx.v2ex.ui.details.DetailsActivity;
+import im.fdx.v2ex.utils.EasyClickListener;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.network.MyGsonRequest;
+import im.fdx.v2ex.utils.RecyclerTouchListener;
 import im.fdx.v2ex.utils.SmoothLayoutManager;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -203,29 +208,6 @@ public class TopicsFragment extends Fragment {
 
         this.container = (RelativeLayout) layout.findViewById(R.id.rv_container);
 
-        // TODO: 16/4/30 不用自定义的Listener。 因为子视图的点击问题，无法屏蔽父视图的点击。
-//        mRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(),
-//                mRecyclerView, new EasyClickListener() {
-//            @Override
-//            public void onClick(View view, int position) {
-//                Intent intent = new Intent(getActivity(), DetailsActivity.class);
-//                intent.putExtra("model", mTopicModels.get(position));
-//                //动画实现bug，先放着，先实现核心功能。// TODO: 15-9-14
-////                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-////                    ActivityOptions options = ActivityOptions
-////                            .makeSceneTransitionAnimation(getActivity(), view, "headee");
-////                    getActivity().startActivity(intent, options.toBundle());
-////                } else {
-//                getActivity().startActivity(intent);
-////                }
-//            }
-//
-//            @Override
-//            public void onLongClick(View view, int position) {
-//            }
-//        }));
-
-        // Inflate the layout for this fragment
         return layout;
     }
 

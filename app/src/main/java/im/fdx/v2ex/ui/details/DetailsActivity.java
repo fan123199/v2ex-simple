@@ -182,10 +182,6 @@ public class DetailsActivity extends AppCompatActivity {
 //        }
 
         mRCView = (RecyclerView) findViewById(R.id.detail_recycler_view);
-//        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-//        mLayoutManager.scrollToPosition(0);
-//        mRCView.setLayoutManager(mLayoutManager);
-
         LinearLayoutManager mLayoutManager = new SmoothLayoutManager(this);
         mRCView.setLayoutManager(mLayoutManager);
         mRCView.smoothScrollToPosition(POSITION_START);
@@ -251,7 +247,6 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
-//                XLog.tag(TAG).d(s.toString());
                 if (TextUtils.isEmpty(s)) {
                     ivSend.setClickable(false);
                     ivSend.setImageResource(R.drawable.ic_send_unable);
