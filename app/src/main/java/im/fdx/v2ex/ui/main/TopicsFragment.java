@@ -1,9 +1,7 @@
 package im.fdx.v2ex.ui.main;
 
 import android.animation.ValueAnimator;
-import android.app.ActivityOptions;
 import android.app.Fragment;
-import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,7 +19,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -41,11 +38,8 @@ import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.ui.details.DetailsActivity;
-import im.fdx.v2ex.utils.EasyClickListener;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.network.MyGsonRequest;
-import im.fdx.v2ex.utils.RecyclerTouchListener;
 import im.fdx.v2ex.utils.SmoothLayoutManager;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -232,16 +226,12 @@ public class TopicsFragment extends Fragment {
                 List<TopicModel> topicList = NetManager.parseTopicLists(html, 0);
 
                 if (topicList == null || topicList.isEmpty()) {
-                    final TextView child = new TextView(getActivity());
-                    child.setText("没有内容");
+
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             mSwipeLayout.setRefreshing(false);
-                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                            params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                            params.addRule(RelativeLayout.CENTER_VERTICAL);
-                            container.addView(child, params);
+                            NetManager.showNoContent(getActivity(), container);
                         }
                     });
                     return;

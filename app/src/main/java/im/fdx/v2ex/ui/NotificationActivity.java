@@ -7,7 +7,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.RelativeLayout;
 
+import org.greenrobot.greendao.annotation.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -25,6 +28,7 @@ import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.NotificationModel;
 import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
+import im.fdx.v2ex.network.NetManager;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -35,6 +39,8 @@ public class NotificationActivity extends AppCompatActivity {
     List<NotificationModel> notifications = new ArrayList<>();
     private NotificationAdapter adapter;
     private SwipeRefreshLayout mSwipe;
+    private RecyclerView rvNotification;
+    private RelativeLayout rl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +53,14 @@ public class NotificationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.notification);
 
+        rl = (RelativeLayout) findViewById(R.id.container);
 
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onBackPressed();
-//            }
-//        });
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         mSwipe = (SwipeRefreshLayout) findViewById(R.id.swipe_notification);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -64,10 +71,10 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_notification);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        rvNotification = (RecyclerView) findViewById(R.id.rv_notification);
+        rvNotification.setLayoutManager(new LinearLayoutManager(this));
         adapter = new NotificationAdapter(this, notifications);
-        recyclerView.setAdapter(adapter);
+        rvNotification.setAdapter(adapter);
 
 
         parseIntent(getIntent());
@@ -95,7 +102,19 @@ public class NotificationActivity extends AppCompatActivity {
 
                 if (response.code() == 200) {
                     Document html = Jsoup.parse(response.body().string());
-                    notifications.addAll(parseToNotifications(html));
+                    List<NotificationModel> c = parseToNotifications(html);
+                    if (c.isEmpty()) {
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSwipe.setRefreshing(false);
+                                NetManager.showNoContent(NotificationActivity.this, rl);
+                            }
+                        });
+                        return;
+                    }
+                    notifications.addAll(c);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -109,7 +128,9 @@ public class NotificationActivity extends AppCompatActivity {
 
     }
 
-    private static List<NotificationModel> parseToNotifications(Document html) {
+    private static
+    @NotNull
+    List<NotificationModel> parseToNotifications(Document html) {
         Element body = html.body();
         Elements items = body.getElementsByAttributeValueStarting("id", "n_");
         if (items == null) {
@@ -162,19 +183,12 @@ public class NotificationActivity extends AppCompatActivity {
                 String replies = matcher2.group();
                 notification.setReplyPosition(replies);
             }
-
             notification.setTopic(topicModel); //4/6
-
             String type = topicElement.ownText();
             notification.setType(type);
-
-
-//            XLog.d("hehe" + content);
             notification.setContent(content); //1/6
             notificationModels.add(notification);
-//            XLog.tag("notification").d(notification.toString());
         }
-        notificationModels.get(0).getTopic().getTitle();
         return notificationModels;
     }
 }

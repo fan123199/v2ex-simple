@@ -73,13 +73,20 @@ public class CreateTopicActivity extends AppCompatActivity {
 //        getSupportActionBar().setIcon(R.drawable.ic_twitter);
 //        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twitter);
 
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
 
         spinner = (SearchableSpinner) findViewById(R.id.search_spinner_node);
         spinner.setTitle(getString(R.string.choose_node));
+        spinner.setPositiveButton(getString(R.string.close));
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, nodeModels);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        spinner.setPositiveButton(getString(R.string.close));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
