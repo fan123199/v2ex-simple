@@ -197,6 +197,7 @@ public class TopicsFragment extends Fragment {
         });
 
         mAdapter = new TopicsRVAdapter(getActivity(), mTopicModels);
+        mAdapter.setNodeClickable(false);
         mRecyclerView.setAdapter(mAdapter); //大工告成
 
 
@@ -280,7 +281,7 @@ public class TopicsFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_topic_fragement, menu);
+//        inflater.inflate(R.menu.menu_topic_fragement, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
 

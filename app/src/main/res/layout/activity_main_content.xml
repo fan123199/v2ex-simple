@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
-        android:elevation="3dp"
+        android:elevation="4dp"
         tools:ignore="UnusedAttribute">
 
         <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -28,7 +28,7 @@
             android:id="@+id/sliding_tabs"
             style="@style/MyCustomTabLayout"
             android:layout_width="match_parent"
-            android:layout_height="40dp" />
+            android:layout_height="30dp"/>
 
     </android.support.design.widget.AppBarLayout>
 
@@ -45,7 +45,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:fabSize="normal"
-        android:src="@drawable/ic_add_white_img"
+        app:elevation="12dp"
+        app:backgroundTint="@color/fab"
+        android:src="@drawable/ic_add_white_24dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"

@@ -43,6 +43,12 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private ImageLoader mImageLoader;
     private Context mContext;
 
+    public void setNodeClickable(boolean nodeClickable) {
+        isNodeClickable = nodeClickable;
+    }
+
+    private boolean isNodeClickable = true;
+
     //这是构造器
     public TopicsRVAdapter(Context activity, List<TopicModel> topicList) {
         mContext = activity;
@@ -80,14 +86,15 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            holder.tvContent.setTransitionName("header");
 //        }
-        String sequence = Integer.toString(currentTopic.getReplies()) + " " + mContext.getString(R.string.reply);
-        holder.tvReplyNumber.setText(sequence);
+        holder.tvReplyNumber.setText(String.valueOf(currentTopic.getReplies()));
         holder.tvAuthor.setText(currentTopic.getMember().getUsername());
         holder.tvNode.setText(currentTopic.getNode().getTitle());
         holder.tvCreated.setText(TimeUtil.getRelativeTime(currentTopic.getCreated()));
         Picasso.with(mContext).load(currentTopic.getMember().getAvatarNormalUrl()).into(holder.ivAvatar);
 
-        holder.tvNode.setOnClickListener(listener);
+        if (isNodeClickable) {
+            holder.tvNode.setOnClickListener(listener);
+        }
         holder.ivAvatar.setOnClickListener(listener);
 //        holder.tvAuthor.setOnClickListener(listener);
 

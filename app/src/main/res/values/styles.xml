@@ -15,10 +15,11 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">?attr/colorAccent</item>
-        <!--<item name="tabBackground">?attr/colorPrimary</item>-->
-        <item name="tabPaddingStart">1dp</item>
-        <item name="tabPaddingEnd">1dp</item>
+        <item name="tabIndicatorColor">@color/white</item>
+        <item name="tabMinWidth">64dp</item>
+        <item name="tabMaxWidth">64dp</item>
+        <item name="tabPaddingStart">0dp</item>
+        <item name="tabPaddingEnd">0dp</item>
         <item name="tabMode">scrollable</item>
     </style>
 

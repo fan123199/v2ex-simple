@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_nav_drawer);
+        setContentView(R.layout.activity_main_nav_drawer);
         XLog.tag(TAG).d("onCreate");
 
         IntentFilter intentFilter = new IntentFilter(ACTION_PREFERENCE_CHANGED);
@@ -319,9 +319,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (MyApp.getInstance().isLogin()) {
             menu.findItem(R.id.menu_login).setVisible(false);
+            menu.findItem(R.id.menu_notification).setVisible(true);
 //            XLog.tag(TAG).d("invisible");
         } else {
             menu.findItem(R.id.menu_login).setVisible(true);
+            menu.findItem(R.id.menu_notification).setVisible(false);
 //            XLog.tag(TAG).d("visible");
         }
         return true;
@@ -334,6 +336,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.menu_login:
                 startActivityForResult(new Intent(MainActivity.this, LoginActivity.class), LOG_IN);
+                break;
+            case R.id.menu_notification:
+                startActivity(new Intent(this, NotificationActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -352,10 +357,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(this, AllNodesActivity.class));
                 break;
             case R.id.nav_notification:
-
-                Intent intent = new Intent(this, NotificationActivity.class);
-//                intent.setAction("im.fdx.v2ex.notification");
-                startActivity(intent);
                 break;
 
             case R.id.nav_favor:

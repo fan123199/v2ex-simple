@@ -125,10 +125,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                mainHolder.tvContent.setTransitionName("header");
 //            }
-            String replyNumberString = String.valueOf(topic.getReplies()) +
-                    " " + mContext.getString(R.string.reply);
 
-            mainHolder.tvReplyNumber.setText(replyNumberString);
+            mainHolder.tvReplyNumber.setText(String.valueOf(topic.getReplies()));
             mainHolder.tvAuthor.setText(topic.getMember().getUsername());
             mainHolder.tvNode.setText(topic.getNode().getTitle());
             TopicsRVAdapter.MyOnClickListener l = new TopicsRVAdapter.MyOnClickListener(mContext, topic);
