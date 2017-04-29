@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="im.fdx.v2ex.ui.MemberActivity">
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 tools:context="im.fdx.v2ex.ui.MemberActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/al_profile"
@@ -18,216 +18,214 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:collapsedTitleTextAppearance="@style/CollapseTitle"
+            app:expandedTitleGravity="top"
             app:expandedTitleMarginStart="126dp"
             app:expandedTitleMarginTop="16dp"
-            app:expandedTitleGravity="top"
             app:expandedTitleTextAppearance="@style/ExpendedCollapseTitle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
-                <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:id="@+id/constraint_member"
-                    android:layout_width="match_parent"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/constraint_member"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:paddingBottom="10dp"
+                app:layout_collapseMode="parallax"
+                app:layout_collapseParallaxMultiplier="0.3">
+
+                <TextView
+                    android:id="@+id/tv_username_profile"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    app:layout_collapseMode="parallax"
-                    app:layout_collapseParallaxMultiplier="0.3"
-                    android:paddingBottom="10dp">
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="0dp"
+                    android:textColor="@color/primary"
+                    android:textSize="18sp"
+                    app:layout_constraintLeft_toRightOf="@+id/iv_avatar_profile"
+                    app:layout_constraintTop_toTopOf="@+id/iv_avatar_profile"
+                    tools:text="@string/username"/>
 
-                    <TextView
-                        android:id="@+id/tv_username_profile"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="0dp"
-                        android:textColor="@color/primary"
-                        android:textSize="18sp"
-                        app:layout_constraintLeft_toRightOf="@+id/iv_avatar_profile"
-                        app:layout_constraintTop_toTopOf="@+id/iv_avatar_profile"
-                        tools:text="@string/username" />
+                <ImageView
+                    android:id="@+id/iv_avatar_profile"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="48dp"
+                    android:layout_marginTop="16dp"
+                    android:cropToPadding="false"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-                    <ImageView
-                        android:id="@+id/iv_avatar_profile"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="16dp"
-                        android:cropToPadding="false"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginLeft="48dp" />
-
-                    <TextView
-                        android:id="@+id/tv_created"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginBottom="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:minWidth="10dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_prefix_created"
-                        app:layout_constraintLeft_toRightOf="@+id/tv_prefix_created"
-                        app:layout_constraintTop_toTopOf="@+id/tv_prefix_created"
-                        app:layout_constraintVertical_bias="0.562" />
+                <TextView
+                    android:id="@+id/tv_created"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:minWidth="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_prefix_created"
+                    app:layout_constraintLeft_toRightOf="@+id/tv_prefix_created"
+                    app:layout_constraintTop_toTopOf="@+id/tv_prefix_created"
+                    app:layout_constraintVertical_bias="0.562"/>
 
 
-                    <TextView
-                        android:id="@+id/tv_intro"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginLeft="0dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginTop="8dp"
-                        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile" />
+                <TextView
+                    android:id="@+id/tv_intro"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile"/>
 
-                    <TextView
-                        android:id="@+id/tv_location"
-                        style="@style/Text.Bg"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignLeft="@+id/tv_username_profile"
-                        android:layout_alignStart="@+id/tv_username_profile"
-                        android:layout_below="@+id/iv_avatar_profile"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="0dp"
-                        android:drawableLeft="@drawable/ic_location"
-                        android:drawablePadding="16dp"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_github"
-                        tools:text="location" />
+                <TextView
+                    android:id="@+id/tv_location"
+                    style="@style/Text.Bg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignLeft="@+id/tv_username_profile"
+                    android:layout_alignStart="@+id/tv_username_profile"
+                    android:layout_below="@+id/iv_avatar_profile"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="0dp"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:drawablePadding="16dp"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_github"
+                    tools:text="location"/>
 
-                    <TextView
-                        android:id="@+id/tv_bitcoin"
-                        style="@style/Text.Bg"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/tv_created"
-                        android:layout_alignRight="@+id/tv_created"
-                        android:layout_below="@+id/tv_github"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginStart="8dp"
-                        android:clickable="true"
-                        android:drawableLeft="@drawable/ic_bitcoin"
-                        android:drawablePadding="16dp"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_twitter"
-                        tools:layout_constraintLeft_creator="1"
-                        android:layout_marginTop="0dp" />
+                <TextView
+                    android:id="@+id/tv_bitcoin"
+                    style="@style/Text.Bg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/tv_created"
+                    android:layout_alignRight="@+id/tv_created"
+                    android:layout_below="@+id/tv_github"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="0dp"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/ic_bitcoin"
+                    android:drawablePadding="16dp"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_twitter"
+                    tools:layout_constraintLeft_creator="1"/>
 
-                    <TextView
-                        android:id="@+id/tv_twitter"
-                        style="@style/Text.Bg"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignEnd="@+id/tv_username_profile"
-                        android:layout_alignRight="@+id/tv_username_profile"
-                        android:layout_below="@+id/tv_bitcoin"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="0dp"
-                        android:clickable="true"
-                        android:drawableLeft="@drawable/ic_twitter"
-                        android:drawablePadding="16dp"
-                        android:gravity="center_vertical"
-                        android:onClick="openTwitter"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_location" />
+                <TextView
+                    android:id="@+id/tv_twitter"
+                    style="@style/Text.Bg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/tv_username_profile"
+                    android:layout_alignRight="@+id/tv_username_profile"
+                    android:layout_below="@+id/tv_bitcoin"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="0dp"
+                    android:clickable="true"
+                    android:drawableLeft="@drawable/ic_twitter"
+                    android:drawablePadding="16dp"
+                    android:gravity="center_vertical"
+                    android:onClick="openTwitter"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_location"/>
 
-                    <TextView
-                        android:id="@+id/tv_id"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginLeft="0dp"
-                        android:layout_marginTop="3dp"
-                        app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_username_profile"
-                        tools:text="id" />
+                <TextView
+                    android:id="@+id/tv_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="3dp"
+                    app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_username_profile"
+                    tools:text="id"/>
 
-                    <TextView
-                        android:id="@+id/tv_website"
-                        style="@style/Text.Bg"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="0dp"
-                        android:drawableLeft="@drawable/ic_website"
-                        android:drawablePadding="16dp"
-                        android:onClick="openWeb"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_bitcoin"
-                        tools:layout_constraintLeft_creator="1"
-                        tools:text="website" />
+                <TextView
+                    android:id="@+id/tv_website"
+                    style="@style/Text.Bg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="0dp"
+                    android:drawableLeft="@drawable/ic_website"
+                    android:drawablePadding="16dp"
+                    android:onClick="openWeb"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_bitcoin"
+                    tools:layout_constraintLeft_creator="1"
+                    tools:text="website"/>
 
-                    <TextView
-                        android:id="@+id/tv_prefix_created"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="0dp"
-                        android:layout_marginLeft="0dp"
-                        android:layout_marginTop="16dp"
-                        android:text="@string/created_on"
-                        app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_profile"
-                        app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_id"
-                        app:layout_constraintVertical_bias="1.0" />
+                <TextView
+                    android:id="@+id/tv_prefix_created"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/created_on"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_profile"
+                    app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_id"
+                    app:layout_constraintVertical_bias="1.0"/>
 
-                    <TextView
-                        android:id="@+id/tv_github"
-                        style="@style/Text.Bg"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:drawableLeft="@drawable/ic_github"
-                        android:drawablePadding="16dp"
-                        android:onClick="openGithub"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_intro" />
+                <TextView
+                    android:id="@+id/tv_github"
+                    style="@style/Text.Bg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:drawableLeft="@drawable/ic_github"
+                    android:drawablePadding="16dp"
+                    android:onClick="openGithub"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_intro"/>
 
-                </android.support.constraint.ConstraintLayout>
+            </android.support.constraint.ConstraintLayout>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -235,23 +233,26 @@
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/AppTheme.AppBarOverlay"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+                app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_of_topic"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <!--<android.support.v4.widget.SwipeRefreshLayout-->
+    <!--android:id="@+id/swipe_of_topic"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_topics_of_user"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+    <!--<android.support.v7.widget.RecyclerView-->
+    <!--android:id="@+id/rv_topics_of_user"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"/>-->
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    <!--</android.support.v4.widget.SwipeRefreshLayout>-->
+
+    <include layout="@layout/fragment_tab_article"
+        />
 
 
 </android.support.design.widget.CoordinatorLayout>

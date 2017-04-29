@@ -42,8 +42,7 @@ import java.util.regex.Pattern;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.BaseModel;
-import im.fdx.v2ex.model.ReplyModel;
-import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.utils.HintUI;
@@ -325,12 +324,13 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 //权限问题，需要登录
-                if (response.code() == 302) {
+                int code = response.code();
+                if (code == 302) {
                     handler.sendEmptyMessage(MSG_ERROR_AUTH);
                     return;
                 }
-                if (response.code() != 200) {
-                    NetManager.dealError();
+                if (code != 200) {
+                    NetManager.dealError(DetailsActivity.this, code);
                     return;
                 }
 

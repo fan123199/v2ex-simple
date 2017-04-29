@@ -246,4 +246,9 @@ public class MemberModel extends BaseModel implements Parcelable {
             return new MemberModel[size];
         }
     };
+
+    @Override
+    public BaseModel parse() {
+        return null;
+    }
 }

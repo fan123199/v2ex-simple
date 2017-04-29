@@ -1,10 +1,10 @@
-package im.fdx.v2ex.model;
+package im.fdx.v2ex.ui.node;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import org.w3c.dom.Node;
+import im.fdx.v2ex.model.BaseModel;
 
 /**
  * Created by a708 on 16-1-17.
@@ -228,4 +228,9 @@ public class NodeModel extends BaseModel implements Parcelable {
             return new NodeModel[size];
         }
     };
+
+    @Override
+    public BaseModel parse() {
+        return null;
+    }
 }

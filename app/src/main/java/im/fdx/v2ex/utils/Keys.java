@@ -31,4 +31,5 @@ public class Keys {
     public static final String ACTION_LOGOUT = "im.fdx.v2ex.event.logout";
     public static final String ACTION_START_NOTIFICATION = "im.fdx.v2ex.notification";
     public static final String ACTION_PREFERENCE_CHANGED = "im.fdx.v2ex.preference";
+    public static final String FAVOR_FRAGMENT_TYPE = "type";
 }

@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.NotificationModel;
-import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import okhttp3.Call;
@@ -53,7 +53,7 @@ public class NotificationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.notification);
 
-        rl = (RelativeLayout) findViewById(R.id.container);
+        rl = (RelativeLayout) findViewById(R.id.rl_container);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +62,7 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
-        mSwipe = (SwipeRefreshLayout) findViewById(R.id.swipe_notification);
+        mSwipe = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -71,12 +71,10 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
-        rvNotification = (RecyclerView) findViewById(R.id.rv_notification);
+        rvNotification = (RecyclerView) findViewById(R.id.rv_container);
         rvNotification.setLayoutManager(new LinearLayoutManager(this));
         adapter = new NotificationAdapter(this, notifications);
         rvNotification.setAdapter(adapter);
-
-
         parseIntent(getIntent());
     }
 

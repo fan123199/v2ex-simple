@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import im.fdx.v2ex.ui.main.TopicsFragment;
+import im.fdx.v2ex.utils.Keys;
 
 /**
  * Created by fdx on 2017/4/13.
  */
-class MyViewPagerAdapter extends FragmentPagerAdapter {
+class FavorViewPagerAdapter extends FragmentPagerAdapter {
 
-    public MyViewPagerAdapter(FragmentManager fm) {
+    public FavorViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -23,12 +24,11 @@ class MyViewPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         if (position == 0) {
-            NodeFavorFragment nodeFavorFragment = new NodeFavorFragment();
-            return nodeFavorFragment;
+            return new NodeFavorFragment();
         } else {
             TopicsFragment topicFavorFragment = new TopicsFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt("type", position);
+            bundle.putInt(Keys.FAVOR_FRAGMENT_TYPE, position);
             topicFavorFragment.setArguments(bundle);
             return topicFavorFragment;
         }

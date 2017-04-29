@@ -1,12 +1,19 @@
 package im.fdx.v2ex.network;
 
+import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
@@ -18,6 +25,7 @@ import com.android.volley.VolleyError;
 import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -30,12 +38,13 @@ import java.util.regex.Pattern;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
-import im.fdx.v2ex.model.NodeModel;
-import im.fdx.v2ex.model.ReplyModel;
-import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.ui.node.NodeModel;
+import im.fdx.v2ex.ui.details.ReplyModel;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeUtil;
+import im.fdx.v2ex.utils.ViewUtil;
 
 import static java.lang.Integer.parseInt;
 
@@ -397,8 +406,29 @@ public class NetManager {
 
     }
 
-    public static void dealError() {
+    public static void dealError(final Context context, final int errorCode) {
 
+        if (context instanceof Activity)
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (errorCode) {
+                        case -1:
+                            Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                            break;
+                        case 302:
+                            Toast.makeText(context, context.getString(R.string.error_auth_failure), Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            });
+    }
+
+    public static void dealError(Context context) {
+        dealError(context, -1);
     }
 
     public static String parseOnce(Element body) {
@@ -433,12 +463,46 @@ public class NetManager {
         return null;
     }
 
-    public static void showNoContent(Context context, ViewGroup container) {
+    public static void showNoContent(Context context, RelativeLayout container) {
         final TextView child = new TextView(context);
         child.setText("没有内容");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            child.setTextColor(context.getColor(R.color.hint));
+        } else {
+            child.setTextColor(context.getResources().getColor(R.color.hint));
+        }
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        params.addRule(RelativeLayout.CENTER_VERTICAL);
+        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        params.topMargin = ViewUtil.dp2px(80);
         container.addView(child, params);
+    }
+
+    public static ArrayList<NodeModel> parseToNode(String string) {
+        Element element = Jsoup.parse(string).body();
+
+        ArrayList<NodeModel> nodeModels = new ArrayList<>();
+        Elements items = element.getElementsByClass("grid_item");
+
+        for (Element item : items) {
+            NodeModel nodeModel = new NodeModel();
+            String id = item.attr("id").substring(2);
+            nodeModel.setId(Long.valueOf(id));
+
+            String title = item.getElementsByTag("div").first().ownText().trim();
+            nodeModel.setTitle(title);
+            String name = item.attr("href").replace("/go/", "");
+            nodeModel.setName(name);
+
+            String num = item.getElementsByTag("span").first().ownText().trim();
+
+            nodeModel.setTopics(parseInt(num));
+
+            String imageUrl = item.getElementsByTag("img").first().attr("src");
+            nodeModel.setAvatar_large(imageUrl);
+            nodeModels.add(nodeModel);
+        }
+
+        return nodeModels;
     }
 }

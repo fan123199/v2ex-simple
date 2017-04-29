@@ -8,13 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.squareup.picasso.Picasso;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.NodeModel;
-import im.fdx.v2ex.network.VolleyHelper;
 
 /**
  * Created by fdx on 16/4/28.

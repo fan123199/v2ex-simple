@@ -65,6 +65,7 @@ import okhttp3.Response;
 import static im.fdx.v2ex.R.id.nav_testNotify;
 import static im.fdx.v2ex.network.NetManager.DAILY_CHECK;
 import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
+import static im.fdx.v2ex.utils.Keys.ACTION_GET_NOTIFICATION;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
 import static im.fdx.v2ex.utils.Keys.ACTION_PREFERENCE_CHANGED;
@@ -88,10 +89,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            XLog.tag(TAG).d("getAction: " + intent.getAction());
-            if (intent.getAction().equals(ACTION_PREFERENCE_CHANGED)) {
+            String action = intent.getAction();
+            XLog.tag(TAG).d("getAction: " + action);
+            if (action.equals(ACTION_PREFERENCE_CHANGED)) {
 
-            } else if (intent.getAction().equals(ACTION_LOGIN)) {
+            } else if (action.equals(ACTION_LOGIN)) {
                 showDailyAndNotification(true);
                 String username = intent.getStringExtra(Keys.KEY_USERNAME);
                 String avatar = intent.getStringExtra("avatar");
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
                 }
-            } else if (intent.getAction().equals(ACTION_LOGOUT)) {
+            } else if (action.equals(ACTION_LOGOUT)) {
                 showDailyAndNotification(false);
                 removeUserInfo();
                 fab.hide();
@@ -109,8 +111,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     shortcutManager.removeDynamicShortcuts(shortcutIds);
                 }
+            } else if (action.equals(ACTION_GET_NOTIFICATION)) {
+                isGetNotification = true;
+                invalidateOptionsMenu();
             }
-
         }
     };
     private ViewPager.OnPageChangeListener listener;
@@ -119,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private List<String> shortcutIds = Collections.singletonList("create_topic");
     private ShortcutInfo createTopicInfo;
     private SharedPreferences sharedPreferences;
+    private boolean isGetNotification;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -128,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         IntentFilter intentFilter = new IntentFilter(ACTION_PREFERENCE_CHANGED);
         intentFilter.addAction(ACTION_LOGIN);
         intentFilter.addAction(ACTION_LOGOUT);
+        intentFilter.addAction(ACTION_GET_NOTIFICATION);
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
@@ -326,6 +332,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             menu.findItem(R.id.menu_notification).setVisible(false);
 //            XLog.tag(TAG).d("visible");
         }
+
+        if (isGetNotification) {
+            menu.findItem(R.id.menu_notification).setIcon(getResources().getDrawable(R.drawable.ic_notification_with_red_point));
+        }
         return true;
 
 
@@ -338,6 +348,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivityForResult(new Intent(MainActivity.this, LoginActivity.class), LOG_IN);
                 break;
             case R.id.menu_notification:
+                item.setIcon(getResources().getDrawable(R.drawable.ic_notifications_white_24dp));
                 startActivity(new Intent(this, NotificationActivity.class));
                 break;
         }

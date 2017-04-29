@@ -1,7 +1,10 @@
-package im.fdx.v2ex.model;
+package im.fdx.v2ex.ui.details;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import im.fdx.v2ex.model.BaseModel;
+import im.fdx.v2ex.model.MemberModel;
 
 /**
  * Created by a708 on 15-9-8.
@@ -145,5 +148,10 @@ public class ReplyModel extends BaseModel implements Parcelable {
         return "ReplyModel{" +
                 "content='" + content_rendered + '\'' +
                 '}';
+    }
+
+    @Override
+    public BaseModel parse() {
+        return null;
     }
 }

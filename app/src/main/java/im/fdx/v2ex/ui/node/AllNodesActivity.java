@@ -21,7 +21,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.NodeModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import okhttp3.Call;

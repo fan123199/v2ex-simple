@@ -1,10 +1,7 @@
 package im.fdx.v2ex.ui.main;
 
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +17,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.TopicModel;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.details.DetailsActivity;
@@ -28,8 +24,6 @@ import im.fdx.v2ex.ui.node.NodeActivity;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeUtil;
 import im.fdx.v2ex.view.GoodTextView;
-
-import static im.fdx.v2ex.MyApp.USE_API;
 
 /**
  * Created by a708 on 15-8-14.
@@ -78,10 +72,6 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.tvTitle.setText(currentTopic.getTitle());
 
         holder.tvContent.setVisibility(View.GONE);
-        if (MyApp.getInstance().getHttpMode() == USE_API) {
-            holder.tvContent.setMaxLines(6);
-            holder.tvContent.setText(currentTopic.getContent());
-        }
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //            holder.tvContent.setTransitionName("header");

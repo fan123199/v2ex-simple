@@ -18,7 +18,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 
@@ -31,8 +30,7 @@ import java.util.List;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.NodeModel;
-import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
@@ -198,17 +196,18 @@ public class NodeActivity extends AppCompatActivity {
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders).url(requestURL).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                NetManager.dealError();
+                NetManager.dealError(NodeActivity.this);
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
 
-                if (response.code() == 302) {
+                int code = response.code();
+                if (code == 302) {
                     handler.sendEmptyMessage(MSG_ERROR_AUTH);
                     return;
-                } else if (response.code() != 200) {
-                    NetManager.dealError();
+                } else if (code != 200) {
+                    NetManager.dealError(NodeActivity.this, code);
                     return;
                 }
                 String body = response.body().string();

@@ -1,9 +1,12 @@
-package im.fdx.v2ex.model;
+package im.fdx.v2ex.ui.main;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import im.fdx.v2ex.R;
+import im.fdx.v2ex.model.BaseModel;
+import im.fdx.v2ex.model.MemberModel;
+import im.fdx.v2ex.ui.node.NodeModel;
 
 /**
  * Created by a708 on 15-8-18.
@@ -267,9 +270,7 @@ public class TopicModel extends BaseModel implements Parcelable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         TopicModel that = (TopicModel) o;
-
         return getTitle().equals(that.getTitle());
 
     }
@@ -277,5 +278,10 @@ public class TopicModel extends BaseModel implements Parcelable {
     @Override
     public int hashCode() {
         return getTitle().hashCode();
+    }
+
+    @Override
+    public BaseModel parse() {
+        return null;
     }
 }

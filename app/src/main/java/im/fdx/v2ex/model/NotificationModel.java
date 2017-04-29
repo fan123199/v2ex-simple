@@ -3,6 +3,8 @@ package im.fdx.v2ex.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import im.fdx.v2ex.ui.main.TopicModel;
+
 /**
  * Created by fdx on 2017/3/24.
  */
@@ -129,4 +131,9 @@ public class NotificationModel extends BaseModel implements Parcelable {
             return new NotificationModel[size];
         }
     };
+
+    @Override
+    public BaseModel parse() {
+        return null;
+    }
 }

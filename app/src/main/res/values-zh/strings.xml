@@ -38,7 +38,7 @@
     <string name="app_name">探索路V2EX</string>
     <string name="app_simple_name">V2EX</string>
     <string name="error_timeout">连接超时</string>
-    <string name="error_auth_failure">验证失败</string>
+    <string name="error_auth_failure">需要登录查看</string>
     <string name="error_network">网络错误</string>
     <string name="error_parser">解析错误</string>
     <string name="share_app">分享应用</string>

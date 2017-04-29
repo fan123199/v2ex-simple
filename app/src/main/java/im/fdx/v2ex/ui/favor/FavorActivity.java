@@ -29,7 +29,7 @@ public class FavorActivity extends AppCompatActivity {
         });
 
 
-        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter(getFragmentManager());
+        FavorViewPagerAdapter myViewPagerAdapter = new FavorViewPagerAdapter(getFragmentManager());
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tl_favor);
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager_follow);
         viewPager.setAdapter(myViewPagerAdapter);

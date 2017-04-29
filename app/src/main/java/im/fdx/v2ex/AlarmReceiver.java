@@ -17,8 +17,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import im.fdx.v2ex.R;
-import im.fdx.v2ex.UpdateService;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.ui.NotificationActivity;
@@ -40,14 +38,16 @@ public class AlarmReceiver extends BroadcastReceiver {
                 .url(url).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                NetManager.dealError();
+                NetManager.dealError(context, -1);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
-                if (response.code() != 200) {
-                    NetManager.dealError();
+
+                int code = response.code();
+                if (code != 200) {
+                    NetManager.dealError(context, code);
                     return;
                 }
 
@@ -59,6 +59,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     int num = Integer.parseInt(matcher.group());
                     XLog.d("num" + num);
                     if (num != 0) {
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Keys.ACTION_GET_NOTIFICATION));
                         putNotification(context, num);
                     }
                 } else {

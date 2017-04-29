@@ -14,14 +14,10 @@ import com.squareup.picasso.Picasso;
  * 用于启动时获取app状态
  */
 public class MyApp extends Application {
-    /**
-     * @deprecated in future
-     */
-    public static final int USE_API = 1;
+
     public static final int USE_WEB = 2;
 
     private static MyApp instance;
-    private SharedPreferences mDefaultSharedPrefs;
 
     public void setLogin(boolean login) {
         isLogin = login;
@@ -33,8 +29,6 @@ public class MyApp extends Application {
 
     private boolean isLogin;
 
-    private int httpMode;
-
     public static MyApp getInstance() {
         return instance;
     }
@@ -45,22 +39,11 @@ public class MyApp extends Application {
         XLog.init(BuildConfig.DEBUG ? LogLevel.ALL             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
                 : LogLevel.NONE);
         PreferenceManager.setDefaultValues(this, R.xml.preference, false);
-        mDefaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences mDefaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         isLogin = mDefaultSharedPrefs.getBoolean("is_login", false);
 
-        httpMode = PreferenceManager.getDefaultSharedPreferences(this).
-                getBoolean("pref_http_mode", false) ? USE_API : USE_WEB;
         Log.d("MyApp", "onCreate\n"
-                + "\nisLogin:" + isLogin
-                + "\nhttp mode :(1api,2web)" + httpMode);
-    }
-
-    public int getHttpMode() {
-        return httpMode;
-    }
-
-    public void setHttpMode(int mode) {
-        httpMode = mode;
+                + "\nisLogin:" + isLogin);
     }
 
 }

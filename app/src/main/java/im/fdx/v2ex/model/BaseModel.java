@@ -5,4 +5,6 @@ package im.fdx.v2ex.model;
  */
 
 public abstract class BaseModel {
+
+    public abstract BaseModel parse();
 }

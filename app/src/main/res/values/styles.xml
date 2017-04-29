@@ -17,6 +17,7 @@
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabIndicatorColor">@color/white</item>
         <item name="tabMinWidth">64dp</item>
+        <item name="android:textSize">14sp</item>
         <item name="tabMaxWidth">64dp</item>
         <item name="tabPaddingStart">0dp</item>
         <item name="tabPaddingEnd">0dp</item>

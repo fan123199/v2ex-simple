@@ -6,7 +6,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -33,8 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.BaseModel;
-import im.fdx.v2ex.model.ReplyModel;
-import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
@@ -139,10 +137,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         } else if (getItemViewType(position) == TYPE_ITEM) {
             final ItemViewHolder itemVH = (ItemViewHolder) holder;
-            // if(!mReplyList.isEmpty()) {
-            //    因为上一个if语句默认了replylist不可能为空
             final ReplyModel replyItem = (ReplyModel) mAllList.get(position);
-
 
             if (MyApp.getInstance().isLogin()) {
                 itemVH.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
@@ -191,7 +186,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 .build()).enqueue(new Callback() {
                                             @Override
                                             public void onFailure(Call call, IOException e) {
-                                                NetManager.dealError();
+                                                NetManager.dealError(mContext);
                                             }
 
                                             @Override
@@ -207,7 +202,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                         }
                                                     });
                                                 } else {
-                                                    NetManager.dealError();
+                                                    NetManager.dealError(mContext, response.code());
                                                 }
                                             }
                                         });
@@ -226,8 +221,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         menu.findItem(R.id.menu_reply).setOnMenuItemClickListener(menuListener);
                         menu.findItem(R.id.menu_thank).setOnMenuItemClickListener(menuListener);
                         menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener);
-
-
                     }
                 });
             }
@@ -259,9 +252,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (position == getItemCount() - 1) {
                 itemVH.divider.setVisibility(View.GONE);
             }
-
         }
-
     }
 
     private String getReplyId() {
@@ -300,7 +291,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView tvThanks;
         CircleImageView ivUserAvatar;
         View divider;
-
 
         public ItemViewHolder(View itemView) {
             super(itemView);

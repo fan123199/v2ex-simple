@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -19,8 +17,6 @@ import java.util.List;
 import java.util.Locale;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.NodeModel;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.Keys;
 
 import static android.media.CamcorderProfile.get;

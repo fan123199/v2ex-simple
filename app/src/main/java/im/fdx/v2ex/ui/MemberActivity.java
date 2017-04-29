@@ -12,7 +12,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -23,9 +22,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
@@ -43,10 +42,9 @@ import java.util.regex.Pattern;
 import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
-import im.fdx.v2ex.model.TopicModel;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
@@ -56,7 +54,6 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.elvishew.xlog.XLog.tag;
 import static im.fdx.v2ex.network.NetManager.*;
 
 
@@ -67,7 +64,8 @@ public class MemberActivity extends AppCompatActivity {
 
 
     public static final String TAG = MemberActivity.class.getSimpleName();
-    private final ImageLoader imageLoader = VolleyHelper.getInstance().getImageLoader();
+    private static final int MSG_GET_USER_INFO = 0;
+    private static final int MSG_GET_TOPIC = 1;
     private TextView mTvUsername;
     private ImageView mIvAvatar;
     private TextView mTvId;
@@ -78,15 +76,21 @@ public class MemberActivity extends AppCompatActivity {
     private TextView mTvGithub;
     private TextView mTvTwitter;
     private TextView mTvWebsite;
-    public int mHttpMode = 2;
-    private static final int MSG_GET_USER_INFO = 0;
-    private static final int MSG_GET_TOPIC = 1;
     private List<TopicModel> mTopics = new ArrayList<>();
 
     private String username;
-    private ActionBar actionBar;
     private TopicsRVAdapter mAdapter;
-
+    private String urlTopic;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private MemberModel member;
+    private String blockOfT;
+    private String followOfOnce;
+    private Boolean isBlocked;
+    private Boolean isFollowed;
+    private ConstraintLayout constraintLayout;
+    private RelativeLayout container;
+    private Menu mMenu;
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -95,25 +99,10 @@ public class MemberActivity extends AppCompatActivity {
             } else if (msg.what == MSG_GET_TOPIC) {
                 mAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
-//                HintUI.t(ProfileActivity.this,"get topic data");
             }
             return true;
         }
     });
-    private Toolbar toolbar;
-    private String urlTopic;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private CollapsingToolbarLayout collapsingToolbarLayout;
-    private AppBarLayout appBarLayout;
-    private CardView cardView;
-    private MemberModel member;
-    private String blockOfT;
-    private String followOfOnce;
-    private Boolean isBlocked;
-    private Boolean isFollowed;
-    private ConstraintLayout constraintLayout;
-    private Menu mMenu;
-    private RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,8 +114,6 @@ public class MemberActivity extends AppCompatActivity {
         mTvId = ((TextView) findViewById(R.id.tv_id));
         mTvUserCreated = (TextView) findViewById(R.id.tv_created);
         mTvIntro = (TextView) findViewById(R.id.tv_intro);
-
-
         mTvLocation = ((TextView) findViewById(R.id.tv_location));
         mTvBitcoin = (TextView) findViewById(R.id.tv_bitcoin);
         mTvGithub = (TextView) findViewById(R.id.tv_github);
@@ -142,10 +129,10 @@ public class MemberActivity extends AppCompatActivity {
         }
 
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
@@ -157,7 +144,7 @@ public class MemberActivity extends AppCompatActivity {
             }
         });
 
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_of_topic);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -165,8 +152,7 @@ public class MemberActivity extends AppCompatActivity {
             }
         });
 
-        appBarLayout = (AppBarLayout) findViewById(R.id.al_profile);
-
+        AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.al_profile);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl_profile);
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
@@ -181,14 +167,26 @@ public class MemberActivity extends AppCompatActivity {
 
         constraintLayout = (ConstraintLayout) findViewById(R.id.constraint_member);
 
-        rv = (RecyclerView) findViewById(R.id.rv_topics_of_user);
+        container = (RelativeLayout) findViewById(R.id.rl_container);
+
+        RecyclerView rv = (RecyclerView) findViewById(R.id.rv_container);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MemberActivity.this);
 
         rv.setLayoutManager(layoutManager);
         mAdapter = new TopicsRVAdapter(this, mTopics);
         rv.setAdapter(mAdapter);
         parseIntent(getIntent());
+    }
 
+    // 设置渐变的动画
+    public static void startAlphaAnimation(View v, long duration, int visibility) {
+        AlphaAnimation alphaAnimation = (visibility == View.VISIBLE)
+                ? new AlphaAnimation(0f, 1f)
+                : new AlphaAnimation(1f, 0f);
+
+        alphaAnimation.setDuration(duration);
+        alphaAnimation.setFillAfter(true);
+        v.startAnimation(alphaAnimation);
     }
 
     private void handleAlphaOnTitle(float percentage) {
@@ -202,18 +200,6 @@ public class MemberActivity extends AppCompatActivity {
 //            collapsingToolbarLayout.setTitle("");//设置title不显示
         }
 
-    }
-
-
-    // 设置渐变的动画
-    public static void startAlphaAnimation(View v, long duration, int visibility) {
-        AlphaAnimation alphaAnimation = (visibility == View.VISIBLE)
-                ? new AlphaAnimation(0f, 1f)
-                : new AlphaAnimation(1f, 0f);
-
-        alphaAnimation.setDuration(duration);
-        alphaAnimation.setFillAfter(true);
-        v.startAnimation(alphaAnimation);
     }
 
     private void parseIntent(Intent intent) {
@@ -236,9 +222,7 @@ public class MemberActivity extends AppCompatActivity {
             urlUserInfo = API_USER + "?username=" + username;  //Livid's profile
         }
         collapsingToolbarLayout.setTitle(username);
-
         urlTopic = API_TOPIC + "?username=" + username;
-
         Log.i(TAG, urlUserInfo + "\n" + urlTopic);
         //// TODO: 2017/3/20 可以改成一步，分析下性能
         getUserInfo(urlUserInfo);
@@ -247,7 +231,6 @@ public class MemberActivity extends AppCompatActivity {
     }
 
     private void getBlockAndFollow() {
-
         if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, ""))) {
             return;
         }
@@ -259,7 +242,7 @@ public class MemberActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                NetManager.dealError();
+                NetManager.dealError(MemberActivity.this);
             }
 
             @Override
@@ -267,11 +250,8 @@ public class MemberActivity extends AppCompatActivity {
                 if (response.code() == 200) {
                     String html = response.body().string();
                     Element body = Jsoup.parse(html).body();
-
                     isBlocked = parseIsBlock(html);
-
                     isFollowed = parseIsFollowed(html);
-
                     XLog.d("isBlocked" + isBlocked + "|" + "isFollowed" + isFollowed);
 
 
@@ -348,14 +328,7 @@ public class MemberActivity extends AppCompatActivity {
                 .url(urlUserInfo).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                tag("profile").e("网络异常");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HintUI.t(MemberActivity.this, "网络异常");
-                    }
-                });
+                dealError(MemberActivity.this);
             }
 
             @Override
@@ -372,7 +345,7 @@ public class MemberActivity extends AppCompatActivity {
                 .url(urlTopic).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                dealError(MemberActivity.this);
             }
 
             @Override
@@ -386,7 +359,8 @@ public class MemberActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            HintUI.t(MemberActivity.this, "该用户没有主题");
+                            swipeRefreshLayout.setRefreshing(false);
+                            showNoContent(MemberActivity.this, container);
                         }
                     });
                     return;
@@ -507,19 +481,13 @@ public class MemberActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_follow:
                 switchFollowAndRefresh(isFollowed);
-
-
                 break;
             case R.id.menu_block:
-
                 switchBlockAndRefresh(isBlocked);
-
-
                 break;
             default:
                 return super.onOptionsItemSelected(item);
         }
-
         return true;
 
     }
@@ -531,7 +499,7 @@ public class MemberActivity extends AppCompatActivity {
                     .build()).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-
+                    dealError(MemberActivity.this);
                 }
 
                 @Override
@@ -555,7 +523,7 @@ public class MemberActivity extends AppCompatActivity {
                     .build()).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-
+                    dealError(MemberActivity.this);
                 }
 
                 @Override

@@ -54,4 +54,9 @@ public class ProfileMode extends BaseModel implements Parcelable {
             return new ProfileMode[size];
         }
     };
+
+    @Override
+    public BaseModel parse() {
+        return null;
+    }
 }

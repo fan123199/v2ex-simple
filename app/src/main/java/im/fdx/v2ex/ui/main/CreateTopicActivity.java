@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.model.NodeModel;
+import im.fdx.v2ex.ui.node.NodeModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.ui.details.DetailsActivity;
@@ -103,7 +103,7 @@ public class CreateTopicActivity extends AppCompatActivity {
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                NetManager.dealError(CreateTopicActivity.this);
             }
 
             @Override
@@ -209,7 +209,7 @@ public class CreateTopicActivity extends AppCompatActivity {
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                NetManager.dealError(CreateTopicActivity.this);
             }
 
             @Override
@@ -244,7 +244,7 @@ public class CreateTopicActivity extends AppCompatActivity {
                             .build()).enqueue(new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-
+                            NetManager.dealError(CreateTopicActivity.this);
                         }
 
                         @Override
