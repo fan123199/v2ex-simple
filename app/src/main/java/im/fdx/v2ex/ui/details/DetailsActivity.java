@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -20,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,7 @@ import okhttp3.Response;
 
 import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
+import static im.fdx.v2ex.network.NetManager.dealError;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
 import static java.lang.Integer.parseInt;
@@ -65,20 +68,35 @@ import static java.lang.Long.parseLong;
 public class DetailsActivity extends AppCompatActivity {
 
 
-    private static final String TAG = DetailsActivity.class.getSimpleName();
     public static final int POSITION_START = 0;
+    private static final String TAG = DetailsActivity.class.getSimpleName();
     private static final int MSG_OK_GET_TOPIC = 0;
     private static final int MSG_ERROR_AUTH = 1;
     private static final int MSG_ERROR_IO = 2;
     private static final int MSG_GO_TO_BOTTOM = 3;
     private static final int MSG_GET_MORE_REPLY = 4;
+
+    private DetailsAdapter.AdapterCallback callback = new DetailsAdapter.AdapterCallback() {
+        @Override
+        public void onMethodCallback() {
+            getMoreRepliesByOrder(1, false);
+        }
+    };
+    RecyclerView rvDetail;
     private SwipeRefreshLayout mSwipe;
     private ImageView ivSend;
-    private EditText etSendReply;
+    //    private EditText etSendReply;
     private DetailsAdapter mAdapter;
     private List<BaseModel> mAllContent = new ArrayList<>();
-    RecyclerView rvDetail;
-
+    private String token;
+    private String mTopicUrl;
+    private Menu mMenu;
+    private boolean isFavored;
+    private long mTopicId = -1L;
+    private String once;
+    private TopicModel topicHeader;
+    private Toolbar toolbar;
+    private ActionBar actionBar;
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -104,29 +122,12 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
     };
-    private String token;
-    private String mTopicUrl;
-    private Menu mMenu;
-    private boolean isFavored;
-
-    private void removeFootView() {
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
-        linearLayout.setVisibility(View.GONE);
-    }
-
-    private void addFootView() {
-        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
-        linearLayout.setVisibility(View.VISIBLE);
-    }
-
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
 
             switch (msg.what) {
                 case MSG_OK_GET_TOPIC:
-                    mSwipe.setRefreshing(false);
-                    break;
                 case MSG_ERROR_IO:
                     mSwipe.setRefreshing(false);
                     break;
@@ -147,9 +148,6 @@ public class DetailsActivity extends AppCompatActivity {
             return false;
         }
     });
-    private long mTopicId = -1L;
-    private String once;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,22 +155,24 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
 
         IntentFilter filter = new IntentFilter(ACTION_LOGIN);
-
         filter.addAction(ACTION_LOGOUT);
         filter.addAction("im.fdx.v2ex.reply");
-
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+
+//        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl);
+
         if (MyApp.getInstance().isLogin()) {
             addFootView();
         } else {
             removeFootView();
         }
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("");
         }
 
         //I add parentActivity in Manifest, so I do not need below code ? NONONONONO---NEEDED
@@ -186,7 +186,7 @@ public class DetailsActivity extends AppCompatActivity {
         }
 
         rvDetail = (RecyclerView) findViewById(R.id.detail_recycler_view);
-        LinearLayoutManager mLayoutManager = new SmoothLayoutManager(this);
+        final LinearLayoutManager mLayoutManager = new SmoothLayoutManager(this);
         rvDetail.setLayoutManager(mLayoutManager);
         rvDetail.smoothScrollToPosition(POSITION_START);
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
@@ -194,19 +194,42 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etSendReply.hasFocus()) {
-                    etSendReply.clearFocus();
-                }
+//                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etSendReply.hasFocus()) {
+//                    etSendReply.clearFocus();
+//                }
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                //// TODO: 2017/5/3
 
             }
         });
 
-        mAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent);
+        rvDetail.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                if (mLayoutManager.findFirstVisibleItemPosition() != 0) {
+                    Log.d(TAG, ":::");
+                    if (topicHeader != null) {
+                        toolbar.setTitle(topicHeader.getTitle());
+                    }
+                } else {
+                    toolbar.setTitle("");
+                }
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+//                Log.d(TAG, String.valueOf(dx) +":::"+ dy);
+            }
+        });
+
+        mAdapter = new DetailsAdapter(DetailsActivity.this, mAllContent, callback);
         rvDetail.setAdapter(mAdapter);
 
         mSwipe = (SwipeRefreshLayout) findViewById(R.id.swipe_details);
@@ -218,50 +241,49 @@ public class DetailsActivity extends AppCompatActivity {
         mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getPageOne(mTopicId, false);
+                getRepliesPageOne(mTopicId, false);
             }
 
         });
-
 
         ivSend = (ImageView) findViewById(R.id.iv_send);
-        etSendReply = (EditText) findViewById(R.id.et_post_reply);
-        etSendReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                XLog.tag(TAG).d("hasFocus" + hasFocus);
-                if (!hasFocus) {
-                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
-            }
-        });
-
-
-        etSendReply.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-                if (TextUtils.isEmpty(s)) {
-                    ivSend.setClickable(false);
-                    ivSend.setImageResource(R.drawable.ic_send_unable);
-
-                } else {
-                    ivSend.setClickable(true);
-                    ivSend.setImageResource(R.drawable.ic_send_enable);
-
-                }
-            }
-        });
+//        etSendReply = (EditText) findViewById(R.id.et_post_reply);
+//        etSendReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//
+//                XLog.tag(TAG).d("hasFocus" + hasFocus);
+//                if (!hasFocus) {
+//                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+//                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+//                }
+//            }
+//        });
+//
+//        etSendReply.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//                if (TextUtils.isEmpty(s)) {
+//                    ivSend.setClickable(false);
+//                    ivSend.setImageResource(R.drawable.ic_send_black_24dp);
+//                    //// TODO: 2017/5/2
+//
+//                } else {
+//                    ivSend.setClickable(true);
+//                    ivSend.setImageResource(R.drawable.ic_send_white_24dp);
+//
+//                }
+//            }
+//        });
         parseIntent(getIntent());
 
         //以下是设置刷新按钮的位置，暂时不用
@@ -270,38 +292,41 @@ public class DetailsActivity extends AppCompatActivity {
 //        mSwipe.setProgressViewOffset(false, -start, (int) (start*1.5));
     }
 
+    private void removeFootView() {
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
+        linearLayout.setVisibility(View.GONE);
+    }
+
+    private void addFootView() {
+        LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
+        linearLayout.setVisibility(View.VISIBLE);
+    }
+
 
     private void parseIntent(Intent intent) {
-
-        mSwipe.setRefreshing(true);
-
         Uri data = intent.getData();
         if (data != null) {
-            String scheme = data.getScheme();
-            String host = data.getHost();
+            String scheme = data.getScheme(); //不需要
+            String host = data.getHost(); //不需要判断，在manifest中已指定
             List<String> params = data.getPathSegments();
-            if (scheme.equals("https") || scheme.equals("http")) {
-                if (host.contains("v2ex.com")) {//不需要判断，在manifest中已指定
-                    mTopicId = Long.parseLong(params.get(1));
-                    mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
-                    getPageOne(mTopicId, false);
-                }
+            try {
+                mTopicId = Long.parseLong(params.get(1));
+            } catch (NumberFormatException e) {
+                return;
             }
         } else if (intent.getParcelableExtra("model") != null) {
             TopicModel topicModel = intent.getParcelableExtra("model");
-
             mAllContent.add(0, topicModel);
             mTopicId = topicModel.getId();
-            mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
-            getPageOne(mTopicId, false);
         } else if (intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L) != -1L) {
             mTopicId = intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L);
-            mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
-            getPageOne(mTopicId, false);
         }
-        XLog.tag(TAG).d(mTopicId);
 
 
+        getRepliesPageOne(mTopicId, false);
+        mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
+
+        XLog.tag(TAG).d(mTopicId + ": " + mTopicUrl);
     }
 
     @Override
@@ -310,7 +335,8 @@ public class DetailsActivity extends AppCompatActivity {
         parseIntent(intent);
     }
 
-    private void getPageOne(final long topicId, final boolean scrollToBottom) {
+    private void getRepliesPageOne(final long topicId, final boolean scrollToBottom) {
+        mSwipe.setRefreshing(true);
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
                 .build()).enqueue(new Callback() {
@@ -330,14 +356,14 @@ public class DetailsActivity extends AppCompatActivity {
                     return;
                 }
                 if (code != 200) {
-                    NetManager.dealError(DetailsActivity.this, code);
+                    dealError(DetailsActivity.this, code);
                     return;
                 }
 
                 String bodyStr = response.body().string();
                 Element body = Jsoup.parse(bodyStr);
 
-                BaseModel topicHeader = NetManager.parseResponseToTopic(body, topicId);
+                topicHeader = NetManager.parseResponseToTopic(body, topicId);
                 List<ReplyModel> repliesOne = NetManager.parseResponseToReplay(body);
 
 
@@ -360,9 +386,7 @@ public class DetailsActivity extends AppCompatActivity {
                             }
                         }
                     });
-
                 }
-
 
                 once = NetManager.parseOnce(body);
                 mAllContent.clear();
@@ -383,16 +407,10 @@ public class DetailsActivity extends AppCompatActivity {
                 });
 
                 if (totalPage != -1) {
-
                     XLog.tag(TAG).d(totalPage);
                     getMoreRepliesByOrder(totalPage, scrollToBottom);
                 }
-
-
             }
-
-
-
         });
     }
 
@@ -402,10 +420,10 @@ public class DetailsActivity extends AppCompatActivity {
         return matcher.find();
     }
 
-    private void getMoreRepliesByOrder(int page, boolean scrollToBottom) {
-        Intent intentGetMoreReply = new Intent(DetailsActivity.this, getMoreReplyService.class);
+    private void getMoreRepliesByOrder(int totalPage, boolean scrollToBottom) {
+        Intent intentGetMoreReply = new Intent(DetailsActivity.this, MoreReplyService.class);
 //        intentGetMoreReply.setAction(ACTION_GET_REPLY);
-        intentGetMoreReply.putExtra("page", page);
+        intentGetMoreReply.putExtra("page", totalPage);
         intentGetMoreReply.putExtra("topic_id", mTopicId);
         intentGetMoreReply.putExtra("bottom", scrollToBottom);
         startService(intentGetMoreReply);
@@ -418,8 +436,10 @@ public class DetailsActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_details, menu);
         if (MyApp.getInstance().isLogin()) {
             menu.findItem(R.id.menu_favor).setVisible(true);
+            menu.findItem(R.id.menu_reply).setVisible(true);
         } else {
             menu.findItem(R.id.menu_favor).setVisible(false);
+            menu.findItem(R.id.menu_reply).setVisible(false);
         }
         mMenu = menu;
         return true;
@@ -427,7 +447,6 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
         return true;
     }
 
@@ -436,26 +455,21 @@ public class DetailsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.menu_favor:
-
                 if (isFavored) {
                     unFavor();
                 } else {
                     favor();
                 }
-
-
                 break;
             case R.id.menu_reply:
-                etSendReply.requestFocus();
-                ObjectAnimator animator = ObjectAnimator.ofFloat(etSendReply, "translationX", 0, 50, -50, 0, 50, 0);
-                animator.setDuration(600);
-                animator.start();
-
-
+//                etSendReply.requestFocus();
+//                ObjectAnimator animator = ObjectAnimator.ofFloat(etSendReply, "translationX", 0, 50, -50, 0, 50, 0);
+//                animator.setDuration(600);
+//                animator.start();
                 break;
             case R.id.menu_refresh:
                 mSwipe.setRefreshing(true);
-                getPageOne(mTopicId, false);
+                getRepliesPageOne(mTopicId, false);
                 break;
             case R.id.menu_item_share:
                 Intent sendIntent = new Intent();
@@ -504,7 +518,7 @@ public class DetailsActivity extends AppCompatActivity {
                         public void run() {
                             HintUI.t(DetailsActivity.this, "取消收藏成功");
 
-                            getPageOne(mTopicId, false);
+                            getRepliesPageOne(mTopicId, false);
                         }
                     });
                 }
@@ -519,7 +533,7 @@ public class DetailsActivity extends AppCompatActivity {
                 .get().build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                dealError(DetailsActivity.this);
             }
 
             @Override
@@ -529,7 +543,7 @@ public class DetailsActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             HintUI.t(DetailsActivity.this, "收藏成功");
-                            getPageOne(mTopicId, false);
+                            getRepliesPageOne(mTopicId, false);
                         }
                     });
                 }
@@ -538,53 +552,46 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
 
-    public void postReply(View view) {
-        etSendReply.clearFocus();
-        XLog.tag(TAG).d("I clicked");
-        final String content = etSendReply.getText().toString();
-        RequestBody requestBody = new FormBody.Builder()
-                .add("content", content)
-                .add("once", once)
-                .build();
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(baseHeaders)
-                .header("Origin", NetManager.HTTPS_V2EX_BASE)
-                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-                .post(requestBody)
-                .build()).enqueue(new Callback() {
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HintUI.t(DetailsActivity.this, "未知原因，回复失败");
-                    }
-                });
-
-            }
-
-            @Override
-            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                if (response.code() == 302) {
-                    XLog.tag(TAG).d("成功发布");
-
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            etSendReply.setText("");
-
-                        }
-                    });
-                    getPageOne(mTopicId, true);
-                }
-            }
-        });
-    }
+//    public void postReply(View view) {
+//        etSendReply.clearFocus();
+//        XLog.tag(TAG).d("I clicked");
+//        final String content = etSendReply.getText().toString();
+//        RequestBody requestBody = new FormBody.Builder()
+//                .add("content", content)
+//                .add("once", once)
+//                .build();
+//        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+//                .headers(baseHeaders)
+//                .header("Origin", NetManager.HTTPS_V2EX_BASE)
+//                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+//                .header("Content-Type", "application/x-www-form-urlencoded")
+//                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+//                .post(requestBody)
+//                .build()).enqueue(new Callback() {
+//
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                dealError(DetailsActivity.this);
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+//                if (response.code() == 302) {
+//                    XLog.tag(TAG).d("成功发布");
+//
+//                    handler.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//
+//                            etSendReply.setText("");
+//
+//                        }
+//                    });
+//                    getRepliesPageOne(mTopicId, true);
+//                }
+//            }
+//        });
+//    }
 
     @Override
     protected void onPause() {
@@ -598,6 +605,4 @@ public class DetailsActivity extends AppCompatActivity {
         XLog.tag(TAG).d("onDestroy");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
-
-
 }

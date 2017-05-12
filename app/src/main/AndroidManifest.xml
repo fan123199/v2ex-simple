@@ -174,16 +174,20 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".ui.main.CreateTopicActivity"
+            android:name=".ui.main.NewTopicActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
 
-        <service android:name=".ui.details.getMoreReplyService" />
+        <service android:name=".ui.details.MoreReplyService"/>
 
         <activity android:name=".ui.WebViewActivity" />
 

@@ -83,27 +83,27 @@ public class TimeUtil {
         int minute = timeStr.indexOf("分钟");
         int day = timeStr.indexOf("天");
 
+        int now = timeStr.indexOf("刚刚");
+
         try {
-        if (second != -1) {
-            return created;
-        } else if (hour != -1) {
-            created -= Long.parseLong(getNum(timeStr.substring(0, hour))) * 60 * 60 +
-                    Long.parseLong(getNum(timeStr.substring(hour + 2, minute))) * 60;
-        } else if (day != -1) {
-            created -= Long.parseLong(getNum(timeStr.substring(0, day))) * 60 * 60 * 24;
-        } else if (minute != -1) {
-            created -= Long.parseLong(getNum(timeStr.substring(0, minute))) * 60;
-        } else if (timeStr.contains("刚刚")) {
-            return created;
-        } else {
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
-            Date date = sdf.parse(timeStr.split(" \\+")[0]);
-            created = date.getTime() / 1000;
-
-        }
+            if (second != -1) {
+                return created;
+            } else if (hour != -1) {
+                created -= Long.parseLong(getNum(timeStr.substring(0, hour))) * 60 * 60 +
+                        Long.parseLong(getNum(timeStr.substring(hour + 2, minute))) * 60;
+            } else if (day != -1) {
+                created -= Long.parseLong(getNum(timeStr.substring(0, day))) * 60 * 60 * 24;
+            } else if (minute != -1) {
+                created -= Long.parseLong(getNum(timeStr.substring(0, minute))) * 60;
+            } else if (now != -1) {
+                return created;
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault());
+                Date date = sdf.parse(timeStr);
+                created = date.getTime() / 1000;
+            }
         } catch (Exception ignored) {
-            XLog.tag("TimeHelper").e("timestr error: |" + timeStr);
+            XLog.tag("TimeUtil").e("timestr error: |" + timeStr);
         }
 
         return created;

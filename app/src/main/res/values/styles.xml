@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
@@ -43,6 +43,7 @@
 
     <style name="ExpendedCollapseTitle">
         <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/white</item>
         <!--<item name="android:maxWidth">20dp</item> not working-->
     </style>
 
@@ -50,5 +51,22 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="MyTitleTextStyle" parent="TextAppearance.AppCompat.Medium.Inverse">
+        <item name="android:textColor">@color/title_color</item>
+        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <!--<item name="android:letterSpacing" tools:targetApi="lollipop">0.1</item>-->
+    </style>
+
+    <style name="contentStyle">
+        <item name="android:lineSpacingMultiplier">1.2</item>
+        <item name="android:textColor">@color/content_font_color</item>
+        <item name="android:textSize">@dimen/content_font_size</item>
+    </style>
+
+    <style name="HintStyle">
+        <item name="android:textColor">@color/hint</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
 
 </resources>

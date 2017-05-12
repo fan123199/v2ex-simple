@@ -91,6 +91,10 @@ public class AllNodesAdapter extends RecyclerView.Adapter<AllNodesAdapter.AllNod
         mNodeModels.addAll(nodeModels);
     }
 
+    public void clear() {
+        mNodeModels.clear();
+    }
+
     public void filter(String newText) {
 
         if (TextUtils.isEmpty(newText)) {

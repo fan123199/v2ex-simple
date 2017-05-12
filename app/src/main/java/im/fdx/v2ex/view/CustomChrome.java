@@ -9,6 +9,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.customtabs.CustomTabsIntent;
 
+import com.squareup.picasso.Picasso;
+
 import im.fdx.v2ex.MyReceiver;
 import im.fdx.v2ex.R;
 
@@ -18,11 +20,11 @@ import im.fdx.v2ex.R;
 public class CustomChrome {
 
     private Context context;
-    static CustomChrome customChrome;
+    private static CustomChrome customChrome;
     private final CustomTabsIntent.Builder builder;
     private final Intent sendIntent;
 
-    public CustomChrome(Context context) {
+    private CustomChrome(Context context) {
         this.context = context;
         builder = new CustomTabsIntent.Builder();
         builder.setShowTitle(true);
@@ -39,7 +41,6 @@ public class CustomChrome {
                 sendIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setActionButton(icon, "分享该页面", pendingIntent, true);
     }
-
 
     public static synchronized CustomChrome getInstance(Context context) {
         if (customChrome == null) {

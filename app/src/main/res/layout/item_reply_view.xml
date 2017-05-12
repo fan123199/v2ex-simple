@@ -1,86 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:elevation="1dp"
-                tools:ignore="UnusedAttribute">
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/iv_reply_avatar"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="@dimen/md_avatar_size"
-        android:layout_height="@dimen/md_avatar_size"
-        android:layout_marginStart="@dimen/md_left_margin"
-        android:layout_marginTop="9dp"
+        android:id="@+id/iv_reply_avatar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:contentDescription="@string/it_is_avatar"
         android:src="@drawable/ic_profile"
         app:civ_border_color="#FFFFFFFF"
-        app:civ_border_width="0dp"/>
+        app:civ_border_width="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <im.fdx.v2ex.view.GoodTextView
         android:id="@+id/tv_reply_content"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/tv_replier"
-        android:layout_below="@+id/tv_replier"
-        android:layout_marginBottom="9dp"
-        android:layout_marginEnd="@dimen/md_left_margin"
-        android:layout_marginTop="6dp"
-        android:text="@string/content"
-        android:textIsSelectable="true"/>
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:lineSpacingMultiplier="1.2"
+        android:textIsSelectable="true"
+        app:layout_constraintBottom_toTopOf="@+id/divider"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_replier"
+        app:layout_constraintRight_toRightOf="@+id/tv_reply_row"
+        app:layout_constraintTop_toBottomOf="@+id/iv_reply_avatar"
+        tools:text="@string/content"/>
 
     <TextView
         android:id="@+id/tv_replier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/iv_reply_avatar"
-        android:layout_marginStart="@dimen/md_left_margin"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/iv_reply_avatar"
-        android:text="@string/author"
+        tools:text="@string/author"
         android:textColor="#333333"
-        android:textStyle="bold"/>
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_reply_avatar"
+        app:layout_constraintLeft_toRightOf="@+id/iv_reply_avatar"
+        app:layout_constraintTop_toTopOf="@+id/iv_reply_avatar"
+        app:layout_constraintVertical_bias="0.444"/>
 
     <TextView
         android:id="@+id/tv_reply_time"
+        style="@style/HintStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_replier"
         android:layout_alignTop="@+id/iv_reply_avatar"
-        android:layout_marginStart="@dimen/md_left_margin"
+        android:layout_marginLeft="28dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/tv_replier"
         android:text="@string/reply_time"
-        />
+        app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
+        app:layout_constraintLeft_toRightOf="@+id/tv_replier"
+        app:layout_constraintTop_toTopOf="@+id/tv_replier"
+        app:layout_constraintVertical_bias="1.0"/>
 
     <TextView
         android:id="@+id/tv_reply_row"
+        style="@style/HintStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/tv_reply_content"
         android:layout_alignTop="@+id/iv_reply_avatar"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="0dp"
         android:text="@string/row"
-        />
+        app:layout_constraintBottom_toBottomOf="@+id/ivReplay"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/ivReplay"
+        app:layout_constraintVertical_bias="0.923"/>
 
-    <include
-        layout="@layout/divider"
+    <View
         android:id="@+id/divider"
-        android:visibility="visible"
-        android:layout_alignStart="@+id/tv_replier"
+        android:layout_width="wrap_content"
+        android:layout_height="1px"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="1dp"
+        android:layout_alignStart="@+id/tv_replier"
         android:layout_below="@id/tv_reply_content"
-        android:layout_height="1dp"
-        android:layout_width="match_parent" />
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="0dp"
+        android:background="@android:color/darker_gray"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_reply_content"
+        app:layout_constraintTop_toBottomOf="@+id/tv_reply_content"/>
 
     <TextView
         android:id="@+id/tv_thanks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tv_reply_time"
-        android:layout_marginStart="15dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:maxEms="3"
+        android:minEms="3"
+        android:maxLines="1"
+        android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/tv_reply_time"
-        android:text="@string/thanks"
-        android:textAppearance="?android:attr/textAppearanceSmall"/>
+        android:drawableStart="@drawable/ic_thumbs_up"
+        tools:text="123"
+        android:textAppearance="@style/HintStyle"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
+        app:layout_constraintRight_toLeftOf="@+id/ivReplay"
+        app:layout_constraintTop_toTopOf="@+id/tv_replier"
+        app:layout_constraintVertical_bias="1.0"/>
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/ivReplay"
+        style="@style/HintStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="44dp"
+        android:layout_marginTop="8dp"
+        android:drawableStart="@drawable/ic_message"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_thanks"
+        app:layout_constraintRight_toLeftOf="@+id/tv_reply_row"
+        app:layout_constraintTop_toTopOf="@+id/tv_thanks"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="HardcodedText"
+        tools:text="bb"/>
+
+</android.support.constraint.ConstraintLayout>

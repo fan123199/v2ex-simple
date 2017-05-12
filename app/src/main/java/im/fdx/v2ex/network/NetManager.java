@@ -463,21 +463,6 @@ public class NetManager {
         return null;
     }
 
-    public static void showNoContent(Context context, RelativeLayout container) {
-        final TextView child = new TextView(context);
-        child.setText("没有内容");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            child.setTextColor(context.getColor(R.color.hint));
-        } else {
-            child.setTextColor(context.getResources().getColor(R.color.hint));
-        }
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-        params.addRule(RelativeLayout.ALIGN_PARENT_TOP);
-        params.topMargin = ViewUtil.dp2px(80);
-        container.addView(child, params);
-    }
-
     public static ArrayList<NodeModel> parseToNode(String string) {
         Element element = Jsoup.parse(string).body();
 

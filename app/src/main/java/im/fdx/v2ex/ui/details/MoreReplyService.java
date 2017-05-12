@@ -20,13 +20,13 @@ import okhttp3.Request;
 /**
  * 为什么不用Thread？感觉Thread不高级
  */
-public class getMoreReplyService extends IntentService {
+public class MoreReplyService extends IntentService {
 
-    public getMoreReplyService(String name) {
+    public MoreReplyService(String name) {
         super(name);
     }
 
-    public getMoreReplyService() {
+    public MoreReplyService() {
         this("what");
     }
 

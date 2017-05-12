@@ -3,6 +3,7 @@ package im.fdx.v2ex.ui.favor;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v13.app.FragmentPagerAdapter;
 
 import im.fdx.v2ex.ui.main.TopicsFragment;
@@ -13,12 +14,12 @@ import im.fdx.v2ex.utils.Keys;
  */
 class FavorViewPagerAdapter extends FragmentPagerAdapter {
 
-    public FavorViewPagerAdapter(FragmentManager fm) {
+    FavorViewPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
 
-    String[] titles = new String[]{"节点收藏", "主题收藏", "特别关注"};
+    static final String[] titles = new String[]{"节点收藏", "主题收藏", "特别关注"};
 
     @Override
     public Fragment getItem(int position) {

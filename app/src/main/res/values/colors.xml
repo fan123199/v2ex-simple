@@ -19,6 +19,7 @@
 
     <color name="white">#FFFFFF</color>
 
+    <color name="light_background">#FFF2F2F2</color>
 
     <color name="black_overlay">#66000000</color>
     <color name="node_background">#41000000</color>

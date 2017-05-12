@@ -34,7 +34,7 @@ import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.network.VolleyHelper;
-import im.fdx.v2ex.ui.main.CreateTopicActivity;
+import im.fdx.v2ex.ui.main.NewTopicActivity;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
@@ -127,7 +127,7 @@ public class NodeActivity extends AppCompatActivity {
         fabNode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(NodeActivity.this, CreateTopicActivity.class);
+                Intent intent = new Intent(NodeActivity.this, NewTopicActivity.class);
                 intent.putExtra(Keys.KEY_NODE_NAME, nodeName);
                 startActivity(intent);
             }

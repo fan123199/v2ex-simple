@@ -32,7 +32,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     public static final int notifyID = 1223;
 
-    public static void notificationUnRead(final Context context) {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        XLog.d("YES, It is alarm");
+        notificationUnRead(context);
+    }
+
+    private void notificationUnRead(final Context context) {
         String url = "https://www.v2ex.com/my/following";
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(url).build()).enqueue(new Callback() {
@@ -69,7 +75,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         });
     }
 
-    public static void putNotification(Context context, int number) {
+    private void putNotification(Context context, int number) {
         Intent resultIntent = new Intent(context, NotificationActivity.class);
         resultIntent.putExtra("number", number);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -109,13 +115,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         Notification mNotificationCompat = mBuilder.build();
         NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(notifyID, mNotificationCompat);
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        XLog.d("YES, It is alarm");
-        notificationUnRead(context);
-//        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent("im.fdx.v2ex.action_alarm"));
     }
 
 }

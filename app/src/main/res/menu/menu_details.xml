@@ -7,19 +7,25 @@
         android:icon="@drawable/ic_refresh_white_24dp"
         android:orderInCategory="97"
         android:title="@string/menu_refresh"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
     <item
         android:id="@+id/menu_favor"
         android:icon="@drawable/ic_favorite_border_white_24dp"
         android:orderInCategory="90"
         android:title="@string/favor"
-        app:showAsAction="always" />
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/menu_reply"
+        android:icon="@drawable/ic_send_white_24dp"
+        android:orderInCategory="90"
+        android:title="@string/reply"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/menu_item_share"
-        android:orderInCategory="98"
+        android:orderInCategory="94"
         android:title="@string/menu_share"
         android:icon="@drawable/ic_share_white_24dp"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="never"/>
     <item
         android:id="@+id/menu_item_open_in_browser"
         android:orderInCategory="97"

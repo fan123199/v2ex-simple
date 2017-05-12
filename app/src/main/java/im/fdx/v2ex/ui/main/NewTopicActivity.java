@@ -37,11 +37,13 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import static android.R.attr.action;
+import static android.R.attr.type;
 import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
 
-public class CreateTopicActivity extends AppCompatActivity {
+public class NewTopicActivity extends AppCompatActivity {
 
-    private static final String TAG = CreateTopicActivity.class.getSimpleName();
+    private static final String TAG = NewTopicActivity.class.getSimpleName();
 
     private List<NodeModel> nodeModels = new ArrayList<>();
     private ArrayAdapter<NodeModel> adapter;
@@ -51,7 +53,6 @@ public class CreateTopicActivity extends AppCompatActivity {
     private String once;
     private EditText etTitle;
     private EditText etContent;
-    private MenuItem item;
     private SearchableSpinner spinner;
 
     @Override
@@ -98,12 +99,10 @@ public class CreateTopicActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
-
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                NetManager.dealError(CreateTopicActivity.this);
+                NetManager.dealError(NewTopicActivity.this);
             }
 
             @Override
@@ -122,14 +121,26 @@ public class CreateTopicActivity extends AppCompatActivity {
             }
         });
 
+        parseIntent(getIntent());
 
+    }
+
+    private void parseIntent(Intent intent) {
+        String action = intent.getAction();
+        String type = intent.getType();
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+                etContent.setText(sharedText);
+            }
+        }
     }
 
     private void setNode(Intent intent) {
         if (intent.getStringExtra(Keys.KEY_NODE_NAME) != null) {
             mNodename = intent.getStringExtra(Keys.KEY_NODE_NAME);
             XLog.d(mNodename + "|" + spinner.getCount() + "|" + adapter.getCount());
-            String nodeTitle = "";
+            String nodeTitle;
             for (int i = 0; i < adapter.getCount(); i++) {
                 if (mNodename.equals(adapter.getItem(i).getName())) {
 
@@ -148,7 +159,7 @@ public class CreateTopicActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        item = menu.add(0, Menu.FIRST, Menu.NONE, "send")
+        MenuItem item = menu.add(0, Menu.FIRST, Menu.NONE, "send")
                 .setIcon(R.drawable.ic_send_white_24dp)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return true;
@@ -163,40 +174,17 @@ public class CreateTopicActivity extends AppCompatActivity {
             mContent = etContent.getText().toString();
 
             if (TextUtils.isEmpty(mTitle) || TextUtils.isEmpty(mContent)) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HintUI.t(CreateTopicActivity.this, "标题和内容不能为空");
-                    }
-                });
+                HintUI.t(this, "标题和内容不能为空");
             } else if (mTitle.length() > 120) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HintUI.t(CreateTopicActivity.this, "主题内容不能超过 20000 个字符");
-                    }
-                });
+                HintUI.t(this, "标题字数超过限制");
             } else if (mContent.length() > 20000) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        HintUI.t(CreateTopicActivity.this, "字数超过限制");
-                    }
-                });
+                HintUI.t(this, "主题内容不能超过 20000 个字符");
+            } else if (TextUtils.isEmpty(mNodename)) {
+                HintUI.t(this, getString(R.string.choose_node));
             } else {
-                if (TextUtils.isEmpty(mNodename)) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            HintUI.t(CreateTopicActivity.this, getString(R.string.choose_node));
-                        }
-                    });
-                } else {
-                    postNew();
-                }
+                postNew();
             }
         }
-
         return true;
     }
 
@@ -209,74 +197,71 @@ public class CreateTopicActivity extends AppCompatActivity {
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                NetManager.dealError(CreateTopicActivity.this);
+                NetManager.dealError(NewTopicActivity.this);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
-                if (response.code() == 200) {
-//                    <input type="hidden" name="once" value="79218" />
-
-                    Pattern p = Pattern.compile("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)");
-                    final Matcher matcher = p.matcher(response.body().string());
-                    if (matcher.find()) {
-                        once = matcher.group();
-                        XLog.tag(TAG).d("once" + once);
-                    } else {
-                        handleError();
-                        return;
-                    }
-
-
-                    RequestBody requestBody = new FormBody.Builder()
-                            .add("title", mTitle)
-                            .add("content", mContent)
-                            .add("node_name", mNodename) //done
-                            .add("once", once) //done
-                            .build();
-
-
-                    HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                            .headers(baseHeaders)
-                            .url("https://www.v2ex.com/new")
-                            .post(requestBody)
-                            .build()).enqueue(new Callback() {
+                if (response.code() != 200) {
+                    NetManager.dealError(NewTopicActivity.this, response.code());
+                    return;
+                }
+//              <input type="hidden" name="once" value="79218" />
+                Pattern p = Pattern.compile("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)");
+                final Matcher matcher = p.matcher(response.body().string());
+                if (!matcher.find()) {
+                    runOnUiThread(new Runnable() {
                         @Override
-                        public void onFailure(Call call, IOException e) {
-                            NetManager.dealError(CreateTopicActivity.this);
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-
-                            if (response.code() == 302) {
-
-//                                /t/348815#reply0
-                                String location = response.header("Location");
-                                Pattern p = Pattern.compile("(?<=/t/)(\\d+)");
-                                Matcher matcher1 = p.matcher(location);
-                                String topic = "";
-                                if (matcher1.find()) {
-                                    topic = matcher1.group();
-                                    XLog.tag(TAG).d(topic);
-                                    Intent intent = new Intent(CreateTopicActivity.this, DetailsActivity.class);
-                                    intent.putExtra(Keys.KEY_TOPIC_ID, Long.parseLong(topic));
-                                    startActivity(intent);
-                                }
-                                finish();
-
-                            }
+                        public void run() {
+                            HintUI.s(etTitle, "无法发布主题，请退出后重试");
                         }
                     });
+                    return;
                 }
 
+                once = matcher.group();
+                XLog.tag(TAG).d("once" + once);
 
+                RequestBody requestBody = new FormBody.Builder()
+                        .add("title", mTitle)
+                        .add("content", mContent)
+                        .add("node_name", mNodename) //done
+                        .add("once", once) //done
+                        .build();
+
+                HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                        .headers(baseHeaders)
+                        .url("https://www.v2ex.com/new")
+                        .post(requestBody)
+                        .build()).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        NetManager.dealError(NewTopicActivity.this);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+
+                        if (response.code() == 302) {
+
+//                                /t/348815#reply0
+                            String location = response.header("Location");
+                            Pattern p = Pattern.compile("(?<=/t/)(\\d+)");
+                            Matcher matcher = p.matcher(location);
+                            String topic;
+                            if (matcher.find()) {
+                                topic = matcher.group();
+                                XLog.tag(TAG).d(topic);
+                                Intent intent = new Intent(NewTopicActivity.this, DetailsActivity.class);
+                                intent.putExtra(Keys.KEY_TOPIC_ID, Long.parseLong(topic));
+                                startActivity(intent);
+                            }
+                            finish();
+                        }
+                    }
+                });
             }
         });
-    }
-
-    private void handleError() {
-
     }
 }

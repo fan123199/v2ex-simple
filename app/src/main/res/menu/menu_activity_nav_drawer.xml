@@ -18,10 +18,10 @@
             android:id="@+id/nav_favor"
             android:icon="@drawable/ic_favorite_border_black_24dp"
             android:title="@string/my_follow" />
-        <item
-            android:id="@+id/nav_notification"
-            android:icon="@drawable/ic_notifications_none_black_24dp"
-            android:title="@string/notification" />
+        <!--<item-->
+        <!--android:id="@+id/nav_notification"-->
+        <!--android:icon="@drawable/ic_notifications_none_black_24dp"-->
+        <!--android:title="@string/notification" />-->
         <item
             android:id="@+id/nav_testNotify"
             android:icon="@android:drawable/ic_menu_manage"

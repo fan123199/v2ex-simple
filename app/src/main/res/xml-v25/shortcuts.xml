@@ -11,7 +11,7 @@
     <!--<intent-->
     <!--android:action="android.intent.action.MAIN"-->
     <!--android:targetPackage="im.fdx.v2ex"-->
-    <!--android:targetClass="im.fdx.v2ex.ui.main.CreateTopicActivity" />-->
+    <!--android:targetClass="im.fdx.v2ex.ui.main.NewTopicActivity>-->
 
     <!--&lt;!&ndash;如果你的一个shortcut关联着多个intent，你可以在这里继续添-->
     <!--加。最后一个intent决定着用户在加载这个shortcut时会看到什么&ndash;&gt;-->

@@ -20,50 +20,5 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-
-    <include
-        layout="@layout/divider"
-        android:layout_height="1dp"
-        android:layout_width="match_parent" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/foot_container">
-
-        <EditText
-            android:layout_weight="1"
-            android:id="@+id/et_post_reply"
-
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:elevation="3dp"
-            android:textSize="16sp"
-            android:background="@android:color/transparent"
-            android:minLines="1"
-            android:maxLines="5"
-            android:paddingStart="@dimen/md_left_margin"
-            android:paddingEnd="@dimen/md_left_margin"
-            android:textColorHint="#ba7e7e7e"
-            android:hint="@string/post_reply"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:textAllCaps="false"
-
-            />
-
-        <ImageView
-            android:id="@+id/iv_send"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_margin="6dp"
-            android:onClick="postReply"
-            android:src="@drawable/ic_send_unable"
-            android:contentDescription="@string/reply" />
-
-    </LinearLayout>
-
-
+    <include layout="@layout/footer_reply_new"/>
 </LinearLayout>

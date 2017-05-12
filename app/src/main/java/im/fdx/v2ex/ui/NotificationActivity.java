@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import org.greenrobot.greendao.annotation.NotNull;
 import org.jsoup.Jsoup;
@@ -28,7 +28,7 @@ import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.NotificationModel;
 import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
-import im.fdx.v2ex.network.NetManager;
+import im.fdx.v2ex.utils.ViewUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -40,7 +40,7 @@ public class NotificationActivity extends AppCompatActivity {
     private NotificationAdapter adapter;
     private SwipeRefreshLayout mSwipe;
     private RecyclerView rvNotification;
-    private RelativeLayout rl;
+    private FrameLayout flContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +53,7 @@ public class NotificationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.notification);
 
-        rl = (RelativeLayout) findViewById(R.id.rl_container);
+        flContainer = (FrameLayout) findViewById(R.id.fl_container);
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +107,7 @@ public class NotificationActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 mSwipe.setRefreshing(false);
-                                NetManager.showNoContent(NotificationActivity.this, rl);
+                                ViewUtil.showNoContent(NotificationActivity.this, flContainer);
                             }
                         });
                         return;

@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -55,17 +56,15 @@ import static android.media.CamcorderProfile.get;
  */
 public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public static final int TYPE_FOOTER = 2;
     private static final String TAG = DetailsAdapter.class.getSimpleName();
-
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
-
+    private AdapterCallback callback;
     private TopicModel mHeader;
     private List<ReplyModel> mReplyList = new ArrayList<>();
-    private ImageLoader mImageLoader = VolleyHelper.getInstance().getImageLoader();
     private Context mContext;
     private List<BaseModel> mAllList;
-    private int maxWith;
     private String verifyCode;
 
     public DetailsAdapter(Context context, TopicModel header, List<ReplyModel> replyList) {
@@ -74,9 +73,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         mReplyList = replyList;
     }
 
-    public DetailsAdapter(Context context, List<BaseModel> allList) {
+    public DetailsAdapter(Context context, List<BaseModel> allList, AdapterCallback callback) {
         mContext = context;
         mAllList = allList;
+        this.callback = callback;
     }
 
 
@@ -84,60 +84,64 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == TYPE_HEADER) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_topic_view, parent, false);
-            // set the view's size, margins, paddings and layout parameters
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_details_topic_view, parent, false);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0, 0, 0, 30);
             view.setLayoutParams(lp);
 
-            return new TopicsRVAdapter.MainViewHolder(view);
+            return new MainDetailViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false);
             return new ItemViewHolder(view);
+        } else if (viewType == TYPE_FOOTER) {
+            View view = new TextView(mContext);
+            return new FooterViewHolder(view);
         }
         throw new RuntimeException(" No type that matches " + viewType + " + Make sure using types correctly");
     }
 
     @Override
-    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-
-        if (holder instanceof TopicsRVAdapter.MainViewHolder)
-            maxWith = ((TopicsRVAdapter.MainViewHolder) holder).tvContent.getHeight();
-    }
-
-    @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
-//        if(holder instanceof TopicsRVAdapter.MainViewHolder) {
-        //采用更直观的选择语句
         if (getItemViewType(position) == TYPE_HEADER) {
 
-            TopicsRVAdapter.MainViewHolder mainHolder = (TopicsRVAdapter.MainViewHolder) holder;
+            MainDetailViewHolder mainHolder = (MainDetailViewHolder) holder;
             final TopicModel topic = ((TopicModel) mAllList.get(position));
-//            mainHolder.itemView.setTop(position);
             mainHolder.tvTitle.setText(topic.getTitle());
             mainHolder.tvContent.setSelected(true);
             mainHolder.tvContent.setGoodText(topic.getContent_rendered());
+            Log.i(TAG, topic.getContent_rendered());
+            Log.i(TAG, topic.getContent());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                mainHolder.tvContent.setTransitionName("header");
 //            }
 
-            mainHolder.tvReplyNumber.setText(String.valueOf(topic.getReplies()));
+//            mainHolder.tvReplyNumber.setText(String.valueOf(topic.getReplies()));
             mainHolder.tvAuthor.setText(topic.getMember().getUsername());
             mainHolder.tvNode.setText(topic.getNode().getTitle());
+            mainHolder.tvCreated.setText(TimeUtil.getRelativeTime(topic.getCreated()));
+            Picasso.with(mContext).load(topic.getMember().getAvatarNormalUrl()).into(mainHolder.ivAvatar);
+
             TopicsRVAdapter.MyOnClickListener l = new TopicsRVAdapter.MyOnClickListener(mContext, topic);
             mainHolder.tvNode.setOnClickListener(l);
-            mainHolder.tvCreated.setText(TimeUtil.getRelativeTime(topic.getCreated()));
-
-//            mainHolder.ivAvatar.setImageUrl(topic.getMember().getAvatarNormalUrl(), mImageLoader);
-            Picasso.with(mContext).load(topic.getMember().getAvatarNormalUrl()).into(mainHolder.ivAvatar);
             mainHolder.ivAvatar.setOnClickListener(l);
 
+        } else if (getItemViewType(position) == TYPE_FOOTER) {
+            TextView tvMore = (TextView) ((FooterViewHolder) holder).itemView;
+            tvMore.setText("加载更多");
+            tvMore.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    callback.onMethodCallback();
+                }
+            });
         } else if (getItemViewType(position) == TYPE_ITEM) {
             final ItemViewHolder itemVH = (ItemViewHolder) holder;
             final ReplyModel replyItem = (ReplyModel) mAllList.get(position);
+            if (position == getItemCount() - 1) {
+                itemVH.divider.setVisibility(View.GONE);
+            }
 
             if (MyApp.getInstance().isLogin()) {
                 itemVH.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
@@ -163,13 +167,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                                 span = new ForegroundColorSpan(Color.BLACK);
                                             }
                                             spanString.setSpan(span, 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
                                             editText.append(spanString);
                                         }
-
                                         editText.setSelection(editText.length());
                                         editText.requestFocus();
-
                                         return true;
                                     case R.id.menu_thank:
 
@@ -223,57 +224,41 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener);
                     }
                 });
-            }
 
-
-            itemVH.tvReplyTime.setText(TimeUtil.getRelativeTime(replyItem.getCreated()));
-            itemVH.tvReplier.setText(replyItem.getMember().getUsername());
-            itemVH.tvThanks.setText(String.format(mContext.getResources().
-                    getString(R.string.show_thanks), replyItem.getThanks()));
-//            itemVH.tvContent.setSelected(true);
-            itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
-            itemVH.tvRow.setText(String.valueOf(position));
-
-            Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
-
-            itemVH.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switch (v.getId()) {
-                        case R.id.iv_reply_avatar:
-                            Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
-                            itProfile.putExtra("username", replyItem.getMember().getUsername());
-                            mContext.startActivity(itProfile);
-                            break;
+                itemVH.tvReplyTime.setText(TimeUtil.getRelativeTime(replyItem.getCreated()));
+                itemVH.tvReplier.setText(replyItem.getMember().getUsername());
+//                itemVH.tvThanks.setText(String.format(mContext.getResources().
+//                        getString(R.string.show_thanks), replyItem.getThanks()));
+                itemVH.tvThanks.setText(String.valueOf(replyItem.getThanks()));
+                itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
+                itemVH.tvRow.setText(String.valueOf(position));
+                Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
+                itemVH.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
+                        itProfile.putExtra("username", replyItem.getMember().getUsername());
+                        mContext.startActivity(itProfile);
                     }
-
-                }
-            });
-            if (position == getItemCount() - 1) {
-                itemVH.divider.setVisibility(View.GONE);
+                });
             }
         }
     }
 
-    private String getReplyId() {
-        return null;
-    }
-
-    private String getValue() {
-        return null;
-    }
 
     @Override
     public int getItemCount() {
-        return mAllList.size();
+        return mAllList.size() + 1;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0) {
             return TYPE_HEADER;
-        }
-        return TYPE_ITEM;
+        } else if (position == getItemCount() - 1) {
+            return TYPE_FOOTER;
+        } else
+            return TYPE_ITEM;
     }
 
     public void setVerifyCode(String verifyCode) {
@@ -281,6 +266,28 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     //我重用了MainAdapter中的MainViewHolder
+
+    public static class MainDetailViewHolder extends RecyclerView.ViewHolder {
+
+        public TextView tvTitle;
+        public GoodTextView tvContent;
+        public TextView tvCreated;
+        public TextView tvAuthor;
+        public CircleImageView ivAvatar;
+        public TextView tvNode;
+        public View container;
+
+        public MainDetailViewHolder(View root) {
+            super(root);
+            container = root;
+            tvTitle = (TextView) root.findViewById(R.id.tv_title);
+            tvContent = (GoodTextView) root.findViewById(R.id.tv_content);
+            tvCreated = (TextView) root.findViewById(R.id.tv_created);
+            tvAuthor = (TextView) root.findViewById(R.id.tv_author);
+            ivAvatar = (CircleImageView) root.findViewById(R.id.iv_avatar_profile);
+            tvNode = (TextView) root.findViewById(R.id.tv_node);
+        }
+    }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -306,4 +313,13 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    public static class FooterViewHolder extends RecyclerView.ViewHolder {
+        public FooterViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    public interface AdapterCallback {
+        void onMethodCallback();
+    }
 }

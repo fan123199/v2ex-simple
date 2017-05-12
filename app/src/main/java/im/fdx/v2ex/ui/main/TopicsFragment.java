@@ -10,14 +10,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.elvishew.xlog.XLog;
 
@@ -33,6 +31,7 @@ import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.SmoothLayoutManager;
+import im.fdx.v2ex.utils.ViewUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -43,37 +42,34 @@ import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
 // simplify it, receive in onCreateView
 public class TopicsFragment extends Fragment {
 
-    public static final int LATEST_TOPICS = 1;
-    public static final int TOP_10_TOPICS = 2;
     private static final String TAG = TopicsFragment.class.getSimpleName();
     private static final int MSG_FAILED = 3;
-
+    private static final int MSG_GET_DATA_BY_OK = 1;
 
     private List<TopicModel> mTopicModels = new ArrayList<>();
-
     private TopicsRVAdapter mAdapter;
-    private int MSG_GET_DATA_BY_OK = 1;
-
-
     private SwipeRefreshLayout mSwipeLayout;
+
     Handler handler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
 
-            if (msg.what == MSG_GET_DATA_BY_OK) {
-                mAdapter.notifyDataSetChanged();
-                mSwipeLayout.setRefreshing(false);
-            } else if (msg.what == MSG_FAILED) {
-                mSwipeLayout.setRefreshing(false);
+            switch (msg.what) {
+                case MSG_GET_DATA_BY_OK:
+                    mAdapter.notifyDataSetChanged();
+                    mSwipeLayout.setRefreshing(false);
+                    break;
+                case MSG_FAILED:
+                    mSwipeLayout.setRefreshing(false);
+                    break;
             }
-
             return false;
         }
     });
     private String mRequestURL;
     private RecyclerView mRecyclerView;
     private FloatingActionButton fab;
-    private RelativeLayout container;
+    private FrameLayout flContainer;
 
     public TopicsFragment() {
     }
@@ -127,58 +123,51 @@ public class TopicsFragment extends Fragment {
 
 
         fab = (FloatingActionButton) getActivity().findViewById(R.id.fab_main);
-        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        if (fab != null) {
+            mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
 
-            boolean isFabShowing = true;
+                boolean isFabShowing = true;
 
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
-                ValueAnimator animator = ValueAnimator.ofInt(100, 200, 300, 400);
-                animator.setDuration(1000);
-
-                Animation animation = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE, Animation.ABSOLUTE, 100);
-
-                animation.setRepeatCount(1);
-                if (dy > 0) {
-                    hideFab();
+                    ValueAnimator animator = ValueAnimator.ofInt(100, 200, 300, 400);
+                    animator.setDuration(1000);
+                    Animation animation = new TranslateAnimation(Animation.ABSOLUTE, Animation.ABSOLUTE, Animation.ABSOLUTE, 100);
+                    animation.setRepeatCount(1);
+                    if (dy > 0) hideFab();
+                    if (dy < 0) showFab();
                 }
 
-                if (dy < 0) {
-                    showFab();
-
+                private void hideFab() {
+                    if (isFabShowing) {
+                        isFabShowing = false;
+                        final Point point = new Point();
+                        getActivity().getWindow().getWindowManager().getDefaultDisplay().getSize(point);
+                        final float translation = fab.getY() - point.y;
+                        fab.animate().translationYBy(-translation).setDuration(500).start();
+                    }
                 }
-            }
 
-            private void hideFab() {
-                if (isFabShowing) {
-                    isFabShowing = false;
-                    final Point point = new Point();
-                    getActivity().getWindow().getWindowManager().getDefaultDisplay().getSize(point);
-                    final float translation = fab.getY() - point.y;
-                    fab.animate().translationYBy(-translation).setDuration(500).start();
+                private void showFab() {
+                    if (!isFabShowing) {
+                        isFabShowing = true;
+                        fab.animate().translationY(0).setDuration(500).start();
+                    }
                 }
-            }
 
-            private void showFab() {
-                if (!isFabShowing) {
-                    isFabShowing = true;
-                    fab.animate().translationY(0).setDuration(500).start();
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
                 }
-            }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });
+            });
+        }
 
         mAdapter = new TopicsRVAdapter(getActivity(), mTopicModels);
         mAdapter.setNodeClickable(false);
         mRecyclerView.setAdapter(mAdapter); //大工告成
 
-
-        this.container = (RelativeLayout) layout.findViewById(R.id.rl_container);
+        flContainer = (FrameLayout) layout.findViewById(R.id.fl_container);
 
         return layout;
     }
@@ -192,24 +181,22 @@ public class TopicsFragment extends Fragment {
                 .build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
                 XLog.tag("TopicFragment").e("error OK");
                 handler.sendEmptyMessage(MSG_FAILED);
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-
                 Document html = Jsoup.parse(response.body().string());
                 List<TopicModel> topicList = NetManager.parseTopicLists(html, 0);
 
+                XLog.i("TOPICS" + topicList);
                 if (topicList == null || topicList.isEmpty()) {
-
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            ViewUtil.showNoContent(getActivity(), flContainer);
                             mSwipeLayout.setRefreshing(false);
-                            NetManager.showNoContent(getActivity(), container);
                         }
                     });
                     return;
@@ -222,10 +209,6 @@ public class TopicsFragment extends Fragment {
         });
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -240,8 +223,4 @@ public class TopicsFragment extends Fragment {
         mRecyclerView.smoothScrollToPosition(0);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
 }

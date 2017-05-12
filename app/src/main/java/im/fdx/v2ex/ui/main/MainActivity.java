@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
             shortcutManager = (ShortcutManager) getSystemService(SHORTCUT_SERVICE);
-            Intent intent = new Intent(this, CreateTopicActivity.class);
+            Intent intent = new Intent(this, NewTopicActivity.class);
             intent.setAction("android.intent.action.MAIN");
             createTopicInfo = new ShortcutInfo.Builder(this, shortcutId)
                     .setActivity(getComponentName())
@@ -182,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, CreateTopicActivity.class));
+                startActivity(new Intent(MainActivity.this, NewTopicActivity.class));
 
             }
         });
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void showDailyAndNotification(boolean visible) {
-        navigationView.getMenu().findItem(R.id.nav_notification).setVisible(visible);
+//        navigationView.getMenu().findItem(R.id.nav_notification).setVisible(visible);
         navigationView.getMenu().findItem(R.id.nav_daily).setVisible(visible);
         navigationView.getMenu().findItem(R.id.nav_favor).setVisible(visible);
         MainActivity.this.invalidateOptionsMenu();
@@ -367,20 +367,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_node:
                 startActivity(new Intent(this, AllNodesActivity.class));
                 break;
-            case R.id.nav_notification:
-                break;
+//            case R.id.nav_notification:
+//                break;
 
             case R.id.nav_favor:
                 Intent intentFavor = new Intent(this, FavorActivity.class);
                 startActivity(intentFavor);
-
                 break;
             case R.id.nav_testMenu2:
 
                 startActivity(new Intent(this, WebViewActivity.class));
                 break;
             case R.id.nav_testNotify:
-
 //                UpdateService.putNotification(this, 199);
                 break;
             case R.id.nav_share:

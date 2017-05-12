@@ -21,8 +21,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elvishew.xlog.XLog;
@@ -49,6 +49,7 @@ import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeUtil;
+import im.fdx.v2ex.utils.ViewUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
@@ -89,7 +90,7 @@ public class MemberActivity extends AppCompatActivity {
     private Boolean isBlocked;
     private Boolean isFollowed;
     private ConstraintLayout constraintLayout;
-    private RelativeLayout container;
+    private FrameLayout container;
     private Menu mMenu;
     private Handler handler = new Handler(new Handler.Callback() {
         @Override
@@ -148,7 +149,7 @@ public class MemberActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getTopicsByUsername();
+                getTopicsByUsernameAPI();
             }
         });
 
@@ -167,7 +168,7 @@ public class MemberActivity extends AppCompatActivity {
 
         constraintLayout = (ConstraintLayout) findViewById(R.id.constraint_member);
 
-        container = (RelativeLayout) findViewById(R.id.rl_container);
+        container = (FrameLayout) findViewById(R.id.fl_container);
 
         RecyclerView rv = (RecyclerView) findViewById(R.id.rv_container);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MemberActivity.this);
@@ -225,16 +226,15 @@ public class MemberActivity extends AppCompatActivity {
         urlTopic = API_TOPIC + "?username=" + username;
         Log.i(TAG, urlUserInfo + "\n" + urlTopic);
         //// TODO: 2017/3/20 可以改成一步，分析下性能
-        getUserInfo(urlUserInfo);
-        getTopicsByUsername();
-        getBlockAndFollow();
+        getUserInfoAPI(urlUserInfo);
+        getTopicsByUsernameAPI();
+        getBlockAndFollowWeb();
     }
 
-    private void getBlockAndFollow() {
+    private void getBlockAndFollowWeb() {
         if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, ""))) {
             return;
         }
-
         String webUrl = "https://www.v2ex.com/member/" + username;
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(webUrl)
@@ -323,7 +323,7 @@ public class MemberActivity extends AppCompatActivity {
         return null;
     }
 
-    private void getUserInfo(String urlUserInfo) {
+    private void getUserInfoAPI(String urlUserInfo) {
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(urlUserInfo).build()).enqueue(new Callback() {
             @Override
@@ -339,7 +339,7 @@ public class MemberActivity extends AppCompatActivity {
         });
     }
 
-    private void getTopicsByUsername() {
+    private void getTopicsByUsernameAPI() {
 
         HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(urlTopic).build()).enqueue(new Callback() {
@@ -360,7 +360,7 @@ public class MemberActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             swipeRefreshLayout.setRefreshing(false);
-                            showNoContent(MemberActivity.this, container);
+                            ViewUtil.showNoContent(MemberActivity.this, container);
                         }
                     });
                     return;
@@ -505,7 +505,7 @@ public class MemberActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.code() == 302) {
-                        getBlockAndFollow();
+                        getBlockAndFollowWeb();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -529,7 +529,7 @@ public class MemberActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.code() == 302) {
-                        getBlockAndFollow();
+                        getBlockAndFollowWeb();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -557,7 +557,7 @@ public class MemberActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.code() == 302) {
-                        getBlockAndFollow();
+                        getBlockAndFollowWeb();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -581,7 +581,7 @@ public class MemberActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.code() == 302) {
-                        getBlockAndFollow();
+                        getBlockAndFollowWeb();
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
