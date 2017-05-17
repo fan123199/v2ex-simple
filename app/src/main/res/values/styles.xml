@@ -1,11 +1,12 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.V2ex" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
 
+        <item name="android:textColorLink">@color/primary</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -51,7 +52,7 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="MyTitleTextStyle" parent="TextAppearance.AppCompat.Medium.Inverse">
+    <style name="Theme.V2ex.TitleTextStyle" parent="TextAppearance.AppCompat.Medium.Inverse">
         <item name="android:textColor">@color/title_color</item>
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:lineSpacingMultiplier">1.2</item>

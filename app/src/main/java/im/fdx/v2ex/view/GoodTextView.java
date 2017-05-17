@@ -1,5 +1,6 @@
 package im.fdx.v2ex.view;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -12,9 +13,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -30,6 +33,7 @@ import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 
+import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.ContentUtils;
@@ -70,15 +74,12 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         super.onDetachedFromWindow();
     }
 
-    public void recycleImage() {
-
-    }
-
 
     public void setGoodText(String text) {
         if (TextUtils.isEmpty(text)) {
             return;
         }
+        setLinkTextColor(ContextCompat.getColor(context, R.color.primary));
 
 //        XLog.tag(TAG).d( "early in setGoodTest" + getWidth());
         String formContent = ContentUtils.format(text);
@@ -104,7 +105,7 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
             int spanStart = htmlSpannable.getSpanStart(urlSpan);
             int spanEnd = htmlSpannable.getSpanEnd(urlSpan);
-            URLSpan newUrlSpan = new URLSpan(urlSpan.getURL()) {
+            URLSpan newUrlSpan = new UrlSpanNoUnderline(urlSpan.getURL()) {
                 @Override
                 public void onClick(View widget) {
                     if (false) {
@@ -328,6 +329,23 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
             super.onPostExecute(bitmap);
+        }
+    }
+
+    @SuppressLint("ParcelCreator")
+    public class UrlSpanNoUnderline extends URLSpan {
+        public UrlSpanNoUnderline(URLSpan src) {
+            super(src.getURL());
+        }
+
+        public UrlSpanNoUnderline(String url) {
+            super(url);
+        }
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            super.updateDrawState(ds);
+            ds.setUnderlineText(false);
         }
     }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:background="@color/list_background"
+             xmlns:tools="http://schemas.android.com/tools"
+             >
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/tv_load_more"
+        android:padding="@dimen/margin_up_down"
+        android:textSize="@dimen/content_font_size"
+        tools:text="加载更多"
+        />
+</FrameLayout>

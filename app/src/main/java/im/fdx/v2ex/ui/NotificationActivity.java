@@ -172,7 +172,7 @@ public class NotificationActivity extends AppCompatActivity {
             Matcher matcher = p.matcher(href);
             if (matcher.find()) {
                 String topicId = matcher.group();
-                topicModel.setId(Long.parseLong(topicId));
+                topicModel.setId(topicId);
             }
 
             Pattern p2 = Pattern.compile("(?<=reply)d+\\b");

@@ -7,7 +7,7 @@
     </style>
 
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.V2ex" parent="Theme.AppCompat.Light.NoActionBar">
 
         <item name="android:statusBarColor">@color/primary</item>
         <item name="colorPrimary">@color/primary</item>

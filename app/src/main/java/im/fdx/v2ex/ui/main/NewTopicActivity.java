@@ -254,7 +254,7 @@ public class NewTopicActivity extends AppCompatActivity {
                                 topic = matcher.group();
                                 XLog.tag(TAG).d(topic);
                                 Intent intent = new Intent(NewTopicActivity.this, DetailsActivity.class);
-                                intent.putExtra(Keys.KEY_TOPIC_ID, Long.parseLong(topic));
+                                intent.putExtra(Keys.KEY_TOPIC_ID, topic);
                                 startActivity(intent);
                             }
                             finish();

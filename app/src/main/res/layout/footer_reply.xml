@@ -2,7 +2,7 @@
 <!--deprecated-->
 <merge xmlns:tools="http://schemas.android.com/tools"
        xmlns:android="http://schemas.android.com/apk/res/android"
-       tools:showIn="@layout/activity_details_content">
+       >
 
 
     <include
@@ -14,6 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:background="@color/light_background"
         android:id="@+id/foot_container">
 
         <EditText
@@ -29,7 +30,7 @@
             android:maxLines="5"
             android:paddingStart="@dimen/md_left_margin"
             android:paddingEnd="@dimen/md_left_margin"
-            android:textColorHint="#ba7e7e7e"
+            android:textColorHint="@color/hint"
             android:hint="@string/post_reply"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
@@ -41,7 +42,11 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="bottom"
-            android:layout_margin="6dp"
+
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
             android:onClick="postReply"
             android:src="@drawable/ic_send_unable"
             android:contentDescription="@string/reply"/>

@@ -168,7 +168,6 @@ public class TopicsFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter); //大工告成
 
         flContainer = (FrameLayout) layout.findViewById(R.id.fl_container);
-
         return layout;
     }
 

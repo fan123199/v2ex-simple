@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui.details;
 
-import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -21,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,21 +75,26 @@ public class DetailsActivity extends AppCompatActivity {
 
     private DetailsAdapter.AdapterCallback callback = new DetailsAdapter.AdapterCallback() {
         @Override
-        public void onMethodCallback() {
-            getMoreRepliesByOrder(1, false);
+        public void onMethodCallback(int type) {
+            if (type == 1) {
+
+
+            } else if (type == 2) {
+                getMoreRepliesByOrder(1, false);
+            }
         }
     };
     RecyclerView rvDetail;
     private SwipeRefreshLayout mSwipe;
     private ImageView ivSend;
-    //    private EditText etSendReply;
+        private EditText etSendReply;
     private DetailsAdapter mAdapter;
     private List<BaseModel> mAllContent = new ArrayList<>();
     private String token;
     private String mTopicUrl;
     private Menu mMenu;
     private boolean isFavored;
-    private long mTopicId = -1L;
+    private String mTopicId;
     private String once;
     private TopicModel topicHeader;
     private Toolbar toolbar;
@@ -159,7 +161,6 @@ public class DetailsActivity extends AppCompatActivity {
         filter.addAction("im.fdx.v2ex.reply");
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
-//        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl);
 
         if (MyApp.getInstance().isLogin()) {
             addFootView();
@@ -175,7 +176,6 @@ public class DetailsActivity extends AppCompatActivity {
             actionBar.setTitle("");
         }
 
-        //I add parentActivity in Manifest, so I do not need below code ? NONONONONO---NEEDED
         if (toolbar != null) {
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
@@ -194,9 +194,9 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-//                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etSendReply.hasFocus()) {
-//                    etSendReply.clearFocus();
-//                }
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etSendReply.hasFocus()) {
+                    etSendReply.clearFocus();
+                }
             }
 
             @Override
@@ -212,7 +212,6 @@ public class DetailsActivity extends AppCompatActivity {
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 
                 if (mLayoutManager.findFirstVisibleItemPosition() != 0) {
-                    Log.d(TAG, ":::");
                     if (topicHeader != null) {
                         toolbar.setTitle(topicHeader.getTitle());
                     }
@@ -225,7 +224,6 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-//                Log.d(TAG, String.valueOf(dx) +":::"+ dy);
             }
         });
 
@@ -247,49 +245,47 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         ivSend = (ImageView) findViewById(R.id.iv_send);
-//        etSendReply = (EditText) findViewById(R.id.et_post_reply);
-//        etSendReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//
-//                XLog.tag(TAG).d("hasFocus" + hasFocus);
-//                if (!hasFocus) {
-//                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-//                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-//                }
-//            }
-//        });
-//
-//        etSendReply.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence s, int start, int before, int count) {
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable s) {
-//
-//                if (TextUtils.isEmpty(s)) {
-//                    ivSend.setClickable(false);
-//                    ivSend.setImageResource(R.drawable.ic_send_black_24dp);
-//                    //// TODO: 2017/5/2
-//
-//                } else {
-//                    ivSend.setClickable(true);
-//                    ivSend.setImageResource(R.drawable.ic_send_white_24dp);
-//
-//                }
-//            }
-//        });
+        etSendReply = (EditText) findViewById(R.id.et_post_reply);
+        etSendReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+
+                XLog.tag(TAG).d("hasFocus" + hasFocus);
+                if (!hasFocus) {
+                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                }
+            }
+        });
+
+        etSendReply.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if (TextUtils.isEmpty(s)) {
+                    ivSend.setClickable(false);
+                    ivSend.setImageResource(R.drawable.ic_send_hint_24dp);
+                    //// TODO: 2017/5/2
+
+                } else {
+                    ivSend.setClickable(true);
+                    ivSend.setImageResource(R.drawable.ic_send_black_24dp);
+
+                }
+            }
+        });
+
         parseIntent(getIntent());
 
-        //以下是设置刷新按钮的位置，暂时不用
-//        final DisplayMetrics metrics = getResources().getDisplayMetrics();
-//        int start = (int) (40 * metrics.density);
-//        mSwipe.setProgressViewOffset(false, -start, (int) (start*1.5));
+
     }
 
     private void removeFootView() {
@@ -310,7 +306,7 @@ public class DetailsActivity extends AppCompatActivity {
             String host = data.getHost(); //不需要判断，在manifest中已指定
             List<String> params = data.getPathSegments();
             try {
-                mTopicId = Long.parseLong(params.get(1));
+                mTopicId = params.get(1);
             } catch (NumberFormatException e) {
                 return;
             }
@@ -318,8 +314,8 @@ public class DetailsActivity extends AppCompatActivity {
             TopicModel topicModel = intent.getParcelableExtra("model");
             mAllContent.add(0, topicModel);
             mTopicId = topicModel.getId();
-        } else if (intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L) != -1L) {
-            mTopicId = intent.getLongExtra(Keys.KEY_TOPIC_ID, -1L);
+        } else if (intent.getStringExtra(Keys.KEY_TOPIC_ID) != null) {
+            mTopicId = intent.getStringExtra(Keys.KEY_TOPIC_ID);
         }
 
 
@@ -335,7 +331,7 @@ public class DetailsActivity extends AppCompatActivity {
         parseIntent(intent);
     }
 
-    private void getRepliesPageOne(final long topicId, final boolean scrollToBottom) {
+    private void getRepliesPageOne(final String topicId, final boolean scrollToBottom) {
         mSwipe.setRefreshing(true);
         OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
@@ -456,16 +452,15 @@ public class DetailsActivity extends AppCompatActivity {
 
             case R.id.menu_favor:
                 if (isFavored) {
-                    unFavor();
+                    unFavor(mTopicId, token);
                 } else {
-                    favor();
+                    favor(mTopicId,token );
                 }
                 break;
             case R.id.menu_reply:
-//                etSendReply.requestFocus();
-//                ObjectAnimator animator = ObjectAnimator.ofFloat(etSendReply, "translationX", 0, 50, -50, 0, 50, 0);
-//                animator.setDuration(600);
-//                animator.start();
+                etSendReply.requestFocus();
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                 break;
             case R.id.menu_refresh:
                 mSwipe.setRefreshing(true);
@@ -482,7 +477,7 @@ public class DetailsActivity extends AppCompatActivity {
                 break;
             case R.id.menu_item_open_in_browser:
 
-                Long topicId = ((TopicModel) mAllContent.get(0)).getId();
+                String topicId = ((TopicModel) mAllContent.get(0)).getId();
                 String url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId;
                 Uri uri = Uri.parse(url);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
@@ -500,10 +495,10 @@ public class DetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void unFavor() {
+    private void unFavor(String topicId, String token) {
         HttpHelper.OK_CLIENT.newCall(new Request.Builder()
                 .headers(HttpHelper.baseHeaders)
-                .url(NetManager.HTTPS_V2EX_BASE + "/unfavorite/topic/" + mTopicId + "?t=" + token)
+                .url(NetManager.HTTPS_V2EX_BASE + "/unfavorite/topic/" + topicId + "?t=" + token)
                 .get().build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -526,10 +521,10 @@ public class DetailsActivity extends AppCompatActivity {
         });
     }
 
-    private void favor() {
+    private void favor(String topicId, String token) {
         HttpHelper.OK_CLIENT.newCall(new Request.Builder()
                 .headers(HttpHelper.baseHeaders)
-                .url(NetManager.HTTPS_V2EX_BASE + "/favorite/topic/" + mTopicId + "?t=" + token)
+                .url(NetManager.HTTPS_V2EX_BASE + "/favorite/topic/" + mTopicId + "?t=" + this.token)
                 .get().build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -552,46 +547,44 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
 
-//    public void postReply(View view) {
-//        etSendReply.clearFocus();
-//        XLog.tag(TAG).d("I clicked");
-//        final String content = etSendReply.getText().toString();
-//        RequestBody requestBody = new FormBody.Builder()
-//                .add("content", content)
-//                .add("once", once)
-//                .build();
-//        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-//                .headers(baseHeaders)
-//                .header("Origin", NetManager.HTTPS_V2EX_BASE)
-//                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-//                .header("Content-Type", "application/x-www-form-urlencoded")
-//                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-//                .post(requestBody)
-//                .build()).enqueue(new Callback() {
-//
-//            @Override
-//            public void onFailure(Call call, IOException e) {
-//                dealError(DetailsActivity.this);
-//            }
-//
-//            @Override
-//            public void onResponse(Call call, okhttp3.Response response) throws IOException {
-//                if (response.code() == 302) {
-//                    XLog.tag(TAG).d("成功发布");
-//
-//                    handler.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//
-//                            etSendReply.setText("");
-//
-//                        }
-//                    });
-//                    getRepliesPageOne(mTopicId, true);
-//                }
-//            }
-//        });
-//    }
+    public void postReply(View view) {
+        etSendReply.clearFocus();
+        XLog.tag(TAG).d("I clicked");
+        final String content = etSendReply.getText().toString();
+        RequestBody requestBody = new FormBody.Builder()
+                .add("content", content)
+                .add("once", once)
+                .build();
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                .headers(baseHeaders)
+                .header("Origin", NetManager.HTTPS_V2EX_BASE)
+                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .post(requestBody)
+                .build()).enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+                dealError(DetailsActivity.this);
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                if (response.code() == 302) {
+                    XLog.tag(TAG).d("成功发布");
+
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            etSendReply.setText("");
+                        }
+                    });
+                    getRepliesPageOne(mTopicId, true);
+                }
+            }
+        });
+    }
 
     @Override
     protected void onPause() {

@@ -142,9 +142,9 @@ public class NetManager {
             Pattern p = Pattern.compile("(?<=/t/)\\d+");
             Matcher matcher = p.matcher(linkWithReply);
 
-            long id;
+            String id;
             if (matcher.find()) {
-                id = Long.parseLong(matcher.group());
+                id = matcher.group();
             } else {
                 return Collections.emptyList();
             }
@@ -284,7 +284,7 @@ public class NetManager {
      * @return
      */
     @NonNull
-    public static TopicModel parseResponseToTopic(Element body, long topicId) {
+    public static TopicModel parseResponseToTopic(Element body, String topicId) {
         TopicModel topicModel = new TopicModel(topicId);
 
         String title = body.getElementsByTag("h1").text();

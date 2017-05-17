@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -18,10 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 
@@ -36,7 +37,6 @@ import im.fdx.v2ex.model.BaseModel;
 import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeUtil;
@@ -84,18 +84,18 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if (viewType == TYPE_HEADER) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.item_details_topic_view, parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_topic_view, parent, false);
             RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
                     RelativeLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0, 0, 0, 30);
             view.setLayoutParams(lp);
 
-            return new MainDetailViewHolder(view);
+            return new TopicsRVAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false);
             return new ItemViewHolder(view);
         } else if (viewType == TYPE_FOOTER) {
-            View view = new TextView(mContext);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.item_load_more, parent, false);
             return new FooterViewHolder(view);
         }
         throw new RuntimeException(" No type that matches " + viewType + " + Make sure using types correctly");
@@ -106,7 +106,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         if (getItemViewType(position) == TYPE_HEADER) {
 
-            MainDetailViewHolder mainHolder = (MainDetailViewHolder) holder;
+            TopicsRVAdapter.MainViewHolder mainHolder = (TopicsRVAdapter.MainViewHolder) holder;
             final TopicModel topic = ((TopicModel) mAllList.get(position));
             mainHolder.tvTitle.setText(topic.getTitle());
             mainHolder.tvContent.setSelected(true);
@@ -117,7 +117,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 //                mainHolder.tvContent.setTransitionName("header");
 //            }
 
-//            mainHolder.tvReplyNumber.setText(String.valueOf(topic.getReplies()));
+            mainHolder.tvReplyNumber.setText(String.valueOf(topic.getReplies()));
             mainHolder.tvAuthor.setText(topic.getMember().getUsername());
             mainHolder.tvNode.setText(topic.getNode().getTitle());
             mainHolder.tvCreated.setText(TimeUtil.getRelativeTime(topic.getCreated()));
@@ -128,12 +128,12 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             mainHolder.ivAvatar.setOnClickListener(l);
 
         } else if (getItemViewType(position) == TYPE_FOOTER) {
-            TextView tvMore = (TextView) ((FooterViewHolder) holder).itemView;
+            TextView tvMore = ((FooterViewHolder) holder).tvLoadMore;
             tvMore.setText("加载更多");
             tvMore.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    callback.onMethodCallback();
+                    callback.onMethodCallback(2);
                 }
             });
         } else if (getItemViewType(position) == TYPE_ITEM) {
@@ -144,6 +144,16 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             if (MyApp.getInstance().isLogin()) {
+
+                ((Activity) mContext).registerForContextMenu(itemVH.itemView);
+                itemVH.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((Activity) mContext).openContextMenu(v);
+                        // TODO: 2017/5/17  采用自己写的View作为菜单
+                    }
+                });
+
                 itemVH.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
                     @Override
                     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -155,64 +165,12 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                             public boolean onMenuItemClick(MenuItem item) {
                                 switch (item.getItemId()) {
                                     case R.id.menu_reply:
-
-                                        EditText editText = (EditText) ((Activity) mContext).findViewById(R.id.et_post_reply);
-                                        String text = String.format("@%s ", replyItem.getMember().getUsername());
-                                        if (!editText.getText().toString().contains(text)) {
-                                            SpannableString spanString = new SpannableString(text);
-                                            ForegroundColorSpan span = null;
-                                            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                                                span = new ForegroundColorSpan(mContext.getColor(R.color.primary));
-                                            } else {
-                                                span = new ForegroundColorSpan(Color.BLACK);
-                                            }
-                                            spanString.setSpan(span, 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                                            editText.append(spanString);
-                                        }
-                                        editText.setSelection(editText.length());
-                                        editText.requestFocus();
-                                        return true;
+                                        reply(replyItem);
                                     case R.id.menu_thank:
-
-                                        XLog.tag(TAG).d("hehe" + verifyCode);
-                                        if (verifyCode == null) {
-                                            return true;
-                                        }
-                                        RequestBody body = new FormBody.Builder().add("t", verifyCode).build();
-
-                                        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                                                .headers(HttpHelper.baseHeaders)
-                                                .url("https://www.v2ex.com/thank/reply/" + replyItem.getId())
-                                                .post(body)
-                                                .build()).enqueue(new Callback() {
-                                            @Override
-                                            public void onFailure(Call call, IOException e) {
-                                                NetManager.dealError(mContext);
-                                            }
-
-                                            @Override
-                                            public void onResponse(Call call, Response response) throws IOException {
-
-                                                if (response.code() == 200) {
-                                                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            HintUI.t(mContext, "感谢成功");
-                                                            itemVH.tvThanks.setText(String.format(mContext.getResources().
-                                                                    getString(R.string.show_thanks), replyItem.getThanks() + 1));
-                                                        }
-                                                    });
-                                                } else {
-                                                    NetManager.dealError(mContext, response.code());
-                                                }
-                                            }
-                                        });
-
+                                        thank(replyItem, itemVH);
                                         break;
                                     case R.id.menu_copy:
-                                        XLog.d("I click menu copy");
-                                        ClipboardManager manager = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                                        manager.setPrimaryClip(ClipData.newPlainText("wtf", replyItem.getContent()));
+                                        copyText(replyItem);
                                         break;
                                 }
                                 return false;
@@ -224,14 +182,21 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener);
                     }
                 });
+                itemVH.tvReply.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        reply(replyItem);
+                    }
+                });
+            }
 
                 itemVH.tvReplyTime.setText(TimeUtil.getRelativeTime(replyItem.getCreated()));
                 itemVH.tvReplier.setText(replyItem.getMember().getUsername());
-//                itemVH.tvThanks.setText(String.format(mContext.getResources().
-//                        getString(R.string.show_thanks), replyItem.getThanks()));
                 itemVH.tvThanks.setText(String.valueOf(replyItem.getThanks()));
                 itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
-                itemVH.tvRow.setText(String.valueOf(position));
+
+                XLog.w(replyItem.getContent_rendered());
+                itemVH.tvRow.setText(String.format("#%s", String.valueOf(position)));
                 Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
                 itemVH.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -241,8 +206,64 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         mContext.startActivity(itProfile);
                     }
                 });
-            }
         }
+    }
+
+    private void copyText(ReplyModel replyItem) {
+        XLog.d("I click menu copy");
+        ClipboardManager manager = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+        manager.setPrimaryClip(ClipData.newPlainText("wtf", replyItem.getContent()));
+    }
+
+    private boolean thank(final ReplyModel replyItem, final ItemViewHolder itemVH) {
+        XLog.tag(TAG).d("hehe" + verifyCode);
+        if (verifyCode == null) {
+            return true;
+        }
+        RequestBody body = new FormBody.Builder().add("t", verifyCode).build();
+
+        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
+                .headers(HttpHelper.baseHeaders)
+                .url("https://www.v2ex.com/thank/reply/" + replyItem.getId())
+                .post(body)
+                .build()).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                NetManager.dealError(mContext);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                if (response.code() == 200) {
+                    ((Activity) mContext).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HintUI.t(mContext, "感谢成功");
+                            itemVH.tvThanks.setText(String.format(mContext.getResources().
+                                    getString(R.string.show_thanks), replyItem.getThanks() + 1));
+                        }
+                    });
+                } else {
+                    NetManager.dealError(mContext, response.code());
+                }
+            }
+        });
+        return false;
+    }
+
+    private void reply(ReplyModel replyItem) {
+        EditText editText = (EditText) ((Activity) mContext).findViewById(R.id.et_post_reply);
+        String text = String.format("@%s ", replyItem.getMember().getUsername());
+        if (!editText.getText().toString().contains(text)) {
+            SpannableString spanString = new SpannableString(text);
+            ForegroundColorSpan span = null;
+            span = new ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.primary));
+            spanString.setSpan(span, 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            editText.append(spanString);
+        }
+        editText.setSelection(editText.length());
+        editText.requestFocus();
     }
 
 
@@ -261,33 +282,33 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             return TYPE_ITEM;
     }
 
-    public void setVerifyCode(String verifyCode) {
+    void setVerifyCode(String verifyCode) {
         this.verifyCode = verifyCode;
     }
 
     //我重用了MainAdapter中的MainViewHolder
 
-    public static class MainDetailViewHolder extends RecyclerView.ViewHolder {
-
-        public TextView tvTitle;
-        public GoodTextView tvContent;
-        public TextView tvCreated;
-        public TextView tvAuthor;
-        public CircleImageView ivAvatar;
-        public TextView tvNode;
-        public View container;
-
-        public MainDetailViewHolder(View root) {
-            super(root);
-            container = root;
-            tvTitle = (TextView) root.findViewById(R.id.tv_title);
-            tvContent = (GoodTextView) root.findViewById(R.id.tv_content);
-            tvCreated = (TextView) root.findViewById(R.id.tv_created);
-            tvAuthor = (TextView) root.findViewById(R.id.tv_author);
-            ivAvatar = (CircleImageView) root.findViewById(R.id.iv_avatar_profile);
-            tvNode = (TextView) root.findViewById(R.id.tv_node);
-        }
-    }
+//    public static class MainDetailViewHolder extends RecyclerView.ViewHolder {
+//
+//        public TextView tvTitle;
+//        public GoodTextView tvContent;
+//        public TextView tvCreated;
+//        public TextView tvAuthor;
+//        public CircleImageView ivAvatar;
+//        public TextView tvNode;
+//        public View container;
+//
+//        public MainDetailViewHolder(View root) {
+//            super(root);
+//            container = root;
+//            tvTitle = (TextView) root.findViewById(R.id.tv_title);
+//            tvContent = (GoodTextView) root.findViewById(R.id.tv_content);
+//            tvCreated = (TextView) root.findViewById(R.id.tv_created);
+//            tvAuthor = (TextView) root.findViewById(R.id.tv_author);
+//            ivAvatar = (CircleImageView) root.findViewById(R.id.iv_avatar_profile);
+//            tvNode = (TextView) root.findViewById(R.id.tv_node);
+//        }
+//    }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 
@@ -296,12 +317,14 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         GoodTextView tvContent;
         TextView tvRow;
         TextView tvThanks;
+        TextView tvReply;
         CircleImageView ivUserAvatar;
         View divider;
 
         public ItemViewHolder(View itemView) {
             super(itemView);
 
+            tvReply = (TextView) itemView.findViewById(R.id.tvReplay);
             tvReplier = (TextView) itemView.findViewById(R.id.tv_replier);
             tvReplyTime = (TextView) itemView.findViewById(R.id.tv_reply_time);
             tvContent = (GoodTextView) itemView.findViewById(R.id.tv_reply_content);
@@ -313,13 +336,16 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    public static class FooterViewHolder extends RecyclerView.ViewHolder {
-        public FooterViewHolder(View itemView) {
+    private static class FooterViewHolder extends RecyclerView.ViewHolder {
+
+        private TextView tvLoadMore;
+        FooterViewHolder(View itemView) {
             super(itemView);
+            tvLoadMore = (TextView) itemView.findViewById(R.id.tv_load_more);
         }
     }
 
     public interface AdapterCallback {
-        void onMethodCallback();
+        void onMethodCallback(int type);
     }
 }

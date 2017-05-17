@@ -52,7 +52,7 @@ import im.fdx.v2ex.ui.node.NodeModel;
 //    ]
 public class TopicModel extends BaseModel implements Parcelable {
 
-    private long id;
+    private String id;
     private String title;
     private String url;
     private String content;
@@ -73,9 +73,8 @@ public class TopicModel extends BaseModel implements Parcelable {
     public TopicModel() {
     }
 
-    //yaoyumeng 喜欢用array,也就是id和replies都是int的话,他就会用readIntArray.我认为不好.我采用vivz.
     protected TopicModel(Parcel in) {
-        id = in.readLong();
+        id = in.readString();
         replies = in.readInt();
         title = in.readString();
         url = in.readString();
@@ -86,9 +85,6 @@ public class TopicModel extends BaseModel implements Parcelable {
         created = in.readLong();
         last_modified = in.readLong();
         last_touched = in.readLong();
-//        author = in.readString();
-//        nodeTitle = in.readString();
-//        avatarString = in.readString();
 
 
     }
@@ -114,15 +110,12 @@ public class TopicModel extends BaseModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id);
+        dest.writeString(id);
         dest.writeInt(replies);
         dest.writeString(title);
         dest.writeString(url);
         dest.writeString(content);
         dest.writeString(content_rendered);
-//        dest.writeString(author);//学devliu
-//        dest.writeString(nodeTitle);
-//        dest.writeString(avatarString);
         dest.writeValue(member);
         dest.writeValue(node);
         dest.writeLong(created);
@@ -130,7 +123,7 @@ public class TopicModel extends BaseModel implements Parcelable {
         dest.writeLong(last_touched);
     }
 
-    public TopicModel(long id, String title, String content, int replies, String node_title, long created, MemberModel member, NodeModel nodeModel) {
+    public TopicModel(String id, String title, String content, int replies, String node_title, long created, MemberModel member, NodeModel nodeModel) {
 //        this.author = author;
         this.id = id;
         this.title = title;
@@ -143,7 +136,7 @@ public class TopicModel extends BaseModel implements Parcelable {
         this.node = nodeModel;
     }
 
-    public TopicModel(long id) {
+    public TopicModel(String id) {
         this.id = id;
     }
 
@@ -192,7 +185,7 @@ public class TopicModel extends BaseModel implements Parcelable {
 //        return avatarString;
 //    }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -228,19 +221,7 @@ public class TopicModel extends BaseModel implements Parcelable {
         this.last_touched = last_touched;
     }
 
-//    public void setAuthor(String author) {
-//        this.author = author;
-//    }
-
-//    public void setTitle(String nodeTitle) {
-//        this.nodeTitle = nodeTitle;
-//    }
-
-//    public void setAvatarString(String avatarString) {
-//        this.avatarString = avatarString;
-//    }
-
-    public long getId() {
+    public String getId() {
         return id;
     }
 

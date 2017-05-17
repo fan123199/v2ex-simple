@@ -20,5 +20,5 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <include layout="@layout/footer_reply_new"/>
+    <include layout="@layout/footer_reply"/>
 </LinearLayout>

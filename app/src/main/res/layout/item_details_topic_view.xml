@@ -22,7 +22,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:textAppearance="@style/MyTitleTextStyle"
+            android:textAppearance="@style/Theme.V2ex.TitleTextStyle"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
