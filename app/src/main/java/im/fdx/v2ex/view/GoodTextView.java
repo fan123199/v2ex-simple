@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.HandlerThread;
 import android.support.v4.content.ContextCompat;
+import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -35,6 +36,8 @@ import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
+
+import org.xml.sax.XMLReader;
 
 import java.io.IOException;
 import java.util.List;
@@ -232,9 +235,9 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
                     );
 
 
-                    int targetWidth = bitmap.getWidth();
-                    ;
-                    int targetHeight = bitmap.getHeight();
+                    int targetWidth = ViewUtil.getScreenSize()[1] - ViewUtil.dp2px(36);
+                    int targetHeight;
+
 
                     int minWidth = ViewUtil.dp2px(12);
                     if (bitmap.getWidth() > targetWidth) {
@@ -243,6 +246,9 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
                     } else if (bitmap.getWidth() < minWidth) {
                         targetWidth = minWidth;
                         targetHeight = (int) (targetWidth * (double) bitmap.getHeight() / (double) bitmap.getWidth());
+                    } else {
+                        targetWidth = bitmap.getWidth();
+                        targetHeight = bitmap.getHeight();
                     }
 
                     Bitmap result = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true); //压缩
@@ -331,4 +337,50 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
             return key;
         }
     }
+
+
+    private class CustomImageSpan extends ImageSpan {
+        public CustomImageSpan(Context context, Bitmap b) {
+            super(context, b);
+        }
+
+        public CustomImageSpan(Context context, Bitmap b, int verticalAlignment) {
+            super(context, b, verticalAlignment);
+        }
+
+        public CustomImageSpan(Drawable d) {
+            super(d);
+        }
+
+        public CustomImageSpan(Drawable d, int verticalAlignment) {
+            super(d, verticalAlignment);
+        }
+
+        public CustomImageSpan(Drawable d, String source) {
+            super(d, source);
+        }
+
+        public CustomImageSpan(Drawable d, String source, int verticalAlignment) {
+            super(d, source, verticalAlignment);
+        }
+
+        public CustomImageSpan(Context context, Uri uri) {
+            super(context, uri);
+        }
+
+        public CustomImageSpan(Context context, Uri uri, int verticalAlignment) {
+            super(context, uri, verticalAlignment);
+        }
+
+        public CustomImageSpan(Context context, int resourceId) {
+            super(context, resourceId);
+        }
+
+        public CustomImageSpan(Context context, int resourceId, int verticalAlignment) {
+            super(context, resourceId, verticalAlignment);
+        }
+
+
+    }
 }
+

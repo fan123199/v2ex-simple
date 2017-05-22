@@ -101,7 +101,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             mainHolder.tvContent.setSelected(true);
             mainHolder.tvContent.setGoodText(topic.getContent_rendered());
             Log.i(TAG, topic.getContent_rendered());
-            Log.i(TAG, topic.getContent());
+//            Log.i(TAG, topic.getContent());
 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 //                mainHolder.tvContent.setTransitionName("header");
 //            }
@@ -172,20 +172,17 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener);
                     }
                 });
-                itemVH.tvReply.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        reply(replyItem);
-                    }
-                });
+                itemVH.tvReply.setOnClickListener(v -> reply(replyItem));
             }
 
                 itemVH.tvReplyTime.setText(TimeUtil.getRelativeTime(replyItem.getCreated()));
                 itemVH.tvReplier.setText(replyItem.getMember().getUsername());
                 itemVH.tvThanks.setText(String.valueOf(replyItem.getThanks()));
+
+            itemVH.tvThanks.setOnClickListener(v -> thank(replyItem, itemVH));
                 itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
 
-                XLog.w(replyItem.getContent_rendered());
+            XLog.i(replyItem.getContent_rendered());
                 itemVH.tvRow.setText(String.format("#%s", String.valueOf(position)));
                 Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
                 itemVH.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
@@ -226,13 +223,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             public void onResponse(Call call, Response response) throws IOException {
 
                 if (response.code() == 200) {
-                    ((Activity) mContext).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            HintUI.t(mContext, "感谢成功");
-                            itemVH.tvThanks.setText(String.format(mContext.getResources().
-                                    getString(R.string.show_thanks), replyItem.getThanks() + 1));
-                        }
+                    ((Activity) mContext).runOnUiThread(() -> {
+                        HintUI.t(mContext, "感谢成功");
+                        itemVH.tvThanks.setText(String.valueOf(replyItem.getThanks() + 1));
                     });
                 } else {
                     NetManager.dealError(mContext, response.code());
