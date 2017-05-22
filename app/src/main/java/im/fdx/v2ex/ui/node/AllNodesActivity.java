@@ -57,7 +57,7 @@ public class AllNodesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 

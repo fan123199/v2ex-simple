@@ -179,13 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         fab = (FloatingActionButton) findViewById(R.id.fab_main);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, NewTopicActivity.class));
-
-            }
-        });
+        fab.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, NewTopicActivity.class)));
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (MyApp.getInstance().isLogin()) {
@@ -282,13 +276,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tvMyName.setText(username);
         CircleImageView ivMyAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar);
 //        ivMyAvatar.setImageUrl(avatar, VolleyHelper.getInstance().getImageLoader());
-        ivMyAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, MemberActivity.class);
-                intent.putExtra(Keys.KEY_USERNAME, username);
-                startActivity(intent);
-            }
+        ivMyAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MemberActivity.class);
+            intent.putExtra(Keys.KEY_USERNAME, username);
+            startActivity(intent);
         });
 
         Picasso.with(MainActivity.this).load(avatar).into(ivMyAvatar);
@@ -430,8 +421,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     private void dailyCheck() {
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(DAILY_CHECK).get().build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -476,7 +467,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void postDailyCheck(String once) {
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(HTTPS_V2EX_BASE + "/mission/daily/redeem?once=" + once)
                 .build()).enqueue(new Callback() {
             @Override

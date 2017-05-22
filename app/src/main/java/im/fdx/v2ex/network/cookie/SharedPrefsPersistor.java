@@ -14,6 +14,8 @@ import okhttp3.Cookie;
 
 /**
  * Created by fdx on 2017/3/16.
+ *
+ * 保存cookie 到 preference
  */
 
 public class SharedPrefsPersistor implements CookiePersistor {

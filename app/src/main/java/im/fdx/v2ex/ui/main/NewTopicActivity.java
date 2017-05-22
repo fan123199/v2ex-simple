@@ -37,9 +37,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static android.R.attr.action;
-import static android.R.attr.type;
-import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
 
 public class NewTopicActivity extends AppCompatActivity {
 
@@ -99,7 +96,7 @@ public class NewTopicActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 NetManager.dealError(NewTopicActivity.this);
@@ -191,8 +188,8 @@ public class NewTopicActivity extends AppCompatActivity {
 
     private void postNew() {
 
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url("https://www.v2ex.com/new")
                 .build()).enqueue(new Callback() {
             @Override
@@ -230,8 +227,8 @@ public class NewTopicActivity extends AppCompatActivity {
                         .add("once", once) //done
                         .build();
 
-                HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                        .headers(baseHeaders)
+                HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                        .headers(HttpHelper.INSTANCE.getBaseHeaders())
                         .url("https://www.v2ex.com/new")
                         .post(requestBody)
                         .build()).enqueue(new Callback() {

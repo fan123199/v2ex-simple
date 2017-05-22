@@ -36,7 +36,6 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public void setNumber(int num) {
         this.number = num;
-
     }
 
 
@@ -55,15 +54,15 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        NotificationViewHolder nholder = (NotificationViewHolder) holder;
+        NotificationViewHolder notiHolder = (NotificationViewHolder) holder;
 
         if (position >= number) {
-            nholder.itemView.setBackgroundColor(mContext.getResources().getColor(R.color.list_background));
+            notiHolder.itemView.setBackgroundColor(mContext.getResources().getColor(R.color.list_background));
         }
 
         final NotificationModel model = mModels.get(position);
 
-        nholder.itemView.setOnClickListener(new View.OnClickListener() {
+        notiHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentDetail = new Intent(mContext, DetailsActivity.class);
@@ -73,26 +72,23 @@ public class NotificationAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         });
 
 
-        nholder.tvAction.setText(model.getType());
+        notiHolder.tvAction.setText(model.getType());
 
         if (TextUtils.isEmpty(model.getContent())) {
-            nholder.tvContent.setVisibility(View.GONE);
+            notiHolder.tvContent.setVisibility(View.GONE);
         } else {
-            nholder.tvContent.setText(model.getContent());
+            notiHolder.tvContent.setText(model.getContent());
         }
 
-        Picasso.with(mContext).load(model.getMember().getAvatarNormalUrl()).into(nholder.ivAvatar);
-        nholder.tvUsername.setText(model.getMember().getUsername());
-        nholder.tvTime.setText(model.getTime());
-        nholder.tvTopicTitle.setText(model.getTopic().getTitle());
+        Picasso.with(mContext).load(model.getMember().getAvatarNormalUrl()).into(notiHolder.ivAvatar);
+        notiHolder.tvUsername.setText(model.getMember().getUsername());
+        notiHolder.tvTime.setText(model.getTime());
+        notiHolder.tvTopicTitle.setText(model.getTopic().getTitle());
 
-        nholder.ivAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, MemberActivity.class);
-                intent.putExtra(Keys.KEY_USERNAME, model.getMember().getUsername());
-                mContext.startActivity(intent);
-            }
+        notiHolder.ivAvatar.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, MemberActivity.class);
+            intent.putExtra(Keys.KEY_USERNAME, model.getMember().getUsername());
+            mContext.startActivity(intent);
         });
 
     }

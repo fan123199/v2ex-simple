@@ -7,6 +7,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.elvishew.xlog.XLog;
 
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -36,6 +37,10 @@ public class MoreReplyService extends IntentService {
         if (intent == null) {
             return;
         }
+        getAllMore(intent);
+    }
+
+    private void getAllMore(@NotNull Intent intent) {
         int totalPage = intent.getIntExtra("page", -1);
         long topicId = intent.getLongExtra("topic_id", -1);
         boolean isToBottom = intent.getBooleanExtra("bottom", false);
@@ -47,8 +52,8 @@ public class MoreReplyService extends IntentService {
 
         try {
             for (int i = 2; i <= totalPage; i++) {
-                okhttp3.Response response = HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                        .headers(HttpHelper.baseHeaders)
+                okhttp3.Response response = HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                        .headers(HttpHelper.INSTANCE.getBaseHeaders())
                         .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + i)
                         .build()).execute();
                 Document body = Jsoup.parse(response.body().string());
@@ -70,5 +75,43 @@ public class MoreReplyService extends IntentService {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void getOneMore(@NotNull Intent intent) {
+
+        int totalPage = intent.getIntExtra("page", -1);
+        long topicId = intent.getLongExtra("topic_id", -1);
+        int currentPage = intent.getIntExtra("currentPage", -1);
+
+        XLog.tag("DetailsActivity").d(totalPage + "<----totalPage | topicId :" + topicId + " |current :  " + currentPage);
+        if (totalPage == -1 || topicId == -1L || currentPage == -1) {
+            return;
+        }
+
+        try {
+            okhttp3.Response response = HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                    .headers(HttpHelper.INSTANCE.getBaseHeaders())
+                    .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + currentPage)
+                    .build()).execute();
+            Document body = Jsoup.parse(response.body().string());
+            ArrayList<ReplyModel> replies = NetManager.parseResponseToReplay(body);
+            String token = NetManager.parseToVerifyCode(body);
+
+            XLog.tag("DetailsActivity").d(replies.get(0).getContent());
+            Intent it = new Intent();
+            it.setAction("im.fdx.v2ex.reply");
+            it.putExtra("token", token);
+            it.putParcelableArrayListExtra("replies", replies);
+
+            if (currentPage == totalPage) {
+                it.putExtra("bottom", true);
+            }
+            LocalBroadcastManager.getInstance(this).sendBroadcast(it);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

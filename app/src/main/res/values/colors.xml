@@ -30,5 +30,6 @@
     <color name="hint">#89000000</color>
 
     <color name="divider_color">#e0e0e0</color>
+    <color name="transparent">#00ffffff</color>
 
 </resources>

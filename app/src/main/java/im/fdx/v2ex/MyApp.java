@@ -7,7 +7,8 @@ import android.util.Log;
 
 import com.elvishew.xlog.LogLevel;
 import com.elvishew.xlog.XLog;
-import com.squareup.picasso.Picasso;
+
+import im.fdx.v2ex.utils.Keys;
 
 /**
  * Created by fdx on 2015/8/16.
@@ -40,7 +41,7 @@ public class MyApp extends Application {
                 : LogLevel.NONE);
         PreferenceManager.setDefaultValues(this, R.xml.preference, false);
         SharedPreferences mDefaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        isLogin = mDefaultSharedPrefs.getBoolean("is_login", false);
+        isLogin = mDefaultSharedPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false);
 
         Log.d("MyApp", "onCreate\n"
                 + "\nisLogin:" + isLogin);

@@ -71,4 +71,5 @@
     <string name="you_have_notifications">你有%d条未读消息</string>
     <string name="favor">收藏</string>
     <string name="my_follow">我的关注</string>
+    <string name="unFavor">取消收藏</string>
 </resources>

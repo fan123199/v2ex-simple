@@ -9,7 +9,9 @@
       <w>paddings</w>
       <w>persistor</w>
       <w>referer</w>
+      <w>sharedpreference</w>
       <w>topicid</w>
+      <w>unfavor</w>
       <w>unfavorite</w>
       <w>webview</w>
     </words>

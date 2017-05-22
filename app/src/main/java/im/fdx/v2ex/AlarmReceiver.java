@@ -40,7 +40,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private void notificationUnRead(final Context context) {
         String url = "https://www.v2ex.com/my/following";
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(url).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

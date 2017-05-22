@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.HandlerThread;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
@@ -32,11 +33,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+import com.squareup.picasso.Transformation;
+
+import java.io.IOException;
+import java.util.List;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.ContentUtils;
+import im.fdx.v2ex.utils.ViewUtil;
 
 
 /**
@@ -49,7 +56,6 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
     public static final int REQUEST_CODE = 200;
     private Context context;
     private static final String TAG = GoodTextView.class.getSimpleName();
-    private MyImageGetter imageGetter;
 
 
     public GoodTextView(Context context) {
@@ -81,10 +87,9 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         }
         setLinkTextColor(ContextCompat.getColor(context, R.color.primary));
 
-//        XLog.tag(TAG).d( "early in setGoodTest" + getWidth());
         String formContent = ContentUtils.format(text);
         final Spanned spannedText;
-        imageGetter = new MyImageGetter();
+        MyImageGetter imageGetter = new MyImageGetter();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             spannedText = Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, imageGetter, null);
         } else {
@@ -105,44 +110,19 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
             int spanStart = htmlSpannable.getSpanStart(urlSpan);
             int spanEnd = htmlSpannable.getSpanEnd(urlSpan);
-            URLSpan newUrlSpan = new UrlSpanNoUnderline(urlSpan.getURL()) {
-                @Override
-                public void onClick(View widget) {
-                    if (false) {
-                        Context context = widget.getContext();
-                        Intent intent = new Intent(context, WebViewActivity.class);
-                        intent.putExtra("url", getURL());
-                        try {
-                            context.startActivity(intent);
-                        } catch (ActivityNotFoundException e) {
-                            Log.w("URLSpan", "Activity was not found for intent, " + intent.toString());
-                        }
-                    }
-
-                    CustomChrome.getInstance(context).load(getURL());
-                }
-            };
+            URLSpan newUrlSpan = new UrlSpanNoUnderline(urlSpan.getURL());
 
             htmlSpannable.removeSpan(urlSpan);
-
             htmlSpannable.setSpan(newUrlSpan, spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-
 
         }
 
 
-
-//        final List<String> imageUrls = new ArrayList<>();
-//        List<String> imagePositions = new ArrayList<>();
         for (final ImageSpan imageSpan : imageSpans) {
 
             final String imageUrl = imageSpan.getSource();
             final int start = htmlSpannable.getSpanStart(imageSpan);
             final int end = htmlSpannable.getSpanEnd(imageSpan);
-
-//            XLog.tag("GoodTextView-fdx").d(imageSpan.getSource());
-//            XLog.tag("GoodTextView-fdx").d(start + "|" + end);
-
 
             //生成自定义可点击的span
             ClickableSpan newClickableSpan = new ClickableSpan() {
@@ -165,6 +145,7 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
             }
             htmlSpannable.setSpan(newClickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
+
         setText(htmlSpannable);
         //不设置这一句，点击图片会跑动。
         setMovementMethod(LinkMovementMethod.getInstance());
@@ -228,109 +209,65 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
     private class MyImageGetter implements Html.ImageGetter {
 
         @Override
-        public Drawable getDrawable(final String source) {
+        public Drawable getDrawable(String source) {
+
+
             //怪不得一样的图片。放在了类里。
             final BitmapHolder bitmapHolder = new BitmapHolder();
-            Point point = new Point();
-            ((Activity) context).getWindowManager().getDefaultDisplay().getSize(point);
-            final int theMaxWith = point.x - 100;
-            final int theMaxHeight = point.y - 100;
-            final BitmapDrawable bitmapDrawable = new BitmapDrawable();
             Log.i(TAG, " Image url: " + source);
-            ImageLoader.ImageContainer response = VolleyHelper.getInstance().getImageLoader()
-                    .get(source, new ImageLoader.ImageListener() {
+
+            Target target = new Target() {
                 @Override
-                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                    if (response != null) {
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+
+                    XLog.tag(TAG).d("bp.getByteCount() " + bitmap.getByteCount()
+                            + "\nbp.getAllocationByteCount() = " + bitmap.getAllocationByteCount()
+                            + "\nbp.getWidth() = " + bitmap.getWidth()
+                            + "\nbp.getHeight() =" + bitmap.getHeight()
+                            + "\nbp.getDensity() = " + bitmap.getDensity()
+                            + "\ngetWidth() = " + GoodTextView.this.getWidth()
+                            + "\ngetHeight() = " + GoodTextView.this.getHeight()
+                            + "\ngetMeasuredWidth()" + getMeasuredWidth()
+                            + "\ngetMeasuredHeight()" + getMeasuredHeight()
+                    );
 
 
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inSampleSize = 2;
+                    int targetWidth = bitmap.getWidth();
+                    ;
+                    int targetHeight = bitmap.getHeight();
 
-
-                        Bitmap bp = response.getBitmap();
-
-
-                        if (bp != null) {
-
-                            XLog.tag(TAG).d("bp.getByteCount() " + bp.getByteCount()
-                                    + "\nbp.getAllocationByteCount() = " + bp.getAllocationByteCount()
-                                    + "\nbp.getWidth() = " + bp.getWidth()
-                                    + "\nbp.getHeight() =" + bp.getHeight()
-                                    + "\nbp.getDensity() = " + bp.getDensity()
-                                    + "\ngetWidth() = " + GoodTextView.this.getWidth()
-                                    + "\ngetHeight() = " + GoodTextView.this.getHeight()
-                                    + "\ngetMeasuredWidth()" + getMeasuredWidth()
-                                    + "\ngetMeasuredHeight()" + getMeasuredHeight()
-                            );
-
-                            Drawable dr = new BitmapDrawable(getResources(), bp);
-
-
-                            int bpheight;
-                            int bpwidth;
-
-                            if (bp.getWidth() > theMaxWith) {
-                                bpwidth = theMaxWith;
-                                bpheight = (int) (bp.getHeight() * ((float) theMaxWith / bp.getWidth()));
-                            } else {
-                                bpheight = bp.getHeight();
-                                bpwidth = bp.getWidth();
-                            }
-
-                            dr.setBounds(0, 0, bpwidth, bpheight);
-                            bitmapHolder.setDrawable(dr);
-                            bitmapHolder.setBounds(0, 0, bpwidth, bpheight);
-
-                            //很关键，然而我一无所知,必须setText
-                            setText(getText());
-                            Log.i(TAG, "got Image");
-                        }
+                    int minWidth = ViewUtil.dp2px(12);
+                    if (bitmap.getWidth() > targetWidth) {
+                        targetWidth = ViewUtil.getScreenSize()[1] - ViewUtil.dp2px(36);
+                        targetHeight = (int) (targetWidth * (double) bitmap.getHeight() / (double) bitmap.getWidth());
+                    } else if (bitmap.getWidth() < minWidth) {
+                        targetWidth = minWidth;
+                        targetHeight = (int) (targetWidth * (double) bitmap.getHeight() / (double) bitmap.getWidth());
                     }
+
+                    Bitmap result = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true); //压缩
+                    Drawable drawable = new BitmapDrawable(getContext().getResources(), result);
+                    drawable.setBounds(0, 0, result.getWidth(), result.getHeight());
+                    bitmapHolder.setBounds(0, 0, result.getWidth(), result.getHeight());
+
+                    bitmapHolder.setDrawable(drawable);
+                    setText(getText());
                 }
 
                 @Override
-                public void onErrorResponse(VolleyError error) {
-
+                public void onBitmapFailed(Drawable errorDrawable) {
                 }
-                    }, theMaxWith, theMaxHeight, ImageView.ScaleType.FIT_CENTER);
 
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            };
+
+            Picasso.with(getContext()).load(source).into(target);
             return bitmapHolder;
         }
     }
 
-    private class NewGetter implements Html.ImageGetter {
-        @Override
-        public Drawable getDrawable(String source) {
-            return null;
-        }
-    }
-
-    private class task extends AsyncTask<GoodTextView, Void, Bitmap> {
-
-        String source;
-        Context context;
-
-        public task(Context context, String source) {
-            this.context = context;
-            this.source = source;
-        }
-
-        @Override
-        protected Bitmap doInBackground(GoodTextView... params) {
-
-            try {
-                return Picasso.with(this.context).load(source).get();
-            } catch (Exception e) {
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmap) {
-            super.onPostExecute(bitmap);
-        }
-    }
 
     @SuppressLint("ParcelCreator")
     public class UrlSpanNoUnderline extends URLSpan {
@@ -347,6 +284,51 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
             super.updateDrawState(ds);
             ds.setUnderlineText(false);
         }
+
+        @Override
+        public void onClick(View widget) {
+            CustomChrome.getInstance(context).load(getURL());
+        }
+
     }
 
+
+    /**
+     * 缩放图片
+     */
+    private class ImageTransform implements Transformation {
+
+        private String key = "ImageTransform";
+
+        @Override
+        public Bitmap transform(Bitmap source) {
+            int targetWidth = ViewUtil.getScreenSize()[1] - ViewUtil.dp2px(36);
+            Log.i(TAG, targetWidth + "targetWidth");
+            if (source.getWidth() == 0) {
+                return source;
+            }
+            //如果图片大于设置的宽度，做处理
+            if (source.getWidth() > targetWidth) {
+                int targetHeight = (int) (targetWidth * (double) source.getHeight() / (double) source.getWidth());
+
+                if (targetHeight != 0 && targetWidth != 0) {
+                    Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, true); //true会压缩
+                    if (result != source) {
+                        // Same bitmap is returned if sizes are the same
+                        source.recycle();
+                    }
+                    return result;
+                } else {
+                    return source;
+                }
+            } else {
+                return source;
+            }
+        }
+
+        @Override
+        public String key() {
+            return key;
+        }
+    }
 }

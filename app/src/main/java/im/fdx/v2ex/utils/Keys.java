@@ -4,6 +4,7 @@ package im.fdx.v2ex.utils;
  * Created by a708 on 15-8-18.
  * 用于全局静态常量，用接口的好处不清楚。
  */
+@SuppressWarnings("unused")
 public class Keys {
 
 
@@ -32,4 +33,7 @@ public class Keys {
     public static final String ACTION_START_NOTIFICATION = "im.fdx.v2ex.notification";
     public static final String ACTION_PREFERENCE_CHANGED = "im.fdx.v2ex.preference";
     public static final String FAVOR_FRAGMENT_TYPE = "type";
+
+
+    public static final String PREF_KEY_IS_LOGIN = "is_login";
 }

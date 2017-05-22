@@ -205,7 +205,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void removeCookie() {
-            HttpHelper.myCookieJar.clear();
+            HttpHelper.INSTANCE.getMyCookieJar().clear();
         }
 
         @Override
@@ -242,7 +242,7 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                     break;
                 case "pref_background_msg":
-//不需要发送广播了，通过sharedpreference就可以获得变化了
+                    //不需要发送广播了，通过sharedpreference就可以获得变化了
                     break;
                 case "pref_msg_period":
                     listPreference.setSummary(listPreference.getEntry());

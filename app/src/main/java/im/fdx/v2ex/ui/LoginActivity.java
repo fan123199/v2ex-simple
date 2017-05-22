@@ -76,12 +76,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (actionBar != null) {
                 actionBar.setDisplayHomeAsUpEnabled(true);
             }
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
+            toolbar.setNavigationOnClickListener(v -> onBackPressed());
         }
 
         etUsername = (TextInputEditText) findViewById(R.id.input_username);
@@ -139,11 +134,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void getLoginData() {
-        Request requestToGetOnce = new Request.Builder().headers(HttpHelper.baseHeaders)
+        Request requestToGetOnce = new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(SIGN_IN_URL)
                 .build();
 
-        HttpHelper.OK_CLIENT.newCall(requestToGetOnce).enqueue(new Callback() {
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(requestToGetOnce).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.e("FDX", "error in get login page");
@@ -183,14 +178,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 .add("once", onceCode)
                 .build();
 
-        final Request request = new Request.Builder().headers(HttpHelper.baseHeaders)
+        final Request request = new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(SIGN_IN_URL)
                 .header("Origin", HTTPS_V2EX_BASE)
                 .header("Referer", SIGN_IN_URL)
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .post(requestBody)
                 .build();
-        HttpHelper.OK_CLIENT.newCall(request).enqueue(new Callback() {
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(request).enqueue(new Callback() {
 
 
             @Override
@@ -250,8 +245,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void goMyHomePage() {
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(API_USER + "?username=" + username).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

@@ -61,17 +61,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
     private AdapterCallback callback;
-    private TopicModel mHeader;
-    private List<ReplyModel> mReplyList = new ArrayList<>();
     private Context mContext;
     private List<BaseModel> mAllList;
     private String verifyCode;
-
-    public DetailsAdapter(Context context, TopicModel header, List<ReplyModel> replyList) {
-        mContext = context;
-        mHeader = header;
-        mReplyList = replyList;
-    }
 
     public DetailsAdapter(Context context, List<BaseModel> allList, AdapterCallback callback) {
         mContext = context;
@@ -85,10 +77,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         if (viewType == TYPE_HEADER) {
             View view = LayoutInflater.from(mContext).inflate(R.layout.item_topic_view, parent, false);
-            RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,
-                    RelativeLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 0, 0, 30);
-            view.setLayoutParams(lp);
+            view.setElevation(0);
 
             return new TopicsRVAdapter.MainViewHolder(view);
         } else if (viewType == TYPE_ITEM) {
@@ -166,6 +155,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                                 switch (item.getItemId()) {
                                     case R.id.menu_reply:
                                         reply(replyItem);
+                                        break;
                                     case R.id.menu_thank:
                                         thank(replyItem, itemVH);
                                         break;
@@ -222,8 +212,8 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         RequestBody body = new FormBody.Builder().add("t", verifyCode).build();
 
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url("https://www.v2ex.com/thank/reply/" + replyItem.getId())
                 .post(body)
                 .build()).enqueue(new Callback() {

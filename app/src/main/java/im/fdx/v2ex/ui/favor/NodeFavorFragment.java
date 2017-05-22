@@ -65,8 +65,8 @@ public class NodeFavorFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         swipe.setRefreshing(true);
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(url)
                 .build()).enqueue(new Callback() {
             @Override

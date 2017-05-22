@@ -6,11 +6,14 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.support.annotation.IntegerRes;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.elvishew.xlog.XLog;
 
 import im.fdx.v2ex.R;
 
@@ -27,6 +30,19 @@ public class ViewUtil {
         DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
         float dp = px / (metrics.densityDpi / 160f);
         return Math.round(dp);
+    }
+
+
+    public static int[] getScreenSize() {
+        DisplayMetrics metrics = Resources.getSystem().getDisplayMetrics();
+
+        int height = metrics.heightPixels;
+        int width = metrics.widthPixels;
+
+        XLog.i("height " + height + "width" + width);
+
+
+        return new int[]{height, width};
     }
 
     public static int dp2px(int dp) {

@@ -85,8 +85,8 @@ public class NotificationActivity extends AppCompatActivity {
 
     private void fetchNotification() {
         String url = "https://www.v2ex.com/notifications";
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(url)
                 .build()).enqueue(new Callback() {
             @Override

@@ -236,7 +236,7 @@ public class MemberActivity extends AppCompatActivity {
             return;
         }
         String webUrl = "https://www.v2ex.com/member/" + username;
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(webUrl)
                 .get().build()).enqueue(new Callback() {
 
@@ -324,7 +324,7 @@ public class MemberActivity extends AppCompatActivity {
     }
 
     private void getUserInfoAPI(String urlUserInfo) {
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(urlUserInfo).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -341,7 +341,7 @@ public class MemberActivity extends AppCompatActivity {
 
     private void getTopicsByUsernameAPI() {
 
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(urlTopic).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -494,7 +494,7 @@ public class MemberActivity extends AppCompatActivity {
 
     private void switchFollowAndRefresh(boolean isFollowed) {
         if (isFollowed) {
-            HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+            HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                     .url(NetManager.HTTPS_V2EX_BASE + "/un" + followOfOnce)
                     .build()).enqueue(new Callback() {
                 @Override
@@ -518,7 +518,7 @@ public class MemberActivity extends AppCompatActivity {
                 }
             });
         } else {
-            HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+            HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                     .url(NetManager.HTTPS_V2EX_BASE + "/" + followOfOnce)
                     .build()).enqueue(new Callback() {
                 @Override
@@ -546,8 +546,8 @@ public class MemberActivity extends AppCompatActivity {
 
     private void switchBlockAndRefresh(Boolean isBlocked) {
         if (isBlocked) {
-            HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                    .headers(HttpHelper.baseHeaders)
+            HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                    .headers(HttpHelper.INSTANCE.getBaseHeaders())
                     .url(HTTPS_V2EX_BASE + "/un" + blockOfT).build()).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -570,8 +570,8 @@ public class MemberActivity extends AppCompatActivity {
                 }
             });
         } else {
-            HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                    .headers(HttpHelper.baseHeaders)
+            HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                    .headers(HttpHelper.INSTANCE.getBaseHeaders())
                     .url(HTTPS_V2EX_BASE + "/" + blockOfT).build()).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {

@@ -34,7 +34,6 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     ;
     private LayoutInflater mInflater;
     private List<TopicModel> mTopicList = new ArrayList<>();
-    private ImageLoader mImageLoader;
     private Context mContext;
 
     public void setNodeClickable(boolean nodeClickable) {
@@ -47,7 +46,6 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public TopicsRVAdapter(Context activity, List<TopicModel> topicList) {
         mContext = activity;
         mInflater = LayoutInflater.from(activity);
-        mImageLoader = VolleyHelper.getInstance().getImageLoader();
         mTopicList = topicList;
     }
 

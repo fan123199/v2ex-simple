@@ -136,6 +136,7 @@
     <string name="favor">Favor</string>
 
     <string name="my_follow">My Follow</string>
+    <string name="unFavor">unfavor</string>
 
     <string-array name="j" translatable="false">
         <item>一颗赛艇</item>

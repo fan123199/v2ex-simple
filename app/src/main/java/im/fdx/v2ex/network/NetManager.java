@@ -2,17 +2,9 @@ package im.fdx.v2ex.network;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -22,7 +14,6 @@ import com.android.volley.ParseError;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
-import com.elvishew.xlog.XLog;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
@@ -44,7 +35,6 @@ import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeUtil;
-import im.fdx.v2ex.utils.ViewUtil;
 
 import static java.lang.Integer.parseInt;
 
@@ -59,10 +49,16 @@ public class NetManager {
     private static final String TAG = NetManager.class.getSimpleName();
 
     public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
+    @SuppressWarnings("unused")
     public static final String HTTP_V2EX_BASE = "http://www.v2ex.com";
+
+    @SuppressWarnings("unused")
     public static final String API_HOT = HTTPS_V2EX_BASE + "/api/topics/hot.json";
+    @SuppressWarnings("unused")
     public static final String API_LATEST = HTTPS_V2EX_BASE + "/api/topics/latest.json";
+
     //以下,接受参数： name: 节点名
+    @SuppressWarnings("unused")
     public static final String API_NODE = HTTPS_V2EX_BASE + "/api/nodes/show.json";
 
 
@@ -80,16 +76,19 @@ public class NetManager {
     //以下接收参数：
     //     topic_id: 主题ID
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
+    @SuppressWarnings("unused")
     public static final String API_REPLIES = "https://www.v2ex.com/api/replies/show.json";
 
-    public static final int MY_TIMEOUT_MS = 4000;
+    static final int MY_TIMEOUT_MS = 10 * 1000;
 
-    public static final int MY_MAX_RETRIES = 1;
+    static final int MY_MAX_RETRIES = 1;
+
     public static final String URL_ALL_NODE =HTTPS_V2EX_BASE + "/api/nodes/all.json";
-    public static final int FROM_HOME = 0;
-    public static final int FROM_NODE = 1;
+    private static final int FROM_HOME = 0;
+    private static final int FROM_NODE = 1;
 
-    public static void handleVolleyError(Context context,VolleyError error) {
+    @SuppressWarnings("unused")
+    public static void handleVolleyError(Context context, VolleyError error) {
         if (error instanceof TimeoutError || error instanceof NoConnectionError) {
             Log.e(TAG,context.getString(R.string.error_timeout));
             HintUI.t(context,context.getString(R.string.app_name) + ": " + context.getString(R.string.error_timeout));
@@ -164,7 +163,6 @@ public class NetManager {
                 String nodeTitle = "";
                 if (strHeader.contains("›")) {
                     nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
-//                    XLog.tag(TAG).d("nodeTitle: " + nodeTitle);
                 }
 
                 Elements elements = html.head().getElementsByTag("script");
@@ -191,7 +189,6 @@ public class NetManager {
 
 
             String smallItem = item.getElementsByClass("small fade").first().text();
-//            XLog.d("small: " + smallItem);
             long created;
             if (!smallItem.contains("最后回复")) {
                 created = -1L;
@@ -233,7 +230,6 @@ public class NetManager {
         String nodeTitle = "";
         if (strHeader.contains("›")) {
             nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
-            XLog.tag(TAG).d("nodeTitle: " + nodeTitle);
         }
         if (header.getElementsByTag("img").first() != null) {
             String avatarLarge = header.getElementsByTag("img").first().attr("src");
@@ -247,9 +243,6 @@ public class NetManager {
         String strScript = script.html();
         String nodeName = strScript.split("\"")[1];
 
-//        Log.w("node", "nodeName" + nodeName);
-//
-//
         nodeModel.setName(nodeName);
         nodeModel.setTitle(nodeTitle);
         nodeModel.setTopics(Integer.parseInt(number));
@@ -258,30 +251,31 @@ public class NetManager {
         return nodeModel;
     }
 
-    public static int getTotalPage(Element body) {
+    @SuppressWarnings("unused")
+    public static int[] getPageValue(Element body) {
 
         int currentPage = 0;
         int totalPage = 0;
         Element pageInput = body.getElementsByClass("page_input").first();
         if (pageInput == null) {
-            return -1;
+            return new int[]{-1, -1};
 
         }
         try {
             currentPage = Integer.parseInt(pageInput.attr("value"));
             totalPage = Integer.parseInt(pageInput.attr("max"));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
 
         }
-        return totalPage;
+        return new int[]{currentPage, totalPage};
 
 
     }
 
     /**
-     * @param body
+     * @param body 网页
      * @param topicId todo 可以省略
-     * @return
+     * @return TopicModel
      */
     @NonNull
     public static TopicModel parseResponseToTopic(Element body, String topicId) {
@@ -296,7 +290,6 @@ public class NetManager {
                 first().getElementsByClass("gray").first().ownText(); // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
         String time = createdUnformed.split("·")[1];
-        XLog.tag(TAG).d(createdUnformed + "||| " + time);
         long created = TimeUtil.toLong(time);
 //long created = -1L;
 
@@ -316,7 +309,6 @@ public class NetManager {
             }
         }
 
-//        XLog.tag(TAG).d("replyNum  = " + replyNum);
         int replies;
         if (!hasReply) {
             replies = 0;
@@ -375,7 +367,6 @@ public class NetManager {
             String username = item.getElementsByTag("strong").first().
                     getElementsByAttributeValueStarting("href", "/member/").first().text();
 
-//            XLog.d(avatar);
             memberModel.setAvatar_large(avatar);
             memberModel.setAvatar_normal(avatar.replace("large", "normal"));
             memberModel.setUsername(username);
@@ -389,9 +380,7 @@ public class NetManager {
             }
 
             String createdOriginal = item.getElementsByClass("fade small").text();
-//            XLog.i(createdOriginal);
             Element replyContent = item.getElementsByClass("reply_content").first();
-//            replyModel.setCreated(-1L);
             replyModel.setCreated(TimeUtil.toLong(createdOriginal));
             replyModel.setMember(memberModel);
             replyModel.setThanks(thanks);
@@ -409,20 +398,18 @@ public class NetManager {
     public static void dealError(final Context context, final int errorCode) {
 
         if (context instanceof Activity)
-            ((Activity) context).runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    switch (errorCode) {
-                        case -1:
-                            Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                            break;
-                        case 302:
-                            Toast.makeText(context, context.getString(R.string.error_auth_failure), Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                            break;
-                    }
+            ((Activity) context).runOnUiThread(() -> {
+                switch (errorCode) {
+                    case -1:
+                        Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                        break;
+                    case 302:
+
+                        Toast.makeText(context, context.getString(R.string.error_auth_failure), Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                        break;
                 }
             });
     }
@@ -442,21 +429,15 @@ public class NetManager {
     }
 
 
-    /**
-     * @param body
-     * @return token
-     */
     public static String parseToVerifyCode(Element body) {
 
 //        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
         Element element = body.getElementsByClass("topic_buttons").first().getElementsByTag("a").first();
         if (element != null) {
             Pattern p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+");
-//            XLog.tag(TAG).d(element.outerHtml());
 
             Matcher matcher = p.matcher(element.outerHtml());
             if (matcher.find()) {
-//                XLog.tag(TAG).d(matcher.group());
                 return matcher.group();
             }
         }

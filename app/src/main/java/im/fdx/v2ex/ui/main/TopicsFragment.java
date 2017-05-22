@@ -174,7 +174,7 @@ public class TopicsFragment extends Fragment {
 
     private void getTopicsByOK(String requestURL) {
 
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(requestURL)
                 .get()
                 .build()).enqueue(new Callback() {

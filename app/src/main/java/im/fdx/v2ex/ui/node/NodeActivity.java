@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.node;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,7 +43,6 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Request;
 
-import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
 
 
 public class NodeActivity extends AppCompatActivity {
@@ -61,8 +61,7 @@ public class NodeActivity extends AppCompatActivity {
     List<TopicModel> mTopicModels = new ArrayList<>();
     private TopicsRVAdapter mAdapter;
 
-    private static ImageLoader imageloader = VolleyHelper.getInstance().getImageLoader();
-
+    @SuppressLint("HandlerLeak")
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -193,7 +192,7 @@ public class NodeActivity extends AppCompatActivity {
     private void getNodeInfoAndTopicByOK(final String nodeName) {
         String requestURL = NetManager.HTTPS_V2EX_BASE + "/go/" + nodeName;
         XLog.d("url:" + requestURL);
-        OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders).url(requestURL).build()).enqueue(new Callback() {
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders()).url(requestURL).build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 NetManager.dealError(NodeActivity.this);

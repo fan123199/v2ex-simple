@@ -54,8 +54,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-import static im.fdx.v2ex.network.HttpHelper.OK_CLIENT;
-import static im.fdx.v2ex.network.HttpHelper.baseHeaders;
 import static im.fdx.v2ex.network.NetManager.dealError;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
@@ -65,40 +63,42 @@ import static java.lang.Long.parseLong;
 public class DetailsActivity extends AppCompatActivity {
 
 
-    public static final int POSITION_START = 0;
     private static final String TAG = DetailsActivity.class.getSimpleName();
+    public static final int POSITION_START = 0;
     private static final int MSG_OK_GET_TOPIC = 0;
     private static final int MSG_ERROR_AUTH = 1;
     private static final int MSG_ERROR_IO = 2;
     private static final int MSG_GO_TO_BOTTOM = 3;
     private static final int MSG_GET_MORE_REPLY = 4;
 
+    RecyclerView rvDetail;
+    private SwipeRefreshLayout mSwipe;
+    private ImageView ivSend;
+    private EditText etSendReply;
+    private DetailsAdapter mAdapter;
+    private List<BaseModel> mAllContent = new ArrayList<>();
+    private Menu mMenu;
+    private Toolbar toolbar;
+    private ActionBar actionBar;
+
+    private TopicModel topicHeader;
+    private String token;
+    private boolean isFavored;
+    private String mTopicId;
+    private String once;
+    private int currentPage;
+
     private DetailsAdapter.AdapterCallback callback = new DetailsAdapter.AdapterCallback() {
         @Override
         public void onMethodCallback(int type) {
             if (type == 1) {
-
 
             } else if (type == 2) {
                 getMoreRepliesByOrder(1, false);
             }
         }
     };
-    RecyclerView rvDetail;
-    private SwipeRefreshLayout mSwipe;
-    private ImageView ivSend;
-        private EditText etSendReply;
-    private DetailsAdapter mAdapter;
-    private List<BaseModel> mAllContent = new ArrayList<>();
-    private String token;
-    private String mTopicUrl;
-    private Menu mMenu;
-    private boolean isFavored;
-    private String mTopicId;
-    private String once;
-    private TopicModel topicHeader;
-    private Toolbar toolbar;
-    private ActionBar actionBar;
+
     BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -236,25 +236,16 @@ public class DetailsActivity extends AppCompatActivity {
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
-        mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getRepliesPageOne(mTopicId, false);
-            }
-
-        });
+        mSwipe.setOnRefreshListener(() -> getRepliesPageOne(mTopicId, false));
 
         ivSend = (ImageView) findViewById(R.id.iv_send);
         etSendReply = (EditText) findViewById(R.id.et_post_reply);
-        etSendReply.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
+        etSendReply.setOnFocusChangeListener((v, hasFocus) -> {
 
-                XLog.tag(TAG).d("hasFocus" + hasFocus);
-                if (!hasFocus) {
-                    InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-                    inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
+            XLog.tag(TAG).d("hasFocus" + hasFocus);
+            if (!hasFocus) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
             }
         });
 
@@ -273,8 +264,6 @@ public class DetailsActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(s)) {
                     ivSend.setClickable(false);
                     ivSend.setImageResource(R.drawable.ic_send_hint_24dp);
-                    //// TODO: 2017/5/2
-
                 } else {
                     ivSend.setClickable(true);
                     ivSend.setImageResource(R.drawable.ic_send_black_24dp);
@@ -284,7 +273,6 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         parseIntent(getIntent());
-
 
     }
 
@@ -320,9 +308,9 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         getRepliesPageOne(mTopicId, false);
-        mTopicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
+        String topicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
 
-        XLog.tag(TAG).d(mTopicId + ": " + mTopicUrl);
+        XLog.tag(TAG).d("TopicUrl: " + topicUrl);
     }
 
     @Override
@@ -332,8 +320,9 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void getRepliesPageOne(final String topicId, final boolean scrollToBottom) {
+
         mSwipe.setRefreshing(true);
-        OK_CLIENT.newCall(new Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
                 .build()).enqueue(new Callback() {
 
@@ -345,9 +334,9 @@ public class DetailsActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                //权限问题，需要登录
                 int code = response.code();
                 if (code == 302) {
+                    //权限问题，需要登录
                     handler.sendEmptyMessage(MSG_ERROR_AUTH);
                     return;
                 }
@@ -372,37 +361,37 @@ public class DetailsActivity extends AppCompatActivity {
                     isFavored = parseIsFavored(body);
 
                     XLog.tag(TAG).d("isfavored" + String.valueOf(isFavored));
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (isFavored) {
-                                mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_white_24dp);
-                            } else {
-                                mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_border_white_24dp);
-                            }
+                    runOnUiThread(() -> {
+                        if (isFavored) {
+                            mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_white_24dp);
+                            mMenu.findItem(R.id.menu_favor).setTitle(R.string.unFavor);
+                        } else {
+                            mMenu.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_border_white_24dp);
+                            mMenu.findItem(R.id.menu_favor).setTitle(R.string.favor);
                         }
                     });
                 }
 
                 once = NetManager.parseOnce(body);
+
                 mAllContent.clear();
                 mAllContent.add(0, topicHeader);
                 mAllContent.addAll(repliesOne);
 
                 XLog.tag(TAG).d("get first page done, next is get more page");
-                final int totalPage = NetManager.getTotalPage(body);  // [2,3]
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.notifyDataSetChanged();
-                        mSwipe.setRefreshing(false);
-                        if (totalPage == 1 && scrollToBottom) {
-                            handler.sendEmptyMessage(MSG_GO_TO_BOTTOM);
-                        }
+
+                final int totalPage = NetManager.getPageValue(body)[1];  // [2,3]
+
+                currentPage = NetManager.getPageValue(body)[0];
+                handler.post(() -> {
+                    mAdapter.notifyDataSetChanged();
+                    mSwipe.setRefreshing(false);
+                    if (totalPage == 1 && scrollToBottom) {
+                        handler.sendEmptyMessage(MSG_GO_TO_BOTTOM);
                     }
                 });
 
-                if (totalPage != -1) {
+                if (totalPage > 1) {
                     XLog.tag(TAG).d(totalPage);
                     getMoreRepliesByOrder(totalPage, scrollToBottom);
                 }
@@ -418,12 +407,23 @@ public class DetailsActivity extends AppCompatActivity {
 
     private void getMoreRepliesByOrder(int totalPage, boolean scrollToBottom) {
         Intent intentGetMoreReply = new Intent(DetailsActivity.this, MoreReplyService.class);
-//        intentGetMoreReply.setAction(ACTION_GET_REPLY);
+        intentGetMoreReply.setAction("im.fdx.v2ex.get.other.more");
         intentGetMoreReply.putExtra("page", totalPage);
         intentGetMoreReply.putExtra("topic_id", mTopicId);
         intentGetMoreReply.putExtra("bottom", scrollToBottom);
         startService(intentGetMoreReply);
         XLog.tag(TAG).d("yes I startIntentService");
+    }
+
+
+    private void getNextReplies(int totalPage, int currentPage) {
+        Intent intentGetMoreReply = new Intent(DetailsActivity.this, MoreReplyService.class);
+        intentGetMoreReply.setAction("im.fdx.v2ex.get.one.more");
+        intentGetMoreReply.putExtra("page", totalPage);
+        intentGetMoreReply.putExtra("topic_id", mTopicId);
+        intentGetMoreReply.putExtra("currentPage", currentPage);
+        startService(intentGetMoreReply);
+
     }
 
 
@@ -454,7 +454,7 @@ public class DetailsActivity extends AppCompatActivity {
                 if (isFavored) {
                     unFavor(mTopicId, token);
                 } else {
-                    favor(mTopicId,token );
+                    favor(mTopicId, token);
                 }
                 break;
             case R.id.menu_reply:
@@ -496,25 +496,23 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void unFavor(String topicId, String token) {
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(HttpHelper.baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .url(NetManager.HTTPS_V2EX_BASE + "/unfavorite/topic/" + topicId + "?t=" + token)
                 .get().build()).enqueue(new Callback() {
+
             @Override
             public void onFailure(Call call, IOException e) {
-
+                dealError(DetailsActivity.this);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.code() == 302) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            HintUI.t(DetailsActivity.this, "取消收藏成功");
+                    runOnUiThread(() -> {
+                        HintUI.t(DetailsActivity.this, "取消收藏成功");
 
-                            getRepliesPageOne(mTopicId, false);
-                        }
+                        getRepliesPageOne(mTopicId, false);
                     });
                 }
             }
@@ -522,9 +520,9 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void favor(String topicId, String token) {
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(HttpHelper.baseHeaders)
-                .url(NetManager.HTTPS_V2EX_BASE + "/favorite/topic/" + mTopicId + "?t=" + this.token)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
+                .url(NetManager.HTTPS_V2EX_BASE + "/favorite/topic/" + topicId + "?t=" + token)
                 .get().build()).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -534,12 +532,9 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.code() == 302) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            HintUI.t(DetailsActivity.this, "收藏成功");
-                            getRepliesPageOne(mTopicId, false);
-                        }
+                    runOnUiThread(() -> {
+                        HintUI.t(DetailsActivity.this, "收藏成功");
+                        getRepliesPageOne(mTopicId, false);
                     });
                 }
             }
@@ -555,8 +550,8 @@ public class DetailsActivity extends AppCompatActivity {
                 .add("content", content)
                 .add("once", once)
                 .build();
-        HttpHelper.OK_CLIENT.newCall(new Request.Builder()
-                .headers(baseHeaders)
+        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder()
+                .headers(HttpHelper.INSTANCE.getBaseHeaders())
                 .header("Origin", NetManager.HTTPS_V2EX_BASE)
                 .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
                 .header("Content-Type", "application/x-www-form-urlencoded")
@@ -574,13 +569,10 @@ public class DetailsActivity extends AppCompatActivity {
                 if (response.code() == 302) {
                     XLog.tag(TAG).d("成功发布");
 
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            etSendReply.setText("");
-                        }
+                    handler.post(() -> {
+                        etSendReply.setText("");
+                        getRepliesPageOne(mTopicId, true);
                     });
-                    getRepliesPageOne(mTopicId, true);
                 }
             }
         });
