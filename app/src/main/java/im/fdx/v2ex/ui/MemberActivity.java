@@ -40,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import im.fdx.v2ex.BuildConfig;
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.ui.main.TopicModel;
@@ -138,32 +139,19 @@ public class MemberActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_container);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getTopicsByUsernameAPI();
-            }
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::getTopicsByUsernameAPI);
 
         AppBarLayout appBarLayout = (AppBarLayout) findViewById(R.id.al_profile);
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.ctl_profile);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+        appBarLayout.addOnOffsetChangedListener((appBarLayout1, verticalOffset) -> {
 
-                int maxScroll = appBarLayout.getTotalScrollRange();
-                float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
-                handleAlphaOnTitle(percentage);
-            }
+            int maxScroll = appBarLayout1.getTotalScrollRange();
+            float percentage = (float) Math.abs(verticalOffset) / (float) maxScroll;
+            handleAlphaOnTitle(percentage);
         });
 
         constraintLayout = (ConstraintLayout) findViewById(R.id.constraint_member);
@@ -255,26 +243,27 @@ public class MemberActivity extends AppCompatActivity {
                     XLog.d("isBlocked" + isBlocked + "|" + "isFollowed" + isFollowed);
 
 
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (isBlocked) {
-                                mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_primary_24dp);
-                            } else {
-                                mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_white_24dp);
-                            }
-
-                            if (isFollowed) {
-                                mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp);
-                            } else {
-                                mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp);
-                            }
-
+                    runOnUiThread(() -> {
+                        if (isBlocked) {
+                            mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_primary_24dp);
+                        } else {
+                            mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_white_24dp);
                         }
+
+                        if (isFollowed) {
+                            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp);
+                        } else {
+                            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp);
+                        }
+
                     });
 
 
                     blockOfT = parseToBlock(html);
+
+                    if (blockOfT == null) {
+                        MyApp.getInstance().setLogin(false);
+                    }
                     followOfOnce = parseToOnce(html);
                 }
             }
@@ -356,12 +345,9 @@ public class MemberActivity extends AppCompatActivity {
                 }.getType();
                 List<TopicModel> topicModels = myGson.fromJson(body, type);
                 if (topicModels == null || topicModels.size() == 0) {
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            swipeRefreshLayout.setRefreshing(false);
-                            ViewUtil.showNoContent(MemberActivity.this, container);
-                        }
+                    runOnUiThread(() -> {
+                        swipeRefreshLayout.setRefreshing(false);
+                        ViewUtil.showNoContent(MemberActivity.this, container);
                     });
                     return;
                 }

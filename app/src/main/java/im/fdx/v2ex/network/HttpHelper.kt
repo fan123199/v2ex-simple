@@ -31,7 +31,7 @@ object HttpHelper {
             .cookieJar(myCookieJar)
             //            .cookieJar(cookieJar)
             .build()
-    var baseHeaders = Headers.Builder()
+    val baseHeaders: Headers = Headers.Builder()
             .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
             .add("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
             .add("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
