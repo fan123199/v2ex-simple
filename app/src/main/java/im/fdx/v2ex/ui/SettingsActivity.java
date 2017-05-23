@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,7 +34,6 @@ import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 
 import static im.fdx.v2ex.R.xml.preference;
-import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -114,9 +112,9 @@ public class SettingsActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         removeCookie();
-                                        notifyAllActivities();
+                                        MyApp.getInstance().setLogin(false);
+                                        LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(Keys.ACTION_LOGOUT));
                                         findPreference(PREF_LOGOUT).setEnabled(false);
-                                        sharedPreferences.edit().remove("is_login").apply();
                                         dialog.dismiss();
                                         HintUI.t(getActivity(), "已退出登录");
                                     }
@@ -194,14 +192,6 @@ public class SettingsActivity extends AppCompatActivity {
             checkBoxPref.setChecked(true);
 
             category.addPreference(checkBoxPref);
-        }
-
-        private void notifyAllActivities() {
-
-            MyApp.getInstance().setLogin(false);
-            Intent intent = new Intent(ACTION_LOGOUT);
-            LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intent);
-
         }
 
         private void removeCookie() {

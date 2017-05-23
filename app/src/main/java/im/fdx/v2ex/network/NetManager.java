@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.ui.node.NodeModel;
@@ -34,6 +35,7 @@ import im.fdx.v2ex.ui.details.ReplyModel;
 import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.HintUI;
+import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeUtil;
 
 import static java.lang.Integer.parseInt;
@@ -432,7 +434,12 @@ public class NetManager {
     public static String parseToVerifyCode(Element body) {
 
 //        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
-        Element element = body.getElementsByClass("topic_buttons").first().getElementsByTag("a").first();
+        Element element = null;
+        try {
+            element = body.getElementsByClass("topic_buttons").first().getElementsByTag("a").first();
+        } catch (NullPointerException e) {
+            return null;
+        }
         if (element != null) {
             Pattern p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+");
 

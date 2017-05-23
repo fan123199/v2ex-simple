@@ -104,10 +104,10 @@ public class DetailsActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
 
             XLog.tag(TAG).d("get in lbc:" + intent.getAction());
-            if (intent.getAction().equals("im.fdx.v2ex.event.login")) {
+            if (intent.getAction().equals(ACTION_LOGIN)) {
                 invalidateOptionsMenu();
                 addFootView();
-            } else if (intent.getAction().equals("im.fdx.v2ex.event.logout")) {
+            } else if (intent.getAction().equals(ACTION_LOGOUT)) {
                 invalidateOptionsMenu();
                 removeFootView();
             } else if (intent.getAction().equals("im.fdx.v2ex.reply")) {
@@ -355,9 +355,13 @@ public class DetailsActivity extends AppCompatActivity {
                 if (MyApp.getInstance().isLogin()) {
                     token = NetManager.parseToVerifyCode(body);
                     XLog.tag(TAG).d("verify" + token);
-                    if (token != null) {
-                        mAdapter.setVerifyCode(token);
+
+                    if (token == null) {
+                        MyApp.getInstance().setLogin(false);
+                        LocalBroadcastManager.getInstance(DetailsActivity.this).sendBroadcast(new Intent(Keys.ACTION_LOGOUT));
+                        return;
                     }
+                    mAdapter.setVerifyCode(token);
                     isFavored = parseIsFavored(body);
 
                     XLog.tag(TAG).d("isfavored" + String.valueOf(isFavored));

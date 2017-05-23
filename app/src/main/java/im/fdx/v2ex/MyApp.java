@@ -1,8 +1,10 @@
 package im.fdx.v2ex;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.elvishew.xlog.LogLevel;
@@ -16,12 +18,17 @@ import im.fdx.v2ex.utils.Keys;
  */
 public class MyApp extends Application {
 
-    public static final int USE_WEB = 2;
-
     private static MyApp instance;
+    private SharedPreferences mPrefs;
 
     public void setLogin(boolean login) {
         isLogin = login;
+
+        if (login) {
+            mPrefs.edit().putBoolean(Keys.PREF_KEY_IS_LOGIN, true).apply();
+        } else {
+            mPrefs.edit().remove(Keys.PREF_KEY_IS_LOGIN).apply();
+        }
     }
 
     public boolean isLogin() {
@@ -37,11 +44,11 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        XLog.init(BuildConfig.DEBUG ? LogLevel.ALL             // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
+        XLog.init(BuildConfig.DEBUG ? LogLevel.ALL   // Specify log level, logs below this level won't be printed, default: LogLevel.ALL
                 : LogLevel.NONE);
         PreferenceManager.setDefaultValues(this, R.xml.preference, false);
-        SharedPreferences mDefaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        isLogin = mDefaultSharedPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false);
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        isLogin = mPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false);
 
         Log.d("MyApp", "onCreate\n"
                 + "\nisLogin:" + isLogin);

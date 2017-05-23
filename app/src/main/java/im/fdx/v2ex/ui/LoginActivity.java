@@ -208,31 +208,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         MyApp.getInstance().setLogin(true);
                         mSharedPreference.edit()
                                 .putString("username", username)
-                                .putBoolean("is_login", true)
                                 .apply();
-//                        LoginActivity.this.setResult(LOG_IN_SUCCEED);
-
-
                         goMyHomePage();
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.dismiss();
-                                HintUI.T(LoginActivity.this, "登录成功");
-                            }
+                        runOnUiThread(() -> {
+                            progressDialog.dismiss();
+                            HintUI.T(LoginActivity.this, "登录成功");
                         });
 
                         finish();
                         break;
                     case 200:
-//                        LoginActivity.this.setResult(LOG_IN_FAILED);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressDialog.dismiss();
-                                HintUI.T(LoginActivity.this, "登录失败\n " + errorMsg);
-                            }
+                        runOnUiThread(() -> {
+                            progressDialog.dismiss();
+                            HintUI.T(LoginActivity.this, "登录失败:\n " + errorMsg);
                         });
                         break;
                     default:
