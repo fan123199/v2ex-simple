@@ -181,12 +181,8 @@ public class MemberActivity extends AppCompatActivity {
     private void handleAlphaOnTitle(float percentage) {
         if (percentage > 0.8f && percentage <= 1f) {
             constraintLayout.setVisibility(View.INVISIBLE);
-//            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_primary_24dp);
-//            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_primary_24dp);
         } else if (percentage <= 0.8f && percentage >= 0f) {
             constraintLayout.setVisibility(View.VISIBLE);
-//            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp);
-//            collapsingToolbarLayout.setTitle("");//设置title不显示
         }
 
     }

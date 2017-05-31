@@ -12,43 +12,55 @@
         android:layout_height="?attr/actionBarSize" />
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/md_left_margin"
+            android:paddingRight="@dimen/md_left_margin"
+            android:paddingTop="@dimen/md_top_margin">
 
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
-                android:id="@+id/search_spinner_node"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_margin="8dp" />
 
-            <EditText
+            <!--<android.support.design.widget.TextInputLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content">-->
+
+            <android.support.design.widget.TextInputEditText
                 android:id="@+id/et_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:layout_margin="8dp"
+                android:textColorHint="@color/hint"
+                android:textSize="@dimen/text_size_large"
                 android:hint="请输入主题"
+                android:background="@null"
+                android:drawableBottom="@drawable/edit_selector"
                 android:maxLines="1" />
 
+            <!--</android.support.design.widget.TextInputLayout>-->
 
-            <EditText
+            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+                android:id="@+id/search_spinner_node"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+
+                android:background="@drawable/ic_share_hint_24dp"
+                app:hintText="选择节点"
+                android:layout_marginLeft="@dimen/md_left_margin"/>
+
+
+            <android.support.v7.widget.AppCompatEditText
                 android:id="@+id/et_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
+                android:layout_height="match_parent"
+                android:hint="请输入正文..."
                 android:gravity="top"
                 android:minLines="6"
-                android:inputType="textMultiLine" />
-
+                android:textSize="@dimen/text_size_medium"
+                android:backgroundTint="@color/transparent"
+                android:inputType="textMultiLine"
+                />
         </LinearLayout>
-    </ScrollView>
 
 
 </LinearLayout>

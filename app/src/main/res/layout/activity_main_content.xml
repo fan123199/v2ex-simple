@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     android:id="@+id/coordinator"
     >
 
@@ -41,7 +42,7 @@
         app:fabSize="normal"
         app:elevation="12dp"
         app:backgroundTint="@color/fab"
-        android:src="@drawable/ic_add_white_24dp"
+        android:src="@drawable/ic_edit_white_24dp"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"

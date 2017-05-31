@@ -240,7 +240,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         String text = String.format("@%s ", replyItem.getMember().getUsername());
         if (!editText.getText().toString().contains(text)) {
             SpannableString spanString = new SpannableString(text);
-            ForegroundColorSpan span = null;
+            ForegroundColorSpan span;
             span = new ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.primary));
             spanString.setSpan(span, 0, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             editText.append(spanString);
@@ -257,7 +257,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
+        if (position == 0 && getItemCount() > 1) {
             return TYPE_HEADER;
         } else if (position == getItemCount() - 1) {
             return TYPE_FOOTER;
@@ -270,28 +270,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     //我重用了MainAdapter中的MainViewHolder
-
-//    public static class MainDetailViewHolder extends RecyclerView.ViewHolder {
-//
-//        public TextView tvTitle;
-//        public GoodTextView tvContent;
-//        public TextView tvCreated;
-//        public TextView tvAuthor;
-//        public CircleImageView ivAvatar;
-//        public TextView tvNode;
-//        public View container;
-//
-//        public MainDetailViewHolder(View root) {
-//            super(root);
-//            container = root;
-//            tvTitle = (TextView) root.findViewById(R.id.tv_title);
-//            tvContent = (GoodTextView) root.findViewById(R.id.tv_content);
-//            tvCreated = (TextView) root.findViewById(R.id.tv_created);
-//            tvAuthor = (TextView) root.findViewById(R.id.tv_author);
-//            ivAvatar = (CircleImageView) root.findViewById(R.id.iv_avatar_profile);
-//            tvNode = (TextView) root.findViewById(R.id.tv_node);
-//        }
-//    }
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
 

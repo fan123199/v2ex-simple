@@ -24,19 +24,19 @@
 
     <im.fdx.v2ex.view.GoodTextView
         android:id="@+id/tv_reply_content"
+        style="@style/contentStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/contentStyle"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
         android:lineSpacingMultiplier="1.2"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/tv_replier"
         app:layout_constraintRight_toRightOf="parent"
-        tools:text="@string/content"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/iv_reply_avatar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="8dp"/>
+        tools:text="@string/content"/>
 
     <TextView
         android:id="@+id/tv_replier"
@@ -57,7 +57,7 @@
 
     <TextView
         android:id="@+id/tv_reply_time"
-        style="@style/HintStyle"
+        style="@style/VText.Hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_replier"
@@ -73,7 +73,7 @@
 
     <TextView
         android:id="@+id/tv_reply_row"
-        style="@style/HintStyle"
+        style="@style/VText.Hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/tv_reply_content"
@@ -114,7 +114,7 @@
         android:drawablePadding="8dp"
         android:drawableStart="@drawable/ic_thumbs_up"
         tools:text="123"
-        android:textAppearance="@style/HintStyle"
+        android:textAppearance="@style/VText.Hint"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
         app:layout_constraintRight_toLeftOf="@+id/tvReplay"
         app:layout_constraintTop_toTopOf="@+id/tv_replier"
@@ -122,15 +122,15 @@
 
     <TextView
         android:id="@+id/tvReplay"
-        style="@style/HintStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/VText.Hint"
+        android:layout_width="12sp"
+        android:layout_height="12sp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:drawableStart="@drawable/ic_message"
+        android:layout_marginTop="0dp"
+        android:drawableStart="@drawable/ic_message_black_24dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_thanks"
         app:layout_constraintTop_toTopOf="@+id/tv_thanks"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintVertical_bias="0.38"
         tools:ignore="HardcodedText"
         tools:text=""
         android:layout_marginRight="16dp"

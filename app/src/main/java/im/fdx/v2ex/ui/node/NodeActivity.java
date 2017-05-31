@@ -34,7 +34,6 @@ import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.main.NewTopicActivity;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;

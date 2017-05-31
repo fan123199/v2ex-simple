@@ -5,9 +5,40 @@
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
-
         <item name="android:textColorLink">@color/primary</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!--<item name="android:windowContentTransitions">true</item>-->
+        <!--<item name="android:windowEnterTransition">@transition/explode</item>-->
+        <!--<item name="android:windowExitTransition">@transition/explode</item>-->
+        <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->
+        <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
+        <!--<item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>-->
+        <!--<item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>-->
     </style>
+
+    <style name="Theme.V2ex.FixStatus">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+    </style>
+
+    <style name="Theme.V2ex.ForEdit">
+        <item name="android:colorAccent">@color/primary</item>
+
+        <item name="colorControlNormal">@color/hint</item>
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="colorControlHighlight">@color/white</item>
+
+        <item name="android:editTextStyle">@style/VEditStyle</item>
+    </style>
+
+
+    <style name="VEditStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingLeft">0dp</item>
+
+    </style>
+
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textAllCaps">false</item>
@@ -33,7 +64,6 @@
 
     <!--<style name="AppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">-->
     <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
-    <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
     <!--</style>-->
 
     <style name="Text.Bg" parent="TextAppearance.AppCompat">
@@ -52,15 +82,18 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
-    <style name="Theme.V2ex.TitleTextStyle" parent="TextAppearance.AppCompat.Medium.Inverse">
-        <item name="android:textColor">@color/title_color</item>
+    <style name="Theme.V2ex.TitleTextStyle">
+        <item name="android:textColor">@color/black87</item>
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
-        <!--<item name="android:letterSpacing" tools:targetApi="lollipop">0.1</item>-->
+    </style>
+
+    <style name="VText">
+        <item name="android:textColor">@color/black87</item>
     </style>
 
 
-    <style name="Theme.V2ex.ToolbarTextStyle">
+    <style name="VText.ToolbarStyle">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textStyle">bold</item>
@@ -72,7 +105,7 @@
         <item name="android:textSize">@dimen/content_font_size</item>
     </style>
 
-    <style name="HintStyle">
+    <style name="VText.Hint">
         <item name="android:textColor">@color/hint</item>
         <item name="android:textSize">@dimen/text_size_small</item>
     </style>

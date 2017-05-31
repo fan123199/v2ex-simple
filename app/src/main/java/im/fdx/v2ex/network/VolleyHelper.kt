@@ -17,20 +17,16 @@ import java.io.IOException
 import im.fdx.v2ex.MyApp
 
 
+@Suppress("unused")
 @Deprecated(" Created by fdx on 2015/8/14.\n  Volley网络库的请求队列。使用单例，增加资源利用")
-class VolleyHelper//带参数context, 与ytb教程不同
+class VolleyHelper
 private constructor() {
-    private var mRequestQueue: RequestQueue
+    private var mRequestQueue: RequestQueue?
     val imageLoader: ImageLoader
     private val mCtx: Context? = null
 
     init {
-        //        mCtx = context;
-        //        mRequestQueue = Volley.newRequestQueue(MyApp.getInstance());
-        //        以上参数是没有传入context的构造函数的
         mRequestQueue = requestQueue
-
-
         imageLoader = ImageLoader(mRequestQueue, object : ImageLoader.ImageCache {
 
             internal var cacheSize = 4 * 1024 //4K
@@ -46,11 +42,7 @@ private constructor() {
         })
     }
 
-    private // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
-            //防止mCtx只是activity的context
-            //            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
-    val requestQueue: RequestQueue
+    private val requestQueue: RequestQueue?
         get() {
             if (mRequestQueue == null) {
                 mRequestQueue = Volley.newRequestQueue(MyApp.getInstance())
@@ -60,7 +52,7 @@ private constructor() {
         }
 
     fun <T> addToRequestQueue(req: Request<T>) {
-        requestQueue.add(req)
+        requestQueue?.add(req)
     }
 
     /**
@@ -87,19 +79,4 @@ private constructor() {
         }
 
     }
-
-//    companion object {
-//
-//        private var mInstance: VolleyHelper? = null
-//
-//        //带参数context, 与ytb教程不同
-//        val instance: VolleyHelper
-//            @Synchronized get() {
-//                if (mInstance == null) {
-//                    mInstance = VolleyHelper()
-//                }
-//
-//                return mInstance
-//            }
-//    }
 }

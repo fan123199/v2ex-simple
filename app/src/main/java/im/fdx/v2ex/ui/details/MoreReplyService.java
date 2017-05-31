@@ -42,11 +42,11 @@ public class MoreReplyService extends IntentService {
 
     private void getAllMore(@NotNull Intent intent) {
         int totalPage = intent.getIntExtra("page", -1);
-        long topicId = intent.getLongExtra("topic_id", -1);
+        String topicId = intent.getStringExtra("topic_id");
         boolean isToBottom = intent.getBooleanExtra("bottom", false);
 
         XLog.tag("DetailsActivity").d(totalPage + " | " + topicId);
-        if (totalPage == -1 || topicId == -1L) {
+        if (totalPage == -1 || topicId == null) {
             return;
         }
 

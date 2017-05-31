@@ -13,11 +13,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -69,6 +71,7 @@ import static im.fdx.v2ex.utils.Keys.ACTION_GET_NOTIFICATION;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
 import static im.fdx.v2ex.utils.Keys.ACTION_PREFERENCE_CHANGED;
+import static im.fdx.v2ex.utils.Keys.KEY_AVATAR;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -91,12 +94,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             String action = intent.getAction();
             XLog.tag(TAG).d("getAction: " + action);
-            if (action.equals(ACTION_PREFERENCE_CHANGED)) {
-
-            } else if (action.equals(ACTION_LOGIN)) {
-                showDailyAndNotification(true);
+            if (action.equals(ACTION_LOGIN)) {
+                showIcon(true);
                 String username = intent.getStringExtra(Keys.KEY_USERNAME);
-                String avatar = intent.getStringExtra("avatar");
+                String avatar = intent.getStringExtra(KEY_AVATAR);
                 setUserInfo(username, avatar);
                 fab.show();
 
@@ -104,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
                 }
             } else if (action.equals(ACTION_LOGOUT)) {
-                showDailyAndNotification(false);
+                showIcon(false);
                 removeUserInfo();
                 fab.hide();
 
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main_nav_drawer);
         XLog.tag(TAG).d("onCreate");
 
-        IntentFilter intentFilter = new IntentFilter(ACTION_PREFERENCE_CHANGED);
+        IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_LOGIN);
         intentFilter.addAction(ACTION_LOGOUT);
         intentFilter.addAction(ACTION_GET_NOTIFICATION);
@@ -183,10 +184,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if (MyApp.getInstance().isLogin()) {
-            showDailyAndNotification(true);
+            showIcon(true);
 
             String username = sharedPreferences.getString(Keys.KEY_USERNAME, "");
-            String avatar = sharedPreferences.getString("avatar", "");
+            String avatar = sharedPreferences.getString(KEY_AVATAR, "");
             XLog.tag(TAG).d(username + "//// " + avatar);
             if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(avatar)) {
                 setUserInfo(username, avatar);
@@ -196,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         } else {
 
-            showDailyAndNotification(false);
+            showIcon(false);
             fab.hide();
         }
 
@@ -245,25 +246,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private void showDailyAndNotification(boolean visible) {
-//        navigationView.getMenu().findItem(R.id.nav_notification).setVisible(visible);
+    public static
+    @ColorInt
+    int adjustColorForStatusBar(@ColorInt int color) {
+        float[] hsl = new float[3];
+        ColorUtils.colorToHSL(color, hsl);
+
+        // darken the color by 7.5%
+        float lightness = hsl[2] * 0.925f;
+        // constrain lightness to be within [0–1]
+        lightness = Math.max(0f, Math.min(1f, lightness));
+        hsl[2] = lightness;
+        return ColorUtils.HSLToColor(hsl);
+    }
+
+    private void showIcon(boolean visible) {
         navigationView.getMenu().findItem(R.id.nav_daily).setVisible(visible);
         navigationView.getMenu().findItem(R.id.nav_favor).setVisible(visible);
         MainActivity.this.invalidateOptionsMenu();
     }
 
-    //    private void addDailyCheckMenu() {
-//        MenuItem item2;
-//        if (navigationView.getMenu().findItem(ID_ITEM_CHECK) == null) {
-//
-//            item2 = navigationView.getMenu().add(R.id.group_nav_main, ID_ITEM_CHECK, 88, R.string.daily_check);
-//            item2.setIcon(R.drawable.ic_check_black_24dp);
-//            item2.setCheckable(true);
-//        }
-//
-//        this.invalidateOptionsMenu();
-//
-//    }
 
     private void shrinkFab() {
         fab.animate().rotation(360f)
@@ -290,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView tvMyName = (TextView) findViewById(R.id.tv_my_username);
         tvMyName.setText("");
         CircleImageView imageView = (CircleImageView) findViewById(R.id.iv_my_avatar);
-//        imageView.setImageUrl("", null);
         imageView.setImageDrawable(null);
         imageView.setVisibility(View.INVISIBLE);
 

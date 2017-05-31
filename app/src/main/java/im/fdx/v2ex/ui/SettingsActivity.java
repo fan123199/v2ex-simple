@@ -51,14 +51,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
 
-        assert toolbar != null;
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                finish();
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         getFragmentManager().beginTransaction()
                 .add(R.id.container, new SettingsFragment())
@@ -71,7 +64,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         public static final String PREF_WIFI = "pref_wifi";
         public static final String PREF_RATES = "pref_rates";
-        //        public static final String PREF_MODE = "pref_http_mode";
         private static final String PREF_LOGOUT = "pref_logout";
         SharedPreferences sharedPreferences;
         private ListPreference listPreference;

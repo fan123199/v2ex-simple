@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.main;
 
 import android.content.Intent;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -48,7 +49,7 @@ public class NewTopicActivity extends AppCompatActivity {
     private String mTitle;
     private String mContent;
     private String once;
-    private EditText etTitle;
+    private TextInputEditText etTitle;
     private EditText etContent;
     private SearchableSpinner spinner;
 
@@ -61,29 +62,19 @@ public class NewTopicActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
-        etTitle = (EditText) findViewById(R.id.et_title);
+        etTitle = (TextInputEditText) findViewById(R.id.et_title);
         etContent = (EditText) findViewById(R.id.et_content);
 
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        // 1,2 not working, 3 is good
-//        toolbar.setNavigationIcon(R.drawable.ic_twitter);
-//        getSupportActionBar().setIcon(R.drawable.ic_twitter);
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_twitter);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
 
         spinner = (SearchableSpinner) findViewById(R.id.search_spinner_node);
         spinner.setTitle(getString(R.string.choose_node));
         spinner.setPositiveButton(getString(R.string.close));
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, nodeModels);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -96,7 +87,9 @@ public class NewTopicActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        HttpHelper.INSTANCE.getOK_CLIENT().newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build()).enqueue(new Callback() {
+        HttpHelper.INSTANCE.getOK_CLIENT()
+                .newCall(new Request.Builder().url(NetManager.URL_ALL_NODE).build())
+                .enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 NetManager.dealError(NewTopicActivity.this);
@@ -107,14 +100,12 @@ public class NewTopicActivity extends AppCompatActivity {
                 Type type = new TypeToken<ArrayList<NodeModel>>() {
                 }.getType();
                 final ArrayList<NodeModel> nodes = NetManager.myGson.fromJson(response.body().string(), type);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.addAll(nodes);
-                        adapter.notifyDataSetChanged();
-                        setNode(getIntent());
-                    }
+                runOnUiThread(() -> {
+                    adapter.addAll(nodes);
+                    adapter.notifyDataSetChanged();
+                    setNode(getIntent());
                 });
+
             }
         });
 

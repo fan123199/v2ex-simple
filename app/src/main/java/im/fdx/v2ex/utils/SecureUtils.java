@@ -29,7 +29,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 
-import static im.fdx.v2ex.ui.LoginActivity.ANDROID_KEY_STORE;
 
 /**
  * Created by fdx on 2017/3/17.
@@ -100,7 +99,7 @@ public class SecureUtils {
         String unencryptedKey = "";
 
         try {
-            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
             final KeyStore.SecretKeyEntry entry = (KeyStore.SecretKeyEntry) keyStore.getEntry(alias, null);
             final SecretKey secretKey = entry.getSecretKey();

@@ -36,15 +36,7 @@ import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
-
-import org.xml.sax.XMLReader;
-
-import java.io.IOException;
-import java.util.List;
-
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.ui.WebViewActivity;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.ViewUtil;
 
@@ -338,49 +330,5 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         }
     }
 
-
-    private class CustomImageSpan extends ImageSpan {
-        public CustomImageSpan(Context context, Bitmap b) {
-            super(context, b);
-        }
-
-        public CustomImageSpan(Context context, Bitmap b, int verticalAlignment) {
-            super(context, b, verticalAlignment);
-        }
-
-        public CustomImageSpan(Drawable d) {
-            super(d);
-        }
-
-        public CustomImageSpan(Drawable d, int verticalAlignment) {
-            super(d, verticalAlignment);
-        }
-
-        public CustomImageSpan(Drawable d, String source) {
-            super(d, source);
-        }
-
-        public CustomImageSpan(Drawable d, String source, int verticalAlignment) {
-            super(d, source, verticalAlignment);
-        }
-
-        public CustomImageSpan(Context context, Uri uri) {
-            super(context, uri);
-        }
-
-        public CustomImageSpan(Context context, Uri uri, int verticalAlignment) {
-            super(context, uri, verticalAlignment);
-        }
-
-        public CustomImageSpan(Context context, int resourceId) {
-            super(context, resourceId);
-        }
-
-        public CustomImageSpan(Context context, int resourceId, int verticalAlignment) {
-            super(context, resourceId, verticalAlignment);
-        }
-
-
-    }
 }
 

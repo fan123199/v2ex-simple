@@ -321,14 +321,11 @@ public class NetManager {
         topicModel.setContentRendered(ContentUtils.format(contentRendered)); //done
 
         MemberModel member = new MemberModel();
-
-
         String username = body.getElementsByClass("header").first()
                 .getElementsByAttributeValueStarting("href", "/member/").text();
         member.setUsername(username);
         String largeAvatar = body.getElementsByClass("header").first()
                 .getElementsByClass("avatar").attr("src");
-
         member.setAvatar_large(largeAvatar);
         member.setAvatar_normal(largeAvatar.replace("large", "normal"));
 //                            member.setId(0);
@@ -337,7 +334,6 @@ public class NetManager {
                 .getElementsByAttributeValueStarting("href", "/go/").first();
         String nodeName = nodeElement.attr("href").replace("/go/", "");
         String nodeTitle = nodeElement.text();
-
         NodeModel nodeModel = new NodeModel();
         nodeModel.setName(nodeName);
         nodeModel.setTitle(nodeTitle);

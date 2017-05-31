@@ -41,9 +41,9 @@ import java.util.regex.Pattern;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.BaseModel;
-import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.SmoothLayoutManager;
@@ -57,8 +57,6 @@ import okhttp3.Response;
 import static im.fdx.v2ex.network.NetManager.dealError;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
-import static java.lang.Integer.parseInt;
-import static java.lang.Long.parseLong;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -69,6 +67,7 @@ public class DetailsActivity extends AppCompatActivity {
     private static final int MSG_ERROR_AUTH = 1;
     private static final int MSG_ERROR_IO = 2;
     private static final int MSG_GO_TO_BOTTOM = 3;
+    @SuppressWarnings("unused")
     private static final int MSG_GET_MORE_REPLY = 4;
 
     RecyclerView rvDetail;
@@ -79,23 +78,23 @@ public class DetailsActivity extends AppCompatActivity {
     private List<BaseModel> mAllContent = new ArrayList<>();
     private Menu mMenu;
     private Toolbar toolbar;
-    private ActionBar actionBar;
 
     private TopicModel topicHeader;
     private String token;
     private boolean isFavored;
     private String mTopicId;
     private String once;
-    private int currentPage;
+    @SuppressWarnings("unused")
+    private int currentPage; // TODO: 2017/5/30 滑动加载，减少流量
 
-    private DetailsAdapter.AdapterCallback callback = new DetailsAdapter.AdapterCallback() {
-        @Override
-        public void onMethodCallback(int type) {
-            if (type == 1) {
+    private DetailsAdapter.AdapterCallback callback = type -> {
+        switch (type) {
+            case 1:
 
-            } else if (type == 2) {
+                break;
+            case 2:
                 getMoreRepliesByOrder(1, false);
-            }
+                break;
         }
     };
 
@@ -140,12 +139,6 @@ public class DetailsActivity extends AppCompatActivity {
                 case MSG_GO_TO_BOTTOM:
                     rvDetail.scrollToPosition(mAllContent.size() - 1);
                     break;
-                case MSG_GET_MORE_REPLY:
-                    XLog.tag("HEHE").d("MSG_GET_MORE_REPLY");
-                    List<ReplyModel> rm = (List<ReplyModel>) msg.obj;
-                    mAllContent.addAll(rm);
-                    mAdapter.notifyDataSetChanged();
-                    break;
             }
             return false;
         }
@@ -170,19 +163,14 @@ public class DetailsActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
 
         if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
+            toolbar.setNavigationOnClickListener(v -> onBackPressed());
         }
 
         rvDetail = (RecyclerView) findViewById(R.id.detail_recycler_view);
@@ -202,7 +190,6 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                //// TODO: 2017/5/3
 
             }
         });
@@ -287,17 +274,14 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
 
+    @SuppressWarnings("unused")
     private void parseIntent(Intent intent) {
         Uri data = intent.getData();
         if (data != null) {
             String scheme = data.getScheme(); //不需要
             String host = data.getHost(); //不需要判断，在manifest中已指定
             List<String> params = data.getPathSegments();
-            try {
-                mTopicId = params.get(1);
-            } catch (NumberFormatException e) {
-                return;
-            }
+            mTopicId = params.get(1);
         } else if (intent.getParcelableExtra("model") != null) {
             TopicModel topicModel = intent.getParcelableExtra("model");
             mAllContent.add(0, topicModel);
@@ -305,7 +289,6 @@ public class DetailsActivity extends AppCompatActivity {
         } else if (intent.getStringExtra(Keys.KEY_TOPIC_ID) != null) {
             mTopicId = intent.getStringExtra(Keys.KEY_TOPIC_ID);
         }
-
 
         getRepliesPageOne(mTopicId, false);
         String topicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId;
@@ -420,6 +403,7 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
 
+    @SuppressWarnings("unused")
     private void getNextReplies(int totalPage, int currentPage) {
         Intent intentGetMoreReply = new Intent(DetailsActivity.this, MoreReplyService.class);
         intentGetMoreReply.setAction("im.fdx.v2ex.get.one.more");

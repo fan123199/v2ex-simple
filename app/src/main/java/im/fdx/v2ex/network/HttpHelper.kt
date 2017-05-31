@@ -11,6 +11,7 @@ import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
 import okhttp3.Headers
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 
 /**
  * Created by fdx on 2016/11/20.
@@ -19,17 +20,15 @@ import okhttp3.OkHttpClient
 
 object HttpHelper {
 
-    //    private val cookieJar = PersistentCookieJar(SetCookieCache(), SharedPrefsCookiePersistor(MyApp.getInstance().applicationContext))
     val myCookieJar = MyCookieJar(SharedPrefsPersistor(MyApp.getInstance().applicationContext))
     val OK_CLIENT: OkHttpClient = OkHttpClient().newBuilder()
-            //            .addInterceptor(new HttpLoggingInterceptor())
+//                        .addInterceptor(HttpLoggingInterceptor())
             //            .connectTimeout(10, TimeUnit.SECONDS)
             //            .writeTimeout(10, TimeUnit.SECONDS)
             //            .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
-            .addInterceptor(ChuckInterceptor(MyApp.getInstance().applicationContext))//好东西，查看Okhttp数据
+//            .addInterceptor(ChuckInterceptor(MyApp.getInstance().applicationContext))//好东西，查看Okhttp数据
             .cookieJar(myCookieJar)
-            //            .cookieJar(cookieJar)
             .build()
     val baseHeaders: Headers = Headers.Builder()
             .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -41,6 +40,5 @@ object HttpHelper {
             //            .add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
             .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36")
             .build()
-
 
 }

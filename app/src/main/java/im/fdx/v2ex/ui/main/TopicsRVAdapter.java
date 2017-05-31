@@ -17,7 +17,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.network.VolleyHelper;
 import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.details.DetailsActivity;
 import im.fdx.v2ex.ui.node.NodeActivity;

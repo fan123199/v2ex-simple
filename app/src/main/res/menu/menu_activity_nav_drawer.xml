@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group
         android:id="@+id/group_nav_main"
@@ -16,7 +17,7 @@
             android:title="@string/all_nodes" />
         <item
             android:id="@+id/nav_favor"
-            android:icon="@drawable/ic_favorite_border_black_24dp"
+            android:icon="@drawable/ic_favorite_hint_24dp"
             android:title="@string/my_follow" />
         <!--<item-->
         <!--android:id="@+id/nav_notification"-->
@@ -39,15 +40,15 @@
 
         <item
             android:id="@+id/nav_share"
-            android:icon="@android:drawable/ic_menu_share"
+            android:icon="@drawable/ic_share_hint_24dp"
             android:title="@string/share_app"/>
         <item
             android:id="@+id/nav_feedback"
-            android:icon="@android:drawable/ic_menu_send"
+            android:icon="@drawable/ic_announcement_hint_24dp"
             android:title="@string/feedback"/>
         <item
             android:id="@+id/nav_setting"
-            android:icon="@android:drawable/ic_menu_preferences"
+            android:icon="@drawable/ic_settings_hint_24dp"
             android:title="@string/settings" />
 
     </group>

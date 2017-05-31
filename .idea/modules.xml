@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/V2ex-simple.iml" filepath="$PROJECT_DIR$/V2ex-simple.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/searchablespinnerlibrary/searchablespinnerlibrary.iml" filepath="$PROJECT_DIR$/searchablespinnerlibrary/searchablespinnerlibrary.iml" />
     </modules>
   </component>
 </project>
