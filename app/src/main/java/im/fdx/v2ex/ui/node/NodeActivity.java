@@ -122,13 +122,10 @@ public class NodeActivity extends AppCompatActivity {
 
 
         FloatingActionButton fabNode = (FloatingActionButton) findViewById(R.id.fab_node);
-        fabNode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(NodeActivity.this, NewTopicActivity.class);
-                intent.putExtra(Keys.KEY_NODE_NAME, nodeName);
-                startActivity(intent);
-            }
+        fabNode.setOnClickListener(v -> {
+            Intent intent = new Intent(NodeActivity.this, NewTopicActivity.class);
+            intent.putExtra(Keys.KEY_NODE_NAME, nodeName);
+            startActivity(intent);
         });
         if (!MyApp.getInstance().isLogin()) {
             fabNode.hide();

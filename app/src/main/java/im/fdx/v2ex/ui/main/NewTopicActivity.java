@@ -74,7 +74,7 @@ public class NewTopicActivity extends AppCompatActivity {
         spinner = (SearchableSpinner) findViewById(R.id.search_spinner_node);
         spinner.setTitle(getString(R.string.choose_node));
         spinner.setPositiveButton(getString(R.string.close));
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, nodeModels);
+        adapter = new ArrayAdapter<>(this, R.layout.simple_list_item, nodeModels);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

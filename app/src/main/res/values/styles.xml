@@ -30,7 +30,19 @@
         <item name="colorControlHighlight">@color/white</item>
 
         <item name="android:editTextStyle">@style/VEditStyle</item>
+
+
     </style>
+
+    <!--<style name="Theme.V2ex.spinnerItemStyle" >-->
+
+    <!--<item name="android:textAppearance">@style/Theme.V2ex.SpinnerText</item>-->
+
+    <!--</style>-->
+
+    <!--<style name="Theme.V2ex.SpinnerText">-->
+    <!--<item name="android:textColor">@color/primary</item>-->
+    <!--</style>-->
 
 
     <style name="VEditStyle" parent="Widget.AppCompat.EditText">

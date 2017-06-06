@@ -8,12 +8,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -22,6 +25,8 @@ import android.widget.SearchView;
 
 import java.io.Serializable;
 import java.util.List;
+
+import static android.view.WindowManager.LayoutParams.*;
 
 public class SearchableListDialog extends DialogFragment implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
@@ -63,14 +68,15 @@ public class SearchableListDialog extends DialogFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams
-                .SOFT_INPUT_STATE_HIDDEN);
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            dialog.getWindow().setSoftInputMode(SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        }
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -102,8 +108,8 @@ public class SearchableListDialog extends DialogFragment implements
         alertDialog.setTitle(strTitle);
 
         final AlertDialog dialog = alertDialog.create();
-        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams
-                .SOFT_INPUT_STATE_HIDDEN);
+        dialog.getWindow().setSoftInputMode(
+                SOFT_INPUT_STATE_HIDDEN);
         return dialog;
     }
 
@@ -173,6 +179,19 @@ public class SearchableListDialog extends DialogFragment implements
                 getDialog().dismiss();
             }
         });
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            DisplayMetrics dm = new DisplayMetrics();
+            getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+            dialog.getWindow().setLayout((int) (dm.widthPixels * 0.75), ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setGravity(Gravity.TOP | Gravity.END);
+        }
     }
 
     @Override

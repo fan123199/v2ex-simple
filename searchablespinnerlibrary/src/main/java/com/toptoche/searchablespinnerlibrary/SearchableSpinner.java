@@ -28,6 +28,7 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     private ArrayAdapter _arrayAdapter;
     private String _strHintText;
     private boolean _isFromInit;
+    private int mLayoutId;
 
     public SearchableSpinner(Context context) {
         super(context);
@@ -44,6 +45,9 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
             int attr = a.getIndex(i);
             if (attr == R.styleable.SearchableSpinner_hintText) {
                 _strHintText = a.getString(attr);
+            }
+            if (attr == R.styleable.SearchableSpinner_itemLayout) {
+                mLayoutId = a.getResourceId(attr, android.R.layout.simple_list_item_1);
             }
         }
         a.recycle();
@@ -65,8 +69,7 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
 
         _arrayAdapter = (ArrayAdapter) getAdapter();
         if (!TextUtils.isEmpty(_strHintText)) {
-            ArrayAdapter arrayAdapter = new ArrayAdapter(_context, android.R.layout
-                    .simple_list_item_1, new String[]{_strHintText});
+            ArrayAdapter arrayAdapter = new ArrayAdapter(_context, mLayoutId, new String[]{_strHintText});
             _isFromInit = true;
             setAdapter(arrayAdapter);
         }
@@ -100,8 +103,7 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
         if (!_isFromInit) {
             _arrayAdapter = (ArrayAdapter) adapter;
             if (!TextUtils.isEmpty(_strHintText) && !_isDirty) {
-                ArrayAdapter arrayAdapter = new ArrayAdapter(_context, android.R.layout
-                        .simple_list_item_1, new String[]{_strHintText});
+                ArrayAdapter arrayAdapter = new ArrayAdapter(_context, mLayoutId, new String[]{_strHintText});
                 super.setAdapter(arrayAdapter);
             } else {
                 super.setAdapter(adapter);
@@ -116,12 +118,16 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
     @Override
     public void onSearchableItemClicked(Object item, int position) {
         setSelection(_items.indexOf(item));
+    }
 
+    //fixed by fdx
+    @Override
+    public void setSelection(int position) {
         if (!_isDirty) {
             _isDirty = true;
             setAdapter(_arrayAdapter);
-            setSelection(_items.indexOf(item));
         }
+        super.setSelection(position);
     }
 
     public void setTitle(String strTitle) {

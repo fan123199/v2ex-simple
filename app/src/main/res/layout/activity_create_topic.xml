@@ -43,9 +43,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-
-                android:background="@drawable/ic_share_hint_24dp"
+                android:backgroundTint="@color/primary"
                 app:hintText="选择节点"
+                app:itemLayout="@layout/simple_list_item"
                 android:layout_marginLeft="@dimen/md_left_margin"/>
 
 
