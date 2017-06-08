@@ -27,11 +27,9 @@
         style="@style/contentStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:lineSpacingMultiplier="1.2"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/tv_replier"
         app:layout_constraintRight_toRightOf="parent"
@@ -94,10 +92,10 @@
         android:layout_below="@id/tv_reply_content"
         android:layout_marginTop="8dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/tv_reply_content"
-        app:layout_constraintTop_toBottomOf="@+id/tv_reply_content"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_reply_content"
+        />
 
 
     <ImageView
