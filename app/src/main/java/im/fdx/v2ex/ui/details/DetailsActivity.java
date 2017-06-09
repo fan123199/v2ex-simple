@@ -155,7 +155,7 @@ public class DetailsActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
 
-        if (MyApp.getInstance().isLogin()) {
+        if (MyApp.Companion.get().isLogin()) {
             addFootView();
         } else {
             removeFootView();
@@ -335,12 +335,12 @@ public class DetailsActivity extends AppCompatActivity {
                 List<ReplyModel> repliesOne = NetManager.parseResponseToReplay(body);
 
 
-                if (MyApp.getInstance().isLogin()) {
+                if (MyApp.Companion.get().isLogin()) {
                     token = NetManager.parseToVerifyCode(body);
                     XLog.tag(TAG).d("verify" + token);
 
                     if (token == null) {
-                        MyApp.getInstance().setLogin(false);
+                        MyApp.Companion.get().setLogin(false);
                         LocalBroadcastManager.getInstance(DetailsActivity.this).sendBroadcast(new Intent(Keys.ACTION_LOGOUT));
                         return;
                     }
@@ -418,7 +418,7 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_details, menu);
-        if (MyApp.getInstance().isLogin()) {
+        if (MyApp.Companion.get().isLogin()) {
             menu.findItem(R.id.menu_favor).setVisible(true);
             menu.findItem(R.id.menu_reply).setVisible(true);
         } else {

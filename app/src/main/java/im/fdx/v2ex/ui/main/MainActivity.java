@@ -48,12 +48,12 @@ import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.UpdateService;
-import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.ui.LoginActivity;
 import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.NotificationActivity;
 import im.fdx.v2ex.ui.SettingsActivity;
+import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.ui.favor.FavorActivity;
 import im.fdx.v2ex.ui.node.AllNodesActivity;
 import im.fdx.v2ex.utils.HintUI;
@@ -70,7 +70,6 @@ import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
 import static im.fdx.v2ex.utils.Keys.ACTION_GET_NOTIFICATION;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
 import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
-import static im.fdx.v2ex.utils.Keys.ACTION_PREFERENCE_CHANGED;
 import static im.fdx.v2ex.utils.Keys.KEY_AVATAR;
 
 
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .setIntent(intent)
                     .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
                     .build();
-            if (MyApp.getInstance().isLogin()) {
+            if (MyApp.Companion.get().isLogin()) {
                 shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
 
             } else {
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fab.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, NewTopicActivity.class)));
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        if (MyApp.getInstance().isLogin()) {
+        if (MyApp.Companion.get().isLogin()) {
             showIcon(true);
 
             String username = sharedPreferences.getString(Keys.KEY_USERNAME, "");
@@ -240,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         intent = new Intent(MainActivity.this, UpdateService.class);
         intent.setAction(Keys.ACTION_START_NOTIFICATION);
-        if (MyApp.getInstance().isLogin() && isOpenMessage()) {
+        if (MyApp.Companion.get().isLogin() && isOpenMessage()) {
             startService(intent);
         }
 
@@ -277,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView tvMyName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.tv_my_username);
         tvMyName.setText(username);
         CircleImageView ivMyAvatar = (CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar);
-//        ivMyAvatar.setImageUrl(avatar, VolleyHelper.getInstance().getImageLoader());
+//        ivMyAvatar.setImageUrl(avatar, VolleyHelper.Companion.get()().getImageLoader());
         ivMyAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, MemberActivity.class);
             intent.putExtra(Keys.KEY_USERNAME, username);
@@ -315,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if (MyApp.getInstance().isLogin()) {
+        if (MyApp.Companion.get().isLogin()) {
             menu.findItem(R.id.menu_login).setVisible(false);
             menu.findItem(R.id.menu_notification).setVisible(true);
 //            XLog.tag(TAG).d("invisible");
@@ -531,7 +530,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (MyApp.getInstance().isLogin() && isOpenMessage() && !isBackground()) {
+        if (MyApp.Companion.get().isLogin() && isOpenMessage() && !isBackground()) {
             stopService(intent);
         }
         XLog.tag(TAG).d("onDestroy");

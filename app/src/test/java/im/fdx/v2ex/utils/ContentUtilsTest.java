@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by fdx on 2016/9/11.
@@ -20,7 +20,7 @@ public class ContentUtilsTest {
     @Test
     public void formatContent() throws Exception {
         String s  = "href=\"/go/";
-        String out = ContentUtils.format(s);
+        String out = ContentUtils.INSTANCE.format(s);
 
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss ", Locale.CHINA);

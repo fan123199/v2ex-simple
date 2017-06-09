@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.ui.node.NodeModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.ui.node.AllNodesAdapter;
+import im.fdx.v2ex.ui.node.NodeModel;
 import im.fdx.v2ex.utils.ViewUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -87,7 +87,7 @@ public class NodeFavorFragment extends Fragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ViewUtil.showNoContent(getActivity(), flContainer);
+                            ViewUtil.INSTANCE.showNoContent(getActivity(), flContainer);
                             swipe.setRefreshing(false);
                         }
                     });

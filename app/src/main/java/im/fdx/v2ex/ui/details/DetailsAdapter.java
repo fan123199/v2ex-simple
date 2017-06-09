@@ -5,39 +5,34 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.BaseModel;
-import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.TimeUtil;
@@ -48,8 +43,6 @@ import okhttp3.FormBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static android.media.CamcorderProfile.get;
 
 /**
  * Created by fdx on 15-9-7.
@@ -120,12 +113,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         } else if (getItemViewType(position) == TYPE_FOOTER) {
             TextView tvMore = ((FooterViewHolder) holder).tvLoadMore;
             tvMore.setText("加载更多");
-            tvMore.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    callback.onMethodCallback(2);
-                }
-            });
+            tvMore.setOnClickListener(v -> callback.onMethodCallback(2));
         } else if (getItemViewType(position) == TYPE_ITEM) {
             final ItemViewHolder itemVH = (ItemViewHolder) holder;
             final ReplyModel replyItem = (ReplyModel) mAllList.get(position);
@@ -133,10 +121,9 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 itemVH.divider.setVisibility(View.GONE);
             }
 
-            if (MyApp.getInstance().isLogin()) {
-
+            if (MyApp.Companion.get().isLogin()) {
                 ((Activity) mContext).registerForContextMenu(itemVH.itemView);
-                itemVH.itemView.setOnClickListener(new View.OnClickListener() {
+                itemVH.itemView.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         ((Activity) mContext).openContextMenu(v);
@@ -144,34 +131,28 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     }
                 });
 
-                itemVH.itemView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-                    @Override
-                    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-                        MenuInflater menuInflater = ((Activity) mContext).getMenuInflater();
-                        menuInflater.inflate(R.menu.menu_reply, menu);
+                itemVH.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
+                    MenuInflater menuInflater = ((Activity) mContext).getMenuInflater();
+                    menuInflater.inflate(R.menu.menu_reply, menu);
 
-                        MenuItem.OnMenuItemClickListener menuListener = new MenuItem.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                switch (item.getItemId()) {
-                                    case R.id.menu_reply:
-                                        reply(replyItem);
-                                        break;
-                                    case R.id.menu_thank:
-                                        thank(replyItem, itemVH);
-                                        break;
-                                    case R.id.menu_copy:
-                                        copyText(replyItem);
-                                        break;
-                                }
-                                return false;
-                            }
-                        };
+                    MenuItem.OnMenuItemClickListener menuListener = item -> {
+                        switch (item.getItemId()) {
+                            case R.id.menu_reply:
+                                reply(replyItem);
+                                break;
+                            case R.id.menu_thank:
+                                thank(replyItem, itemVH);
+                                break;
+                            case R.id.menu_copy:
+                                copyText(replyItem);
+                                break;
+                        }
+                        return false;
+                    };
 
-                        menu.findItem(R.id.menu_reply).setOnMenuItemClickListener(menuListener);
-                        menu.findItem(R.id.menu_thank).setOnMenuItemClickListener(menuListener);
-                        menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener);
-                    }
+                    menu.findItem(R.id.menu_reply).setOnMenuItemClickListener(menuListener);
+                    menu.findItem(R.id.menu_thank).setOnMenuItemClickListener(menuListener);
+                    menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener);
                 });
                 itemVH.tvReply.setOnClickListener(v -> reply(replyItem));
             }
@@ -186,13 +167,10 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             XLog.i(replyItem.getContent_rendered());
                 itemVH.tvRow.setText(String.format("#%s", String.valueOf(position)));
                 Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
-                itemVH.ivUserAvatar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
-                        itProfile.putExtra("username", replyItem.getMember().getUsername());
-                        mContext.startActivity(itProfile);
-                    }
+            itemVH.ivUserAvatar.setOnClickListener(v -> {
+                Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
+                itProfile.putExtra("username", replyItem.getMember().getUsername());
+                mContext.startActivity(itProfile);
                 });
         }
     }

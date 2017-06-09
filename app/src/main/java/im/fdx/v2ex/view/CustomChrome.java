@@ -6,10 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.support.customtabs.CustomTabsIntent;
-
-import com.squareup.picasso.Picasso;
+import android.support.v4.content.ContextCompat;
 
 import im.fdx.v2ex.MyReceiver;
 import im.fdx.v2ex.R;
@@ -20,19 +18,14 @@ import im.fdx.v2ex.R;
 public class CustomChrome {
 
     private Context context;
-    private static CustomChrome customChrome;
     private final CustomTabsIntent.Builder builder;
     private final Intent sendIntent;
 
-    private CustomChrome(Context context) {
+    public CustomChrome(Context context) {
         this.context = context;
         builder = new CustomTabsIntent.Builder();
         builder.setShowTitle(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            builder.setToolbarColor(context.getColor(R.color.primary));
-        } else {
-            builder.setToolbarColor(context.getResources().getColor(R.color.primary));
-        }
+        builder.setToolbarColor(ContextCompat.getColor(context, R.color.primary));
 
         Bitmap icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_share_white_24dp);
         sendIntent = new Intent(context, MyReceiver.class);
@@ -40,13 +33,6 @@ public class CustomChrome {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0,
                 sendIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder.setActionButton(icon, "分享该页面", pendingIntent, true);
-    }
-
-    public static synchronized CustomChrome getInstance(Context context) {
-        if (customChrome == null) {
-            customChrome = new CustomChrome(context);
-        }
-        return customChrome;
     }
 
     public void load(String url) {

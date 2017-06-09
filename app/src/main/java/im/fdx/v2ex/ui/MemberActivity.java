@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
@@ -11,7 +12,6 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -43,9 +43,9 @@ import im.fdx.v2ex.BuildConfig;
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
-import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
@@ -56,7 +56,11 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static im.fdx.v2ex.network.NetManager.*;
+import static im.fdx.v2ex.network.NetManager.API_TOPIC;
+import static im.fdx.v2ex.network.NetManager.API_USER;
+import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
+import static im.fdx.v2ex.network.NetManager.dealError;
+import static im.fdx.v2ex.network.NetManager.myGson;
 
 
 /**
@@ -258,7 +262,7 @@ public class MemberActivity extends AppCompatActivity {
                     blockOfT = parseToBlock(html);
 
                     if (blockOfT == null) {
-                        MyApp.getInstance().setLogin(false);
+                        MyApp.Companion.get().setLogin(false);
                     }
                     followOfOnce = parseToOnce(html);
                 }
@@ -343,7 +347,7 @@ public class MemberActivity extends AppCompatActivity {
                 if (topicModels == null || topicModels.size() == 0) {
                     runOnUiThread(() -> {
                         swipeRefreshLayout.setRefreshing(false);
-                        ViewUtil.showNoContent(MemberActivity.this, container);
+                        ViewUtil.INSTANCE.showNoContent(MemberActivity.this, container);
                     });
                     return;
                 }
@@ -400,9 +404,8 @@ public class MemberActivity extends AppCompatActivity {
         member = myGson.fromJson(response, MemberModel.class);
         mTvUsername.setText(member.getUsername());
 
-//        toolbar.setTitle(member.getUsername());
-
-        Picasso.with(this).load(member.getAvatarLargeUrl()).error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar);
+        Picasso.with(this).load(member.getAvatarLargeUrl())
+                .error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar);
         mTvId.setText(getString(R.string.the_n_member, member.getId()));
         mTvIntro.setText(member.getBio());
         mTvUserCreated.setText(TimeUtil.getAbsoluteTime(Long.parseLong(member.getCreated())));

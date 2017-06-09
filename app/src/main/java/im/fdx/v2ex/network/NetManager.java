@@ -4,16 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
-import com.android.volley.VolleyError;
 import com.google.gson.Gson;
 
 import org.jsoup.Jsoup;
@@ -27,17 +19,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
-import im.fdx.v2ex.ui.node.NodeModel;
 import im.fdx.v2ex.ui.details.ReplyModel;
 import im.fdx.v2ex.ui.main.TopicModel;
+import im.fdx.v2ex.ui.node.NodeModel;
 import im.fdx.v2ex.utils.ContentUtils;
-import im.fdx.v2ex.utils.HintUI;
-import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeUtil;
 
+import static im.fdx.v2ex.network.NetManager.Source.FROM_HOME;
+import static im.fdx.v2ex.network.NetManager.Source.FROM_NODE;
 import static java.lang.Integer.parseInt;
 
 /**
@@ -51,8 +42,6 @@ public class NetManager {
     private static final String TAG = NetManager.class.getSimpleName();
 
     public static final String HTTPS_V2EX_BASE = "https://www.v2ex.com";
-    @SuppressWarnings("unused")
-    public static final String HTTP_V2EX_BASE = "http://www.v2ex.com";
 
     @SuppressWarnings("unused")
     public static final String API_HOT = HTTPS_V2EX_BASE + "/api/topics/hot.json";
@@ -66,7 +55,7 @@ public class NetManager {
 
     public static final String API_TOPIC = HTTPS_V2EX_BASE + "/api/topics/show.json";
 
-    public static final String DAILY_CHECK = "https://www.v2ex.com/mission/daily";
+    public static final String DAILY_CHECK = HTTPS_V2EX_BASE + "/mission/daily";
 
     public static final String SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup";
 
@@ -74,46 +63,23 @@ public class NetManager {
     //以下,接受以下参数之一：
     //    username: 用户名
     //    id: 用户在 V2EX 的数字 ID
-    public static final String API_USER = "https://www.v2ex.com/api/members/show.json";
+    public static final String API_USER = HTTPS_V2EX_BASE + "/api/members/show.json";
     //以下接收参数：
     //     topic_id: 主题ID
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
     @SuppressWarnings("unused")
-    public static final String API_REPLIES = "https://www.v2ex.com/api/replies/show.json";
+    @Deprecated
+    public static final String API_REPLIES = HTTPS_V2EX_BASE + "/api/replies/show.json";
 
-    static final int MY_TIMEOUT_MS = 10 * 1000;
+    public static final String URL_ALL_NODE = HTTPS_V2EX_BASE + "/api/nodes/all.json";
 
-    static final int MY_MAX_RETRIES = 1;
-
-    public static final String URL_ALL_NODE =HTTPS_V2EX_BASE + "/api/nodes/all.json";
-    private static final int FROM_HOME = 0;
-    private static final int FROM_NODE = 1;
-
-    @SuppressWarnings("unused")
-    public static void handleVolleyError(Context context, VolleyError error) {
-        if (error instanceof TimeoutError || error instanceof NoConnectionError) {
-            Log.e(TAG,context.getString(R.string.error_timeout));
-            HintUI.t(context,context.getString(R.string.app_name) + ": " + context.getString(R.string.error_timeout));
-        } else if (error instanceof AuthFailureError) {
-            Log.e(TAG,context.getString(R.string.error_auth_failure));
-            HintUI.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
-
-        } else if (error instanceof ServerError) {
-            Log.e(TAG,context.getString(R.string.error_auth_failure));
-            HintUI.t(context,context.getPackageName() + ": " + context.getString(R.string.error_auth_failure));
-
-        } else if (error instanceof NetworkError) {
-            Log.e(TAG,context.getString(R.string.error_network));
-            HintUI.t(context, context.getPackageName() + ": " + context.getString(R.string.error_network));
-        } else if (error instanceof ParseError) {
-            Log.e(TAG,context.getString(R.string.error_parser));
-            HintUI.t(context, context.getPackageName() + ": " + context.getString(R.string.error_parser));
-        }
+    public enum Source {
+        FROM_HOME, FROM_NODE
     }
 
     public static Gson myGson = new Gson();
 
-    public static List<TopicModel> parseTopicLists(Document html, int source) {
+    public static List<TopicModel> parseTopicLists(Document html, Source source) {
         ArrayList<TopicModel> topics = new ArrayList<>();
 
         //用okhttp模拟登录的话获取不到Content内容，必须再一步。
@@ -121,7 +87,7 @@ public class NetManager {
 //        Document html = Jsoup.parse(string);
         Element body = html.body();
 
-        Elements items;
+        Elements items = null;
         switch (source) {
             case FROM_HOME:
                 items = body.getElementsByClass("cell item");
@@ -129,8 +95,6 @@ public class NetManager {
             case FROM_NODE:
                 items = body.getElementsByAttributeValueStarting("class", "cell from");
                 break;
-            default:
-                items = body.getElementsByClass("cell item");
         }
         for (Element item :
                 items) {
@@ -275,7 +239,7 @@ public class NetManager {
     }
 
     /**
-     * @param body 网页
+     * @param body    网页
      * @param topicId todo 可以省略
      * @return TopicModel
      */
@@ -318,7 +282,7 @@ public class NetManager {
             replies = parseInt(replyNum);
         }
 
-        topicModel.setContentRendered(ContentUtils.format(contentRendered)); //done
+        topicModel.setContentRendered(ContentUtils.INSTANCE.format(contentRendered)); //done
 
         MemberModel member = new MemberModel();
         String username = body.getElementsByClass("header").first()
@@ -356,8 +320,7 @@ public class NetManager {
                 items) {
 
 //            <div id="r_4157549" class="cell">
-            String idStr = item.id();
-            long id = Long.parseLong(idStr.substring(2));
+            String id = item.id().substring(2);
 
             ReplyModel replyModel = new ReplyModel();
             MemberModel memberModel = new MemberModel();
@@ -386,7 +349,7 @@ public class NetManager {
 
             replyModel.setId(id);
             replyModel.setContent(replyContent.text());
-            replyModel.setContent_rendered(ContentUtils.format(replyContent.html()));
+            replyModel.setContent_rendered(ContentUtils.INSTANCE.format(replyContent.html()));
             replyModels.add(replyModel);
         }
         return replyModels;
@@ -456,7 +419,7 @@ public class NetManager {
         for (Element item : items) {
             NodeModel nodeModel = new NodeModel();
             String id = item.attr("id").substring(2);
-            nodeModel.setId(Long.valueOf(id));
+            nodeModel.setId(id);
 
             String title = item.getElementsByTag("div").first().ownText().trim();
             nodeModel.setTitle(title);

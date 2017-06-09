@@ -118,7 +118,7 @@
     <string name="app_simple_name">V2EX</string>
     <string name="created_on">Created on</string>
     <string name="introduction">Introduction</string>
-    <string name="the_n_member">the %d member</string>
+    <string name="the_n_member">the %s member</string>
     <string name="topic_number">Topic Num %d</string>
     <string name="daily_check">Daily Check</string>
     <string name="logout">Logout</string>

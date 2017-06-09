@@ -5,16 +5,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.util.LruCache
 import android.widget.ImageView
-
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.Volley
 import com.squareup.picasso.Picasso
-
-import java.io.IOException
-
 import im.fdx.v2ex.MyApp
+import java.io.IOException
 
 
 @Suppress("unused")
@@ -45,7 +42,7 @@ private constructor() {
     private val requestQueue: RequestQueue?
         get() {
             if (mRequestQueue == null) {
-                mRequestQueue = Volley.newRequestQueue(MyApp.getInstance())
+                mRequestQueue = Volley.newRequestQueue(MyApp.get())
             }
 
             return mRequestQueue

@@ -21,7 +21,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 
 import com.elvishew.xlog.XLog;
 
@@ -83,7 +82,7 @@ public class SettingsActivity extends AppCompatActivity {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
 
-            if (MyApp.getInstance().isLogin()) {
+            if (MyApp.Companion.get().isLogin()) {
 
                 addPreferencesFromResource(R.xml.preference_login);
 
@@ -104,7 +103,7 @@ public class SettingsActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         removeCookie();
-                                        MyApp.getInstance().setLogin(false);
+                                        MyApp.Companion.get().setLogin(false);
                                         LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent(Keys.ACTION_LOGOUT));
                                         findPreference(PREF_LOGOUT).setEnabled(false);
                                         dialog.dismiss();

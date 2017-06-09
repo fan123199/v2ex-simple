@@ -3,31 +3,26 @@ package im.fdx.v2ex.ui.node
 import android.annotation.SuppressLint
 import android.app.SearchManager
 import android.content.Context
+import android.os.Bundle
 import android.os.Handler
 import android.os.Message
 import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
-
-import com.elvishew.xlog.XLog
 import com.google.gson.reflect.TypeToken
-
-import java.io.IOException
-import java.util.ArrayList
-
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
-
-import android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL
+import java.io.IOException
+import java.util.*
 
 class AllNodesActivity : AppCompatActivity() {
     private var mAdapter: AllNodesAdapter? = null;
@@ -71,9 +66,7 @@ class AllNodesActivity : AppCompatActivity() {
 
 
         mAdapter = AllNodesAdapter(this, false)
-        val layoutManager = StaggeredGridLayoutManager(3, VERTICAL)
-        rvNode.layoutManager = layoutManager
-
+        rvNode.layoutManager = StaggeredGridLayoutManager(3, VERTICAL)
         rvNode.adapter = mAdapter
     }
 
@@ -83,21 +76,14 @@ class AllNodesActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_node, menu)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val menuItemCompat = menu.findItem(R.id.search_node)
-
         val searchView = menuItemCompat.actionView as SearchView
-
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(componentName))
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
+            override fun onQueryTextSubmit(query: String) = false
 
             override fun onQueryTextChange(newText: String): Boolean {
-
-                XLog.tag("ALLNODE").d("lala" + newText)
                 mAdapter?.filter(newText)
                 return false
             }

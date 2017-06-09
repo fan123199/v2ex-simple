@@ -18,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 
@@ -31,10 +30,10 @@ import java.util.List;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.ui.main.NewTopicActivity;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.ui.main.TopicsRVAdapter;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
@@ -127,7 +126,7 @@ public class NodeActivity extends AppCompatActivity {
             intent.putExtra(Keys.KEY_NODE_NAME, nodeName);
             startActivity(intent);
         });
-        if (!MyApp.getInstance().isLogin()) {
+        if (!MyApp.Companion.get().isLogin()) {
             fabNode.hide();
         }
 
@@ -211,7 +210,7 @@ public class NodeActivity extends AppCompatActivity {
                 Message.obtain(handler, MSG_GET_NODE_INFO).sendToTarget();
 
                 mTopicModels.clear();
-                mTopicModels.addAll(NetManager.parseTopicLists(html, 1));
+                mTopicModels.addAll(NetManager.parseTopicLists(html, NetManager.Source.FROM_NODE));
 //                Message.obtain(handler, MSG_GET_TOPICS, mTopicModels).sendToTarget();
                 handler.sendEmptyMessage(MSG_GET_TOPICS);
             }

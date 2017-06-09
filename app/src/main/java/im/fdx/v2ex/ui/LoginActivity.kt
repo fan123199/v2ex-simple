@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val actionBar = supportActionBar
         toolbar.title = ""
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { v -> onBackPressed() }
+        toolbar.setNavigationOnClickListener { onBackPressed() }
 
         etUsername = findViewById(R.id.input_username) as TextInputEditText
         etPassword = findViewById(R.id.input_password) as TextInputEditText
@@ -132,7 +132,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun postLogin(nameKey: String, passwordKey: String, onceCode: String) {
         val requestBody = FormBody.Builder()
-                // .add("next", "/")
                 .add(nameKey, username!!)
                 .add(passwordKey, password!!)
                 .add("once", onceCode)
@@ -154,18 +153,16 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             override fun onResponse(call: Call, response: Response) {
                 val httpcode = response.code()
                 val errorMsg = getErrorMsg(response.body().string())
-                XLog.tag("LoginActivity").d("http code: " + response.code())
-                XLog.tag("LoginActivity").d("errorMsg" + errorMsg)
+                XLog.tag("LoginActivity").d("http code: ${response.code()}")
+                XLog.tag("LoginActivity").d("errorMsg: $errorMsg")
 
                 when (httpcode) {
                     302 -> {
-
-                        MyApp.getInstance().isLogin = true
+                        MyApp.get().setLogin(true)
                         mSharedPreference?.edit()
                                 ?.putString("username", username)
                                 ?.apply()
                         goMyHomePage()
-
                         runOnUiThread {
                             progressDialog?.dismiss()
                             HintUI.T(this@LoginActivity, "登录成功")
@@ -185,7 +182,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun goMyHomePage() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .headers(HttpHelper.baseHeaders)
-                .url(API_USER + "?username=" + username).build()).enqueue(object : Callback {
+                .url("$API_USER?username=$username").build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dealError(this@LoginActivity)
             }
@@ -202,11 +199,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 avatar = member.avatarLargeUrl
 
                 mSharedPreference!!.edit().putString("avatar", avatar).apply()
-                val intent = Intent(Keys.ACTION_LOGIN)
-                intent.putExtra(Keys.KEY_USERNAME, username)
-                intent.putExtra(Keys.KEY_AVATAR, avatar)
-                LocalBroadcastManager.getInstance(this@LoginActivity)
-                        .sendBroadcast(intent)
+                val intent = Intent(Keys.ACTION_LOGIN).apply {
+                    putExtra(Keys.KEY_USERNAME, username)
+                    putExtra(Keys.KEY_AVATAR, avatar)
+                }
+                LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
             }
         })
     }
@@ -240,7 +237,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
 
     companion object {
-        private val TAG = LoginActivity.javaClass.canonicalName;
+        private val TAG = LoginActivity::class.java.canonicalName;
     }
 
 }

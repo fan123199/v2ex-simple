@@ -1,21 +1,15 @@
 package im.fdx.v2ex.view;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.HandlerThread;
 import android.support.v4.content.ContextCompat;
-import android.text.Editable;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -28,14 +22,12 @@ import android.text.style.URLSpan;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
 import com.elvishew.xlog.XLog;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.squareup.picasso.Transformation;
+
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.utils.ContentUtils;
 import im.fdx.v2ex.utils.ViewUtil;
@@ -82,7 +74,7 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
         }
         setLinkTextColor(ContextCompat.getColor(context, R.color.primary));
 
-        String formContent = ContentUtils.format(text);
+        String formContent = ContentUtils.INSTANCE.format(text);
         final Spanned spannedText;
         MyImageGetter imageGetter = new MyImageGetter();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -227,13 +219,13 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
                     );
 
 
-                    int targetWidth = ViewUtil.getScreenSize()[1] - ViewUtil.dp2px(36);
+                    int targetWidth = ViewUtil.INSTANCE.getScreenSize()[1] - ViewUtil.INSTANCE.dp2px(36);
                     int targetHeight;
 
 
-                    int minWidth = ViewUtil.dp2px(12);
+                    int minWidth = ViewUtil.INSTANCE.dp2px(12);
                     if (bitmap.getWidth() > targetWidth) {
-                        targetWidth = ViewUtil.getScreenSize()[1] - ViewUtil.dp2px(36);
+                        targetWidth = ViewUtil.INSTANCE.getScreenSize()[1] - ViewUtil.INSTANCE.dp2px(36);
                         targetHeight = (int) (targetWidth * (double) bitmap.getHeight() / (double) bitmap.getWidth());
                     } else if (bitmap.getWidth() < minWidth) {
                         targetWidth = minWidth;
@@ -285,7 +277,7 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
         @Override
         public void onClick(View widget) {
-            CustomChrome.getInstance(context).load(getURL());
+            new CustomChrome(context).load(getURL());
         }
 
     }
@@ -300,7 +292,7 @@ public class GoodTextView extends android.support.v7.widget.AppCompatTextView {
 
         @Override
         public Bitmap transform(Bitmap source) {
-            int targetWidth = ViewUtil.getScreenSize()[1] - ViewUtil.dp2px(36);
+            int targetWidth = ViewUtil.INSTANCE.getScreenSize()[1] - ViewUtil.INSTANCE.dp2px(36);
             Log.i(TAG, targetWidth + "targetWidth");
             if (source.getWidth() == 0) {
                 return source;

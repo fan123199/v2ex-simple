@@ -32,10 +32,11 @@
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="0.3">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_node_image"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
+                    app:civ_fill_color="@color/white"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginBottom="8dp"

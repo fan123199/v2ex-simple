@@ -1,9 +1,9 @@
 package im.fdx.v2ex.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,8 +26,8 @@ import java.util.regex.Pattern;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
 import im.fdx.v2ex.model.NotificationModel;
-import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.network.HttpHelper;
+import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.utils.ViewUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -107,7 +107,7 @@ public class NotificationActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 mSwipe.setRefreshing(false);
-                                ViewUtil.showNoContent(NotificationActivity.this, flContainer);
+                                ViewUtil.INSTANCE.showNoContent(NotificationActivity.this, flContainer);
                             }
                         });
                         return;

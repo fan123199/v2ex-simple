@@ -187,16 +187,13 @@ public class TopicsFragment extends Fragment {
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
                 Document html = Jsoup.parse(response.body().string());
-                List<TopicModel> topicList = NetManager.parseTopicLists(html, 0);
+                List<TopicModel> topicList = NetManager.parseTopicLists(html, NetManager.Source.FROM_HOME);
 
                 XLog.i("TOPICS" + topicList);
                 if (topicList == null || topicList.isEmpty()) {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            ViewUtil.showNoContent(getActivity(), flContainer);
-                            mSwipeLayout.setRefreshing(false);
-                        }
+                    getActivity().runOnUiThread(() -> {
+                        ViewUtil.INSTANCE.showNoContent(getActivity(), flContainer);
+                        mSwipeLayout.setRefreshing(false);
                     });
                     return;
                 }

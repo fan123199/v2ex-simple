@@ -1,28 +1,24 @@
 package im.fdx.v2ex.network;
 
 import android.util.Log;
-import android.widget.LinearLayout;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
-
 /**
  * Created by fdx on 16-1-19.
  * 由于Java的类型擦除，我不能用这个去获得List的Gson转换
+ * @deprecated 不用Volley了
  */
 public class GsonRequest<T> extends Request<T> {
 
@@ -50,9 +46,7 @@ public class GsonRequest<T> extends Request<T> {
             T listFoo = gson.fromJson(json, mTTypeToken);
             return  Response.success(listFoo,
                     HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
-        } catch (JsonSyntaxException e) {
+        } catch (UnsupportedEncodingException | JsonSyntaxException e) {
             return Response.error(new ParseError(e));
         }
     }

@@ -50,10 +50,11 @@
                     app:layout_constraintTop_toTopOf="@+id/iv_avatar_profile"
                     tools:text="@string/username"/>
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_avatar_profile"
                     android:layout_width="64dp"
                     android:layout_height="64dp"
+                    app:civ_fill_color="@color/white"
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="48dp"
                     android:layout_marginTop="16dp"

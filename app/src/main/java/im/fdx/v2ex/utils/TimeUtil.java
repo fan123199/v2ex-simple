@@ -5,17 +5,12 @@ import android.text.format.DateUtils;
 import com.elvishew.xlog.XLog;
 
 import java.text.DateFormat;
-import java.text.FieldPosition;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
-
-import static android.R.attr.format;
-import static android.view.View.X;
 
 /**
  * Created by a708 on 15-9-9.
@@ -37,7 +32,7 @@ public class TimeUtil {
         long now = System.currentTimeMillis();
         long difference = now - created;
         CharSequence text = (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS) ?
-                MyApp.getInstance().getString(R.string.just_now) :
+                MyApp.Companion.get().getString(R.string.just_now) :
                 DateUtils.getRelativeTimeSpanString(
                         created,
                         now,
@@ -64,7 +59,7 @@ public class TimeUtil {
      * 算出绝对时间是为了保存如缓存，不然可以直接用得到的时间展示。
      *
      * @param timeStr 两个点中间的字符串，包括空格
-     * @return
+     * @return long value
      */
     public static long toLong(String timeStr) throws NumberFormatException {
 
