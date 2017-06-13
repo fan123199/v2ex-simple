@@ -9,7 +9,6 @@ import android.support.v13.app.FragmentStatePagerAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.utils.Keys;
 
@@ -39,7 +38,7 @@ class MyViewPagerAdapter extends FragmentStatePagerAdapter {
             for (int i = 0; i < tabPaths.length; ++i) {
                 TopicsFragment fragment = new TopicsFragment();
                 Bundle bundle = new Bundle();
-                bundle.putString(Keys.KEY_TAB, tabPaths[i]);
+                bundle.putString(Keys.INSTANCE.getKEY_TAB(), tabPaths[i]);
                 fragment.setArguments(bundle);
                 mFragments.add(fragment);
                 mTabTitles.add(tabTitles[i]);

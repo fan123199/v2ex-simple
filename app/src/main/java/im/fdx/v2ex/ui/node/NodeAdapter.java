@@ -54,7 +54,7 @@ public class NodeAdapter extends RecyclerView.Adapter<NodeAdapter.NodeViewHolder
             super(itemView);
             tvNodeName = (TextView) itemView.findViewById(R.id.tv_node_name);
             ivNode = (ImageView) itemView.findViewById(R.id.iv_node_image);
-            tvNodeHeader = (TextView) itemView.findViewById(R.id.tv_node_header);
+            tvNodeHeader = (TextView) itemView.findViewById(R.id.tv_node_details);
 
 
         }

@@ -48,10 +48,10 @@
             tools:text="num"
             android:layout_alignBaseline="@+id/tv_node_name"
             android:layout_alignBottom="@+id/tv_node_name"
-            android:layout_alignEnd="@+id/tv_node_header" />
+            android:layout_alignEnd="@+id/tv_node_details"/>
 
         <TextView
-            android:id="@+id/tv_node_header"
+            android:id="@+id/tv_node_details"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/iv_node_image"

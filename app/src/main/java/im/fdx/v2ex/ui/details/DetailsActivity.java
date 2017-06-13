@@ -19,13 +19,17 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.elvishew.xlog.XLog;
 
@@ -45,7 +49,6 @@ import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.utils.HintUI;
-import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.SmoothLayoutManager;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -55,8 +58,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static im.fdx.v2ex.network.NetManager.dealError;
-import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
-import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
+import static im.fdx.v2ex.utils.Keys.INSTANCE;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -70,14 +72,15 @@ public class DetailsActivity extends AppCompatActivity {
     @SuppressWarnings("unused")
     private static final int MSG_GET_MORE_REPLY = 4;
 
-    RecyclerView rvDetail;
+    private RecyclerView rvDetail;
     private SwipeRefreshLayout mSwipe;
     private ImageView ivSend;
     private EditText etSendReply;
     private DetailsAdapter mAdapter;
     private List<BaseModel> mAllContent = new ArrayList<>();
     private Menu mMenu;
-    private Toolbar toolbar;
+
+    private TextView tvToolbar;
 
     private TopicModel topicHeader;
     private String token;
@@ -103,10 +106,10 @@ public class DetailsActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
 
             XLog.tag(TAG).d("get in lbc:" + intent.getAction());
-            if (intent.getAction().equals(ACTION_LOGIN)) {
+            if (intent.getAction().equals(INSTANCE.getACTION_LOGIN())) {
                 invalidateOptionsMenu();
                 addFootView();
-            } else if (intent.getAction().equals(ACTION_LOGOUT)) {
+            } else if (intent.getAction().equals(INSTANCE.getACTION_LOGOUT())) {
                 invalidateOptionsMenu();
                 removeFootView();
             } else if (intent.getAction().equals("im.fdx.v2ex.reply")) {
@@ -149,8 +152,8 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        IntentFilter filter = new IntentFilter(ACTION_LOGIN);
-        filter.addAction(ACTION_LOGOUT);
+        IntentFilter filter = new IntentFilter(INSTANCE.getACTION_LOGIN());
+        filter.addAction(INSTANCE.getACTION_LOGOUT());
         filter.addAction("im.fdx.v2ex.reply");
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
 
@@ -160,7 +163,9 @@ public class DetailsActivity extends AppCompatActivity {
         } else {
             removeFootView();
         }
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        tvToolbar = (TextView) toolbar.findViewById(R.id.tv_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -169,9 +174,7 @@ public class DetailsActivity extends AppCompatActivity {
             actionBar.setTitle("");
         }
 
-        if (toolbar != null) {
-            toolbar.setNavigationOnClickListener(v -> onBackPressed());
-        }
+        toolbar.setNavigationOnClickListener(v -> onBackPressed());
 
         rvDetail = (RecyclerView) findViewById(R.id.detail_recycler_view);
         final LinearLayoutManager mLayoutManager = new SmoothLayoutManager(this);
@@ -195,22 +198,39 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
         rvDetail.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            private int currentPosition = 0;
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-
-                if (mLayoutManager.findFirstVisibleItemPosition() != 0) {
-                    if (topicHeader != null) {
-                        toolbar.setTitle(topicHeader.getTitle());
-                    }
-                } else {
-                    toolbar.setTitle("");
-                }
-
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+
+
+                Log.d("scroll", dx + "   " + dy);
+
+                View v = rvDetail.getChildAt(0);
+
+                Log.w("view", v.getHeight() + "" + v.getMeasuredHeight());
+                if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
+
+
+                    if (currentPosition != 0) {
+                        startAlphaAnimation(tvToolbar, 500, false);
+                        currentPosition = 0;
+                    }
+                } else {
+
+                    if (topicHeader != null) {
+
+                        if (currentPosition == 0) {
+                            tvToolbar.setText(topicHeader.getTitle());
+                            startAlphaAnimation(tvToolbar, 500, true);
+                            currentPosition = -1;
+                        }
+                    }
+                }
             }
         });
 
@@ -263,6 +283,19 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
+    // 设置渐变的动画
+    public void startAlphaAnimation(View v, int duration, boolean show) {
+
+        Animation anim = show ?
+                AnimationUtils.loadAnimation(this, R.anim.show_toolbar) :
+                AnimationUtils.loadAnimation(this, R.anim.hide_toolbar);
+
+        anim.setDuration(duration);
+        anim.setFillAfter(true);
+        v.startAnimation(anim);
+    }
+
+
     private void removeFootView() {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.foot_container);
         linearLayout.setVisibility(View.GONE);
@@ -286,8 +319,8 @@ public class DetailsActivity extends AppCompatActivity {
             TopicModel topicModel = intent.getParcelableExtra("model");
             mAllContent.add(0, topicModel);
             mTopicId = topicModel.getId();
-        } else if (intent.getStringExtra(Keys.KEY_TOPIC_ID) != null) {
-            mTopicId = intent.getStringExtra(Keys.KEY_TOPIC_ID);
+        } else if (intent.getStringExtra(INSTANCE.getKEY_TOPIC_ID()) != null) {
+            mTopicId = intent.getStringExtra(INSTANCE.getKEY_TOPIC_ID());
         }
 
         getRepliesPageOne(mTopicId, false);
@@ -341,7 +374,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                     if (token == null) {
                         MyApp.Companion.get().setLogin(false);
-                        LocalBroadcastManager.getInstance(DetailsActivity.this).sendBroadcast(new Intent(Keys.ACTION_LOGOUT));
+                        LocalBroadcastManager.getInstance(DetailsActivity.this).sendBroadcast(new Intent(INSTANCE.getACTION_LOGOUT()));
                         return;
                     }
                     mAdapter.setVerifyCode(token);

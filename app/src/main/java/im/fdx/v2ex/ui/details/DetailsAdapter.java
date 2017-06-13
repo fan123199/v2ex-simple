@@ -15,9 +15,9 @@ import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.elvishew.xlog.XLog;
@@ -92,6 +92,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             TopicsRVAdapter.MainViewHolder mainHolder = (TopicsRVAdapter.MainViewHolder) holder;
             final TopicModel topic = ((TopicModel) mAllList.get(position));
             mainHolder.tvTitle.setText(topic.getTitle());
+            mainHolder.tvTitle.setMaxLines(3);
             mainHolder.tvContent.setSelected(true);
             mainHolder.tvContent.setGoodText(topic.getContent_rendered());
             Log.i(TAG, topic.getContent_rendered());
@@ -123,13 +124,6 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
             if (MyApp.Companion.get().isLogin()) {
                 ((Activity) mContext).registerForContextMenu(itemVH.itemView);
-                itemVH.itemView.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        ((Activity) mContext).openContextMenu(v);
-                        // TODO: 2017/5/17  采用自己写的View作为菜单
-                    }
-                });
 
                 itemVH.itemView.setOnCreateContextMenuListener((menu, v, menuInfo) -> {
                     MenuInflater menuInflater = ((Activity) mContext).getMenuInflater();
@@ -157,21 +151,28 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 itemVH.tvReply.setOnClickListener(v -> reply(replyItem));
             }
 
-                itemVH.tvReplyTime.setText(TimeUtil.getRelativeTime(replyItem.getCreated()));
-                itemVH.tvReplier.setText(replyItem.getMember().getUsername());
-                itemVH.tvThanks.setText(String.valueOf(replyItem.getThanks()));
+            itemVH.tvReplyTime.setText(TimeUtil.getRelativeTime(replyItem.getCreated()));
+            itemVH.tvReplier.setText(replyItem.getMember().getUsername());
+            itemVH.tvThanks.setText(String.valueOf(replyItem.getThanks()));
 
+            if (replyItem.isThanked()) {
+                itemVH.ivThank.setImageTintList(ContextCompat.getColorStateList(mContext, R.color.primary));
+            } else {
+                itemVH.ivThank.setImageTintList(null);
+            }
+
+            itemVH.ivThank.setOnClickListener(v -> thank(replyItem, itemVH));
             itemVH.tvThanks.setOnClickListener(v -> thank(replyItem, itemVH));
-                itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
+            itemVH.tvContent.setGoodText(replyItem.getContent_rendered());
 
             XLog.i(replyItem.getContent_rendered());
-                itemVH.tvRow.setText(String.format("#%s", String.valueOf(position)));
-                Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
+            itemVH.tvRow.setText(String.format("#%s", String.valueOf(position)));
+            Picasso.with(mContext).load(replyItem.getMember().getAvatarNormalUrl()).into(itemVH.ivUserAvatar);
             itemVH.ivUserAvatar.setOnClickListener(v -> {
                 Intent itProfile = new Intent("im.fdx.v2ex.intent.profile");
                 itProfile.putExtra("username", replyItem.getMember().getUsername());
                 mContext.startActivity(itProfile);
-                });
+            });
         }
     }
 
@@ -205,6 +206,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                     ((Activity) mContext).runOnUiThread(() -> {
                         HintUI.t(mContext, "感谢成功");
                         itemVH.tvThanks.setText(String.valueOf(replyItem.getThanks() + 1));
+                        itemVH.ivThank.setImageTintList(ContextCompat.getColorStateList(mContext, R.color.primary));
                     });
                 } else {
                     NetManager.dealError(mContext, response.code());
@@ -258,6 +260,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView tvRow;
         TextView tvThanks;
         TextView tvReply;
+        ImageView ivThank;
         CircleImageView ivUserAvatar;
         View divider;
 
@@ -272,6 +275,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ivUserAvatar = (CircleImageView) itemView.findViewById(R.id.iv_reply_avatar);
             tvThanks = (TextView) itemView.findViewById(R.id.tv_thanks);
             divider = itemView.findViewById(R.id.divider);
+            ivThank = (ImageView) itemView.findViewById(R.id.iv_thanks);
 
         }
     }
@@ -279,6 +283,7 @@ public class DetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private static class FooterViewHolder extends RecyclerView.ViewHolder {
 
         private TextView tvLoadMore;
+
         FooterViewHolder(View itemView) {
             super(itemView);
             tvLoadMore = (TextView) itemView.findViewById(R.id.tv_load_more);

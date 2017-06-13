@@ -57,7 +57,6 @@ import im.fdx.v2ex.ui.WebViewActivity;
 import im.fdx.v2ex.ui.favor.FavorActivity;
 import im.fdx.v2ex.ui.node.AllNodesActivity;
 import im.fdx.v2ex.utils.HintUI;
-import im.fdx.v2ex.utils.Keys;
 import im.fdx.v2ex.utils.TimeUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -67,10 +66,7 @@ import okhttp3.Response;
 import static im.fdx.v2ex.R.id.nav_testNotify;
 import static im.fdx.v2ex.network.NetManager.DAILY_CHECK;
 import static im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE;
-import static im.fdx.v2ex.utils.Keys.ACTION_GET_NOTIFICATION;
-import static im.fdx.v2ex.utils.Keys.ACTION_LOGIN;
-import static im.fdx.v2ex.utils.Keys.ACTION_LOGOUT;
-import static im.fdx.v2ex.utils.Keys.KEY_AVATAR;
+import static im.fdx.v2ex.utils.Keys.INSTANCE;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -93,17 +89,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             String action = intent.getAction();
             XLog.tag(TAG).d("getAction: " + action);
-            if (action.equals(ACTION_LOGIN)) {
+            if (action.equals(INSTANCE.getACTION_LOGIN())) {
                 showIcon(true);
-                String username = intent.getStringExtra(Keys.KEY_USERNAME);
-                String avatar = intent.getStringExtra(KEY_AVATAR);
+                String username = intent.getStringExtra(INSTANCE.getKEY_USERNAME());
+                String avatar = intent.getStringExtra(INSTANCE.getKEY_AVATAR());
                 setUserInfo(username, avatar);
                 fab.show();
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     shortcutManager.addDynamicShortcuts(Collections.singletonList(createTopicInfo));
                 }
-            } else if (action.equals(ACTION_LOGOUT)) {
+            } else if (action.equals(INSTANCE.getACTION_LOGOUT())) {
                 showIcon(false);
                 removeUserInfo();
                 fab.hide();
@@ -111,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                     shortcutManager.removeDynamicShortcuts(shortcutIds);
                 }
-            } else if (action.equals(ACTION_GET_NOTIFICATION)) {
+            } else if (action.equals(INSTANCE.getACTION_GET_NOTIFICATION())) {
                 isGetNotification = true;
                 invalidateOptionsMenu();
             }
@@ -131,9 +127,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         XLog.tag(TAG).d("onCreate");
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_LOGIN);
-        intentFilter.addAction(ACTION_LOGOUT);
-        intentFilter.addAction(ACTION_GET_NOTIFICATION);
+        intentFilter.addAction(INSTANCE.getACTION_LOGIN());
+        intentFilter.addAction(INSTANCE.getACTION_LOGOUT());
+        intentFilter.addAction(INSTANCE.getACTION_GET_NOTIFICATION());
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter);
 
@@ -185,8 +181,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (MyApp.Companion.get().isLogin()) {
             showIcon(true);
 
-            String username = sharedPreferences.getString(Keys.KEY_USERNAME, "");
-            String avatar = sharedPreferences.getString(KEY_AVATAR, "");
+            String username = sharedPreferences.getString(INSTANCE.getKEY_USERNAME(), "");
+            String avatar = sharedPreferences.getString(INSTANCE.getKEY_AVATAR(), "");
             XLog.tag(TAG).d(username + "//// " + avatar);
             if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(avatar)) {
                 setUserInfo(username, avatar);
@@ -238,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         intent = new Intent(MainActivity.this, UpdateService.class);
-        intent.setAction(Keys.ACTION_START_NOTIFICATION);
+        intent.setAction(INSTANCE.getACTION_START_NOTIFICATION());
         if (MyApp.Companion.get().isLogin() && isOpenMessage()) {
             startService(intent);
         }
@@ -279,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        ivMyAvatar.setImageUrl(avatar, VolleyHelper.Companion.get()().getImageLoader());
         ivMyAvatar.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, MemberActivity.class);
-            intent.putExtra(Keys.KEY_USERNAME, username);
+            intent.putExtra(INSTANCE.getKEY_USERNAME(), username);
             startActivity(intent);
         });
 
@@ -385,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Intent intentData = new Intent(Intent.ACTION_SEND);
 
                 intentData.setType("message/rfc822");
-                intentData.putExtra(Intent.EXTRA_EMAIL, new String[]{Keys.AUTHOR_EMAIL});
+                intentData.putExtra(Intent.EXTRA_EMAIL, new String[]{INSTANCE.getAUTHOR_EMAIL()});
                 intentData.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject));
                 intentData.putExtra(Intent.EXTRA_TEXT, getString(R.string.feedback_hint) + "\n");
                 try {
@@ -393,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     startActivity(intentData);
                 } catch (ActivityNotFoundException ex) {
                     intentData.setPackage(null);
-                    intentData.setData(Uri.parse("mailto:" + Keys.AUTHOR_EMAIL));
+                    intentData.setData(Uri.parse("mailto:" + INSTANCE.getAUTHOR_EMAIL()));
                     startActivity(intentData);
 //                    Toast.makeText(MainActivity.this, "There are no email clients installed.",
 //                            Toast.LENGTH_SHORT).show();

@@ -19,6 +19,8 @@
 
     <color name="white">#FFFFFFFF</color>
 
+    <color name="light_hint">#AAFFFFFF</color>
+
     <color name="light_background">#FFF2F2F2</color>
 
     <color name="black_overlay">#66000000</color>

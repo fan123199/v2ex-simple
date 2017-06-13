@@ -34,27 +34,12 @@ data class ReplyModel(var id: String = "",
                       var content_rendered: String = "",
                       var thanks: Int = 0,
                       var created: Long = 0,
-                      var member: MemberModel = MemberModel()
+                      var isThanked: Boolean,
+                      var member: MemberModel? = MemberModel()
 ) : BaseModel(), Parcelable {
 
-    constructor(source: Parcel) : this(
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readInt(),
-            source.readLong(),
-            source.readParcelable<MemberModel>(MemberModel::class.java.classLoader)
-    )
 
-
-    override fun writeToParcel(dest: Parcel?, flags: Int) {
-        dest?.writeString(id)
-        dest?.writeString(content)
-        dest?.writeString(content_rendered)
-        dest?.writeInt(thanks)
-        dest?.writeLong(created)
-        dest?.writeValue(member)
-    }
+    constructor() : this("", "", "", 0, 0, false, null)
 
     override fun toString() = "ReplyModel{content='$content_rendered}"
 
@@ -67,5 +52,25 @@ data class ReplyModel(var id: String = "",
         }
     }
 
+    constructor(source: Parcel) : this(
+            source.readString(),
+            source.readString(),
+            source.readString(),
+            source.readInt(),
+            source.readLong(),
+            1 == source.readInt(),
+            source.readParcelable<MemberModel>(MemberModel::class.java.classLoader)
+    )
+
     override fun describeContents() = 0
+
+    override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
+        dest.writeString(content)
+        dest.writeString(content_rendered)
+        dest.writeInt(thanks)
+        dest.writeLong(created)
+        dest.writeInt((if (isThanked) 1 else 0))
+        dest.writeParcelable(member, 0)
+    }
 }

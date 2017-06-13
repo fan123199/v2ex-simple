@@ -85,10 +85,10 @@ public class TopicsFragment extends Fragment {
                              Bundle savedInstanceState) {
         final View layout = inflater.inflate(R.layout.fragment_tab_article, container, false);
         Bundle args = getArguments();
-        String mTabs = args.getString(Keys.KEY_TAB);
-        if (args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1) {
+        String mTabs = args.getString(Keys.INSTANCE.getKEY_TAB());
+        if (args.getInt(Keys.INSTANCE.getFAVOR_FRAGMENT_TYPE(), -1) == 1) {
             mRequestURL = HTTPS_V2EX_BASE + "/my/topics";
-        } else if (args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2) {
+        } else if (args.getInt(Keys.INSTANCE.getFAVOR_FRAGMENT_TYPE(), -1) == 2) {
             mRequestURL = HTTPS_V2EX_BASE + "/my/following";
         } else {
             if (mTabs != null && !mTabs.isEmpty())

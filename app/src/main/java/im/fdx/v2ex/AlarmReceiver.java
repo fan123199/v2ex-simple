@@ -65,7 +65,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                     int num = Integer.parseInt(matcher.group());
                     XLog.d("num" + num);
                     if (num != 0) {
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Keys.ACTION_GET_NOTIFICATION));
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(new Intent(Keys.INSTANCE.getACTION_GET_NOTIFICATION()));
                         putNotification(context, num);
                     }
                 } else {

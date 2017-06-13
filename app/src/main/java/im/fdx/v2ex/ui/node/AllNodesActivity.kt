@@ -13,7 +13,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager
 import android.support.v7.widget.StaggeredGridLayoutManager.VERTICAL
 import android.support.v7.widget.Toolbar
 import android.view.Menu
-import android.view.MenuItem
 import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
@@ -58,7 +57,7 @@ class AllNodesActivity : AppCompatActivity() {
                     @Throws(IOException::class)
                     override fun onResponse(call: Call, response: okhttp3.Response) {
                         val type = object : TypeToken<ArrayList<NodeModel>>() {}.type
-                        val nodeModels = NetManager.myGson.fromJson<ArrayList<NodeModel>>(response.body().string(), type)
+                        val nodeModels = NetManager.myGson.fromJson<ArrayList<NodeModel>>(response.body()?.string(), type)
                         mAdapter?.setAllData(nodeModels)
                         handler.sendEmptyMessage(0)
                     }
@@ -91,11 +90,4 @@ class AllNodesActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-
-        }
-
-        return false
-    }
 }

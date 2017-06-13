@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import org.greenrobot.greendao.annotation.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,6 +22,7 @@ import java.util.regex.Pattern;
 
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.model.MemberModel;
+import im.fdx.v2ex.model.NotificationModel;
 import im.fdx.v2ex.ui.details.ReplyModel;
 import im.fdx.v2ex.ui.main.TopicModel;
 import im.fdx.v2ex.ui.node.NodeModel;
@@ -72,6 +74,69 @@ public class NetManager {
     public static final String API_REPLIES = HTTPS_V2EX_BASE + "/api/replies/show.json";
 
     public static final String URL_ALL_NODE = HTTPS_V2EX_BASE + "/api/nodes/all.json";
+
+    public static @NotNull
+    List<NotificationModel> parseToNotifications(Document html) {
+        Element body = html.body();
+        Elements items = body.getElementsByAttributeValueStarting("id", "n_");
+        if (items == null) {
+            return Collections.emptyList();
+        }
+
+        List<NotificationModel> notificationModels = new ArrayList<>();
+        for (Element item : items) {
+            NotificationModel notification = new NotificationModel();
+
+            String notificationId = item.attr("id").substring(2);
+            notification.setId(notificationId);
+
+            Element contentElement = item.getElementsByClass("payload").first();
+            String content = "";
+            if (contentElement != null) {
+                content = contentElement.text();
+            }
+
+            String time = item.getElementsByClass("snow").first().text();
+            notification.setTime(time);// 2/6
+
+
+            Element memberElement = item.getElementsByTag("a").first();
+            String username = memberElement.attr("href").replace("/member/", "");
+            String avatarUrl = memberElement.getElementsByClass("avatar").first().attr("src");
+            MemberModel memberModel = new MemberModel();
+            memberModel.setUsername(username);
+            memberModel.setAvatar_normal(avatarUrl);
+            notification.setMember(memberModel); // 3/6
+
+            TopicModel topicModel = new TopicModel();
+
+            Element topicElement = item.getElementsByClass("fade").first();
+//            <a href="/t/348757#reply1">交互式《线性代数》学习资料</a>
+            String href = topicElement.getElementsByAttributeValueStarting("href", "/t/").first().attr("href");
+
+            topicModel.setTitle(topicElement.getElementsByAttributeValueStarting("href", "/t/").first().text());
+
+            Pattern p = Pattern.compile("(?<=/t/)\\d+(?=#)");
+            Matcher matcher = p.matcher(href);
+            if (matcher.find()) {
+                String topicId = matcher.group();
+                topicModel.setId(topicId);
+            }
+
+            Pattern p2 = Pattern.compile("(?<=reply)d+\\b");
+            Matcher matcher2 = p2.matcher(href);
+            if (matcher2.find()) {
+                String replies = matcher2.group();
+                notification.setReplyPosition(replies);
+            }
+            notification.setTopic(topicModel); //4/6
+            String type = topicElement.ownText();
+            notification.setType(type);
+            notification.setContent(content); //1/6
+            notificationModels.add(notification);
+        }
+        return notificationModels;
+    }
 
     public enum Source {
         FROM_HOME, FROM_NODE
@@ -192,11 +257,8 @@ public class NetManager {
         Element contentElement = header.getElementsByClass("f12 gray").first();
         String content = contentElement == null ? "" : contentElement.text();
         String number = header.getElementsByTag("strong").first().text();
-        String strHeader = header.text();
-        String nodeTitle = "";
-        if (strHeader.contains("›")) {
-            nodeTitle = strHeader.split("›")[1].split(" ")[1].trim();
-        }
+        String strHeader = header.ownText().trim();
+
         if (header.getElementsByTag("img").first() != null) {
             String avatarLarge = header.getElementsByTag("img").first().attr("src");
             nodeModel.setAvatar_large(avatarLarge);
@@ -210,7 +272,7 @@ public class NetManager {
         String nodeName = strScript.split("\"")[1];
 
         nodeModel.setName(nodeName);
-        nodeModel.setTitle(nodeTitle);
+        nodeModel.setTitle(strHeader);
         nodeModel.setTopics(Integer.parseInt(number));
         nodeModel.setHeader(content);
 
@@ -340,6 +402,15 @@ public class NetManager {
                 thanks = parseInt(thanksOriginal.replace("♥ ", ""));
             }
 
+            boolean isThank = false;
+            Element thanked = item.getElementsByClass("thank_area thanked").first();
+            if (thanked != null && "感谢已发送".equals(thanked.text())) {
+                isThank = true;
+            }
+
+            replyModel.setThanked(isThank);
+
+
             String createdOriginal = item.getElementsByClass("fade small").text();
             Element replyContent = item.getElementsByClass("reply_content").first();
             replyModel.setCreated(TimeUtil.toLong(createdOriginal));
@@ -359,18 +430,21 @@ public class NetManager {
     public static void dealError(final Context context, final int errorCode) {
 
         if (context instanceof Activity)
-            ((Activity) context).runOnUiThread(() -> {
-                switch (errorCode) {
-                    case -1:
-                        Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                        break;
-                    case 302:
+            ((Activity) context).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (errorCode) {
+                        case -1:
+                            Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                            break;
+                        case 302:
 
-                        Toast.makeText(context, context.getString(R.string.error_auth_failure), Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                        break;
+                            Toast.makeText(context, context.getString(R.string.error_auth_failure), Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                            break;
+                    }
                 }
             });
     }

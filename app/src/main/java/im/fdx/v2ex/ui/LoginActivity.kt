@@ -108,7 +108,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response0: Response) {
-                val htmlString = response0.body().string()
+                val htmlString = response0.body()?.string()
                 val body = Jsoup.parse(htmlString).body()
                 val nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮箱地址").attr("name")
                 val passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
@@ -152,7 +152,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val httpcode = response.code()
-                val errorMsg = getErrorMsg(response.body().string())
+                val errorMsg = getErrorMsg(response.body()?.string())
                 XLog.tag("LoginActivity").d("http code: ${response.code()}")
                 XLog.tag("LoginActivity").d("errorMsg: $errorMsg")
 
@@ -194,7 +194,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     dealError(this@LoginActivity, response.code())
                     return
                 }
-                val body = response.body().string()
+                val body = response.body()?.string()
                 val member = myGson.fromJson(body, MemberModel::class.java)
                 avatar = member.avatarLargeUrl
 
@@ -209,7 +209,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
 
 
-    private fun getErrorMsg(body: String): String {
+    private fun getErrorMsg(body: String?): String {
 
         XLog.tag(TAG).d(body)
         val element = Jsoup.parse(body).body()

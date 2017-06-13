@@ -8,14 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import im.fdx.v2ex.MyApp;
 import im.fdx.v2ex.R;
 import im.fdx.v2ex.ui.MemberActivity;
 import im.fdx.v2ex.ui.details.DetailsActivity;
@@ -145,12 +143,12 @@ public class TopicsRVAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     break;
                 case R.id.iv_avatar_profile:
                     Intent intent = new Intent(context, MemberActivity.class);
-                    intent.putExtra(Keys.KEY_USERNAME, topic.getMember().getUsername());
+                    intent.putExtra(Keys.INSTANCE.getKEY_USERNAME(), topic.getMember().getUsername());
                     context.startActivity(intent);
                     break;
                 case R.id.tv_node:
                     Intent itNode = new Intent(context, NodeActivity.class);
-                    itNode.putExtra(Keys.KEY_NODE_NAME, topic.getNode().getName());
+                    itNode.putExtra(Keys.INSTANCE.getKEY_NODE_NAME(), topic.getNode().getName());
                     context.startActivity(itNode);
                     break;
                 case R.id.main_text_view:

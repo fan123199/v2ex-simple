@@ -57,13 +57,13 @@ data class NodeModel(var id: String,
 
 
     val avatarMiniUrl: String
-        get() = "http:${avatar_mini!!}"
+        get() = "http:$avatar_mini"
 
     val avatarNormalUrl: String
-        get() = "http:${avatar_normal!!}"
+        get() = "http:${avatar_normal}"
 
     val avatarLargeUrl: String
-        get() = "http:${avatar_large!!}"
+        get() = "http:${avatar_large}"
 
     override fun toString() = "$title / $name"
 

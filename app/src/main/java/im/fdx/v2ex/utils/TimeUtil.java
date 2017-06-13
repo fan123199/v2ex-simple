@@ -93,7 +93,7 @@ public class TimeUtil {
             } else if (now != -1) {
                 return created;
             } else {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.getDefault());
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss +08:00", Locale.getDefault());
                 Date date = sdf.parse(timeStr);
                 created = date.getTime() / 1000;
             }

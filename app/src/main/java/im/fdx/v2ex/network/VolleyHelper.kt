@@ -14,7 +14,7 @@ import im.fdx.v2ex.MyApp
 import java.io.IOException
 
 
-@Suppress("unused")
+@Suppress("unused", "UNUSED_PARAMETER")
 @Deprecated(" Created by fdx on 2015/8/14.\n  Volley网络库的请求队列。使用单例，增加资源利用")
 class VolleyHelper
 private constructor() {

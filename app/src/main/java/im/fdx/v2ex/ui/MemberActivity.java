@@ -204,7 +204,7 @@ public class MemberActivity extends AppCompatActivity {
                 urlUserInfo = API_USER + "?username=" + username;
             }
         } else if (intent.getExtras() != null) {
-            username = getIntent().getExtras().getString(Keys.KEY_USERNAME);
+            username = getIntent().getExtras().getString(Keys.INSTANCE.getKEY_USERNAME());
             urlUserInfo = API_USER + "?username=" + username;
         } else if (BuildConfig.DEBUG) {
             username = "Livid";
@@ -220,7 +220,7 @@ public class MemberActivity extends AppCompatActivity {
     }
 
     private void getBlockAndFollowWeb() {
-        if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, ""))) {
+        if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.INSTANCE.getKEY_USERNAME(), ""))) {
             return;
         }
         String webUrl = "https://www.v2ex.com/member/" + username;
@@ -452,7 +452,7 @@ public class MemberActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_member, menu);
         this.mMenu = menu;
-        if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, ""))) {
+        if (username.equals(PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.INSTANCE.getKEY_USERNAME(), ""))) {
             menu.findItem(R.id.menu_block).setVisible(false);
             menu.findItem(R.id.menu_follow).setVisible(false);
         }

@@ -22,9 +22,26 @@
         <!--app:layout_collapseMode="pin"-->
         <!--app:popupTheme="@style/AppTheme.PopupOverlay"/>-->
 
-        <include
-            layout="@layout/app_toolbar"
-            app:layout_collapseMode="pin"/>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/AppTheme.AppBarOverlay"
+            app:contentInsetStartWithNavigation="0dp"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:id="@+id/tv_toolbar"
+                android:textAppearance="@style/VText.ToolbarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="我是个大标我是个大标题"/>
+
+
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/activity_details_content"

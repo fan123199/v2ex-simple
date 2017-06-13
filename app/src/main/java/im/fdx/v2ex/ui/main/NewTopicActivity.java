@@ -1,9 +1,9 @@
 package im.fdx.v2ex.ui.main;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -25,10 +25,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import im.fdx.v2ex.R;
-import im.fdx.v2ex.ui.node.NodeModel;
 import im.fdx.v2ex.network.HttpHelper;
 import im.fdx.v2ex.network.NetManager;
 import im.fdx.v2ex.ui.details.DetailsActivity;
+import im.fdx.v2ex.ui.node.NodeModel;
 import im.fdx.v2ex.utils.HintUI;
 import im.fdx.v2ex.utils.Keys;
 import okhttp3.Call;
@@ -125,8 +125,8 @@ public class NewTopicActivity extends AppCompatActivity {
     }
 
     private void setNode(Intent intent) {
-        if (intent.getStringExtra(Keys.KEY_NODE_NAME) != null) {
-            mNodename = intent.getStringExtra(Keys.KEY_NODE_NAME);
+        if (intent.getStringExtra(Keys.INSTANCE.getKEY_NODE_NAME()) != null) {
+            mNodename = intent.getStringExtra(Keys.INSTANCE.getKEY_NODE_NAME());
             XLog.d(mNodename + "|" + spinner.getCount() + "|" + adapter.getCount());
             String nodeTitle;
             for (int i = 0; i < adapter.getCount(); i++) {
@@ -242,7 +242,7 @@ public class NewTopicActivity extends AppCompatActivity {
                                 topic = matcher.group();
                                 XLog.tag(TAG).d(topic);
                                 Intent intent = new Intent(NewTopicActivity.this, DetailsActivity.class);
-                                intent.putExtra(Keys.KEY_TOPIC_ID, topic);
+                                intent.putExtra(Keys.INSTANCE.getKEY_TOPIC_ID(), topic);
                                 startActivity(intent);
                             }
                             finish();
