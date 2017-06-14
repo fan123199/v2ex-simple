@@ -23,7 +23,7 @@ internal class FavorViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter
     }
 
     override fun getCount() = titles.size
-    override fun getPageTitle(position: Int): CharSequence = titles[position]
+    override fun getPageTitle(position: Int) = titles[position]
 
     companion object {
         val titles = arrayOf("节点收藏", "主题收藏", "特别关注")

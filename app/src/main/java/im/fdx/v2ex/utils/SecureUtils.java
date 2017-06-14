@@ -8,7 +8,6 @@ import android.util.Base64;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -35,7 +34,7 @@ import javax.crypto.spec.GCMParameterSpec;
  *
  * 还有一些bug，无法保证可靠性，暂时不用
  */
-
+@Deprecated
 @SuppressWarnings("TryWithIdenticalCatches")
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class SecureUtils {

@@ -124,7 +124,7 @@ class NodeActivity : AppCompatActivity() {
         mSwipeRefreshLayout = findViewById(R.id.swipe_of_node) as SwipeRefreshLayout
 
         mSwipeRefreshLayout.isRefreshing = true
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary)
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange)
         mSwipeRefreshLayout.setOnRefreshListener { getNodeInfoAndTopicByOK(nodeName) }
         parseIntent(intent)
 
@@ -132,12 +132,8 @@ class NodeActivity : AppCompatActivity() {
 
     private fun handleAlphaOnTitle(percentage: Float) {
         XLog.tag("collapse").d(percentage)
-        if (percentage > 0.8 && percentage <= 1) {
-            rlNodeHeader.visibility = View.INVISIBLE  //View隐藏
-
-        } else if (percentage >= 0 && percentage <= 0.8) {
-            rlNodeHeader.visibility = View.VISIBLE //view 显示
-            rlNodeHeader.alpha = 1 - percentage
+        when (percentage) {
+            in 0..1 -> rlNodeHeader.alpha = 1 - percentage
         }
     }
 

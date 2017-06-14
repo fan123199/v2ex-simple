@@ -59,6 +59,7 @@
                     android:layout_marginLeft="48dp"
                     android:layout_marginTop="16dp"
                     android:cropToPadding="false"
+                    tools:src="@drawable/ic_profile"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
@@ -89,6 +90,7 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="0dp"
                     android:layout_marginRight="8dp"
+                    tools:text="这是自我简介，可能很长"
                     android:layout_marginTop="8dp"
                     app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                     app:layout_constraintRight_toRightOf="parent"
@@ -113,7 +115,7 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_github"
-                    tools:text="location"/>
+                    tools:text="我在深圳"/>
 
                 <TextView
                     android:id="@+id/tv_bitcoin"
@@ -129,6 +131,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="0dp"
                     android:clickable="true"
+                    tools:text="我的比特号"
                     android:drawableLeft="@drawable/ic_bitcoin"
                     android:drawablePadding="16dp"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -155,6 +158,7 @@
                     android:drawablePadding="16dp"
                     android:gravity="center_vertical"
                     android:onClick="openTwitter"
+                    tools:text="twitter id"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -191,7 +195,7 @@
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_bitcoin"
                     tools:layout_constraintLeft_creator="1"
-                    tools:text="website"/>
+                    tools:text="http://google.com"/>
 
                 <TextView
                     android:id="@+id/tv_prefix_created"
@@ -221,6 +225,7 @@
                     android:layout_marginTop="8dp"
                     android:drawableLeft="@drawable/ic_github"
                     android:drawablePadding="16dp"
+                    tools:text="github账号"
                     android:onClick="openGithub"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -232,7 +237,7 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="?actionBarSize"
                 android:theme="@style/AppTheme.AppBarOverlay"
                 app:layout_collapseMode="pin"
                 app:popupTheme="@style/AppTheme.PopupOverlay"/>

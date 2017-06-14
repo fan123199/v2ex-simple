@@ -10,6 +10,7 @@ import android.view.View;
 /**
  * Created by a708 on 15-8-28.
  * RecyclerView 的 按钮监听类，不用OnclickListener，而是用OnItemTouchListener
+ * @deprecated
  */
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 

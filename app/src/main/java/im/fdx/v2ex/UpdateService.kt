@@ -12,10 +12,11 @@ import com.elvishew.xlog.XLog
 
 class UpdateService : Service() {
 
-    private var alarmManager: AlarmManager? = null
+    private lateinit var alarmManager: AlarmManager
 
     override fun onCreate() {
         super.onCreate()
+        XLog.d("service onCreate")
 
         //// TODO: 2017/3/24 JobScheduler or period settings.
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -27,10 +28,10 @@ class UpdateService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        alarmManager!!.cancel(operationIntent)
-        val interval = java.lang.Long.parseLong(PreferenceManager.getDefaultSharedPreferences(this)
-                .getString("pref_msg_period", "60")) * 1000L
-        alarmManager!!.setRepeating(AlarmManager.RTC_WAKEUP,
+        alarmManager.cancel(operationIntent)
+        val interval = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("pref_msg_period", "60").toLong() * 1000L
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis() + 5 * 1000, interval,
                 operationIntent)
         XLog.d("updateService alarmManager: time" + interval)
@@ -46,7 +47,7 @@ class UpdateService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         XLog.d("service onDestroy")
-        alarmManager!!.cancel(operationIntent)
+        alarmManager.cancel(operationIntent)
     }
 }
 

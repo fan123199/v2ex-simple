@@ -61,6 +61,22 @@
         <item>关注</item>
     </string-array>
 
+    <string-array name="v2ex_favorite_tab_paths" translatable="false">
+        <item>hot</item>
+        <item>all</item>
+        <item>recent</item>
+        <item>tech</item>
+        <item>creative</item>
+        <item>play</item>
+        <item>apple</item>
+        <item>jobs</item>
+        <item>deals</item>
+        <item>city</item>
+        <item>qna</item>
+        <item>r2</item>
+        <item>members</item>
+    </string-array>
+
     <string-array name="period_string">
         <item>1分钟</item>
         <item>2分钟</item>
@@ -79,22 +95,7 @@
         <item>1800</item>
         <item>3600</item>
         <item>86400</item>
-    </string-array>
 
-    <string-array name="v2ex_favorite_tab_paths" translatable="false">
-        <item>hot</item>
-        <item>all</item>
-        <item>recent</item>
-        <item>tech</item>
-        <item>creative</item>
-        <item>play</item>
-        <item>apple</item>
-        <item>jobs</item>
-        <item>deals</item>
-        <item>city</item>
-        <item>qna</item>
-        <item>r2</item>
-        <item>members</item>
     </string-array>
     <string name="title_activity_node">Node</string>
     <string name="node_image" translatable="false">node image</string>

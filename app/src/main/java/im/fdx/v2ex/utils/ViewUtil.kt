@@ -9,7 +9,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
-import im.fdx.v2ex.extensions.dp2px
+import im.fdx.v2ex.utils.extensions.dp2px
 
 /**
  * Created by fdx on 2017/4/29.
@@ -31,12 +31,6 @@ object ViewUtil {
             XLog.i("height $height, width $width")
             return intArrayOf(height, width)
         }
-
-    fun dp2px(dp: Int): Int {
-        val metrics = Resources.getSystem().displayMetrics
-        val px = dp * (metrics.densityDpi / 160f)
-        return Math.round(px)
-    }
 
     fun showNoContent(activity: Activity, container: FrameLayout) {
         val child = TextView(activity)

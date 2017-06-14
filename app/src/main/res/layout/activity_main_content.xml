@@ -21,9 +21,7 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/sliding_tabs"
-            style="@style/MyCustomTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"/>
+            style="@style/VTabLayout"/>
 
     </android.support.design.widget.AppBarLayout>
 

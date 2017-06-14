@@ -9,7 +9,7 @@ import org.junit.Test;
 public class TimeHelperTest {
     @Test
     public void getAbsoluteTime() throws Exception {
-        String s = TimeUtil.getAbsoluteTime(1341262360);
+        String s = TimeUtil.INSTANCE.getAbsoluteTime(1341262360);
 //        assertEquals("succeed", "2012-7-3 4:52:40",s);
     }
 

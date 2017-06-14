@@ -28,7 +28,8 @@
 
     <color name="content_font_color">#2d2d2d</color>
 
-    <color name="fab">#ffffd600</color>
+    <color name="accent_orange">#ffffd600</color>
+    <color name="fab">@color/accent_orange</color>
     <color name="hint">@color/black54</color>
 
     <color name="nav_icon">@color/black54</color>

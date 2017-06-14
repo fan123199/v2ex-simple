@@ -3,7 +3,7 @@
     <!--<item-->
     <!--android:id="@+id/menu_refresh"-->
     <!--android:title="@string/menu_refresh"-->
-    <!--android:icon="@drawable/ic_refresh_black_24dp"-->
+    <!--android:icon="@drawaic_refresh_white_24dp24dp"-->
     <!--app:showAsAction="never" />-->
     <item
         android:id="@+id/menu_login"

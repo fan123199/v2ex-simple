@@ -45,8 +45,8 @@ data class NodeModel(var id: String,
                      var title: String,
                      var title_alternative: String,
                      var topics: Int,
-                     val stars: Int,
-                     val created: Long,
+                     var stars: Int,
+                     var created: Long,
                      var avatar_mini: String?,
                      var avatar_normal: String?,
                      var avatar_large: String?,
@@ -55,6 +55,7 @@ data class NodeModel(var id: String,
 
     constructor() : this("", "", "", "", "", 0, 0, 0, "", "", "", "")
 
+    constructor(name: String) : this("", name, "", "", "", 0, 0, 0, "", "", "", "")
 
     val avatarMiniUrl: String
         get() = "http:$avatar_mini"

@@ -23,6 +23,7 @@ import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.T
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -67,8 +68,8 @@ class SettingsActivity : AppCompatActivity() {
                 findPreference(PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
                     val alert = AlertDialog.Builder(activity)
                             .setTitle("确定要退出吗")
-                            .setNegativeButton(R.string.cancel) { dialog, which -> dialog.dismiss() }
-                            .setPositiveButton(R.string.ok) { dialog, which ->
+                            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+                            .setPositiveButton(R.string.ok) { dialog, _ ->
                                 removeCookie()
                                 MyApp.get().setLogin(false)
                                 LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
@@ -121,7 +122,7 @@ class SettingsActivity : AppCompatActivity() {
             findPreference("pref_version").onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 if (count < 0) {
                     count = 7
-                    HintUI.t(activity, ha[(System.currentTimeMillis() / 100 % 3).toInt()])
+                    activity.T(ha[(System.currentTimeMillis() / 100 % 3).toInt()])
                 }
                 count--
                 true
@@ -187,7 +188,7 @@ class SettingsActivity : AppCompatActivity() {
                     activity.startService(intent)
                     XLog.d("pref_msg_period changed")
                 }
-            }//不需要发送广播了，通过sharedpreference就可以获得变化了
+            }
         }
 
         companion object {

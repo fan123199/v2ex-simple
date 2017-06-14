@@ -21,7 +21,11 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.model.MemberModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.NetManager.*
+import im.fdx.v2ex.network.NetManager.API_USER
+import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
+import im.fdx.v2ex.network.NetManager.dealError
+import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import okhttp3.*
