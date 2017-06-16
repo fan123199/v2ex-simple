@@ -107,7 +107,9 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_thanks"
         android:layout_marginBottom="0dp"
-        app:layout_constraintTop_toTopOf="@+id/tv_thanks"/>
+        app:layout_constraintTop_toTopOf="@+id/tv_thanks"
+        android:contentDescription="thank the reply"
+        tools:ignore="HardcodedText"/>
 
     <TextView
         android:id="@+id/tv_thanks"
@@ -122,12 +124,12 @@
         tools:text="123"
         android:textAppearance="@style/VText.Hint"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
-        app:layout_constraintRight_toLeftOf="@+id/tvReplay"
+        app:layout_constraintRight_toLeftOf="@+id/tv_reply"
         app:layout_constraintTop_toTopOf="@+id/tv_replier"
         app:layout_constraintVertical_bias="1.0"/>
 
     <TextView
-        android:id="@+id/tvReplay"
+        android:id="@+id/tv_reply"
         style="@style/VText.Hint"
         android:layout_width="12sp"
         android:layout_height="12sp"

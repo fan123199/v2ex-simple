@@ -26,8 +26,8 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.T
 import okhttp3.*
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -169,14 +169,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         goMyHomePage()
                         runOnUiThread {
                             progressDialog?.dismiss()
-                            HintUI.T(this@LoginActivity, "登录成功")
+                            T("登录成功")
                         }
 
                         finish()
                     }
                     200 -> runOnUiThread {
                         progressDialog?.dismiss()
-                        HintUI.T(this@LoginActivity, "登录失败:\n $errorMsg")
+                        T("登录失败:\n $errorMsg")
                     }
                 }
             }

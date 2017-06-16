@@ -22,7 +22,6 @@ import android.widget.TextView
 import com.elvishew.xlog.XLog
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.BaseModel
@@ -30,8 +29,8 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.t
 import im.fdx.v2ex.view.GoodTextView
 import okhttp3.*
 import java.io.IOException
@@ -41,22 +40,13 @@ import java.io.IOException
  * 详情页的Adapter。
  */
 class DetailsAdapter(private val mContext: Context, private val mAllList: List<BaseModel>, private val callback: DetailsAdapter.AdapterCallback) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var verifyCode: String? = null
+    internal var verifyCode: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-
         when (viewType) {
-            TYPE_HEADER -> {
-                val view = LayoutInflater.from(mContext).inflate(R.layout.item_topic_view, parent, false)
-                view.elevation = 0f
-                return TopicsRVAdapter.MainViewHolder(view)
-            }
-            TYPE_ITEM -> {
-                return ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false))
-            }
-            TYPE_FOOTER -> {
-                return FooterViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_load_more, parent, false))
-            }
+            TYPE_HEADER -> return TopicsRVAdapter.MainViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_topic_view, parent, false))
+            TYPE_ITEM -> return ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false))
+            TYPE_FOOTER -> return FooterViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_load_more, parent, false))
             else -> throw RuntimeException(" No type that matches $viewType + Make sure using types correctly")
         }
     }
@@ -128,15 +118,17 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
                 itemVH.tvReplyTime.text = TimeUtil.getRelativeTime(replyItem.created)
                 itemVH.tvReplier.text = replyItem.member!!.username
                 itemVH.tvThanks.text = replyItem.thanks.toString()
+                itemVH.ivThank.setOnClickListener { thank(replyItem, itemVH) }
+                itemVH.tvThanks.setOnClickListener { thank(replyItem, itemVH) }
 
                 if (replyItem.isThanked) {
                     itemVH.ivThank.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
+                    itemVH.ivThank.isClickable = false
+                    itemVH.tvThanks.isClickable = false
                 } else {
                     itemVH.ivThank.imageTintList = null
                 }
 
-                itemVH.ivThank.setOnClickListener { thank(replyItem, itemVH) }
-                itemVH.tvThanks.setOnClickListener { thank(replyItem, itemVH) }
                 itemVH.tvContent.setGoodText(replyItem.content_rendered)
 
                 XLog.i(replyItem.content_rendered)
@@ -178,9 +170,13 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
 
                 if (response.code() == 200) {
                     (mContext as Activity).runOnUiThread {
-                        HintUI.t(mContext, "感谢成功")
-                        itemVH.tvThanks.text = (replyItem.thanks + 1).toString()
+                        mContext.t("感谢成功")
+                        replyItem.thanks = replyItem.thanks + 1
+                        itemVH.tvThanks.text = (replyItem.thanks).toString()
                         itemVH.ivThank.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
+                        itemVH.ivThank.isClickable = false
+                        itemVH.tvThanks.isClickable = false
+                        replyItem.isThanked = true
                     }
                 } else {
                     NetManager.dealError(mContext, response.code())
@@ -192,7 +188,8 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
 
     private fun reply(replyItem: ReplyModel, position: Int) {
         val editText = (mContext as Activity).findViewById(R.id.et_post_reply) as EditText
-        val text = "@${replyItem.member!!.username} ${if (BuildConfig.DEBUG) "#$position " else ""}"   //todo hehe
+        val text = "@${replyItem.member!!.username} " +
+                if (MyApp.get().mPrefs.getBoolean("pref_add_row", false)) "#$position " else ""
         if (!editText.text.toString().contains(text)) {
             val spanString = SpannableString(text)
             val span: ForegroundColorSpan = ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.primary))
@@ -217,37 +214,18 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
             return TYPE_ITEM
     }
 
-    internal fun setVerifyCode(verifyCode: String) {
-        this.verifyCode = verifyCode
-    }
-
     //我重用了MainAdapter中的MainViewHolder
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        internal var tvReplier: TextView
-        internal var tvReplyTime: TextView
-        internal var tvContent: GoodTextView
-        internal var tvRow: TextView
-        internal var tvThanks: TextView
-        internal var tvReply: TextView
-        internal var ivThank: ImageView
-        internal var ivUserAvatar: CircleImageView
-        internal var divider: View
-
-        init {
-
-            tvReply = itemView.findViewById(R.id.tvReplay) as TextView
-            tvReplier = itemView.findViewById(R.id.tv_replier) as TextView
-            tvReplyTime = itemView.findViewById(R.id.tv_reply_time) as TextView
-            tvContent = itemView.findViewById(R.id.tv_reply_content) as GoodTextView
-            tvRow = itemView.findViewById(R.id.tv_reply_row) as TextView
-            ivUserAvatar = itemView.findViewById(R.id.iv_reply_avatar) as CircleImageView
-            tvThanks = itemView.findViewById(R.id.tv_thanks) as TextView
-            divider = itemView.findViewById(R.id.divider)
-            ivThank = itemView.findViewById(R.id.iv_thanks) as ImageView
-
-        }
+        internal var tvReplier: TextView = itemView.findViewById(R.id.tv_replier) as TextView
+        internal var tvReplyTime: TextView = itemView.findViewById(R.id.tv_reply_time) as TextView
+        internal var tvContent: GoodTextView = itemView.findViewById(R.id.tv_reply_content) as GoodTextView
+        internal var tvRow: TextView = itemView.findViewById(R.id.tv_reply_row) as TextView
+        internal var tvThanks: TextView = itemView.findViewById(R.id.tv_thanks) as TextView
+        internal var tvReply: TextView = itemView.findViewById(R.id.tv_reply) as TextView
+        internal var ivThank: ImageView = itemView.findViewById(R.id.iv_thanks) as ImageView
+        internal var ivUserAvatar: CircleImageView = itemView.findViewById(R.id.iv_reply_avatar) as CircleImageView
+        internal var divider: View = itemView.findViewById(R.id.divider)
     }
 
     private class FooterViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {

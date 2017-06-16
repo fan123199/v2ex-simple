@@ -1,5 +1,6 @@
 package im.fdx.v2ex.network
 
+import com.readystatesoftware.chuck.ChuckInterceptor
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
@@ -20,7 +21,7 @@ object HttpHelper {
             //            .writeTimeout(10, TimeUnit.SECONDS)
             //            .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
-//            .addInterceptor(ChuckInterceptor(MyApp.INSTANCE.applicationContext))//好东西，查看Okhttp数据
+            .addInterceptor(ChuckInterceptor(MyApp.get().applicationContext))//好东西，查看Okhttp数据
             .cookieJar(myCookieJar)
             .build()
     val baseHeaders: Headers = Headers.Builder()

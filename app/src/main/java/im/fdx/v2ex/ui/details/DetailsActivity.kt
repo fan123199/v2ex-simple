@@ -34,6 +34,7 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.t
 import im.fdx.v2ex.view.SmoothLayoutManager
 import okhttp3.*
 import org.jsoup.Jsoup
@@ -44,11 +45,11 @@ import java.util.regex.Pattern
 
 class DetailsActivity : AppCompatActivity() {
 
-    private var ivSend: ImageView? = null
     private var mAdapter: DetailsAdapter? = null
     private val mAllContent = ArrayList<BaseModel>()
     private var mMenu: Menu? = null
 
+    private lateinit var ivSend: ImageView
     private lateinit var mSwipe: SwipeRefreshLayout
     private lateinit var rvDetail: RecyclerView
     private lateinit var etSendReply: EditText
@@ -97,12 +98,16 @@ class DetailsActivity : AppCompatActivity() {
     }
     private val handler = Handler(Handler.Callback { msg ->
         when (msg.what) {
-            MSG_OK_GET_TOPIC, MSG_ERROR_IO -> mSwipe.isRefreshing = false
+            MSG_OK_GET_TOPIC -> mSwipe.isRefreshing = false
             MSG_ERROR_AUTH -> {
-                HintUI.t(this@DetailsActivity, "该主题需要登录查看")
+                t("需要登录后查看该主题")
                 this@DetailsActivity.finish()
             }
             MSG_GO_TO_BOTTOM -> rvDetail.scrollToPosition(mAllContent.size - 1)
+            MSG_ERROR_IO -> {
+                mSwipe.isRefreshing = false
+                t("无法打开该主题")
+            }
         }
         false
     })
@@ -204,11 +209,11 @@ class DetailsActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable) {
 
                 if (TextUtils.isEmpty(s)) {
-                    ivSend!!.isClickable = false
-                    ivSend!!.imageTintList = null
+                    ivSend.isClickable = false
+                    ivSend.imageTintList = null
                 } else {
-                    ivSend!!.isClickable = true
-                    ivSend!!.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this@DetailsActivity, R.color.primary))
+                    ivSend.isClickable = true
+                    ivSend.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this@DetailsActivity, R.color.primary))
 
                 }
             }
@@ -283,6 +288,7 @@ class DetailsActivity : AppCompatActivity() {
                 }
                 if (code != 200) {
                     dealError(this@DetailsActivity, code)
+                    handler.sendEmptyMessage(MSG_ERROR_IO)
                     return
                 }
 
@@ -295,14 +301,15 @@ class DetailsActivity : AppCompatActivity() {
 
                 if (MyApp.get().isLogin()) {
                     token = NetManager.parseToVerifyCode(body)
-                    XLog.tag(TAG).d("verify" + token!!)
 
                     if (token == null) {
                         MyApp.get().setLogin(false)
                         LocalBroadcastManager.getInstance(this@DetailsActivity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+                        handler.sendEmptyMessage(MSG_ERROR_AUTH)
                         return
                     }
-                    mAdapter!!.setVerifyCode(token!!)
+                    XLog.tag(TAG).d("verify" + token!!)
+                    mAdapter!!.verifyCode = token!!
                     isFavored = parseIsFavored(body)
 
                     XLog.tag(TAG).d("isfavored" + isFavored.toString())
@@ -447,7 +454,7 @@ class DetailsActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 302) {
                     runOnUiThread {
-                        HintUI.t(this@DetailsActivity, "${if (doFavor) "" else "取消"}收藏成功")
+                        HintUI.toa(this@DetailsActivity, "${if (doFavor) "" else "取消"}收藏成功")
                         getRepliesPageOne(mTopicId, false)
                     }
                 }
@@ -482,12 +489,12 @@ class DetailsActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     XLog.tag(TAG).d("成功发布")
                     handler.post {
-                        HintUI.t(this@DetailsActivity, "发表评论成功")
+                        HintUI.toa(this@DetailsActivity, "发表评论成功")
                         etSendReply.setText("")
                         getRepliesPageOne(mTopicId, true)
                     }
                 } else {
-                    HintUI.t(this@DetailsActivity, "发表评论失败")
+                    HintUI.toa(this@DetailsActivity, "发表评论失败")
                 }
             }
         })

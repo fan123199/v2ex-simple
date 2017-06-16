@@ -3,6 +3,8 @@ package im.fdx.v2ex.ui.main
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
@@ -25,6 +27,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import com.squareup.picasso.Picasso
@@ -40,15 +43,14 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Request
-import okhttp3.Response
+import im.fdx.v2ex.utils.extensions.t
+import okhttp3.*
 import org.jsoup.Jsoup
+import java.io.ByteArrayOutputStream
 import java.io.IOException
+import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -296,6 +298,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_testMenu2 -> startActivity(Intent(this, WebViewActivity::class.java))
             R.id.nav_testNotify -> {
+                val photoPickerIntent = Intent(Intent.ACTION_PICK)
+                photoPickerIntent.type = "image/*"
+                startActivityForResult(photoPickerIntent, 110)
             }
             R.id.nav_share -> {
                 //                Uri uri = Uri.parse("market://details?id=" + getPackageName());
@@ -343,7 +348,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onResponse(call: Call, response: Response) {
 
                 if (response.code() == 302) {
-                    runOnUiThread { HintUI.t(this@MainActivity, " 还未登录，请先登录") }
+                    runOnUiThread { t("还未登录，请先登录") }
                     return
                 }
 
@@ -351,7 +356,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (body.contains("每日登录奖励已领取")) {
                     XLog.tag("MainActivity").w("已领取")
-                    runOnUiThread { HintUI.t(this@MainActivity, "已领取，明天再来") }
+                    runOnUiThread { t("已领取，明天再来") }
                     return
                 }
 
@@ -377,7 +382,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 Log.w("MainActivity", "daily check ok")
-                runOnUiThread { HintUI.t(this@MainActivity, "领取成功") }
+                runOnUiThread { t("领取成功") }
             }
         })
     }
@@ -413,6 +418,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         XLog.tag(TAG).d("onStop")
 
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        when (requestCode) {
+            110 ->
+                if (resultCode == RESULT_OK) {
+                    try {
+                        val imageUri = imageReturnedIntent?.data;
+                        val imageStream = contentResolver.openInputStream(imageUri);
+                        val bitmap = BitmapFactory.decodeStream(imageStream);
+
+                        val stream = ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        val byteArray = stream.toByteArray();
+                        val img = ImageView(this)
+//                        img.setImageURI(imageUri)
+
+                        val MEDIA_TYPE_MULTI = MediaType.parse("multipart/form-data")
+                        val url = "https://sm.ms/api/upload"
+                        val pp: RequestBody = MultipartBody.create(MEDIA_TYPE_MULTI, byteArray)
+                        val body: RequestBody = MultipartBody.Builder().addFormDataPart("smfile", "nonono", pp).build()
+                        HttpHelper.OK_CLIENT.newCall(Request.Builder()
+                                .headers(HttpHelper.baseHeaders)
+                                .header("Host", "sm.ms")
+                                .url(url)
+                                .post(body)
+                                .build()).enqueue(object : Callback {
+                            override fun onFailure(call: Call?, e: IOException?) {
+                                e?.printStackTrace()
+                            }
+
+                            override fun onResponse(call: Call?, response: Response?) {
+                                XLog.tag("smms").d(response?.body()?.string())
+                            }
+                        })
+                        setContentView(img)
+                        t(imageUri.toString())
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    } finally {
+                    }
+                }
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

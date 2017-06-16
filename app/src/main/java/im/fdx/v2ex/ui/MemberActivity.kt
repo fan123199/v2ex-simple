@@ -456,7 +456,7 @@ class MemberActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     getBlockAndFollowWeb()
                     runOnUiThread {
-                        HintUI.t(this@MemberActivity, "${if (isFollowed) "取消" else ""}关注成功")
+                        HintUI.toa(this@MemberActivity, "${if (isFollowed) "取消" else ""}关注成功")
                     }
                 }
             }
@@ -477,7 +477,7 @@ class MemberActivity : AppCompatActivity() {
                         if (response.code() == 302) {
                             getBlockAndFollowWeb()
                             runOnUiThread {
-                                HintUI.t(this@MemberActivity, "${if (isBlocked) "取消" else ""}屏蔽成功")
+                                HintUI.toa(this@MemberActivity, "${if (isBlocked) "取消" else ""}屏蔽成功")
                             }
                         }
                     }

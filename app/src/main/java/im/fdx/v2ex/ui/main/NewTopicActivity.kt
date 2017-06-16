@@ -1,11 +1,13 @@
 package im.fdx.v2ex.ui.main
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -24,7 +26,10 @@ import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.t
 import okhttp3.*
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.lang.Exception
 import java.util.*
 import java.util.regex.Pattern
 
@@ -95,6 +100,53 @@ class NewTopicActivity : AppCompatActivity() {
 
     }
 
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        when (requestCode) {
+            110 ->
+                if (resultCode == RESULT_OK) {
+                    try {
+                        val imageUri = imageReturnedIntent.data;
+                        val imageStream = contentResolver.openInputStream(imageUri);
+
+                        val file = File("new_file")
+                        val out: FileOutputStream = FileOutputStream(file);
+                        out.write(imageStream.readBytes())
+                        out.flush()
+                        out.close()
+
+                        val selectedImage = BitmapFactory.decodeStream(imageStream);
+
+                        uploadImage(file)
+                        t(imageUri.toString())
+                    } catch (e: Exception) {
+                        e.printStackTrace();
+                    }
+
+                }
+        }
+    }
+
+    private fun uploadImage(file: File) {
+
+        val MEDIA_TYPE_PNG = MediaType.parse("image/*");
+        val url = "https://sm.ms/api/upload"
+        val body: RequestBody = RequestBody.create(MEDIA_TYPE_PNG, file)
+
+        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+                .post(body)
+                .url(url).build()).enqueue(object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                e?.printStackTrace()
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                Log.d("haha", response?.body().toString())
+            }
+        })
+    }
+
     private fun parseIntent(intent: Intent) {
         val action = intent.action
         val type = intent.type
@@ -139,11 +191,11 @@ class NewTopicActivity : AppCompatActivity() {
             mContent = etContent.text.toString()
 
             when {
-                TextUtils.isEmpty(mTitle) -> HintUI.t(this, "标题和内容不能为空")
-                TextUtils.isEmpty(mContent) -> HintUI.t(this, "标题和内容不能为空")
-                mTitle.length > 120 -> HintUI.t(this, "标题字数超过限制")
-                mContent.length > 20000 -> HintUI.t(this, "主题内容不能超过 20000 个字符")
-                TextUtils.isEmpty(mNodename) -> HintUI.t(this, getString(R.string.choose_node))
+                TextUtils.isEmpty(mTitle) -> HintUI.toa(this, "标题和内容不能为空")
+                TextUtils.isEmpty(mContent) -> HintUI.toa(this, "标题和内容不能为空")
+                mTitle.length > 120 -> HintUI.toa(this, "标题字数超过限制")
+                mContent.length > 20000 -> HintUI.toa(this, "主题内容不能超过 20000 个字符")
+                TextUtils.isEmpty(mNodename) -> HintUI.toa(this, getString(R.string.choose_node))
                 else -> postNew()
             }
         }

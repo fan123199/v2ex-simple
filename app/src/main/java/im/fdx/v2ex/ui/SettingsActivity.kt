@@ -21,9 +21,9 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.R.xml.preference
 import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.T
+import im.fdx.v2ex.utils.extensions.t
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -59,38 +59,39 @@ class SettingsActivity : AppCompatActivity() {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
 
-            if (MyApp.get().isLogin()) {
+            when {
+                MyApp.get().isLogin() -> {
 
-                addPreferencesFromResource(R.xml.preference_login)
+                    addPreferencesFromResource(R.xml.preference_login)
 
-                findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
+                    findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
 
-                findPreference(PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                    val alert = AlertDialog.Builder(activity)
-                            .setTitle("确定要退出吗")
-                            .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
-                            .setPositiveButton(R.string.ok) { dialog, _ ->
-                                removeCookie()
-                                MyApp.get().setLogin(false)
-                                LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
-                                findPreference(PREF_LOGOUT).isEnabled = false
-                                dialog.dismiss()
-                                activity.finish();
-                                HintUI.t(activity, "已退出登录")
-                            }
-                    alert.create().show()
-                    true
-                }
+                    findPreference(PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                        val alert = AlertDialog.Builder(activity)
+                                .setTitle("确定要退出吗")
+                                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+                                .setPositiveButton(R.string.ok) { dialog, _ ->
+                                    removeCookie()
+                                    MyApp.get().setLogin(false)
+                                    LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+                                    findPreference(PREF_LOGOUT).isEnabled = false
+                                    dialog.dismiss()
+                                    activity.finish();
+                                    activity.t("已退出登录")
+                                }.create()
+                        alert.show()
+                        true
+                    }
 
-                listPreference = findPreference("pref_msg_period") as ListPreference
-                if (listPreference!!.entry != null) {
-                    listPreference!!.summary = listPreference!!.entry//初始化时设置summary
-                }
+                    listPreference = findPreference("pref_msg_period") as ListPreference
+                    if (listPreference!!.entry != null) {
+                        listPreference!!.summary = listPreference!!.entry//初始化时设置summary
+                    }
 
-                if (!sharedPreferences.getBoolean("pref_msg", false)) {
-                    findPreference("pref_msg_period").isEnabled = false
-                    findPreference("pref_background_msg").isEnabled = false
-
+                    if (!sharedPreferences.getBoolean("pref_msg", false)) {
+                        findPreference("pref_msg_period").isEnabled = false
+                        findPreference("pref_background_msg").isEnabled = false
+                    }
                 }
             }
 
@@ -101,7 +102,7 @@ class SettingsActivity : AppCompatActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 } catch (e: Exception) {
-                    HintUI.t(activity, "没有找到V2EX客户端")
+                    activity.t("没有找到V2EX客户端")
                 }
 
                 true
@@ -187,6 +188,10 @@ class SettingsActivity : AppCompatActivity() {
                     listPreference!!.summary = listPreference!!.entry
                     activity.startService(intent)
                     XLog.d("pref_msg_period changed")
+                }
+
+                "pref_add_row" -> {
+
                 }
             }
         }

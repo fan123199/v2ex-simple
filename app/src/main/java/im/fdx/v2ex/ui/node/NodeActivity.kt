@@ -66,7 +66,7 @@ class NodeActivity : AppCompatActivity() {
                     mSwipeRefreshLayout.isRefreshing = false
                 }
                 msg.what == MSG_ERROR_AUTH -> {
-                    HintUI.t(this@NodeActivity, "需要登录")
+                    HintUI.toa(this@NodeActivity, "需要登录")
                     finish()
                 }
             }

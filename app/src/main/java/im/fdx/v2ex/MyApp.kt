@@ -20,7 +20,7 @@ class MyApp : Application() {
         }
     }
 
-    private lateinit var mPrefs: SharedPreferences
+    lateinit var mPrefs: SharedPreferences
     internal var isLogin = false
 
     fun setLogin(login: Boolean) {

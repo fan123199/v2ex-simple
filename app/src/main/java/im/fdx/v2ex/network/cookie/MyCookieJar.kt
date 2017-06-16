@@ -11,33 +11,29 @@ import java.util.*
  *
  * 请用自己的Cookie策略，而不是开源库。
  */
-class MyCookieJar(private val cookiePersistor: CookiePersistor) : CookieJar {
+class MyCookieJar(private val cookiePersistor: SharedPrefsPersistor) : CookieJar {
     private val cookieStore = HashMap<String, List<Cookie>>()
     private val mCookies = ArrayList<Cookie>()
-
-    init {
-        mCookies.addAll(cookiePersistor.loadAll())
-    }
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         mCookies.clear()
         mCookies.addAll(cookies)
+        cookieStore[url.host()] = mCookies
         cookiePersistor.persistAll(cookies)
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
 
-        val cookies: List<Cookie>?
-        if (cookiePersistor.loadAll().isNotEmpty()) {
-            cookies = cookiePersistor.loadAll()
+        val cookies: List<Cookie>? = if (cookiePersistor.loadByHost(url.host()).isNotEmpty()) {
+            cookiePersistor.loadByHost(url.host().removePrefix("www."))
         } else
-            cookies = cookieStore[url.host()]
+            cookieStore[url.host()]
         return cookies ?: ArrayList<Cookie>()
     }
 
-
     fun clear() {
         mCookies.clear()
+        cookieStore.clear()
         cookiePersistor.clear()
     }
 }
