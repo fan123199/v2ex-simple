@@ -82,7 +82,6 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
             //生成自定义可点击的span
             val newClickableSpan = object : ClickableSpan() {
                 override fun onClick(widget: View) {
-
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl))
                     context.startActivity(intent)
                 }
@@ -165,14 +164,15 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
                     val drawable = BitmapDrawable(context.resources, result)
                     drawable.setBounds(0, 0, result.width, result.height)
                     bitmapHolder.setBounds(0, 0, result.width, result.height)
-
                     bitmapHolder.setDrawable(drawable)
-                    text = text
+                    this@GoodTextView.text = this@GoodTextView.text
                 }
 
-                override fun onBitmapFailed(errorDrawable: Drawable?) {}
+                override fun onBitmapFailed(errorDrawable: Drawable?) {
+                }
 
-                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+                }
             }
 
             Picasso.with(context).load(source).into(target)

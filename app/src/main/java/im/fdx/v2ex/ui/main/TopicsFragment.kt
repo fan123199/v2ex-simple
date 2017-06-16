@@ -20,6 +20,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.showNoContent
 import im.fdx.v2ex.view.SmoothLayoutManager
@@ -143,6 +144,12 @@ class TopicsFragment : Fragment() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
+
+                if (response.code() != 200) {
+                    dealError(activity, response.code())
+                    return
+                }
+
                 val html = Jsoup.parse(response.body()?.string())
                 val topicList = NetManager.parseTopicLists(html, NetManager.Source.FROM_HOME)
 

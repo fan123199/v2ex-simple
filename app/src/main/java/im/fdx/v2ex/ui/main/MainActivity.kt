@@ -3,8 +3,6 @@ package im.fdx.v2ex.ui.main
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
@@ -27,7 +25,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import com.squareup.picasso.Picasso
@@ -46,11 +43,12 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.t
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
 import org.jsoup.Jsoup
-import java.io.ByteArrayOutputStream
 import java.io.IOException
-import java.lang.Exception
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -303,7 +301,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 startActivityForResult(photoPickerIntent, 110)
             }
             R.id.nav_share -> {
-                //                Uri uri = Uri.parse("market://details?id=" + getPackageName());
                 val intentShare = Intent(Intent.ACTION_SEND)
                 intentShare.type = "text/plain"
                 intentShare.putExtra(Intent.EXTRA_TEXT, "V2ex:" + "market://details?id=" + packageName)
@@ -419,51 +416,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        when (requestCode) {
-            110 ->
-                if (resultCode == RESULT_OK) {
-                    try {
-                        val imageUri = imageReturnedIntent?.data;
-                        val imageStream = contentResolver.openInputStream(imageUri);
-                        val bitmap = BitmapFactory.decodeStream(imageStream);
-
-                        val stream = ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        val byteArray = stream.toByteArray();
-                        val img = ImageView(this)
-//                        img.setImageURI(imageUri)
-
-                        val MEDIA_TYPE_MULTI = MediaType.parse("multipart/form-data")
-                        val url = "https://sm.ms/api/upload"
-                        val pp: RequestBody = MultipartBody.create(MEDIA_TYPE_MULTI, byteArray)
-                        val body: RequestBody = MultipartBody.Builder().addFormDataPart("smfile", "nonono", pp).build()
-                        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                                .headers(HttpHelper.baseHeaders)
-                                .header("Host", "sm.ms")
-                                .url(url)
-                                .post(body)
-                                .build()).enqueue(object : Callback {
-                            override fun onFailure(call: Call?, e: IOException?) {
-                                e?.printStackTrace()
-                            }
-
-                            override fun onResponse(call: Call?, response: Response?) {
-                                XLog.tag("smms").d(response?.body()?.string())
-                            }
-                        })
-                        setContentView(img)
-                        t(imageUri.toString())
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    } finally {
-                    }
-                }
-        }
-    }
-
-
     override fun onDestroy() {
         super.onDestroy()
         if (MyApp.get().isLogin() && isOpenMessage && !isBackground) {
@@ -483,9 +435,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     companion object {
 
         private val TAG = "MainActivity"
-        private val LOG_IN_SUCCEED = 1
         private val LOG_IN = 0
-        private val ID_ITEM_CHECK = 33
 
         @ColorInt
         fun adjustColorForStatusBar(@ColorInt color: Int): Int {

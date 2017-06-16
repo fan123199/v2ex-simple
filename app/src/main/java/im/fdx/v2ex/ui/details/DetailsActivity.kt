@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -162,12 +161,6 @@ class DetailsActivity : AppCompatActivity() {
 
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
 
-
-                Log.d("scroll", dx.toString() + "   " + dy)
-
-                val v = rvDetail.getChildAt(0)
-
-                Log.w("view", v.height.toString() + "" + v.measuredHeight)
                 if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
                     if (currentPosition != 0) {
                         startAlphaAnimation(tvToolbar, 500, false)
@@ -194,7 +187,6 @@ class DetailsActivity : AppCompatActivity() {
         etSendReply = findViewById(R.id.et_post_reply) as EditText
         etSendReply.setOnFocusChangeListener { v, hasFocus ->
 
-            XLog.tag(TAG).d("hasFocus" + hasFocus)
             if (!hasFocus) {
                 val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
@@ -203,22 +195,16 @@ class DetailsActivity : AppCompatActivity() {
 
         etSendReply.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
-            override fun afterTextChanged(s: Editable) {
-
-                if (TextUtils.isEmpty(s)) {
-                    ivSend.isClickable = false
-                    ivSend.imageTintList = null
-                } else {
-                    ivSend.isClickable = true
-                    ivSend.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this@DetailsActivity, R.color.primary))
-
-                }
+            override fun afterTextChanged(s: Editable) = if (TextUtils.isEmpty(s)) {
+                ivSend.isClickable = false
+                ivSend.imageTintList = null
+            } else {
+                ivSend.isClickable = true
+                ivSend.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this@DetailsActivity, R.color.primary))
             }
         })
-
         parseIntent(intent)
 
     }
@@ -256,9 +242,8 @@ class DetailsActivity : AppCompatActivity() {
         }
 
         getRepliesPageOne(mTopicId, false)
-        val topicUrl = NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId
 
-        XLog.tag(TAG).d("TopicUrl: " + topicUrl)
+        XLog.tag(TAG).d("TopicUrl: ${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId")
     }
 
     override fun onNewIntent(intent: Intent) {
