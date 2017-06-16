@@ -123,7 +123,7 @@ class SettingsActivity : AppCompatActivity() {
             findPreference("pref_version").onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 if (count < 0) {
                     count = 7
-                    activity.T(ha[(System.currentTimeMillis() / 100 % 3).toInt()])
+                    activity.T(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
                 }
                 count--
                 true

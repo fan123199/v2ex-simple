@@ -2,7 +2,6 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
               tools:context="im.fdx.v2ex.ui.SettingsActivity">
 
@@ -10,7 +9,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="4dp">
+        android:elevation="4dp">
 
         <include
             android:id="@+id/toolbar"
