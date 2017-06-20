@@ -79,16 +79,16 @@ class NodeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_node)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowTitleEnabled(false) //很关键，不会一闪而过一个东西
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
 
-        val appBarLayout = findViewById(R.id.appbar_node) as AppBarLayout
+        val appBarLayout: AppBarLayout = findViewById(R.id.appbar_node)
 
-        collapsingToolbarLayout = findViewById(R.id.ctl_node) as CollapsingToolbarLayout
+        collapsingToolbarLayout = findViewById(R.id.ctl_node)
 
         appBarLayout.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
@@ -98,7 +98,7 @@ class NodeActivity : AppCompatActivity() {
         }
 
 
-        val fabNode = findViewById(R.id.fab_node) as FloatingActionButton
+        val fabNode: FloatingActionButton = findViewById(R.id.fab_node)
         fabNode.setOnClickListener {
             val intent = Intent(this@NodeActivity, NewTopicActivity::class.java)
             intent.putExtra(Keys.KEY_NODE_NAME, nodeName)
@@ -108,20 +108,20 @@ class NodeActivity : AppCompatActivity() {
             fabNode.hide()
         }
 
-        rlNodeHeader = findViewById(R.id.rl_node_header) as View
-        rlNodeList = findViewById(R.id.rl_node_list) as View
-        ivNodeIcon = findViewById(R.id.iv_node_image) as ImageView
-        tvNodeHeader = findViewById(R.id.tv_node_details) as TextView
-        tvNodeNum = findViewById(R.id.tv_topic_num) as TextView
+        rlNodeHeader = findViewById(R.id.rl_node_header)
+        rlNodeList = findViewById(R.id.rl_node_list)
+        ivNodeIcon = findViewById(R.id.iv_node_image)
+        tvNodeHeader = findViewById(R.id.tv_node_details)
+        tvNodeNum = findViewById(R.id.tv_topic_num)
 
 
-        val rvTopicsOfNode = findViewById(R.id.rv_topics_of_node) as RecyclerView
+        val rvTopicsOfNode: RecyclerView = findViewById(R.id.rv_topics_of_node)
 
         mAdapter = TopicsRVAdapter(this, mTopicModels)
         rvTopicsOfNode.adapter = mAdapter
         rvTopicsOfNode.layoutManager = LinearLayoutManager(this)
 
-        mSwipeRefreshLayout = findViewById(R.id.swipe_of_node) as SwipeRefreshLayout
+        mSwipeRefreshLayout = findViewById(R.id.swipe_of_node)
 
         mSwipeRefreshLayout.isRefreshing = true
         mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange)

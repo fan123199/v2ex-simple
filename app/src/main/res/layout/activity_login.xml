@@ -2,112 +2,110 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primary"
     android:orientation="vertical">
 
-    <include
+    <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        layout="@layout/app_toolbar"/>
-
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:contentInsetStartWithNavigation="0dp"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="24dp">
+            android:layout_gravity="center_horizontal"
+            android:text="@string/log_in_v2ex"
+            android:textAppearance="@style/VText.ToolbarStyle"/>
 
-            <TextView
-                android:id="@+id/tv_logo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/log_in_v2ex"
-                android:textSize="30sp"
-                android:textColor="@color/black"
-                android:paddingBottom="3dp" />
+    </android.support.v7.widget.Toolbar>
 
-            <!-- Email Label -->
-            <android.support.design.widget.TextInputLayout
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_between_log_in_item"
-                android:layout_marginTop="@dimen/margin_between_log_in_item"
-                app:hintTextAppearance="@style/TextAppearance.AppCompat">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input_username"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/username"
-                    android:inputType="textPersonName"/>
-            </android.support.design.widget.TextInputLayout>
-
-            <!-- Password Label -->
-            <android.support.design.widget.TextInputLayout
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_between_log_in_item"
-                android:layout_marginTop="@dimen/margin_between_log_in_item"
-                app:hintTextAppearance="@style/TextAppearance.AppCompat">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/input_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"/>
-            </android.support.design.widget.TextInputLayout>
-
-
-
-            <TextView
-                android:id="@+id/link_sign_up"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:hint="@string/register_tip"
-                android:textSize="12sp"/>
-
-
-        </LinearLayout>
-
-
-    </ScrollView>
-
-
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="6dp">
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="24dp">
 
-        <include
-            layout="@layout/divider"
+        <!-- Email Label -->
+        <android.support.design.widget.TextInputLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
-            android:layout_height="1dp" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_between_log_in_item"
+            android:layout_marginTop="@dimen/margin_between_log_in_item"
+            app:theme="@style/Theme.V2ex.Login"
+            android:textColorHint="@color/light_hint"
+            app:hintTextAppearance="@style/VText.LightHint">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/username"
+                android:inputType="textPersonName"
+                android:textColor="@color/white"/>
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- Password Label -->
+        <android.support.design.widget.TextInputLayout
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_between_log_in_item"
+            android:textColorHint="@color/light_hint"
+            android:layout_marginTop="@dimen/margin_between_log_in_item"
+            app:hintTextAppearance="@style/VText.LightHint"
+            app:theme="@style/Theme.V2ex.Login">
+
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/input_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:textColor="@color/white"/>
+        </android.support.design.widget.TextInputLayout>
+
 
         <Button
             android:id="@+id/btn_login"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="24dp"
-            android:layout_marginTop="6dp"
-            android:minHeight="36dp"
-            android:minWidth="36dp"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:layout_marginTop="24dp"
             android:background="@drawable/radio_border"
-            android:text="@string/login" />
-    </FrameLayout>
+            android:elevation="24dp"
+            android:minHeight="32dp"
+            android:textColor="@color/primary"
+            android:text="@string/login"
+            android:textSize="@dimen/text_size_large"/>
 
+        <ProgressBar
+            android:id="@+id/pb_login"
+            android:visibility="gone"
+            android:layout_width="32dp"
+            android:layout_height="32dp"/>
 
+        <TextView
+            android:id="@+id/link_sign_up"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
+            android:text="@string/register_tip"
+            android:textColor="@color/light_hint"
+            android:textSize="@dimen/text_size_medium"/>
+
+        <!--<ProgressBar-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"/>-->
+
+    </LinearLayout>
 </LinearLayout>

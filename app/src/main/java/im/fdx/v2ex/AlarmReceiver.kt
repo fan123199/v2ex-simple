@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.NotificationCompat
 import com.elvishew.xlog.XLog
@@ -78,12 +79,7 @@ class AlarmReceiver : BroadcastReceiver() {
         val resultPendingIntent = stackBuilder
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val c: Int
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            c = context.resources.getColor(R.color.primary, context.theme)
-        } else {
-            c = context.resources.getColor(R.color.primary)
-        }
+        val c = ContextCompat.getColor(context, R.color.primary)
         val mBuilder = NotificationCompat.Builder(context)
         mBuilder
                 //                .setSubText("subtext")

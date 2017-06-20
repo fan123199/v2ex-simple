@@ -79,13 +79,13 @@ class TopicsRVAdapter//这是构造器
     // 用static就是为了复用
     class MainViewHolder(var container: View) : RecyclerView.ViewHolder(container) {
 
-        var tvTitle: TextView = container.findViewById(R.id.tv_title) as TextView
-        var tvContent: GoodTextView = container.findViewById(R.id.tv_content) as GoodTextView
-        var tvReplyNumber: TextView = container.findViewById(R.id.tv_reply_number) as TextView
-        var tvCreated: TextView = container.findViewById(R.id.tv_created) as TextView
-        var tvAuthor: TextView = container.findViewById(R.id.tv_author) as TextView
-        var ivAvatar: CircleImageView = container.findViewById(R.id.iv_avatar_profile) as CircleImageView
-        var tvNode: TextView = container.findViewById(R.id.tv_node) as TextView
+        var tvTitle: TextView = container.findViewById(R.id.tv_title)
+        var tvContent: GoodTextView = container.findViewById(R.id.tv_content)
+        var tvReplyNumber: TextView = container.findViewById(R.id.tv_reply_number)
+        var tvCreated: TextView = container.findViewById(R.id.tv_created)
+        var tvAuthor: TextView = container.findViewById(R.id.tv_author)
+        var ivAvatar: CircleImageView = container.findViewById(R.id.iv_avatar_profile)
+        var tvNode: TextView = container.findViewById(R.id.tv_node)
 
     }
 

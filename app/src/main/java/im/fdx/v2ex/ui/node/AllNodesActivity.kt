@@ -41,12 +41,12 @@ class AllNodesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_all_nodes)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "所有节点"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val rvNode = findViewById(R.id.rv_node) as RecyclerView
+        val rvNode: RecyclerView = findViewById(R.id.rv_node)
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder().url(NetManager.URL_ALL_NODE).build())
                 .enqueue(object : Callback {

@@ -187,7 +187,7 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
     }
 
     private fun reply(replyItem: ReplyModel, position: Int) {
-        val editText = (mContext as Activity).findViewById(R.id.et_post_reply) as EditText
+        val editText: EditText = (mContext as Activity).findViewById(R.id.et_post_reply)
         val text = "@${replyItem.member!!.username} " +
                 if (MyApp.get().mPrefs.getBoolean("pref_add_row", false)) "#$position " else ""
         if (!editText.text.toString().contains(text)) {
@@ -217,19 +217,19 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
     //我重用了MainAdapter中的MainViewHolder
 
     class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        internal var tvReplier: TextView = itemView.findViewById(R.id.tv_replier) as TextView
-        internal var tvReplyTime: TextView = itemView.findViewById(R.id.tv_reply_time) as TextView
-        internal var tvContent: GoodTextView = itemView.findViewById(R.id.tv_reply_content) as GoodTextView
-        internal var tvRow: TextView = itemView.findViewById(R.id.tv_reply_row) as TextView
-        internal var tvThanks: TextView = itemView.findViewById(R.id.tv_thanks) as TextView
-        internal var tvReply: TextView = itemView.findViewById(R.id.tv_reply) as TextView
-        internal var ivThank: ImageView = itemView.findViewById(R.id.iv_thanks) as ImageView
-        internal var ivUserAvatar: CircleImageView = itemView.findViewById(R.id.iv_reply_avatar) as CircleImageView
+        internal var tvReplier: TextView = itemView.findViewById(R.id.tv_replier)
+        internal var tvReplyTime: TextView = itemView.findViewById(R.id.tv_reply_time)
+        internal var tvContent: GoodTextView = itemView.findViewById(R.id.tv_reply_content)
+        internal var tvRow: TextView = itemView.findViewById(R.id.tv_reply_row)
+        internal var tvThanks: TextView = itemView.findViewById(R.id.tv_thanks)
+        internal var tvReply: TextView = itemView.findViewById(R.id.tv_reply)
+        internal var ivThank: ImageView = itemView.findViewById(R.id.iv_thanks)
+        internal var ivUserAvatar: CircleImageView = itemView.findViewById(R.id.iv_reply_avatar)
         internal var divider: View = itemView.findViewById(R.id.divider)
     }
 
     private class FooterViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        internal val tvLoadMore: TextView = itemView.findViewById(R.id.tv_load_more) as TextView
+        internal val tvLoadMore: TextView = itemView.findViewById(R.id.tv_load_more)
     }
 
     interface AdapterCallback {

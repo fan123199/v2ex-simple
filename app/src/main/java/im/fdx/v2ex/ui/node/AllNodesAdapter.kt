@@ -86,7 +86,7 @@ class AllNodesAdapter(private val context: Context, private val isShowImg: Boole
     }
 
     class AllNodeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var tvNodeName: TextView = itemView.findViewById(R.id.tv_node_name) as TextView
-        var ivNodeIcon: ImageView = itemView.findViewById(R.id.iv_node_image) as ImageView
+        var tvNodeName: TextView = itemView.findViewById(R.id.tv_node_name)
+        var ivNodeIcon: ImageView = itemView.findViewById(R.id.iv_node_image)
     }
 }

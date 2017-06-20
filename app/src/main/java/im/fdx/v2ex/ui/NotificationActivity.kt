@@ -33,20 +33,20 @@ class NotificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setTitle(R.string.notification)
 
-        flContainer = findViewById(R.id.fl_container) as FrameLayout
+        flContainer = findViewById(R.id.fl_container)
 
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        mSwipe = findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        mSwipe = findViewById(R.id.swipe_container)
         mSwipe!!.setOnRefreshListener { fetchNotification() }
 
-        rvNotification = findViewById(R.id.rv_container) as RecyclerView
+        rvNotification = findViewById(R.id.rv_container)
         rvNotification.layoutManager = LinearLayoutManager(this)
         adapter = NotificationAdapter(this, notifications)
         rvNotification.adapter = adapter

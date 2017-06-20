@@ -166,6 +166,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
                     bitmapHolder.setBounds(0, 0, result.width, result.height)
                     bitmapHolder.setDrawable(drawable)
                     this@GoodTextView.text = this@GoodTextView.text
+                    invalidate()
                 }
 
                 override fun onBitmapFailed(errorDrawable: Drawable?) {

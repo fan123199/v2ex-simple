@@ -33,7 +33,14 @@
 
         <item name="android:editTextStyle">@style/VEditStyle</item>
 
+    </style>
 
+    <style name="Theme.V2ex.Login">
+        <item name="android:colorAccent">@color/light_hint</item>
+
+        <item name="colorControlNormal">@color/light_hint</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
     </style>
 
     <!--<style name="Theme.V2ex.spinnerItemStyle" >-->
@@ -123,6 +130,11 @@
 
     <style name="VText.Hint">
         <item name="android:textColor">@color/hint</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="VText.LightHint">
+        <item name="android:textColor">@color/light_hint</item>
         <item name="android:textSize">@dimen/text_size_small</item>
     </style>
 

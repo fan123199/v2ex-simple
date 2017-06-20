@@ -67,12 +67,12 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
 
     class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var tvTopicTitle: TextView = itemView.findViewById(R.id.tv_topic_title) as TextView
-        var tvUsername: TextView = itemView.findViewById(R.id.tv_username) as TextView
-        var tvTime: TextView = itemView.findViewById(R.id.tv_time) as TextView
-        var tvContent: TextView = itemView.findViewById(R.id.content_notification) as TextView
-        var tvAction: TextView = itemView.findViewById(R.id.tv_action_notification) as TextView
-        var ivAvatar: CircleImageView = itemView.findViewById(R.id.iv_avatar_notification) as CircleImageView
+        var tvTopicTitle: TextView = itemView.findViewById(R.id.tv_topic_title)
+        var tvUsername: TextView = itemView.findViewById(R.id.tv_username)
+        var tvTime: TextView = itemView.findViewById(R.id.tv_time)
+        var tvContent: TextView = itemView.findViewById(R.id.content_notification)
+        var tvAction: TextView = itemView.findViewById(R.id.tv_action_notification)
+        var ivAvatar: CircleImageView = itemView.findViewById(R.id.iv_avatar_notification)
 
     }
 }

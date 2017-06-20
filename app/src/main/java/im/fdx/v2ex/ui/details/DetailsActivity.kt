@@ -122,10 +122,10 @@ class DetailsActivity : AppCompatActivity() {
 
 
         setFootView(MyApp.get().isLogin())
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        tvToolbar = toolbar.findViewById(R.id.tv_toolbar) as TextView
+        tvToolbar = toolbar.findViewById(R.id.tv_toolbar)
         setSupportActionBar(toolbar)
 
         val actionBar = supportActionBar
@@ -135,7 +135,7 @@ class DetailsActivity : AppCompatActivity() {
         }
 
 
-        rvDetail = findViewById(R.id.detail_recycler_view) as RecyclerView
+        rvDetail = findViewById(R.id.detail_recycler_view)
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
         val mLayoutManager = SmoothLayoutManager(this)
         rvDetail.layoutManager = mLayoutManager
@@ -179,12 +179,12 @@ class DetailsActivity : AppCompatActivity() {
         mAdapter = DetailsAdapter(this@DetailsActivity, mAllContent, callback)
         rvDetail.adapter = mAdapter
 
-        mSwipe = findViewById(R.id.swipe_details) as SwipeRefreshLayout
+        mSwipe = findViewById(R.id.swipe_details)
         mSwipe.setColorSchemeResources(R.color.accent_orange)
         mSwipe.setOnRefreshListener { getRepliesPageOne(mTopicId, false) }
 
-        ivSend = findViewById(R.id.iv_send) as ImageView
-        etSendReply = findViewById(R.id.et_post_reply) as EditText
+        ivSend = findViewById(R.id.iv_send)
+        etSendReply = findViewById(R.id.et_post_reply)
         etSendReply.setOnFocusChangeListener { v, hasFocus ->
 
             if (!hasFocus) {
@@ -222,7 +222,7 @@ class DetailsActivity : AppCompatActivity() {
 
 
     private fun setFootView(beVisible: Boolean) {
-        findViewById(R.id.foot_container).visibility = if (beVisible) View.VISIBLE else View.GONE
+        findViewById<View>(R.id.foot_container).visibility = if (beVisible) View.VISIBLE else View.GONE
     }
 
     private fun parseIntent(intent: Intent) {

@@ -38,12 +38,12 @@ class NodeFavorFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         XLog.d("NodeFavorFragment onCreateView")
         val view = inflater.inflate(R.layout.fragment_tab_article, container, false)
-        val recyclerView = view.findViewById(R.id.rv_container) as RecyclerView
+        val recyclerView: RecyclerView = view.findViewById(R.id.rv_container)
         adapter = AllNodesAdapter(activity, true)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(activity, 3)
-        swipe = view.findViewById(R.id.swipe_container) as SwipeRefreshLayout
-        flContainer = view.findViewById(R.id.fl_container) as FrameLayout
+        swipe = view.findViewById(R.id.swipe_container)
+        flContainer = view.findViewById(R.id.fl_container)
         return view
     }
 

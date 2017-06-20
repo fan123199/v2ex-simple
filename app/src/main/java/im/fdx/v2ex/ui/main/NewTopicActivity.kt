@@ -50,12 +50,12 @@ class NewTopicActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_topic)
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
 
-        etTitle = findViewById(R.id.et_title) as TextInputEditText
-        etContent = findViewById(R.id.et_content) as EditText
+        etTitle = findViewById(R.id.et_title)
+        etContent = findViewById(R.id.et_content)
 
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -63,7 +63,7 @@ class NewTopicActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
 
-        spinner = findViewById(R.id.search_spinner_node) as SearchableSpinner
+        spinner = findViewById(R.id.search_spinner_node)
         spinner.setTitle(getString(R.string.choose_node))
         spinner.setPositiveButton(getString(R.string.close))
         adapter = ArrayAdapter(this, R.layout.simple_list_item, nodeModels)

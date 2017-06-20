@@ -12,7 +12,7 @@ class FavorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_follow_activity)
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.title = "我的收藏"
 
         setSupportActionBar(toolbar)
@@ -20,8 +20,8 @@ class FavorActivity : AppCompatActivity() {
 
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        val tabLayout = findViewById(R.id.tl_favor) as TabLayout
-        val viewPager = findViewById(R.id.viewpager_follow) as ViewPager
+        val tabLayout: TabLayout = findViewById(R.id.tl_favor)
+        val viewPager: ViewPager = findViewById(R.id.viewpager_follow)
         viewPager.offscreenPageLimit = FavorViewPagerAdapter.titles.size
         viewPager.adapter = FavorViewPagerAdapter(fragmentManager)
         tabLayout.setupWithViewPager(viewPager)

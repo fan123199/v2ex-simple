@@ -69,7 +69,7 @@ class TopicsFragment : Fragment() {
             args.getString(Keys.KEY_TAB) == "recent" -> "$HTTPS_V2EX_BASE/recent"
             else -> "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
         }
-        mSwipeLayout = layout.findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        mSwipeLayout = layout.findViewById(R.id.swipe_container)
         mSwipeLayout.setColorSchemeResources(R.color.accent_orange)
         mSwipeLayout.setOnRefreshListener { getTopics(mRequestURL) }
 
@@ -78,10 +78,10 @@ class TopicsFragment : Fragment() {
 
 
         //找出recyclerview,并赋予变量 //fdx最早的水平
-        mRecyclerView = layout.findViewById(R.id.rv_container) as RecyclerView
+        mRecyclerView = layout.findViewById(R.id.rv_container)
         mRecyclerView.layoutManager = SmoothLayoutManager(activity)
 
-        fab = activity.findViewById(R.id.fab_main) as FloatingActionButton?
+        fab = activity.findViewById(R.id.fab_main)
         if (fab != null)
             mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
@@ -126,7 +126,7 @@ class TopicsFragment : Fragment() {
         mAdapter?.isNodeClickable = false
         mRecyclerView.adapter = mAdapter //大工告成
 
-        flContainer = layout.findViewById(R.id.fl_container) as FrameLayout
+        flContainer = layout.findViewById(R.id.fl_container)
         return layout
     }
 

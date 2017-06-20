@@ -97,16 +97,16 @@ class MemberActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        mTvUsername = findViewById(R.id.tv_username_profile) as TextView
-        mIvAvatar = findViewById(R.id.iv_avatar_profile) as ImageView
-        mTvId = findViewById(R.id.tv_id) as TextView
-        mTvUserCreated = findViewById(R.id.tv_created) as TextView
-        mTvIntro = findViewById(R.id.tv_intro) as TextView
-        mTvLocation = findViewById(R.id.tv_location) as TextView
-        mTvBitCoin = findViewById(R.id.tv_bitcoin) as TextView
-        mTvGithub = findViewById(R.id.tv_github) as TextView
-        mTvTwitter = findViewById(R.id.tv_twitter) as TextView
-        mTvWebsite = findViewById(R.id.tv_website) as TextView
+        mTvUsername = findViewById(R.id.tv_username_profile)
+        mIvAvatar = findViewById(R.id.iv_avatar_profile)
+        mTvId = findViewById(R.id.tv_id)
+        mTvUserCreated = findViewById(R.id.tv_created)
+        mTvIntro = findViewById(R.id.tv_intro)
+        mTvLocation = findViewById(R.id.tv_location)
+        mTvBitCoin = findViewById(R.id.tv_bitcoin)
+        mTvGithub = findViewById(R.id.tv_github)
+        mTvTwitter = findViewById(R.id.tv_twitter)
+        mTvWebsite = findViewById(R.id.tv_website)
 
         run {
             mTvLocation!!.visibility = View.GONE
@@ -117,7 +117,7 @@ class MemberActivity : AppCompatActivity() {
         }
 
 
-        val toolbar = findViewById(R.id.toolbar) as Toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         val actionBar = supportActionBar
@@ -125,12 +125,12 @@ class MemberActivity : AppCompatActivity() {
         actionBar?.title = ""
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        swipeRefreshLayout = findViewById(R.id.swipe_container) as SwipeRefreshLayout
+        swipeRefreshLayout = findViewById(R.id.swipe_container)
         swipeRefreshLayout.setOnRefreshListener({ this.getTopicsByUsernameAPI() })
 
-        val appBarLayout = findViewById(R.id.al_profile) as AppBarLayout
+        val appBarLayout: AppBarLayout = findViewById(R.id.al_profile)
 
-        collapsingToolbarLayout = findViewById(R.id.ctl_profile) as CollapsingToolbarLayout
+        collapsingToolbarLayout = findViewById(R.id.ctl_profile)
         appBarLayout.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
@@ -138,11 +138,11 @@ class MemberActivity : AppCompatActivity() {
             handleAlphaOnTitle(percentage)
         }
 
-        constraintLayout = findViewById(R.id.constraint_member) as ConstraintLayout
+        constraintLayout = findViewById(R.id.constraint_member)
 
-        container = findViewById(R.id.fl_container) as FrameLayout
+        container = findViewById(R.id.fl_container)
 
-        val rv = findViewById(R.id.rv_container) as RecyclerView
+        val rv: RecyclerView = findViewById(R.id.rv_container)
         val layoutManager = LinearLayoutManager(this@MemberActivity)
 
         rv.layoutManager = layoutManager

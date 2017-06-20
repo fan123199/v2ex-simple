@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
 
-        val mToolbar = findViewById(R.id.toolbar) as Toolbar
+        val mToolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(mToolbar)
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
@@ -135,7 +135,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
 
-        mDrawer = findViewById(R.id.drawer_layout) as DrawerLayout
+        mDrawer = findViewById(R.id.drawer_layout)
         val mDrawToggle = ActionBarDrawerToggle(this, mDrawer,
                 mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawer.addDrawerListener(mDrawToggle)
@@ -148,9 +148,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        navigationView = findViewById(R.id.nav_view) as NavigationView
+        navigationView = findViewById(R.id.nav_view)
         navigationView?.setNavigationItemSelectedListener(this)
-        fab = findViewById(R.id.fab_main) as FloatingActionButton
+        fab = findViewById(R.id.fab_main)
         fab.setOnClickListener { startActivity(Intent(this@MainActivity, NewTopicActivity::class.java)) }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
@@ -172,11 +172,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             fab.hide()
         }
 
-        mViewPager = findViewById(R.id.viewpager_main) as ViewPager
+        mViewPager = findViewById(R.id.viewpager_main)
         mAdapter = MyViewPagerAdapter(fragmentManager, this@MainActivity)
         mViewPager!!.adapter = mAdapter
 
-        val mTabLayout = findViewById(R.id.sliding_tabs) as TabLayout
+        val mTabLayout: TabLayout = findViewById(R.id.sliding_tabs)
 
 
         //这句话可以省略，主要用于如果在其他地方对tablayout自定义title的话，
@@ -222,9 +222,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun setUserInfo(username: String, avatar: String) {
-        val tvMyName = navigationView!!.getHeaderView(0).findViewById(R.id.tv_my_username) as TextView
+        val tvMyName: TextView = navigationView!!.getHeaderView(0).findViewById(R.id.tv_my_username)
         tvMyName.text = username
-        val ivMyAvatar = navigationView!!.getHeaderView(0).findViewById(R.id.iv_my_avatar) as CircleImageView
+        val ivMyAvatar: CircleImageView = navigationView!!.getHeaderView(0).findViewById(R.id.iv_my_avatar)
         ivMyAvatar.setOnClickListener {
             val intent = Intent(this@MainActivity, MemberActivity::class.java)
             intent.putExtra(Keys.KEY_USERNAME, username)
@@ -236,9 +236,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun removeUserInfo() {
-        val tvMyName = findViewById(R.id.tv_my_username) as TextView
+        val tvMyName: TextView = findViewById(R.id.tv_my_username)
         tvMyName.text = ""
-        val imageView = findViewById(R.id.iv_my_avatar) as CircleImageView
+        val imageView: CircleImageView = findViewById(R.id.iv_my_avatar)
         imageView.setImageDrawable(null)
         imageView.visibility = View.INVISIBLE
 

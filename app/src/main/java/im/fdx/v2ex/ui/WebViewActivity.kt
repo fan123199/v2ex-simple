@@ -29,7 +29,7 @@ class WebViewActivity : AppCompatActivity() {
 
 
 
-        myWebView = findViewById(R.id.webview) as WebView
+        myWebView = findViewById(R.id.webview)
         val chromeClient = myChromeClient()
         myWebView!!.setWebChromeClient(chromeClient)
         val webViewClient = myWebViewClient()
@@ -68,7 +68,7 @@ class WebViewActivity : AppCompatActivity() {
     private inner class myChromeClient : WebChromeClient() {
 
         override fun onReceivedTitle(view: WebView, title: String) {
-            (findViewById(R.id.title) as TextView).text = title
+            (findViewById<TextView>(R.id.title) as TextView).text = title
             super.onReceivedTitle(view, title)
         }
     }
