@@ -19,6 +19,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?selectableItemBackground"
         android:orientation="vertical">
 
         <ImageView
@@ -30,7 +31,9 @@
             android:layout_marginLeft="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginRight="8dp"
-            app:layout_constraintRight_toRightOf="parent" />
+            tools:src="@drawable/ic_profile"
+            app:layout_constraintRight_toRightOf="parent"
+            android:contentDescription="@string/node_image"/>
 
         <TextView
             android:id="@+id/tv_node_name"

@@ -19,6 +19,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -43,6 +44,7 @@ import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.showNoContent
+import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -57,31 +59,34 @@ import java.util.regex.Pattern
  * 获取user的主题，依然使用api的方式
  */
 class MemberActivity : AppCompatActivity() {
-    private var mTvUsername: TextView? = null
-    private var mIvAvatar: ImageView? = null
-    private var mTvId: TextView? = null
-    private var mTvUserCreated: TextView? = null
-    private var mTvIntro: TextView? = null
-    private var mTvLocation: TextView? = null
-    private var mTvBitCoin: TextView? = null
-    private var mTvGithub: TextView? = null
-    private var mTvTwitter: TextView? = null
-    private var mTvWebsite: TextView? = null
+
+    private lateinit var mIvAvatar: ImageView
+    private lateinit var mTvUserCreatedPrefix: TextView
+    private lateinit var mTvIntro: TextView
+    private lateinit var mTvLocation: ImageView
+    private lateinit var mTvBitCoin: ImageView
+    private lateinit var mTvGithub: ImageView
+    private lateinit var mTvTwitter: ImageView
+    private lateinit var mTvWebsite: ImageView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
+
+    private lateinit var llInfo: ViewGroup
+
+
     private val mTopics = ArrayList<TopicModel>()
 
     private var username: String? = null
     private var mAdapter: TopicsRVAdapter? = null
     private var urlTopic: String? = null
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
-    private var member: MemberModel? = null
+    private lateinit var member: MemberModel
     private var blockOfT: String? = null
     private var followOfOnce: String? = null
     private var isBlocked: Boolean = false
     private var isFollowed: Boolean = false
     private lateinit var constraintLayout: ConstraintLayout
     private lateinit var container: FrameLayout
-    private var mMenu: Menu? = null
+    private lateinit var mMenu: Menu
     private val handler = Handler(Handler.Callback { msg ->
         when (msg.what) {
             MSG_GET_USER_INFO -> showUser(msg.obj as String)
@@ -97,23 +102,31 @@ class MemberActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        mTvUsername = findViewById(R.id.tv_username_profile)
         mIvAvatar = findViewById(R.id.iv_avatar_profile)
-        mTvId = findViewById(R.id.tv_id)
-        mTvUserCreated = findViewById(R.id.tv_created)
+        mTvUserCreatedPrefix = findViewById(R.id.tv_prefix_created)
         mTvIntro = findViewById(R.id.tv_intro)
+
+
         mTvLocation = findViewById(R.id.tv_location)
         mTvBitCoin = findViewById(R.id.tv_bitcoin)
         mTvGithub = findViewById(R.id.tv_github)
         mTvTwitter = findViewById(R.id.tv_twitter)
         mTvWebsite = findViewById(R.id.tv_website)
 
+        llInfo = findViewById(R.id.ll_info)
+
         run {
-            mTvLocation!!.visibility = View.GONE
-            mTvBitCoin!!.visibility = View.GONE
-            mTvGithub!!.visibility = View.GONE
-            mTvTwitter!!.visibility = View.GONE
-            mTvWebsite!!.visibility = View.GONE
+            mTvLocation.visibility = View.GONE
+            mTvBitCoin.visibility = View.GONE
+            mTvGithub.visibility = View.GONE
+            mTvTwitter.visibility = View.GONE
+            mTvWebsite.visibility = View.GONE
+
+            mTvLocation.setOnClickListener(listener)
+            mTvBitCoin.setOnClickListener(listener)
+            mTvGithub.setOnClickListener(listener)
+            mTvTwitter.setOnClickListener(listener)
+            mTvWebsite.setOnClickListener(listener)
         }
 
 
@@ -126,7 +139,7 @@ class MemberActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         swipeRefreshLayout = findViewById(R.id.swipe_container)
-        swipeRefreshLayout.setOnRefreshListener({ this.getTopicsByUsernameAPI() })
+        swipeRefreshLayout.setOnRefreshListener { getTopicsByUsernameAPI() }
 
         val appBarLayout: AppBarLayout = findViewById(R.id.al_profile)
 
@@ -152,10 +165,10 @@ class MemberActivity : AppCompatActivity() {
     }
 
     private fun handleAlphaOnTitle(percentage: Float) {
-        if (percentage > 0.8f && percentage <= 1f) {
-            constraintLayout.visibility = View.INVISIBLE
-        } else if (percentage <= 0.8f && percentage >= 0f) {
-            constraintLayout.visibility = View.VISIBLE
+        constraintLayout.visibility = when (percentage) {
+            in 0.8f..1f -> View.INVISIBLE
+            in 0f..0.8f -> View.VISIBLE
+            else -> View.INVISIBLE
         }
 
     }
@@ -202,7 +215,7 @@ class MemberActivity : AppCompatActivity() {
                 .get().build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                NetManager.dealError(this@MemberActivity)
+                NetManager.dealError(this@MemberActivity, swipe = swipeRefreshLayout)
             }
 
             @Throws(IOException::class)
@@ -217,15 +230,15 @@ class MemberActivity : AppCompatActivity() {
 
                     runOnUiThread {
                         if (isBlocked) {
-                            mMenu!!.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_primary_24dp)
+                            mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_primary_24dp)
                         } else {
-                            mMenu!!.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_white_24dp)
+                            mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_white_24dp)
                         }
 
                         if (isFollowed) {
-                            mMenu!!.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp)
+                            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp)
                         } else {
-                            mMenu!!.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
+                            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
                         }
 
                     }
@@ -289,12 +302,12 @@ class MemberActivity : AppCompatActivity() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(urlUserInfo).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity)
+                dealError(this@MemberActivity, swipe = swipeRefreshLayout)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                val body = response.body()!!.string()
+                val body = response.body()?.string()
                 Message.obtain(handler, MSG_GET_USER_INFO, body).sendToTarget()
             }
         })
@@ -305,7 +318,7 @@ class MemberActivity : AppCompatActivity() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(urlTopic!!).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity)
+                dealError(this@MemberActivity, swipe = swipeRefreshLayout)
             }
 
             @Throws(IOException::class)
@@ -330,93 +343,82 @@ class MemberActivity : AppCompatActivity() {
         })
     }
 
-    fun openTwitter(view: View) {
-        if (TextUtils.isEmpty(member!!.twitter)) {
+
+    private var listener: View.OnClickListener = View.OnClickListener {
+        when (it.id) {
+            R.id.tv_location -> {
+            }
+            R.id.tv_github -> openGithub()
+            R.id.tv_twitter -> openTwitter()
+            R.id.tv_website -> openWeb()
+        }
+    }
+
+    fun openTwitter() {
+        if (TextUtils.isEmpty(member.twitter)) {
             return
         }
-        var intent: Intent
+        val intent: Intent
         try {
             // get the Twitter app if possible
             this.packageManager.getPackageInfo("com.twitter.android", 0)
             intent = Intent(Intent.ACTION_VIEW,
-                    Uri.parse("twitter://user?screen_name=" + member!!.twitter))
+                    Uri.parse("twitter://user?screen_name=" + member.twitter))
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
         } catch (e: Exception) {
             // no Twitter app, revert to browser
-            intent = Intent(Intent.ACTION_VIEW,
-                    Uri.parse("https://twitter.com/" + member!!.twitter))
+            CustomChrome(this).load("https://twitter.com/" + member.twitter)
         }
-
-        startActivity(intent)
     }
 
-    fun openWeb(view: View) {
-        if (TextUtils.isEmpty(member?.website)) {
+    fun openWeb() {
+        if (TextUtils.isEmpty(member.website)) {
             return
         }
-        val text: String
-        if (!member?.website?.contains("http")!!) {
-            text = "http://" + member!!.website
-        } else {
-            text = member!!.website
-        }
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(text))
-        startActivity(intent)
+        CustomChrome(this).load(if (!member.website.contains("http")) "http://" + member.website else member.website)
     }
 
-    fun openGithub(view: View) {
-        if (TextUtils.isEmpty(member!!.github)) {
-            return
-        }
-        val intent = Intent(Intent.ACTION_VIEW,
-                Uri.parse("https://www.github.com/" + member!!.github))
-        startActivity(intent)
+    fun openGithub() {
+        if (TextUtils.isEmpty(member.github)) return
+        CustomChrome(this).load("https://www.github.com/" + member.github)
     }
 
     private fun showUser(response: String) {
         member = myGson.fromJson(response, MemberModel::class.java)
-        mTvUsername!!.text = member!!.username
 
-        Picasso.with(this).load(member!!.avatarLargeUrl)
+        Picasso.with(this).load(member.avatarLargeUrl)
                 .error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar)
-        mTvId!!.text = getString(R.string.the_n_member, member!!.id)
-        mTvIntro!!.text = member!!.bio
-        mTvUserCreated!!.text = TimeUtil.getAbsoluteTime(java.lang.Long.parseLong(member!!.created))
+        mTvIntro.text = member.bio
+        mTvUserCreatedPrefix.text = "创建于${TimeUtil.getAbsoluteTime(java.lang.Long.parseLong(member.created))}，${getString(R.string.the_n_member, member.id)}"
 
-        val debug_view = false
-        if (debug_view || TextUtils.isEmpty(member!!.btc)) {
-            mTvBitCoin!!.visibility = View.GONE
-        } else {
-            mTvBitCoin!!.visibility = View.VISIBLE
-            mTvBitCoin!!.text = member!!.btc
+        mTvBitCoin.visibility = when {
+            TextUtils.isEmpty(member.btc) -> View.GONE
+            else -> View.VISIBLE
         }
-        if (debug_view || TextUtils.isEmpty(member!!.github)) {
-            mTvGithub!!.visibility = View.GONE
-        } else {
-            mTvGithub!!.visibility = View.VISIBLE
-            mTvGithub!!.text = member!!.github
+        mTvGithub.visibility = when {
+            TextUtils.isEmpty(member.github) -> View.GONE
+            else -> View.VISIBLE
         }
 
-        if (debug_view || TextUtils.isEmpty(member!!.location)) {
-            mTvLocation!!.visibility = View.GONE
-        } else {
-            mTvLocation!!.visibility = View.VISIBLE
-            mTvLocation!!.text = member!!.location
+        mTvLocation.visibility = when {
+            TextUtils.isEmpty(member.location) -> View.GONE
+            else -> View.VISIBLE
         }
 
-        if (debug_view || TextUtils.isEmpty(member!!.twitter)) {
-            mTvTwitter!!.visibility = View.GONE
-        } else {
-            mTvTwitter!!.visibility = View.VISIBLE
-            mTvTwitter!!.text = member!!.twitter
+        mTvTwitter.visibility = when {
+            TextUtils.isEmpty(member.twitter) -> View.GONE
+            else -> View.VISIBLE
         }
 
-        if (debug_view || TextUtils.isEmpty(member!!.website)) {
-            mTvWebsite!!.visibility = View.GONE
-        } else {
-            mTvWebsite!!.visibility = View.VISIBLE
-            mTvWebsite!!.text = member!!.website
+        mTvWebsite.visibility = when {
+            TextUtils.isEmpty(member.website) -> View.GONE
+            else -> View.VISIBLE
+        }
 
+        llInfo.visibility = when {
+            !TextUtils.isEmpty(member.website + member.twitter + member.github + member.btc + member.location) -> View.VISIBLE
+            else -> View.GONE
         }
     }
 
@@ -432,15 +434,12 @@ class MemberActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        XLog.d("onOptionsItemSelected")
-
         when (item.itemId) {
             R.id.menu_follow -> switchFollowAndRefresh(isFollowed)
             R.id.menu_block -> switchBlockAndRefresh(isBlocked)
             else -> return super.onOptionsItemSelected(item)
         }
         return true
-
     }
 
     private fun switchFollowAndRefresh(isFollowed: Boolean) {
@@ -448,7 +447,7 @@ class MemberActivity : AppCompatActivity() {
                 .url("${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "un" else ""}$followOfOnce")
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity)
+                dealError(this@MemberActivity, swipe = swipeRefreshLayout)
             }
 
             @Throws(IOException::class)
@@ -469,7 +468,7 @@ class MemberActivity : AppCompatActivity() {
                 .url("$HTTPS_V2EX_BASE/${if (isBlocked) "un" else ""}$blockOfT").build())
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
-                        dealError(this@MemberActivity)
+                        dealError(this@MemberActivity, swipe = swipeRefreshLayout)
                     }
 
                     @Throws(IOException::class)
@@ -508,5 +507,4 @@ class MemberActivity : AppCompatActivity() {
             v.startAnimation(alphaAnimation)
         }
     }
-
 }

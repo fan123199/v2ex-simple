@@ -2,6 +2,7 @@ package im.fdx.v2ex.network
 
 import android.app.Activity
 import android.content.Context
+import android.support.v4.widget.SwipeRefreshLayout
 import android.text.TextUtils
 import android.widget.Toast
 import com.google.gson.Gson
@@ -73,15 +74,17 @@ object NetManager {
             notification.id = notificationId
 
             val contentElement = item.getElementsByClass("payload").first()
-            var content = ""
-            if (contentElement != null) {
-                content = contentElement.text()
+            val content = when {
+                contentElement != null -> contentElement.text()
+                else -> "" //
             }
+            notification.content = content //1/6
 
             val time = item.getElementsByClass("snow").first().text()
             notification.time = time// 2/6
 
 
+            //member model
             val memberElement = item.getElementsByTag("a").first()
             val username = memberElement.attr("href").replace("/member/", "")
             val avatarUrl = memberElement.getElementsByClass("avatar").first().attr("src")
@@ -112,9 +115,22 @@ object NetManager {
                 notification.replyPosition = replies
             }
             notification.topic = topicModel //4/6
-            val type = topicElement.ownText()
-            notification.type = type
-            notification.content = content //1/6
+
+            val originalType = topicElement.ownText()
+            notification.type =
+                    when {
+                        originalType.contains("感谢了你在主题") ->
+                            "感谢了你:"
+                        originalType.contains("回复了你")
+                        -> "回复了你:"
+                        originalType.contains("提到了你")
+                        -> "提到了你:"
+                        originalType.contains("收藏了你发布的主题")
+                        -> "收藏了你发布的主题:"
+                        else -> originalType
+
+                    }
+
             notificationModels.add(notification)
         }
         return notificationModels
@@ -376,10 +392,11 @@ object NetManager {
 
     }
 
-    @JvmOverloads fun dealError(context: Context, errorCode: Int = -1) {
+    @JvmOverloads fun dealError(context: Context, errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
 
         if (context is Activity)
             context.runOnUiThread {
+                swipe?.isRefreshing = false
                 when (errorCode) {
                     -1 -> Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show()
                     302 ->

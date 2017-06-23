@@ -9,8 +9,13 @@ import im.fdx.v2ex.ui.main.TopicModel
  * Created by fdx on 2017/3/24.
  */
 
-class NotificationModel(var time: String? = null,
-                        var replyPosition: String? = null, var type: String? = null, var topic: TopicModel? = null, var member: MemberModel? = null, var content: String? = null, var id: String? = null) : BaseModel(), Parcelable {
+class NotificationModel(var time: String? = "",
+                        var replyPosition: String? = "",
+                        var type: String? = "",
+                        var topic: TopicModel? = TopicModel(),
+                        var member: MemberModel? = MemberModel(),
+                        var content: String? = "",
+                        var id: String? = "") : BaseModel(), Parcelable {
 
     override fun toString() = "NotificationModel{type='$type', topic=$topic," +
             " member=$member, content='$content', id='$id', time='$time'}"

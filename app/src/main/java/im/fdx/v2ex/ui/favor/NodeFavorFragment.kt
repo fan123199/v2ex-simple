@@ -55,21 +55,18 @@ class NodeFavorFragment : Fragment() {
                 .url(url)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                NetManager.dealError(activity)
-                activity.runOnUiThread {
-                    swipe.isRefreshing = false
-                }
+                NetManager.dealError(activity, swipe = swipe)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
 
                 if (response.code() != 200) {
-                    NetManager.dealError(activity, response.code())
+                    NetManager.dealError(activity, response.code(), swipe)
                     return
                 }
                 val nodeModels = NetManager.parseToNode(response.body()!!.string())
-                if (nodeModels == null || nodeModels.isEmpty()) {
+                if (nodeModels.isEmpty()) {
                     activity.runOnUiThread {
                         flContainer.showNoContent()
                         swipe.isRefreshing = false

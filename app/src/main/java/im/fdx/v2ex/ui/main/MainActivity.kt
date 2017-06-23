@@ -3,6 +3,8 @@ package im.fdx.v2ex.ui.main
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
@@ -43,19 +45,19 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.t
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Request
-import okhttp3.Response
+import okhttp3.*
 import org.jsoup.Jsoup
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
     internal lateinit var mDrawer: DrawerLayout
+    private lateinit var navigationView: NavigationView
+
     private var mViewPager: ViewPager? = null
     private var mAdapter: MyViewPagerAdapter? = null
-    private var navigationView: NavigationView? = null
     private val shortcutId = "create_topic"
     private var vitent: Intent? = null
     private val listener: ViewPager.OnPageChangeListener? = null
@@ -65,6 +67,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private var createTopicInfo: ShortcutInfo? = null
     private lateinit var sharedPreferences: SharedPreferences
     private var isGetNotification: Boolean = false
+
+    private var count: Int = -1
+
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -93,6 +98,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
                 Keys.ACTION_GET_NOTIFICATION -> {
+
+                    count = intent.getIntExtra(Keys.KEY_COUNT, -1)
                     isGetNotification = true
                     invalidateOptionsMenu()
                 }
@@ -143,13 +150,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View?) {
-                val menu = navigationView!!.menu
+                val menu = navigationView.menu
                 (0..menu.size() - 1).forEach { j -> menu.getItem(j).isChecked = false }
             }
         })
 
         navigationView = findViewById(R.id.nav_view)
-        navigationView?.setNavigationItemSelectedListener(this)
+        navigationView.setNavigationItemSelectedListener(this)
         fab = findViewById(R.id.fab_main)
         fab.setOnClickListener { startActivity(Intent(this@MainActivity, NewTopicActivity::class.java)) }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
@@ -196,8 +203,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         if (!BuildConfig.DEBUG) {
-            navigationView!!.menu.removeItem(nav_testNotify)
-            navigationView!!.menu.removeItem(R.id.nav_testMenu2)
+            navigationView.menu.removeItem(nav_testNotify)
+            navigationView.menu.removeItem(R.id.nav_testMenu2)
         }
 
         vitent = Intent(this@MainActivity, UpdateService::class.java)
@@ -209,22 +216,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun showIcon(visible: Boolean) {
-        navigationView!!.menu.findItem(R.id.nav_daily).isVisible = visible
-        navigationView!!.menu.findItem(R.id.nav_favor).isVisible = visible
+        navigationView.menu.findItem(R.id.nav_daily).isVisible = visible
+        navigationView.menu.findItem(R.id.nav_favor).isVisible = visible
         this@MainActivity.invalidateOptionsMenu()
     }
 
 
     private fun shrinkFab() {
-        fab!!.animate().rotation(360f)
+        fab.animate().rotation(360f)
                 .setDuration(1000).start()
     }
 
 
     private fun setUserInfo(username: String, avatar: String) {
-        val tvMyName: TextView = navigationView!!.getHeaderView(0).findViewById(R.id.tv_my_username)
+        val tvMyName: TextView = navigationView.getHeaderView(0).findViewById(R.id.tv_my_username)
         tvMyName.text = username
-        val ivMyAvatar: CircleImageView = navigationView!!.getHeaderView(0).findViewById(R.id.iv_my_avatar)
+        val ivMyAvatar: CircleImageView = navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar)
         ivMyAvatar.setOnClickListener {
             val intent = Intent(this@MainActivity, MemberActivity::class.java)
             intent.putExtra(Keys.KEY_USERNAME, username)
@@ -280,7 +287,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.menu_login -> startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), LOG_IN)
             R.id.menu_notification -> {
                 item.icon = resources.getDrawable(R.drawable.ic_notifications_white_24dp, theme)
-                startActivity(Intent(this, NotificationActivity::class.java))
+                val intent = Intent(this, NotificationActivity::class.java)
+                when {
+                    count != -1 -> intent.putExtra(Keys.KEY_COUNT, count)
+                }
+                startActivity(intent)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -332,6 +343,51 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDrawer.closeDrawer(GravityCompat.START)
         return true
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        when (requestCode) {
+            110 ->
+                if (resultCode == RESULT_OK) {
+                    try {
+                        val imageUri = imageReturnedIntent?.data
+                        val imageStream = contentResolver.openInputStream(imageUri);
+                        val bitmap = BitmapFactory.decodeStream(imageStream)
+
+                        val stream = ByteArrayOutputStream();
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        val byteArray = stream.toByteArray();
+
+                        val url = "https://sm.ms/api/upload/"
+
+                        Thread(Runnable {
+                            HttpHelper.OK_CLIENT.newCall(Request.Builder().url("https://sm.ms").get().build()).execute()
+                            val pp: RequestBody = MultipartBody.create(MediaType.parse("multipart/jpeg"), byteArray)
+                            val body: RequestBody = MultipartBody.Builder()
+                                    .addFormDataPart("smfile", "nonono.png", pp).build()
+                            HttpHelper.OK_CLIENT.newCall(Request.Builder()
+                                    //                                .headers(HttpHelper.baseHeaders)
+                                    //                                .header("Host", "sm.ms")
+                                    //                                .header("Refer","http://sm.ms/")
+                                    .url(url)
+                                    .post(body)
+                                    .build()).enqueue(object : Callback {
+                                override fun onFailure(call: Call?, e: IOException?) {
+                                    e?.printStackTrace()
+                                }
+
+                                override fun onResponse(call: Call?, response: Response?) {
+                                    XLog.tag("smms").d(response?.body()?.string())
+                                }
+                            })
+                        }).start()
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+        }
+    }
+
 
     private fun dailyCheck() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()

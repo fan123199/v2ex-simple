@@ -1,89 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="6dp">
+    android:foreground="@color/bantoing38"
+    android:background="?selectableItemBackground"
+    >
 
-    <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_avatar_notification"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/it_is_avatar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_username"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="16dp">
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="20dp"
+        android:textAppearance="@style/VText.Hint"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_notification"
+        app:layout_constraintLeft_toRightOf="@+id/iv_avatar_notification"
+        app:layout_constraintTop_toTopOf="@+id/iv_avatar_notification"
+        tools:text="@string/username"/>
 
+    <TextView
+        android:id="@+id/content_notification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/VText"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_notification"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_topic_title"
+        />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_avatar_notification"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:contentDescription="@string/it_is_avatar"
-            android:layout_marginLeft="16dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp" />
+    <TextView
+        android:id="@+id/tv_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="0dp"
+        android:textAppearance="@style/VText.Hint"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_username"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_username"
+        app:layout_constraintStart_toEndOf="@+id/tv_username"
+        app:layout_constraintTop_toTopOf="@+id/tv_username"
+        tools:text="Time"/>
 
-        <TextView
-            android:id="@+id/tv_username"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_weight="0.11"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toRightOf="@+id/iv_avatar_notification"
-            app:layout_constraintTop_toTopOf="@+id/iv_avatar_notification"
-            tools:text="@string/username" />
+    <TextView
+        android:id="@+id/tv_action_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/VText.Hint"
+        app:layout_constraintStart_toStartOf="@+id/tv_username"
+        app:layout_constraintTop_toBottomOf="@+id/tv_username"
+        tools:text="TextView"/>
 
-        <TextView
-            android:id="@+id/content_notification"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.11"
-            tools:text="notification content"
-            app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_notification"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/tv_topic_title"
-            android:layout_marginRight="16dp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginEnd="16dp" />
+    <TextView
+        android:id="@+id/tv_topic_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="0dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_action_notification"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_action_notification"
+        app:layout_constraintTop_toTopOf="@+id/tv_action_notification"
+        tools:text="@string/title"/>
 
-        <TextView
-            android:id="@+id/tv_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_notification"
-            app:layout_constraintLeft_toLeftOf="@+id/tv_username"
-            tools:text="Time"
-            android:layout_marginStart="8dp" />
-
-        <TextView
-            android:id="@+id/tv_action_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:text="TextView"
-            app:layout_constraintLeft_toRightOf="@+id/tv_username"
-            app:layout_constraintTop_toTopOf="@+id/tv_username"
-            android:layout_marginStart="8dp" />
-
-        <TextView
-            android:id="@+id/tv_topic_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/primary"
-            android:textSize="18sp"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/iv_avatar_notification"
-            tools:text="@string/title"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginLeft="0dp"
-            app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_notification" />
-    </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
+    <include
+        android:id="@+id/include"
+        layout="@layout/divider"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="@+id/content_notification"
+        app:layout_constraintStart_toStartOf="@+id/content_notification"
+        app:layout_constraintTop_toBottomOf="@+id/content_notification"/>
+</android.support.constraint.ConstraintLayout>

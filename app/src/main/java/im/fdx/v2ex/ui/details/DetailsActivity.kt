@@ -272,7 +272,7 @@ class DetailsActivity : AppCompatActivity() {
                     return
                 }
                 if (code != 200) {
-                    dealError(this@DetailsActivity, code)
+                    dealError(this@DetailsActivity, code, mSwipe)
                     handler.sendEmptyMessage(MSG_ERROR_IO)
                     return
                 }
@@ -432,7 +432,7 @@ class DetailsActivity : AppCompatActivity() {
                 .get().build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@DetailsActivity)
+                dealError(this@DetailsActivity, swipe = mSwipe)
             }
 
             @Throws(IOException::class)
@@ -466,7 +466,7 @@ class DetailsActivity : AppCompatActivity() {
                 .build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@DetailsActivity)
+                dealError(this@DetailsActivity, swipe = mSwipe)
             }
 
             @Throws(IOException::class)

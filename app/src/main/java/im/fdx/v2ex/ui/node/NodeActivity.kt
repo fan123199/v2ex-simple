@@ -36,7 +36,6 @@ import java.util.*
 
 
 class NodeActivity : AppCompatActivity() {
-    private lateinit var rlNodeList: View
     private lateinit var rlNodeHeader: View
     private lateinit var ivNodeIcon: ImageView
     private lateinit var tvNodeHeader: TextView
@@ -57,7 +56,6 @@ class NodeActivity : AppCompatActivity() {
                     Picasso.with(this@NodeActivity).load(mNodeModel?.avatarLargeUrl).into(ivNodeIcon)
                     XLog.d(mNodeModel?.title)
                     collapsingToolbarLayout?.title = mNodeModel?.title
-                    collapsingToolbarLayout?.isTitleEnabled = true
                     tvNodeHeader.text = mNodeModel?.header
                     tvNodeNum.text = getString(R.string.topic_number, mNodeModel?.topics)
                 }
@@ -109,7 +107,6 @@ class NodeActivity : AppCompatActivity() {
         }
 
         rlNodeHeader = findViewById(R.id.rl_node_header)
-        rlNodeList = findViewById(R.id.rl_node_list)
         ivNodeIcon = findViewById(R.id.iv_node_image)
         tvNodeHeader = findViewById(R.id.tv_node_details)
         tvNodeNum = findViewById(R.id.tv_topic_num)
@@ -145,6 +142,7 @@ class NodeActivity : AppCompatActivity() {
         } else if (intent.getStringExtra(Keys.KEY_NODE_NAME) != null) {
             nodeName = intent.getStringExtra(Keys.KEY_NODE_NAME)
         }
+        mSwipeRefreshLayout.isRefreshing = true
         getNodeInfoAndTopicByOK(nodeName)
 
     }
@@ -154,7 +152,7 @@ class NodeActivity : AppCompatActivity() {
         XLog.tag(TAG).d("url:" + requestURL)
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders).url(requestURL).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                NetManager.dealError(this@NodeActivity)
+                NetManager.dealError(this@NodeActivity, swipe = mSwipeRefreshLayout)
             }
 
             @Throws(IOException::class)
@@ -165,7 +163,7 @@ class NodeActivity : AppCompatActivity() {
                     handler.sendEmptyMessage(MSG_ERROR_AUTH)
                     return
                 } else if (code != 200) {
-                    NetManager.dealError(this@NodeActivity, code)
+                    NetManager.dealError(this@NodeActivity, code, mSwipeRefreshLayout)
                     return
                 }
                 val body = response.body()?.string()

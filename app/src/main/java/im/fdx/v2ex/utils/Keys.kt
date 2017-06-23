@@ -23,4 +23,6 @@ object Keys {
     val ACTION_PREFERENCE_CHANGED = "im.fdx.v2ex.preference"
     val FAVOR_FRAGMENT_TYPE = "type"
     val PREF_KEY_IS_LOGIN = "is_login"
+
+    val KEY_COUNT = "count"
 }

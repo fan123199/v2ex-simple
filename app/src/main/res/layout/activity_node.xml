@@ -24,7 +24,7 @@
             app:expandedTitleMarginTop="30dp"
             app:expandedTitleTextAppearance="@style/ExpendedCollapseTitle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:titleEnabled="false">
+            app:titleEnabled="true">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -34,9 +34,8 @@
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/AppTheme.AppBarOverlay"
                 app:layout_collapseMode="pin"
-                android:visibility="visible"
-                tools:title="rewqfadfadfa"
                 app:titleMarginStart="0dp"
+                tools:title="woshizhongguo"
                 app:contentInsetStartWithNavigation="0dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
@@ -88,8 +87,8 @@
                     android:layout_alignStart="@+id/iv_node_image"
                     android:layout_marginEnd="16dp"
                     android:layout_marginTop="16dp"
-                    android:textColor="@color/white"
                     android:lineSpacingMultiplier="1.2"
+                    android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -104,13 +103,11 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout android:id="@+id/rl_node_list"
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    xmlns:tools="http://schemas.android.com/tools"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <FrameLayout
+        android:id="@+id/rl_node_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
         <android.support.v4.widget.SwipeRefreshLayout
@@ -124,7 +121,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </android.support.v4.widget.SwipeRefreshLayout>
-    </RelativeLayout>
+    </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_node"

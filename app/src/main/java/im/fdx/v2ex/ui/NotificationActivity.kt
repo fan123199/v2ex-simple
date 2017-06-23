@@ -13,19 +13,19 @@ import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.utils.ViewUtil
+import im.fdx.v2ex.utils.extensions.t
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
 import org.jsoup.Jsoup
 import java.io.IOException
-import java.util.*
 
 class NotificationActivity : AppCompatActivity() {
 
-    private var notifications: MutableList<NotificationModel> = ArrayList()
-    private var adapter: NotificationAdapter? = null
-    private var mSwipe: SwipeRefreshLayout? = null
+    private var notifications: MutableList<NotificationModel> = mutableListOf()
+    private lateinit var adapter: NotificationAdapter
+    private lateinit var mSwipe: SwipeRefreshLayout
     private lateinit var rvNotification: RecyclerView
     private lateinit var flContainer: FrameLayout
 
@@ -37,14 +37,12 @@ class NotificationActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setTitle(R.string.notification)
-
-        flContainer = findViewById(R.id.fl_container)
-
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
+        flContainer = findViewById(R.id.fl_container)
         mSwipe = findViewById(R.id.swipe_container)
-        mSwipe!!.setOnRefreshListener { fetchNotification() }
+        mSwipe.setColorSchemeResources(R.color.primary)
+        mSwipe.setOnRefreshListener { fetchNotification() }
 
         rvNotification = findViewById(R.id.rv_container)
         rvNotification.layoutManager = LinearLayoutManager(this)
@@ -54,7 +52,13 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun parseIntent(intent: Intent) {
-        adapter!!.number = intent.getIntExtra("number", -1)
+        val numUnread = intent.getIntExtra("number", -1)
+        adapter.number = numUnread
+        supportActionBar?.title = "${getString(R.string.notification)} ${when {
+            numUnread != -1 -> "($numUnread 条未读)"
+            else -> ""
+        }}"
+        mSwipe.isRefreshing = true
         fetchNotification()
     }
 
@@ -66,26 +70,33 @@ class NotificationActivity : AppCompatActivity() {
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
 
+                NetManager.dealError(this@NotificationActivity, swipe = mSwipe)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
 
-                if (response.code() == 200) {
-                    val html = Jsoup.parse(response.body()?.string())
-                    val c = NetManager.parseToNotifications(html)
-                    if (c.isEmpty()) {
-                        runOnUiThread {
-                            mSwipe?.isRefreshing = false
-                            ViewUtil.showNoContent(this@NotificationActivity, flContainer)
+                when (response.code()) {
+                    302 -> runOnUiThread {
+                        t("您未登录或登录信息已过时，请重新登录")
+                    }
+                    200 -> {
+                        val html = Jsoup.parse(response.body()?.string())
+                        val c = NetManager.parseToNotifications(html)
+                        if (c.isEmpty()) {
+                            runOnUiThread {
+                                mSwipe.isRefreshing = false
+                                ViewUtil.showNoContent(this@NotificationActivity, flContainer)
+                            }
+                            return
                         }
-                        return
+                        notifications.addAll(c)
+                        runOnUiThread {
+                            adapter.notifyDataSetChanged()
+                            mSwipe.isRefreshing = false
+                        }
                     }
-                    notifications.addAll(c)
-                    runOnUiThread {
-                        adapter?.notifyDataSetChanged()
-                        mSwipe?.isRefreshing = false
-                    }
+                    else -> NetManager.dealError(this@NotificationActivity, response.code(), mSwipe)
                 }
             }
         })

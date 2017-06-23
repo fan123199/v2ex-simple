@@ -58,7 +58,9 @@ class AlarmReceiver : BroadcastReceiver() {
                     val num = Integer.parseInt(matcher.group())
                     XLog.d("num" + num)
                     if (num != 0) {
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Keys.ACTION_GET_NOTIFICATION))
+                        val intent = Intent(Keys.ACTION_GET_NOTIFICATION)
+                        intent.putExtra(Keys.KEY_COUNT, num)
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                         putNotification(context, num)
                     }
                 } else {
@@ -70,7 +72,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun putNotification(context: Context, number: Int) {
         val resultIntent = Intent(context, NotificationActivity::class.java)
-        resultIntent.putExtra("number", number)
+        resultIntent.putExtra(Keys.KEY_COUNT, number)
         val stackBuilder = TaskStackBuilder.create(context)
         //        stackBuilder.addParentStack(NotificationActivity.class);
         //        stackBuilder.addNextIntent(resultIntent);

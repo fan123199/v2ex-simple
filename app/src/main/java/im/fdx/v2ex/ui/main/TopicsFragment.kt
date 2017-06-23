@@ -146,7 +146,7 @@ class TopicsFragment : Fragment() {
             override fun onResponse(call: Call, response: okhttp3.Response) {
 
                 if (response.code() != 200) {
-                    dealError(activity, response.code())
+                    dealError(activity, response.code(), mSwipeLayout)
                     return
                 }
 

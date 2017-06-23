@@ -46,7 +46,7 @@ object TimeUtil {
         created *= 1000
 
         //        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
-        val format1 = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val format1 = SimpleDateFormat("yyyy/MM/dd")
         return format1.format(created)
     }
 

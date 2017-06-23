@@ -10,7 +10,8 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/al_profile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:elevation="4dp">
 
 
         <android.support.design.widget.CollapsingToolbarLayout
@@ -18,10 +19,10 @@
             android:id="@+id/ctl_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:collapsedTitleTextAppearance="@style/CollapseTitle"
+            app:collapsedTitleTextAppearance="@style/VText.ToolbarStyle"
             app:expandedTitleGravity="top"
-            app:expandedTitleMarginStart="126dp"
-            app:expandedTitleMarginTop="16dp"
+            app:expandedTitleMarginStart="128dp"
+            app:expandedTitleMarginTop="24dp"
             app:expandedTitleTextAppearance="@style/ExpendedCollapseTitle"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -63,22 +64,123 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
 
-                <TextView
-                    android:id="@+id/tv_created"
-                    android:layout_width="wrap_content"
+
+                <LinearLayout
+                    android:id="@+id/ll_info"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:minWidth="10dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/tv_prefix_created"
-                    app:layout_constraintLeft_toRightOf="@+id/tv_prefix_created"
-                    app:layout_constraintTop_toTopOf="@+id/tv_prefix_created"
-                    app:layout_constraintVertical_bias="0.562"/>
+                    android:layout_marginTop="24dp"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_intro"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:gravity="end"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_marginRight="16dp"
+                        android:id="@+id/tv_location"
+                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/white"
+                        app:civ_fill_color="@color/white"
+                        android:layout_width="32dp"
+                        android:src="@drawable/ic_location"
+                        android:layout_height="32dp"/>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_marginRight="16dp"
+                        android:id="@+id/tv_twitter"
+                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/white"
+                        app:civ_fill_color="@color/white"
+                        android:layout_width="32dp"
+                        android:src="@drawable/ic_twitter"
+                        android:layout_height="32dp"/>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_marginRight="16dp"
+                        android:id="@+id/tv_github"
+                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/white"
+                        app:civ_fill_color="@color/white"
+                        android:layout_width="32dp"
+                        android:src="@drawable/ic_github"
+                        android:layout_height="32dp"/>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_marginRight="16dp"
+                        app:civ_border_width="4dp"
+                        android:id="@+id/tv_bitcoin"
+                        app:civ_border_color="@color/white"
+                        app:civ_fill_color="@color/white"
+                        android:layout_width="32dp"
+                        android:src="@drawable/ic_bitcoin"
+                        android:layout_height="32dp"/>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:layout_marginRight="16dp"
+                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/white"
+                        android:id="@+id/tv_website"
+                        app:civ_fill_color="@color/white"
+                        android:layout_width="32dp"
+                        android:src="@drawable/ic_website"
+                        android:layout_height="32dp"/>
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_location"-->
+                    <!--style="@style/Text.Bg"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:drawableLeft="@drawable/ic_location"-->
+                    <!--android:drawablePadding="8dp"-->
+                    <!--tools:text="我在深圳"/>-->
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_bitcoin"-->
+                    <!--style="@style/Text.Bg"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:clickable="true"-->
+                    <!--tools:text="我的比特号"-->
+                    <!--android:drawableLeft="@drawable/ic_bitcoin"-->
+                    <!--android:drawablePadding="8dp"-->
+                    <!--/>-->
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_github"-->
+                    <!--style="@style/Text.Bg"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:drawableLeft="@drawable/ic_github"-->
+                    <!--android:drawablePadding="8dp"-->
+                    <!--tools:text=""-->
+                    <!--android:onClick="openGithub"-->
+                    <!--/>-->
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_twitter"-->
+                    <!--style="@style/Text.Bg"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:clickable="true"-->
+                    <!--android:drawableLeft="@drawable/ic_twitter"-->
+                    <!--android:drawablePadding="8dp"-->
+                    <!--android:gravity="center_vertical"-->
+                    <!--android:onClick="openTwitter"-->
+                    <!--tools:text=""/>-->
+
+                    <!--<TextView-->
+                    <!--android:id="@+id/tv_website"-->
+                    <!--style="@style/Text.Bg"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:drawableLeft="@drawable/ic_website"-->
+                    <!--android:drawablePadding="8dp"-->
+                    <!--android:onClick="openWeb"-->
+                    <!--tools:text=""/>-->
+
+                </LinearLayout>
 
 
                 <TextView
@@ -90,147 +192,27 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginLeft="0dp"
                     android:layout_marginRight="8dp"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_small"
                     tools:text="这是自我简介，可能很长"
                     android:layout_marginTop="8dp"
                     app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile"/>
 
-                <TextView
-                    android:id="@+id/tv_location"
-                    style="@style/Text.Bg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/tv_username_profile"
-                    android:layout_alignStart="@+id/tv_username_profile"
-                    android:layout_below="@+id/iv_avatar_profile"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="0dp"
-                    android:drawableLeft="@drawable/ic_location"
-                    android:drawablePadding="16dp"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_github"
-                    tools:text="我在深圳"/>
-
-                <TextView
-                    android:id="@+id/tv_bitcoin"
-                    style="@style/Text.Bg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignEnd="@+id/tv_created"
-                    android:layout_alignRight="@+id/tv_created"
-                    android:layout_below="@+id/tv_github"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="0dp"
-                    android:clickable="true"
-                    tools:text="我的比特号"
-                    android:drawableLeft="@drawable/ic_bitcoin"
-                    android:drawablePadding="16dp"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_twitter"
-                    tools:layout_constraintLeft_creator="1"/>
-
-                <TextView
-                    android:id="@+id/tv_twitter"
-                    style="@style/Text.Bg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignEnd="@+id/tv_username_profile"
-                    android:layout_alignRight="@+id/tv_username_profile"
-                    android:layout_below="@+id/tv_bitcoin"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="0dp"
-                    android:clickable="true"
-                    android:drawableLeft="@drawable/ic_twitter"
-                    android:drawablePadding="16dp"
-                    android:gravity="center_vertical"
-                    android:onClick="openTwitter"
-                    tools:text="twitter id"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_location"/>
-
-                <TextView
-                    android:id="@+id/tv_id"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="3dp"
-                    app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_username_profile"
-                    tools:text="id"/>
-
-                <TextView
-                    android:id="@+id/tv_website"
-                    style="@style/Text.Bg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="0dp"
-                    android:drawableLeft="@drawable/ic_website"
-                    android:drawablePadding="16dp"
-                    android:onClick="openWeb"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_bitcoin"
-                    tools:layout_constraintLeft_creator="1"
-                    tools:text="http://google.com"/>
 
                 <TextView
                     android:id="@+id/tv_prefix_created"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="0dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginTop="16dp"
+                    android:textColor="@color/white"
                     android:text="@string/created_on"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_profile"
                     app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_id"
-                    app:layout_constraintVertical_bias="1.0"/>
+                    android:layout_marginBottom="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/iv_avatar_profile"
+                    android:layout_marginStart="16dp"/>
 
-                <TextView
-                    android:id="@+id/tv_github"
-                    style="@style/Text.Bg"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:drawableLeft="@drawable/ic_github"
-                    android:drawablePadding="16dp"
-                    tools:text="github账号"
-                    android:onClick="openGithub"
-                    app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_intro"/>
 
             </android.support.constraint.ConstraintLayout>
 
