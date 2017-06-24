@@ -166,7 +166,7 @@ class MemberActivity : AppCompatActivity() {
 
     private fun handleAlphaOnTitle(percentage: Float) {
         when (percentage) {
-            in 0..1 -> constraintLayout.alpha = 1 - percentage
+            in 0f..1f -> constraintLayout.alpha = 1 - percentage
         }
     }
 
@@ -387,7 +387,7 @@ class MemberActivity : AppCompatActivity() {
         Picasso.with(this).load(member.avatarLargeUrl)
                 .error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar)
         mTvIntro.text = member.bio
-        mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime(java.lang.Long.parseLong(member.created))},${getString(R.string.the_n_member, member.id)}"
+        mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
         mTvBitCoin.visibility = when {
             TextUtils.isEmpty(member.btc) -> View.GONE
