@@ -368,10 +368,10 @@ class DetailsActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.menu_details, menu)
         if (MyApp.get().isLogin()) {
             menu.findItem(R.id.menu_favor).isVisible = true
-            menu.findItem(R.id.menu_reply).isVisible = true
+            menu.findItem(R.id.menu_reply)?.isVisible = true
         } else {
             menu.findItem(R.id.menu_favor).isVisible = false
-            menu.findItem(R.id.menu_reply).isVisible = false
+            menu.findItem(R.id.menu_reply)?.isVisible = false
         }
         mMenu = menu
         return true

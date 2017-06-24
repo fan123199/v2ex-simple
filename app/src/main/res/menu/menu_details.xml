@@ -2,24 +2,24 @@
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="im.fdx.v2ex.ui.details.DetailsActivity">
-    <item
-        android:id="@+id/menu_refresh"
-        android:icon="@drawable/ic_refresh_white_24dp"
-        android:orderInCategory="97"
-        android:title="@string/menu_refresh"
-        app:showAsAction="never"/>
+    <!--<item-->
+    <!--android:id="@+id/menu_refresh"-->
+    <!--android:icon="@drawable/ic_refresh_white_24dp"-->
+    <!--android:orderInCategory="97"-->
+    <!--android:title="@string/menu_refresh"-->
+    <!--app:showAsAction="never"/>-->
     <item
         android:id="@+id/menu_favor"
         android:icon="@drawable/ic_favorite_border_white_24dp"
         android:orderInCategory="90"
         android:title="@string/favor"
         app:showAsAction="never"/>
-    <item
-        android:id="@+id/menu_reply"
-        android:icon="@drawable/ic_send_white_24dp"
-        android:orderInCategory="90"
-        android:title="@string/reply"
-        app:showAsAction="never"/>
+    <!--<item-->
+    <!--android:id="@+id/menu_reply"-->
+    <!--android:icon="@drawable/ic_send_white_24dp"-->
+    <!--android:orderInCategory="90"-->
+    <!--android:title="@string/reply"-->
+    <!--app:showAsAction="never"/>-->
     <item
         android:id="@+id/menu_item_share"
         android:orderInCategory="94"

@@ -85,6 +85,7 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="true"
+            android:theme="@style/Theme.V2ex.ForEdit"
             android:label="@string/title_activity_settings">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

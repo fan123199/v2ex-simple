@@ -50,22 +50,17 @@ class SettingsActivity : AppCompatActivity() {
 
         private var count: Int = 0
 
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             addPreferencesFromResource(preference)
-
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-
 
             when {
                 MyApp.get().isLogin() -> {
 
                     addPreferencesFromResource(R.xml.preference_login)
-
                     findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
-
                     findPreference(PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
                         val alert = AlertDialog.Builder(activity)
                                 .setTitle("确定要退出吗")

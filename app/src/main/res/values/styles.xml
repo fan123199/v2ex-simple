@@ -4,7 +4,7 @@
 
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/primary</item>
         <item name="android:textColorLink">@color/primary</item>
         <item name="android:statusBarColor">@color/primary</item>
 
@@ -43,16 +43,6 @@
         <item name="colorControlHighlight">@color/white</item>
     </style>
 
-    <!--<style name="Theme.V2ex.spinnerItemStyle" >-->
-
-    <!--<item name="android:textAppearance">@style/Theme.V2ex.SpinnerText</item>-->
-
-    <!--</style>-->
-
-    <!--<style name="Theme.V2ex.SpinnerText">-->
-    <!--<item name="android:textColor">@color/primary</item>-->
-    <!--</style>-->
-
 
     <style name="VEditStyle" parent="Widget.AppCompat.EditText">
         <item name="android:paddingRight">0dp</item>
@@ -80,7 +70,7 @@
     </style>
 
     <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">
-        <item name="colorAccent">@color/accent</item>
+        <item name="colorAccent">@color/primary</item>
         <item name="android:textColorPrimary">@color/primary</item>
         <item name="android:background">@color/primary_dark</item>
     </style>

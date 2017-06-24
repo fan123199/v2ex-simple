@@ -165,12 +165,9 @@ class MemberActivity : AppCompatActivity() {
     }
 
     private fun handleAlphaOnTitle(percentage: Float) {
-        constraintLayout.visibility = when (percentage) {
-            in 0.8f..1f -> View.INVISIBLE
-            in 0f..0.8f -> View.VISIBLE
-            else -> View.INVISIBLE
+        when (percentage) {
+            in 0..1 -> constraintLayout.alpha = 1 - percentage
         }
-
     }
 
     private fun parseIntent(intent: Intent) {
@@ -390,7 +387,7 @@ class MemberActivity : AppCompatActivity() {
         Picasso.with(this).load(member.avatarLargeUrl)
                 .error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar)
         mTvIntro.text = member.bio
-        mTvUserCreatedPrefix.text = "创建于${TimeUtil.getAbsoluteTime(java.lang.Long.parseLong(member.created))}，${getString(R.string.the_n_member, member.id)}"
+        mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime(java.lang.Long.parseLong(member.created))},${getString(R.string.the_n_member, member.id)}"
 
         mTvBitCoin.visibility = when {
             TextUtils.isEmpty(member.btc) -> View.GONE
@@ -416,6 +413,10 @@ class MemberActivity : AppCompatActivity() {
             else -> View.VISIBLE
         }
 
+        mTvIntro.visibility = when {
+            TextUtils.isEmpty(member.bio) -> View.GONE
+            else -> View.VISIBLE
+        }
         llInfo.visibility = when {
             !TextUtils.isEmpty(member.website + member.twitter + member.github + member.btc + member.location) -> View.VISIBLE
             else -> View.GONE

@@ -90,6 +90,7 @@ class NotificationActivity : AppCompatActivity() {
                             }
                             return
                         }
+                        notifications.clear()
                         notifications.addAll(c)
                         runOnUiThread {
                             adapter.notifyDataSetChanged()

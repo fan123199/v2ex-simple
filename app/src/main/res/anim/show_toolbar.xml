@@ -4,7 +4,7 @@
     <alpha
         android:fromAlpha="0"
         android:toAlpha="1"
-        android:duration="400"
+        android:duration="300"
         android:interpolator="@android:anim/decelerate_interpolator"
         />
 
@@ -12,5 +12,5 @@
         android:fromYDelta="100"
         android:toYDelta="0"
         android:interpolator="@android:anim/decelerate_interpolator"
-        android:duration="400"/>
+        android:duration="300"/>
 </set>

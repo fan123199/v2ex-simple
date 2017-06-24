@@ -58,6 +58,7 @@ class NewTopicActivity : AppCompatActivity() {
         etContent = findViewById(R.id.et_content)
 
 
+        title = getString(R.string.new_top)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         toolbar.setNavigationOnClickListener { onBackPressed() }
