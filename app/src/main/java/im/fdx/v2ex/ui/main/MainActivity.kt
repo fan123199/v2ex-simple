@@ -3,8 +3,6 @@ package im.fdx.v2ex.ui.main
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
@@ -45,9 +43,11 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.t
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Request
+import okhttp3.Response
 import org.jsoup.Jsoup
-import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 
@@ -198,7 +198,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-                (mAdapter!!.getItem(tab.position) as TopicsFragment).scrollToTop()
+                mAdapter!!.getItem(tab.position).scrollToTop()
             }
         })
 
@@ -344,49 +344,49 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        when (requestCode) {
-            110 ->
-                if (resultCode == RESULT_OK) {
-                    try {
-                        val imageUri = imageReturnedIntent?.data
-                        val imageStream = contentResolver.openInputStream(imageUri);
-                        val bitmap = BitmapFactory.decodeStream(imageStream)
-
-                        val stream = ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        val byteArray = stream.toByteArray();
-
-                        val url = "https://sm.ms/api/upload/"
-
-                        Thread(Runnable {
-                            HttpHelper.OK_CLIENT.newCall(Request.Builder().url("https://sm.ms").get().build()).execute()
-                            val pp: RequestBody = MultipartBody.create(MediaType.parse("multipart/jpeg"), byteArray)
-                            val body: RequestBody = MultipartBody.Builder()
-                                    .addFormDataPart("smfile", "nonono.png", pp).build()
-                            HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                                    //                                .headers(HttpHelper.baseHeaders)
-                                    //                                .header("Host", "sm.ms")
-                                    //                                .header("Refer","http://sm.ms/")
-                                    .url(url)
-                                    .post(body)
-                                    .build()).enqueue(object : Callback {
-                                override fun onFailure(call: Call?, e: IOException?) {
-                                    e?.printStackTrace()
-                                }
-
-                                override fun onResponse(call: Call?, response: Response?) {
-                                    XLog.tag("smms").d(response?.body()?.string())
-                                }
-                            })
-                        }).start()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+//        when (requestCode) {
+//            110 ->
+//                if (resultCode == RESULT_OK) {
+//                    try {
+//                        val imageUri = imageReturnedIntent?.data
+//                        val imageStream = contentResolver.openInputStream(imageUri);
+//                        val bitmap = BitmapFactory.decodeStream(imageStream)
+//
+//                        val stream = ByteArrayOutputStream();
+//                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                        val byteArray = stream.toByteArray();
+//
+//                        val url = "https://sm.ms/api/upload/"
+//
+//                        Thread(Runnable {
+//                            HttpHelper.OK_CLIENT.newCall(Request.Builder().url("https://sm.ms").get().build()).execute()
+//                            val pp: RequestBody = MultipartBody.create(MediaType.parse("multipart/jpeg"), byteArray)
+//                            val body: RequestBody = MultipartBody.Builder()
+//                                    .addFormDataPart("smfile", "nonono.png", pp).build()
+//                            HttpHelper.OK_CLIENT.newCall(Request.Builder()
+//                                    //                                .headers(HttpHelper.baseHeaders)
+//                                    //                                .header("Host", "sm.ms")
+//                                    //                                .header("Refer","http://sm.ms/")
+//                                    .url(url)
+//                                    .post(body)
+//                                    .build()).enqueue(object : Callback {
+//                                override fun onFailure(call: Call?, e: IOException?) {
+//                                    e?.printStackTrace()
+//                                }
+//
+//                                override fun onResponse(call: Call?, response: Response?) {
+//                                    XLog.tag("smms").d(response?.body()?.string())
+//                                }
+//                            })
+//                        }).start()
+//                    } catch (e: Exception) {
+//                        e.printStackTrace()
+//                    }
+//                }
+//        }
+//    }
 
 
     private fun dailyCheck() {
