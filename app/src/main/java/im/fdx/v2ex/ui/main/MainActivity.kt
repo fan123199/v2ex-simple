@@ -8,12 +8,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.annotation.ColorInt
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.graphics.ColorUtils
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
@@ -55,17 +53,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     internal lateinit var mDrawer: DrawerLayout
     private lateinit var navigationView: NavigationView
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var mViewPager: ViewPager
+    private lateinit var fab: FloatingActionButton
 
-    private var mViewPager: ViewPager? = null
     private var mAdapter: MyViewPagerAdapter? = null
     private val shortcutId = "create_topic"
     private var vitent: Intent? = null
-    private val listener: ViewPager.OnPageChangeListener? = null
-    private lateinit var fab: FloatingActionButton
     private var shortcutManager: ShortcutManager? = null
     private val shortcutIds = listOf("create_topic")
     private var createTopicInfo: ShortcutInfo? = null
-    private lateinit var sharedPreferences: SharedPreferences
     private var isGetNotification: Boolean = false
 
     private var count: Int = -1
@@ -83,7 +80,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     val avatar = intent.getStringExtra(Keys.KEY_AVATAR)
                     setUserInfo(username, avatar)
                     fab.show()
-
+                    mAdapter?.initFragment()
+                    mAdapter?.notifyDataSetChanged()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         shortcutManager?.addDynamicShortcuts(listOfNotNull<ShortcutInfo>(createTopicInfo))
                     }
@@ -92,7 +90,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     showIcon(false)
                     removeUserInfo()
                     fab.hide()
-
+                    mAdapter?.initFragment()
+                    mAdapter?.notifyDataSetChanged()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         shortcutManager?.removeDynamicShortcuts(shortcutIds)
                     }
@@ -181,7 +180,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         mViewPager = findViewById(R.id.viewpager_main)
         mAdapter = MyViewPagerAdapter(fragmentManager, this@MainActivity)
-        mViewPager!!.adapter = mAdapter
+        mViewPager.adapter = mAdapter
 
         val mTabLayout: TabLayout = findViewById(R.id.sliding_tabs)
 
@@ -269,11 +268,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (MyApp.get().isLogin()) {
             menu.findItem(R.id.menu_login).isVisible = false
             menu.findItem(R.id.menu_notification).isVisible = true
-            //            XLog.tag(TAG).d("invisible");
         } else {
             menu.findItem(R.id.menu_login).isVisible = true
             menu.findItem(R.id.menu_notification).isVisible = false
-            //            XLog.tag(TAG).d("visible");
         }
 
         if (isGetNotification) {
@@ -452,8 +449,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onResume() {
         super.onResume()
         XLog.tag(TAG).d("onResume")
-
-        //        bindService(intent);
     }
 
     override fun onPause() {
@@ -474,11 +469,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onDestroy() {
         super.onDestroy()
+        XLog.tag(TAG).d("onDestroy")
         if (MyApp.get().isLogin() && isOpenMessage && !isBackground) {
             stopService(intent)
         }
-        XLog.tag(TAG).d("onDestroy")
-        mViewPager!!.clearOnPageChangeListeners()
+        mViewPager.clearOnPageChangeListeners()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
@@ -492,19 +487,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         private val TAG = "MainActivity"
         private val LOG_IN = 0
-
-        @ColorInt
-        fun adjustColorForStatusBar(@ColorInt color: Int): Int {
-            val hsl = FloatArray(3)
-            ColorUtils.colorToHSL(color, hsl)
-
-            // darken the color by 7.5%
-            var lightness = hsl[2] * 0.925f
-            // constrain lightness to be within [0–1]
-            lightness = Math.max(0f, Math.min(1f, lightness))
-            hsl[2] = lightness
-            return ColorUtils.HSLToColor(hsl)
-        }
     }
 
 }

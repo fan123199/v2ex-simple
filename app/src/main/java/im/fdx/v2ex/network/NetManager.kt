@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.support.v4.widget.SwipeRefreshLayout
 import android.text.TextUtils
-import android.widget.Toast
 import com.google.gson.Gson
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.MemberModel
@@ -16,6 +15,7 @@ import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.ContentUtils
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.t
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -398,11 +398,9 @@ object NetManager {
             context.runOnUiThread {
                 swipe?.isRefreshing = false
                 when (errorCode) {
-                    -1 -> Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show()
-                    302 ->
-
-                        Toast.makeText(context, context.getString(R.string.error_auth_failure), Toast.LENGTH_SHORT).show()
-                    else -> Toast.makeText(context, context.getString(R.string.error_network), Toast.LENGTH_SHORT).show()
+                    -1 -> context.t(context.getString(R.string.error_network))
+                    302 -> context.t(context.getString(R.string.error_auth_failure))
+                    else -> context.t(context.getString(R.string.error_network))
                 }
             }
     }

@@ -116,11 +116,13 @@ class MemberActivity : AppCompatActivity() {
         llInfo = findViewById(R.id.ll_info)
 
         run {
+            mTvIntro.visibility = View.GONE
             mTvLocation.visibility = View.GONE
             mTvBitCoin.visibility = View.GONE
             mTvGithub.visibility = View.GONE
             mTvTwitter.visibility = View.GONE
             mTvWebsite.visibility = View.GONE
+            llInfo.visibility = View.GONE
 
             mTvLocation.setOnClickListener(listener)
             mTvBitCoin.setOnClickListener(listener)
