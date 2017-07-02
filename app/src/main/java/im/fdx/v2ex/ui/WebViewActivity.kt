@@ -13,7 +13,7 @@ import android.widget.TextView
 import im.fdx.v2ex.R
 
 
-@Deprecated("暂时不用，等")
+@Deprecated("暂时不用，等以后实现")
 class WebViewActivity : AppCompatActivity() {
 
     private var myWebView: WebView? = null

@@ -39,23 +39,18 @@ import im.fdx.v2ex.model.BaseModel
 //        "avatar_large" : "//cdn.v2ex.co/navatar/8613/985e/90_large.png?m=1452823690"
 //        }
 
-data class NodeModel(var id: String,
-                     var name: String,
-                     var url: String,
-                     var title: String,
-                     var title_alternative: String,
-                     var topics: Int,
-                     var stars: Int,
-                     var created: Long,
-                     var avatar_mini: String?,
-                     var avatar_normal: String?,
-                     var avatar_large: String?,
-                     var header: String?) : BaseModel(), Parcelable {
-
-
-    constructor() : this("", "", "", "", "", 0, 0, 0, "", "", "", "")
-
-    constructor(name: String) : this("", name, "", "", "", 0, 0, 0, "", "", "", "")
+data class NodeModel(var id: String = "",
+                     var name: String = "",
+                     var url: String = "",
+                     var title: String = "",
+                     var title_alternative: String = "",
+                     var topics: Int = 0,
+                     var stars: Int = 0,
+                     var created: Long = 0,
+                     var avatar_mini: String = "",
+                     var avatar_normal: String = "",
+                     var avatar_large: String = "",
+                     var header: String = "") : BaseModel(), Parcelable {
 
     val avatarMiniUrl: String
         get() = "http:$avatar_mini"

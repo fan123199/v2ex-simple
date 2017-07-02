@@ -63,7 +63,7 @@ class SharedPrefsPersistor : CookiePersistor {
         val cookies = ArrayList<Cookie>()
 
         val mapSet = sharedPreferences.all.entries
-        for ((key, value) in mapSet) {
+        for ((_, value) in mapSet) {
             val strCookie = value as String
             val cookie = NetManager.myGson.fromJson(strCookie, Cookie::class.java)
             cookies.add(cookie)

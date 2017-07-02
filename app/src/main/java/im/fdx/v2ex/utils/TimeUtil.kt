@@ -20,19 +20,19 @@ object TimeUtil {
      * @return
      */
     fun getRelativeTime(created: Long): String {
-        var created = created
-        if (created == -1L) {
+        var _created = created
+        if (_created == -1L) {
             return ""
         }
 
-        created *= 1000
+        _created *= 1000
         val now = System.currentTimeMillis()
-        val difference = now - created
+        val difference = now - _created
         val text = if (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS)
             MyApp.get().getString(R.string.just_now)
         else
             DateUtils.getRelativeTimeSpanString(
-                    created,
+                    _created,
                     now,
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE)
@@ -42,12 +42,12 @@ object TimeUtil {
 
 
     fun getAbsoluteTime(created: Long): String {
-        var created = created
-        created *= 1000
+        var _created = created
+        _created *= 1000
 
         //        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
         val format1 = SimpleDateFormat("yyyy/MM/dd")
-        return format1.format(created)
+        return format1.format(_created)
     }
 
     /**
@@ -61,10 +61,10 @@ object TimeUtil {
      */
     @Throws(NumberFormatException::class)
     fun toLong(timeStr: String): Long {
-        var timeStr = timeStr
+        var _time = timeStr
 
-        timeStr = timeStr.trim { it <= ' ' }
-        //       String timeStr = time.replace("&nbsp", "");
+        _time = _time.trim { it <= ' ' }
+        //       String _time = time.replace("&nbsp", "");
         //        44 分钟前用 iPhone 发布
         //         · 1 小时 34 分钟前 · 775 次点击
         //         · 100 天前 · 775 次点击
@@ -73,31 +73,31 @@ object TimeUtil {
         //其中可能出现一些奇怪的字符，你可能以为是空格。
         var created = System.currentTimeMillis() / 1000 // ms -> second
 
-        val second = timeStr.indexOf("秒")
-        val hour = timeStr.indexOf("小时")
-        val minute = timeStr.indexOf("分钟")
-        val day = timeStr.indexOf("天")
+        val second = _time.indexOf("秒")
+        val hour = _time.indexOf("小时")
+        val minute = _time.indexOf("分钟")
+        val day = _time.indexOf("天")
 
-        val now = timeStr.indexOf("刚刚")
+        val now = _time.indexOf("刚刚")
 
         try {
             if (second != -1) {
                 return created
             } else if (hour != -1) {
-                created -= java.lang.Long.parseLong(getNum(timeStr.substring(0, hour))) * 60 * 60 + java.lang.Long.parseLong(getNum(timeStr.substring(hour + 2, minute))) * 60
+                created -= java.lang.Long.parseLong(getNum(_time.substring(0, hour))) * 60 * 60 + java.lang.Long.parseLong(getNum(_time.substring(hour + 2, minute))) * 60
             } else if (day != -1) {
-                created -= java.lang.Long.parseLong(getNum(timeStr.substring(0, day))) * 60 * 60 * 24
+                created -= java.lang.Long.parseLong(getNum(_time.substring(0, day))) * 60 * 60 * 24
             } else if (minute != -1) {
-                created -= java.lang.Long.parseLong(getNum(timeStr.substring(0, minute))) * 60
+                created -= java.lang.Long.parseLong(getNum(_time.substring(0, minute))) * 60
             } else if (now != -1) {
                 return created
             } else {
                 val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss +08:00", Locale.getDefault())
-                val date = sdf.parse(timeStr)
+                val date = sdf.parse(_time)
                 created = date.time / 1000
             }
         } catch (ignored: Exception) {
-            XLog.tag("TimeUtil").e("time str error: |" + timeStr)
+            XLog.tag("TimeUtil").e("time str error: |" + _time)
         }
 
         return created

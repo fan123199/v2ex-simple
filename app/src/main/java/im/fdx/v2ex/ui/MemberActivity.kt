@@ -49,7 +49,6 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
-import org.jsoup.Jsoup
 import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
@@ -178,7 +177,6 @@ class MemberActivity : AppCompatActivity() {
         var urlUserInfo = ""
         when {
             appLinkData != null -> {
-                val scheme = appLinkData.scheme
                 val host = appLinkData.host
                 val params = appLinkData.pathSegments
                 if (host.contains("v2ex.com") && params[0].contains("member")) {
@@ -221,7 +219,6 @@ class MemberActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 200) {
                     val html = response.body()!!.string()
-                    val body = Jsoup.parse(html).body()
                     isBlocked = parseIsBlock(html)
                     isFollowed = parseIsFollowed(html)
                     XLog.d("isBlocked: $isBlocked|isFollowed: $isFollowed")

@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.main
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
@@ -36,15 +35,16 @@ import java.util.regex.Pattern
 
 class NewTopicActivity : AppCompatActivity() {
 
-    private val nodeModels = ArrayList<NodeModel>()
     private lateinit var adapter: ArrayAdapter<NodeModel>
     private lateinit var mNodename: String
-    private var mTitle: String = ""
-    private var mContent: String = ""
-    private var once: String? = null
     private lateinit var etTitle: TextInputEditText
     private lateinit var etContent: EditText
     private lateinit var spinner: SearchableSpinner
+
+    private var mTitle: String = ""
+    private var mContent: String = ""
+    private var once: String? = null
+    private val nodeModels = ArrayList<NodeModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,9 +116,6 @@ class NewTopicActivity : AppCompatActivity() {
                         out.write(imageStream.readBytes())
                         out.flush()
                         out.close()
-
-                        val selectedImage = BitmapFactory.decodeStream(imageStream);
-
                         uploadImage(file)
                         t(imageUri.toString())
                     } catch (e: Exception) {

@@ -95,7 +95,7 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
                 if (MyApp.get().isLogin()) {
                     (mContext as Activity).registerForContextMenu(itemVH.itemView)
 
-                    itemVH.itemView.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                    itemVH.itemView.setOnCreateContextMenuListener { menu, _, _ ->
                         val menuInflater = mContext.menuInflater
                         menuInflater.inflate(R.menu.menu_reply, menu)
 
