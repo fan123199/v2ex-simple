@@ -186,7 +186,6 @@ class SettingsActivity : AppCompatActivity() {
                 }
 
                 "pref_add_row" -> {
-
                 }
             }
         }

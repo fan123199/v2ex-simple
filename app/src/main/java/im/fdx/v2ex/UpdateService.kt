@@ -27,7 +27,7 @@ class UpdateService : Service() {
         throw UnsupportedOperationException("Not yet implemented")
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         alarmManager.cancel(operationIntent)
         val interval = PreferenceManager.getDefaultSharedPreferences(this)
                 .getString("pref_msg_period", "60").toLong() * 1000L
@@ -35,7 +35,7 @@ class UpdateService : Service() {
                 System.currentTimeMillis() + 5 * 1000, interval,
                 operationIntent)
         XLog.d("updateService alarmManager: time" + interval)
-        return Service.START_STICKY
+        return Service.START_NOT_STICKY
     }
 
     private val operationIntent: PendingIntent

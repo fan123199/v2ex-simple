@@ -23,6 +23,8 @@
 
 -keep class org.jsoup.**
 
+-keep class android.support.** { *; }
+
 -keepattributes Signature
 
 -dontwarn kotlin.**
