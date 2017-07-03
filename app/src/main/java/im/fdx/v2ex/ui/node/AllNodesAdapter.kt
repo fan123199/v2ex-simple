@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.node
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -16,10 +15,10 @@ import java.util.*
 
 /**
  * Created by fdx on 2016/9/13.
- * fdx will maintain it
+ * 所有节点页面
  */
 
-class AllNodesAdapter(private val context: Context, private val isShowImg: Boolean) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
+class AllNodesAdapter(val isShowImg: Boolean) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
 
     private var mNodeModels: MutableList<NodeModel> = ArrayList()
     private var realAllNodes: MutableList<NodeModel> = ArrayList()

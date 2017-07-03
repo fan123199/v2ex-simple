@@ -38,7 +38,7 @@ class NodeFavorFragment : Fragment() {
         XLog.d("NodeFavorFragment onCreateView")
         val view = inflater.inflate(R.layout.fragment_tab_article, container, false)
         val recyclerView: RecyclerView = view.findViewById(R.id.rv_container)
-        adapter = AllNodesAdapter(activity, true)
+        adapter = AllNodesAdapter(true)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(activity, 3)
         swipe = view.findViewById(R.id.swipe_container)

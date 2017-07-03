@@ -62,7 +62,7 @@ object TimeUtil {
     fun toLong(timeStr: String): Long {
         var theTime = timeStr
 
-        theTime = theTime.trim { it <= ' ' }
+        theTime = theTime.trim()
         //       String theTime = time.replace("&nbsp", "");
         //        44 分钟前用 iPhone 发布
         //         · 1 小时 34 分钟前 · 775 次点击
@@ -80,6 +80,7 @@ object TimeUtil {
 
         try {
             when {
+//                theTime.isEmpty() -> return System.currentTimeMillis()/1000
                 second != -1 -> return created
                 hour != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, hour))) * 60 * 60 + java.lang.Long.parseLong(getNum(theTime.substring(hour + 2, minute))) * 60
                 day != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, day))) * 60 * 60 * 24
@@ -92,7 +93,7 @@ object TimeUtil {
                 }
             }
         } catch (ignored: Exception) {
-            XLog.tag("TimeUtil").e("time str error: $theTime")
+            XLog.tag("TimeUtil").e("time str error: $theTime, $timeStr")
         }
 
         return created

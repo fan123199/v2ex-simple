@@ -24,14 +24,14 @@ import java.io.IOException
 import java.util.*
 
 class AllNodesActivity : AppCompatActivity() {
-    private var mAdapter: AllNodesAdapter? = null;
+    private lateinit var mAdapter: AllNodesAdapter
 
 
     @SuppressLint("HandlerLeak")
     private val handler = object : Handler() {
         override fun handleMessage(msg: Message) {
             when {
-                msg.what == 0 -> mAdapter!!.notifyDataSetChanged()
+                msg.what == 0 -> mAdapter.notifyDataSetChanged()
             }
         }
     }
@@ -58,13 +58,13 @@ class AllNodesActivity : AppCompatActivity() {
                     override fun onResponse(call: Call, response: okhttp3.Response) {
                         val type = object : TypeToken<ArrayList<NodeModel>>() {}.type
                         val nodeModels = NetManager.myGson.fromJson<ArrayList<NodeModel>>(response.body()?.string(), type)
-                        mAdapter?.setAllData(nodeModels)
+                        mAdapter.setAllData(nodeModels)
                         handler.sendEmptyMessage(0)
                     }
                 })
 
 
-        mAdapter = AllNodesAdapter(this, false)
+        mAdapter = AllNodesAdapter(false)
         rvNode.layoutManager = StaggeredGridLayoutManager(3, VERTICAL)
         rvNode.adapter = mAdapter
     }
@@ -77,17 +77,14 @@ class AllNodesActivity : AppCompatActivity() {
         val menuItemCompat = menu.findItem(R.id.search_node)
         val searchView = menuItemCompat.actionView as SearchView
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String) = false
-
             override fun onQueryTextChange(newText: String): Boolean {
-                mAdapter?.filter(newText)
+                mAdapter.filter(newText)
                 return false
             }
         })
         return true
     }
-
 }

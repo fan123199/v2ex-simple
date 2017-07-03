@@ -210,20 +210,18 @@ object NetManager {
 
 
             val smallItem = item.getElementsByClass("small fade").first().text()
-            val created: Long
-            if (!smallItem.contains("最后回复")) {
-                created = -1L
-            } else {
-                var createdOriginal = ""
-                when (source) {
-                    FROM_HOME -> createdOriginal = smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]
-                    FROM_NODE -> createdOriginal = smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+            val created = when {
+                !smallItem.contains("最后回复") -> -1L
+                else -> {
+                    TimeUtil.toLong(when (source) {
+                        FROM_HOME -> smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]
+                        FROM_NODE -> smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                    })
                 }
-                created = TimeUtil.toLong(createdOriginal)
             }
             topicModel.replies = replies
             topicModel.content = ""
-            topicModel.setContentRendered("")
+            topicModel.content_rendered = ""
             topicModel.title = title
 
             topicModel.member = memberModel
@@ -322,7 +320,7 @@ object NetManager {
             else -> 0
         }
 
-        topicModel.setContentRendered(contentRendered.fullUrl()) //done
+        topicModel.content_rendered = contentRendered.fullUrl() //done
 
         val member = MemberModel()
         val username = body.getElementsByClass("header").first()
@@ -376,7 +374,7 @@ object NetManager {
             val thanked = item.getElementsByClass("thank_area thanked").first()
             replyModel.isThanked = thanked != null && "感谢已发送" == thanked.text()
 
-            val createdOriginal = item.getElementsByClass("fade small").text()
+            val createdOriginal = item.getElementsByClass("ago").text()
             val replyContent = item.getElementsByClass("reply_content").first()
             replyModel.created = TimeUtil.toLong(createdOriginal)
             replyModel.member = memberModel

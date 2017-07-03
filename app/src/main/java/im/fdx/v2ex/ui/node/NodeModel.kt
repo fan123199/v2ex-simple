@@ -56,10 +56,13 @@ data class NodeModel(var id: String = "",
         get() = "http:$avatar_mini"
 
     val avatarNormalUrl: String
-        get() = "http:${avatar_normal}"
+        get() = "http:$avatar_normal"
 
     val avatarLargeUrl: String
-        get() = "http:${avatar_large}"
+        get() = when {
+            !avatar_large.startsWith("/static") -> "http:$avatar_large"
+            else -> "https://www.v2ex.com/static/img/node_large.png"
+        }
 
     override fun toString() = "$title / $name"
 

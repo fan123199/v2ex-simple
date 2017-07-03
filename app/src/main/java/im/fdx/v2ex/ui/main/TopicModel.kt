@@ -56,10 +56,6 @@ class TopicModel(var id: String = "", var title: String = "", var url: String = 
         this.id = id
     }
 
-    fun setContentRendered(content_rendered: String) {
-        this.content_rendered = content_rendered
-    }
-
     override fun toString() = "标题：$title,\n内容：$content"
 
     override fun equals(other: Any?): Boolean {
