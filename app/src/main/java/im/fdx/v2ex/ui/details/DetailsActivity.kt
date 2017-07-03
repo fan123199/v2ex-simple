@@ -31,7 +31,6 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.main.TopicModel
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.t
 import im.fdx.v2ex.view.SmoothLayoutManager
@@ -439,7 +438,7 @@ class DetailsActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 302) {
                     runOnUiThread {
-                        HintUI.toa(this@DetailsActivity, "${if (doFavor) "" else "取消"}收藏成功")
+                        t("${if (doFavor) "" else "取消"}收藏成功")
                         getRepliesPageOne(mTopicId, false)
                     }
                 }
@@ -474,12 +473,12 @@ class DetailsActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     XLog.tag(TAG).d("成功发布")
                     handler.post {
-                        HintUI.toa(this@DetailsActivity, "发表评论成功")
+                        t("发表评论成功")
                         etSendReply.setText("")
                         getRepliesPageOne(mTopicId, true)
                     }
                 } else {
-                    HintUI.toa(this@DetailsActivity, "发表评论失败")
+                    t("发表评论失败")
                 }
             }
         })

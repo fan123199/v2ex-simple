@@ -9,7 +9,7 @@ import im.fdx.v2ex.utils.Keys
 
 /**
  * Created by fdx on 2015/8/16.
- * 用于启动时获取app状态， what the fuck
+ * 用于启动时获取app状态
  */
 class MyApp : Application() {
     companion object {

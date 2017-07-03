@@ -13,8 +13,8 @@ import im.fdx.v2ex.network.NetManager.Source.FROM_NODE
 import im.fdx.v2ex.ui.details.ReplyModel
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.node.NodeModel
-import im.fdx.v2ex.utils.ContentUtils
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.fullUrl
 import im.fdx.v2ex.utils.extensions.t
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -323,7 +323,7 @@ object NetManager {
             else -> 0
         }
 
-        topicModel.setContentRendered(ContentUtils.format(contentRendered)) //done
+        topicModel.setContentRendered(contentRendered.fullUrl()) //done
 
         val member = MemberModel()
         val username = body.getElementsByClass("header").first()
@@ -385,7 +385,7 @@ object NetManager {
 
             replyModel.id = id
             replyModel.content = replyContent.text()
-            replyModel.content_rendered = ContentUtils.format(replyContent.html())
+            replyModel.content_rendered = replyContent.html().fullUrl()
             replyModels.add(replyModel)
         }
         return replyModels

@@ -139,6 +139,8 @@
     <string name="my_follow">My Follow</string>
     <string name="unFavor">unfavor</string>
     <string name="new_top">new topic</string>
+    <string name="follow">Follow</string>
+    <string name="block">Block</string>
 
     <string-array name="j" translatable="false">
         <item>一颗赛艇</item>

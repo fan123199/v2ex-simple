@@ -1,12 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="im.fdx.v2ex.ui.node.NodeActivity">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
-        android:id="@+id/search_node"
-        android:title="@string/search_hint"
-        android:icon="@drawable/ic_search_white_48px"
-        app:showAsAction="ifRoom|collapseActionView"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        />
+        android:title="@string/follow"
+        android:id="@+id/menu_follow"
+        android:icon="@drawable/ic_favorite_border_white_24dp"
+        app:showAsAction="ifRoom"/>
 </menu>

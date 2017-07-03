@@ -11,12 +11,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.load
 
 /**
  * Created by fdx on 2017/3/24.
@@ -48,7 +48,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
 
         notiHolder.tvAction.text = model.type
         notiHolder.tvContent.text = model.content
-        Picasso.with(mContext).load(model.member?.avatarNormalUrl).into(notiHolder.ivAvatar)
+        notiHolder.ivAvatar.load(model.member?.avatarNormalUrl)
         notiHolder.tvUsername.text = model.member?.username
         notiHolder.tvTime.text = model.time
         notiHolder.tvTopicTitle.text = model.topic?.title

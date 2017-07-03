@@ -25,7 +25,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import com.elvishew.xlog.XLog
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
@@ -40,6 +39,7 @@ import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.t
 import okhttp3.Call
 import okhttp3.Callback
@@ -237,7 +237,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             startActivity(intent)
         }
 
-        Picasso.with(this@MainActivity).load(avatar).into(ivMyAvatar)
+        ivMyAvatar.load(avatar)
 
     }
 
@@ -328,10 +328,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     intentData.`package` = null
                     intentData.data = Uri.parse("mailto:${Keys.AUTHOR_EMAIL}")
                     startActivity(intentData)
-                    //                    Toast.makeText(MainActivity.this, "There are no email clients installed.",
-                    //                            Toast.LENGTH_SHORT).show();
                 }
-
             }
             R.id.nav_setting -> {
                 startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
@@ -340,50 +337,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDrawer.closeDrawer(GravityCompat.START)
         return true
     }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-//        when (requestCode) {
-//            110 ->
-//                if (resultCode == RESULT_OK) {
-//                    try {
-//                        val imageUri = imageReturnedIntent?.data
-//                        val imageStream = contentResolver.openInputStream(imageUri);
-//                        val bitmap = BitmapFactory.decodeStream(imageStream)
-//
-//                        val stream = ByteArrayOutputStream();
-//                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                        val byteArray = stream.toByteArray();
-//
-//                        val url = "https://sm.ms/api/upload/"
-//
-//                        Thread(Runnable {
-//                            HttpHelper.OK_CLIENT.newCall(Request.Builder().url("https://sm.ms").get().build()).execute()
-//                            val pp: RequestBody = MultipartBody.create(MediaType.parse("multipart/jpeg"), byteArray)
-//                            val body: RequestBody = MultipartBody.Builder()
-//                                    .addFormDataPart("smfile", "nonono.png", pp).build()
-//                            HttpHelper.OK_CLIENT.newCall(Request.Builder()
-//                                    //                                .headers(HttpHelper.baseHeaders)
-//                                    //                                .header("Host", "sm.ms")
-//                                    //                                .header("Refer","http://sm.ms/")
-//                                    .url(url)
-//                                    .post(body)
-//                                    .build()).enqueue(object : Callback {
-//                                override fun onFailure(call: Call?, e: IOException?) {
-//                                    e?.printStackTrace()
-//                                }
-//
-//                                override fun onResponse(call: Call?, response: Response?) {
-//                                    XLog.tag("smms").d(response?.body()?.string())
-//                                }
-//                            })
-//                        }).start()
-//                    } catch (e: Exception) {
-//                        e.printStackTrace()
-//                    }
-//                }
-//        }
-//    }
 
 
     private fun dailyCheck() {

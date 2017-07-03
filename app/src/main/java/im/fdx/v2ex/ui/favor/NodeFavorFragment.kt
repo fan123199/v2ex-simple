@@ -29,7 +29,6 @@ import java.io.IOException
 class NodeFavorFragment : Fragment() {
 
 
-    private val url = "https://www.v2ex.com/my/nodes"
     private lateinit var swipe: SwipeRefreshLayout
     private lateinit var adapter: AllNodesAdapter
     private lateinit var flContainer: FrameLayout
@@ -52,7 +51,7 @@ class NodeFavorFragment : Fragment() {
         swipe.isRefreshing = true
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .headers(HttpHelper.baseHeaders)
-                .url(url)
+                .url(Companion.nodeUrl)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(activity, swipe = swipe)
@@ -82,6 +81,10 @@ class NodeFavorFragment : Fragment() {
                 }
             }
         })
+    }
+
+    companion object {
+        const val nodeUrl = "https://www.v2ex.com/my/nodes"
     }
 
 }

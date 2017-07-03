@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.MemberActivity
@@ -15,6 +14,7 @@ import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.view.GoodTextView
 import java.util.*
 
@@ -60,7 +60,7 @@ class TopicsRVAdapter//这是构造器
         holder.tvAuthor.text = currentTopic.member?.username
         holder.tvNode.text = currentTopic.node?.title
         holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)
-        Picasso.with(mContext).load(currentTopic.member?.avatarNormalUrl).into(holder.ivAvatar)
+        holder.ivAvatar.load(currentTopic.member?.avatarNormalUrl)
 
         if (isNodeClickable) {
             holder.tvNode.setOnClickListener(listener)

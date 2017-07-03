@@ -12,7 +12,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.utils.ViewUtil
+import im.fdx.v2ex.utils.extensions.showNoContent
 import im.fdx.v2ex.utils.extensions.t
 import okhttp3.Call
 import okhttp3.Callback
@@ -86,7 +86,7 @@ class NotificationActivity : AppCompatActivity() {
                         if (c.isEmpty()) {
                             runOnUiThread {
                                 mSwipe.isRefreshing = false
-                                ViewUtil.showNoContent(this@NotificationActivity, flContainer)
+                                flContainer.showNoContent()
                             }
                             return
                         }

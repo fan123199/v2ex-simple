@@ -20,7 +20,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
-import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -30,6 +29,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.t
 import im.fdx.v2ex.view.GoodTextView
 import okhttp3.*
@@ -73,7 +73,7 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
                 mainHolder.tvAuthor.text = topic.member!!.username
                 mainHolder.tvNode.text = topic.node!!.title
                 mainHolder.tvCreated.text = TimeUtil.getRelativeTime(topic.created)
-                Picasso.with(mContext).load(topic.member!!.avatarNormalUrl).into(mainHolder.ivAvatar)
+                mainHolder.ivAvatar.load(topic.member!!.avatarNormalUrl)
 
                 val l = TopicsRVAdapter.MyOnClickListener(mContext, topic)
                 mainHolder.tvNode.setOnClickListener(l)
@@ -133,7 +133,7 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
 
                 XLog.i(replyItem.content_rendered)
                 itemVH.tvRow.text = "#$position"
-                Picasso.with(mContext).load(replyItem.member!!.avatarNormalUrl).into(itemVH.ivUserAvatar)
+                itemVH.ivUserAvatar.load(replyItem.member!!.avatarLargeUrl)
                 itemVH.ivUserAvatar.setOnClickListener {
                     val itProfile = Intent("im.fdx.v2ex.intent.profile")
                     itProfile.putExtra("username", replyItem.member!!.username)

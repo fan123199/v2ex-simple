@@ -59,12 +59,11 @@ object TimeUtil {
      * *
      * @return long value
      */
-    @Throws(NumberFormatException::class)
     fun toLong(timeStr: String): Long {
-        var _time = timeStr
+        var theTime = timeStr
 
-        _time = _time.trim { it <= ' ' }
-        //       String _time = time.replace("&nbsp", "");
+        theTime = theTime.trim { it <= ' ' }
+        //       String theTime = time.replace("&nbsp", "");
         //        44 分钟前用 iPhone 发布
         //         · 1 小时 34 分钟前 · 775 次点击
         //         · 100 天前 · 775 次点击
@@ -73,31 +72,27 @@ object TimeUtil {
         //其中可能出现一些奇怪的字符，你可能以为是空格。
         var created = System.currentTimeMillis() / 1000 // ms -> second
 
-        val second = _time.indexOf("秒")
-        val hour = _time.indexOf("小时")
-        val minute = _time.indexOf("分钟")
-        val day = _time.indexOf("天")
-
-        val now = _time.indexOf("刚刚")
+        val second = theTime.indexOf("秒")
+        val hour = theTime.indexOf("小时")
+        val minute = theTime.indexOf("分钟")
+        val day = theTime.indexOf("天")
+        val now = theTime.indexOf("刚刚")
 
         try {
-            if (second != -1) {
-                return created
-            } else if (hour != -1) {
-                created -= java.lang.Long.parseLong(getNum(_time.substring(0, hour))) * 60 * 60 + java.lang.Long.parseLong(getNum(_time.substring(hour + 2, minute))) * 60
-            } else if (day != -1) {
-                created -= java.lang.Long.parseLong(getNum(_time.substring(0, day))) * 60 * 60 * 24
-            } else if (minute != -1) {
-                created -= java.lang.Long.parseLong(getNum(_time.substring(0, minute))) * 60
-            } else if (now != -1) {
-                return created
-            } else {
-                val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss +08:00", Locale.getDefault())
-                val date = sdf.parse(_time)
-                created = date.time / 1000
+            when {
+                second != -1 -> return created
+                hour != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, hour))) * 60 * 60 + java.lang.Long.parseLong(getNum(theTime.substring(hour + 2, minute))) * 60
+                day != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, day))) * 60 * 60 * 24
+                minute != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, minute))) * 60
+                now != -1 -> return created
+                else -> {
+                    val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss +08:00", Locale.getDefault())
+                    val date = sdf.parse(theTime.trim())
+                    created = date.time / 1000
+                }
             }
         } catch (ignored: Exception) {
-            XLog.tag("TimeUtil").e("time str error: |" + _time)
+            XLog.tag("TimeUtil").e("time str error: $theTime")
         }
 
         return created

@@ -4,14 +4,11 @@ package im.fdx.v2ex.network
 import android.content.Context
 import android.graphics.Bitmap
 import android.util.LruCache
-import android.widget.ImageView
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.Volley
-import com.squareup.picasso.Picasso
 import im.fdx.v2ex.MyApp
-import java.io.IOException
 
 
 @Suppress("unused", "UNUSED_PARAMETER")
@@ -50,30 +47,5 @@ private constructor() {
 
     fun <T> addToRequestQueue(req: Request<T>) {
         requestQueue?.add(req)
-    }
-
-    /**
-     * Created by fdx on 2017/3/15.
-     * fdx will maintain it
-     */
-
-    object MyImageLoader {
-
-        fun load(context: Context, url: String, imageView: ImageView) {
-            Picasso.with(context).load("http://i.imgur.com/DvpvklR.png").into(imageView)
-        }
-
-        fun load(context: Context, url: String): Bitmap? {
-            var bitmap: Bitmap? = null
-            try {
-                bitmap = Picasso.with(context).load(url).resize(300, 300).get()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-            return bitmap
-
-        }
-
     }
 }

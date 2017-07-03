@@ -13,11 +13,12 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
-import com.squareup.picasso.Picasso
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
@@ -25,14 +26,17 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.t
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
+import okhttp3.Response
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.util.*
+import java.util.regex.Pattern
 
 
 class NodeActivity : AppCompatActivity() {
@@ -53,7 +57,7 @@ class NodeActivity : AppCompatActivity() {
             when {
                 msg.what == MSG_GET_NODE_INFO -> {
 
-                    Picasso.with(this@NodeActivity).load(mNodeModel?.avatarLargeUrl).into(ivNodeIcon)
+                    ivNodeIcon.load(mNodeModel?.avatarLargeUrl)
                     XLog.d(mNodeModel?.title)
                     collapsingToolbarLayout?.title = mNodeModel?.title
                     tvNodeHeader.text = mNodeModel?.header
@@ -64,12 +68,13 @@ class NodeActivity : AppCompatActivity() {
                     mSwipeRefreshLayout.isRefreshing = false
                 }
                 msg.what == MSG_ERROR_AUTH -> {
-                    HintUI.toa(this@NodeActivity, "需要登录")
+                    t("需要登录")
                     finish()
                 }
             }
         }
     }
+    private var isFollowed = false
     private lateinit var nodeName: String
     private var mNodeModel: NodeModel? = null
     private var collapsingToolbarLayout: CollapsingToolbarLayout? = null
@@ -122,10 +127,49 @@ class NodeActivity : AppCompatActivity() {
 
         mSwipeRefreshLayout.isRefreshing = true
         mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange)
-        mSwipeRefreshLayout.setOnRefreshListener { getNodeInfoAndTopicByOK(nodeName) }
+        mSwipeRefreshLayout.setOnRefreshListener { getInfoAndTopics(nodeName) }
         parseIntent(intent)
 
     }
+
+    private lateinit var mMenu: Menu
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_node, menu)
+        mMenu = menu!!
+        return true
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when (item?.itemId) {
+            R.id.menu_follow -> {
+                switchFollowAndRefresh(isFollowed)
+            }
+        }
+        return true
+    }
+
+    private fun switchFollowAndRefresh(isFavorite: Boolean) {
+        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+                .url("${NetManager.HTTPS_V2EX_BASE}/${if (isFavorite) "un" else ""}$token")
+                .build()).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                NetManager.dealError(this@NodeActivity)
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                if (response.code() == 302) {
+                    getInfoAndTopics(nodeName)
+                    runOnUiThread { t("${if (isFavorite) "取消" else ""}关注成功") }
+                }
+            }
+        })
+    }
+
+
+
 
     private fun handleAlphaOnTitle(percentage: Float) {
         XLog.tag("collapse").d(percentage)
@@ -143,11 +187,12 @@ class NodeActivity : AppCompatActivity() {
             nodeName = intent.getStringExtra(Keys.KEY_NODE_NAME)
         }
         mSwipeRefreshLayout.isRefreshing = true
-        getNodeInfoAndTopicByOK(nodeName)
+        getInfoAndTopics(nodeName)
 
     }
 
-    private fun getNodeInfoAndTopicByOK(nodeName: String) {
+    private var token: String? = null
+    private fun getInfoAndTopics(nodeName: String) {
         val requestURL = NetManager.HTTPS_V2EX_BASE + "/go/" + nodeName
         XLog.tag(TAG).d("url:" + requestURL)
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders).url(requestURL).build()).enqueue(object : Callback {
@@ -171,6 +216,16 @@ class NodeActivity : AppCompatActivity() {
                 mNodeModel = NetManager.parseToNode(html)
                 Message.obtain(handler, MSG_GET_NODE_INFO).sendToTarget()
 
+                isFollowed = parseIsFollowed(body)
+                token = parseWithOnce(body)
+
+                runOnUiThread {
+                    if (isFollowed) {
+                        mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp)
+                    } else {
+                        mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
+                    }
+                }
                 mTopicModels.clear()
                 mTopicModels.addAll(NetManager.parseTopicLists(html, NetManager.Source.FROM_NODE))
                 handler.sendEmptyMessage(MSG_GET_TOPICS)
@@ -183,6 +238,25 @@ class NodeActivity : AppCompatActivity() {
         private val MSG_GET_TOPICS = 1
         private val MSG_GET_NODE_INFO = 0
         private val MSG_ERROR_AUTH = 2
+
+
+        private fun parseIsFollowed(html: String?): Boolean {
+            val pFollow = Pattern.compile("un(?=favorite/node/\\d{1,8}\\?once=)")
+            val matcher = pFollow.matcher(html)
+            return matcher.find()
+        }
+
+        private fun parseWithOnce(html: String?): String? {
+
+//        /favorite/node/557?once=46345
+
+            val pFollow = Pattern.compile("favorite/node/\\d{1,8}\\?once=\\d{1,10}")
+            val matcher = pFollow.matcher(html)
+            if (matcher.find()) {
+                return matcher.group()
+            }
+            return null
+        }
     }
 
 }

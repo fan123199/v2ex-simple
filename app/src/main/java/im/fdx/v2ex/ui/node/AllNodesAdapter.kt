@@ -9,9 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.squareup.picasso.Picasso
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.load
 import java.util.*
 
 /**
@@ -35,7 +35,7 @@ class AllNodesAdapter(private val context: Context, private val isShowImg: Boole
         val node = mNodeModels[position]
 
         if (isShowImg) {
-            Picasso.with(context).load(node.avatarLargeUrl).into(holder.ivNodeIcon)
+            holder.ivNodeIcon.load(node.avatarLargeUrl)
         } else {
             holder.ivNodeIcon.visibility = View.GONE
         }

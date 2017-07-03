@@ -40,10 +40,10 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.showNoContent
+import im.fdx.v2ex.utils.extensions.t
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
 import okhttp3.Callback
@@ -264,20 +264,6 @@ class MemberActivity : AppCompatActivity() {
         return matcher.find()
     }
 
-    private fun parseToOnce(html: String): String? {
-
-        //        <input type="button" value="加入特别关注"
-        // onclick="if (confirm('确认要开始关注 SoulGem？'))
-        // { location.href = '/follow/209351?once=61676'; }" class="super special button">
-
-        val pFollow = Pattern.compile("follow/\\d{1,8}\\?once=\\d{1,10}")
-        val matcher = pFollow.matcher(html)
-        if (matcher.find()) {
-            return matcher.group()
-        }
-        return null
-    }
-
     /**
      * @param html
      * *
@@ -455,7 +441,7 @@ class MemberActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     getBlockAndFollowWeb()
                     runOnUiThread {
-                        HintUI.toa(this@MemberActivity, "${if (isFollowed) "取消" else ""}关注成功")
+                        t("${if (isFollowed) "取消" else ""}关注成功")
                     }
                 }
             }
@@ -476,7 +462,7 @@ class MemberActivity : AppCompatActivity() {
                         if (response.code() == 302) {
                             getBlockAndFollowWeb()
                             runOnUiThread {
-                                HintUI.toa(this@MemberActivity, "${if (isBlocked) "取消" else ""}屏蔽成功")
+                                t("${if (isBlocked) "取消" else ""}屏蔽成功")
                             }
                         }
                     }
@@ -494,6 +480,21 @@ class MemberActivity : AppCompatActivity() {
         var TAG: String? = MemberActivity::class.java.simpleName
         private val MSG_GET_USER_INFO = 0
         private val MSG_GET_TOPIC = 1
+
+
+        fun parseToOnce(html: String): String? {
+
+            //        <input type="button" value="加入特别关注"
+            // onclick="if (confirm('确认要开始关注 SoulGem？'))
+            // { location.href = '/follow/209351?once=61676'; }" class="super special button">
+
+            val pFollow = Pattern.compile("follow/\\d{1,8}\\?once=\\d{1,10}")
+            val matcher = pFollow.matcher(html)
+            if (matcher.find()) {
+                return matcher.group()
+            }
+            return null
+        }
 
         // 设置渐变的动画
         fun startAlphaAnimation(v: View, duration: Long, visibility: Int) {

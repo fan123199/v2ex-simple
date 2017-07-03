@@ -6,7 +6,7 @@ import android.content.Intent
 
 
 /**
- * 这是我见过最曲线救国的方法了。
+ * 这是我见过最曲线救国的方法了。用于chrometab的分享功能
  */
 class MyReceiver : BroadcastReceiver() {
 

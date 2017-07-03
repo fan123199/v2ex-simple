@@ -21,7 +21,6 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.NodeModel
-import im.fdx.v2ex.utils.HintUI
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.t
 import okhttp3.*
@@ -189,11 +188,11 @@ class NewTopicActivity : AppCompatActivity() {
             mContent = etContent.text.toString()
 
             when {
-                TextUtils.isEmpty(mTitle) -> HintUI.toa(this, "标题和内容不能为空")
-                TextUtils.isEmpty(mContent) -> HintUI.toa(this, "标题和内容不能为空")
-                mTitle.length > 120 -> HintUI.toa(this, "标题字数超过限制")
-                mContent.length > 20000 -> HintUI.toa(this, "主题内容不能超过 20000 个字符")
-                TextUtils.isEmpty(mNodename) -> HintUI.toa(this, getString(R.string.choose_node))
+                TextUtils.isEmpty(mTitle) -> t("标题和内容不能为空")
+                TextUtils.isEmpty(mContent) -> t("标题和内容不能为空")
+                mTitle.length > 120 -> t("标题字数超过限制")
+                mContent.length > 20000 -> t("主题内容不能超过 20000 个字符")
+                TextUtils.isEmpty(mNodename) -> t(getString(R.string.choose_node))
                 else -> postNew()
             }
         }

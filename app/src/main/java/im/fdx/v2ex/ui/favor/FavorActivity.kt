@@ -12,12 +12,11 @@ class FavorActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_follow_activity)
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         toolbar.title = "我的收藏"
-
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         toolbar.setNavigationOnClickListener { onBackPressed() }
 
         val tabLayout: TabLayout = findViewById(R.id.tl_favor)
@@ -25,7 +24,5 @@ class FavorActivity : AppCompatActivity() {
         viewPager.offscreenPageLimit = FavorViewPagerAdapter.titles.size
         viewPager.adapter = FavorViewPagerAdapter(fragmentManager)
         tabLayout.setupWithViewPager(viewPager)
-
-
     }
 }

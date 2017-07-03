@@ -22,9 +22,9 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import com.squareup.picasso.Transformation
 import im.fdx.v2ex.R
-import im.fdx.v2ex.utils.ContentUtils
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.dp2px
+import im.fdx.v2ex.utils.extensions.fullUrl
 
 
 /**
@@ -45,7 +45,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
         }
         setLinkTextColor(ContextCompat.getColor(context, R.color.primary))
 
-        val formContent = ContentUtils.format(text)
+        val formContent = text.fullUrl()
         val imageGetter = MyImageGetter()
         val spannedText = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, imageGetter, null)

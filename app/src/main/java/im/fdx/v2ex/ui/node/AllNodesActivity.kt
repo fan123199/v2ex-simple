@@ -72,7 +72,7 @@ class AllNodesActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
 
-        menuInflater.inflate(R.menu.menu_node, menu)
+        menuInflater.inflate(R.menu.menu_all_node, menu)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val menuItemCompat = menu.findItem(R.id.search_node)
         val searchView = menuItemCompat.actionView as SearchView
