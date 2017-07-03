@@ -79,8 +79,8 @@ class SettingsActivity : AppCompatActivity() {
                     }
 
                     listPreference = findPreference("pref_msg_period") as ListPreference
-                    if (listPreference!!.entry != null) {
-                        listPreference!!.summary = listPreference!!.entry//初始化时设置summary
+                    if (listPreference?.entry != null) {
+                        listPreference?.summary = listPreference?.entry//初始化时设置summary
                     }
 
                     if (!sharedPreferences.getBoolean("pref_msg", false)) {
@@ -180,7 +180,7 @@ class SettingsActivity : AppCompatActivity() {
                 "pref_background_msg" -> {
                 }
                 "pref_msg_period" -> {
-                    listPreference!!.summary = listPreference!!.entry
+                    listPreference?.summary = listPreference?.entry
                     activity.startService(intent)
                     XLog.d("pref_msg_period changed")
                 }

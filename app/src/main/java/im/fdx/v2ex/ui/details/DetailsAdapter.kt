@@ -62,7 +62,7 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
                 mainHolder.tvTitle.text = topic.title
                 mainHolder.tvTitle.maxLines = 3
                 mainHolder.tvContent.isSelected = true
-                mainHolder.tvContent.setGoodText(topic.content_rendered!!)
+                mainHolder.tvContent.setGoodText(topic.content_rendered)
                 Log.i(TAG, topic.content_rendered)
                 //            Log.i(TAG, topic.getContent());
                 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

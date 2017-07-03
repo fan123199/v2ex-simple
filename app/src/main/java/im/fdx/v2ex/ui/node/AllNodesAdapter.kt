@@ -1,9 +1,9 @@
 package im.fdx.v2ex.ui.node
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,40 +20,33 @@ import java.util.*
  */
 
 class AllNodesAdapter(private val context: Context, private val isShowImg: Boolean) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
-    private var mNodeModels: MutableList<NodeModel> = ArrayList()
 
+    private var mNodeModels: MutableList<NodeModel> = ArrayList()
     private var realAllNodes: MutableList<NodeModel> = ArrayList()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllNodeViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            AllNodeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_all_nodes, parent, false))
 
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_all_nodes, parent, false)
-
-        return AllNodeViewHolder(view)
-    }
-
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: AllNodeViewHolder, position: Int) {
         val node = mNodeModels[position]
 
-        if (isShowImg) {
-            holder.ivNodeIcon.load(node.avatarLargeUrl)
-        } else {
-            holder.ivNodeIcon.visibility = View.GONE
+        when {
+            isShowImg -> holder.ivNodeIcon.load(node.avatarLargeUrl)
+            else -> holder.ivNodeIcon.visibility = View.GONE
         }
-        holder.tvNodeName.text = String.format(Locale.CHINA, "%s (%s)", node.title, node.topics)
-
-        holder.itemView.setOnClickListener { v ->
+        holder.tvNodeName.text = "${node.title} (${node.topics})"
+        holder.itemView.setOnClickListener {
             val intent = Intent().apply {
-                setClass(v.context, NodeActivity::class.java)
+                setClass(it.context, NodeActivity::class.java)
                 putExtra(Keys.KEY_NODE_NAME, node.name)
             }
-            v.context.startActivity(intent)
+            it.context.startActivity(intent)
         }
 
     }
 
-
     override fun getItemCount() = mNodeModels.size
-
 
     fun setAllData(nodeModels: MutableList<NodeModel>) {
         mNodeModels = nodeModels
@@ -64,24 +57,19 @@ class AllNodesAdapter(private val context: Context, private val isShowImg: Boole
         mNodeModels.addAll(nodeModels)
     }
 
-    fun clear() {
-        mNodeModels.clear()
-    }
+    fun clear() = mNodeModels.clear()
 
     fun filter(newText: String) {
 
-        if (TextUtils.isEmpty(newText)) {
+        if (newText.isNullOrEmpty()) {
             mNodeModels = realAllNodes
             notifyDataSetChanged()
             return
         }
 
-        mNodeModels = realAllNodes
-                .filter {
-                    it.name.contains(newText) || it.title.contains(newText)
-                            || it.title_alternative.contains(newText)
-                }
-                .toMutableList()
+        mNodeModels = realAllNodes.filter {
+            it.name.contains(newText) || it.title.contains(newText) || it.title_alternative.contains(newText)
+        }.toMutableList()
         notifyDataSetChanged()
     }
 

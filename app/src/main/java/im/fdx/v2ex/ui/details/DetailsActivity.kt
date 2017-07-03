@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.text.Editable
-import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
@@ -196,7 +195,7 @@ class DetailsActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
-            override fun afterTextChanged(s: Editable) = if (TextUtils.isEmpty(s)) {
+            override fun afterTextChanged(s: Editable) = if (s.isNullOrEmpty()) {
                 ivSend.isClickable = false
                 ivSend.imageTintList = null
             } else {

@@ -3,7 +3,6 @@ package im.fdx.v2ex.network
 import android.app.Activity
 import android.content.Context
 import android.support.v4.widget.SwipeRefreshLayout
-import android.text.TextUtils
 import com.google.gson.Gson
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.MemberModel
@@ -311,7 +310,7 @@ object NetManager {
                 val wholeText = gray.text()
                 val index = wholeText.indexOf("回复")
                 replyNum = wholeText.substring(0, index - 1)
-                if (!TextUtils.isEmpty(replyNum)) {
+                if (!replyNum.isEmpty()) {
                     hasReply = true
                 }
                 break

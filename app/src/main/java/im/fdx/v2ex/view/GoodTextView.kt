@@ -9,7 +9,10 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.support.v4.content.ContextCompat
-import android.text.*
+import android.text.Html
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
@@ -39,13 +42,13 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
 
     @Suppress("DEPRECATION")
-    fun setGoodText(text: String) {
-        if (TextUtils.isEmpty(text)) {
+    fun setGoodText(text: String?) {
+        if (text.isNullOrEmpty()) {
             return
         }
         setLinkTextColor(ContextCompat.getColor(context, R.color.primary))
 
-        val formContent = text.fullUrl()
+        val formContent = text?.fullUrl()
         val imageGetter = MyImageGetter()
         val spannedText = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, imageGetter, null)

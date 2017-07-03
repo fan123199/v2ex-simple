@@ -18,7 +18,6 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -166,7 +165,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             val username = sharedPreferences.getString(Keys.KEY_USERNAME, "")
             val avatar = sharedPreferences.getString(Keys.KEY_AVATAR, "")
             XLog.tag(TAG).d(username + "//// " + avatar)
-            if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(avatar)) {
+            if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
                 setUserInfo(username, avatar)
             }
 

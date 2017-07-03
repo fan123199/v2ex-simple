@@ -14,7 +14,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -337,7 +336,7 @@ class MemberActivity : AppCompatActivity() {
     }
 
     fun openTwitter() {
-        if (TextUtils.isEmpty(member.twitter)) {
+        if ((member.twitter).isNullOrEmpty()) {
             return
         }
         val intent: Intent
@@ -355,14 +354,14 @@ class MemberActivity : AppCompatActivity() {
     }
 
     fun openWeb() {
-        if (TextUtils.isEmpty(member.website)) {
+        if ((member.website).isNullOrEmpty()) {
             return
         }
         CustomChrome(this).load(if (!member.website.contains("http")) "http://" + member.website else member.website)
     }
 
     fun openGithub() {
-        if (TextUtils.isEmpty(member.github)) return
+        if ((member.github).isNullOrEmpty()) return
         CustomChrome(this).load("https://www.github.com/" + member.github)
     }
 
@@ -375,35 +374,35 @@ class MemberActivity : AppCompatActivity() {
         mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
         mTvBitCoin.visibility = when {
-            TextUtils.isEmpty(member.btc) -> View.GONE
+            (member.btc).isNullOrEmpty() -> View.GONE
             else -> View.VISIBLE
         }
         mTvGithub.visibility = when {
-            TextUtils.isEmpty(member.github) -> View.GONE
+            (member.github).isNullOrEmpty() -> View.GONE
             else -> View.VISIBLE
         }
 
         mTvLocation.visibility = when {
-            TextUtils.isEmpty(member.location) -> View.GONE
+            (member.location).isNullOrEmpty() -> View.GONE
             else -> View.VISIBLE
         }
 
         mTvTwitter.visibility = when {
-            TextUtils.isEmpty(member.twitter) -> View.GONE
+            (member.twitter).isNullOrEmpty() -> View.GONE
             else -> View.VISIBLE
         }
 
         mTvWebsite.visibility = when {
-            TextUtils.isEmpty(member.website) -> View.GONE
+            (member.website).isNullOrEmpty() -> View.GONE
             else -> View.VISIBLE
         }
 
         mTvIntro.visibility = when {
-            TextUtils.isEmpty(member.bio) -> View.GONE
+            (member.bio).isNullOrEmpty() -> View.GONE
             else -> View.VISIBLE
         }
         llInfo.visibility = when {
-            !TextUtils.isEmpty(member.website + member.twitter + member.github + member.btc + member.location) -> View.VISIBLE
+            !(member.website + member.twitter + member.github + member.btc + member.location).isNullOrEmpty() -> View.VISIBLE
             else -> View.GONE
         }
     }

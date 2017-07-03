@@ -9,8 +9,6 @@
     app:cardElevation="3dp"
     app:cardCornerRadius="3dp"
     android:layout_margin="4dp"
-    app:contentPaddingTop="6dp"
-    app:contentPaddingBottom="6dp"
     app:cardBackgroundColor="@color/white">
 
     <android.support.constraint.ConstraintLayout
@@ -19,6 +17,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:background="?selectableItemBackground"
         android:orientation="vertical">
 

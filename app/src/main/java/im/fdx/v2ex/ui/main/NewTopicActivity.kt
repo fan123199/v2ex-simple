@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -188,11 +187,11 @@ class NewTopicActivity : AppCompatActivity() {
             mContent = etContent.text.toString()
 
             when {
-                TextUtils.isEmpty(mTitle) -> t("标题和内容不能为空")
-                TextUtils.isEmpty(mContent) -> t("标题和内容不能为空")
+                mTitle.isEmpty() -> t("标题和内容不能为空")
+                mContent.isEmpty() -> t("标题和内容不能为空")
                 mTitle.length > 120 -> t("标题字数超过限制")
                 mContent.length > 20000 -> t("主题内容不能超过 20000 个字符")
-                TextUtils.isEmpty(mNodename) -> t(getString(R.string.choose_node))
+                mNodename.isEmpty() -> t(getString(R.string.choose_node))
                 else -> postNew()
             }
         }

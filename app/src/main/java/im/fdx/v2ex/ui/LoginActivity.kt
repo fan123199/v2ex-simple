@@ -9,7 +9,6 @@ import android.support.design.widget.TextInputEditText
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.view.View.VISIBLE
@@ -75,7 +74,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         button.setOnClickListener(this)
         tvSignup.setOnClickListener(this)
 
-        if (!TextUtils.isEmpty(usernamePref)) {
+        if (usernamePref.isNullOrEmpty()) {
             etUsername.setText(usernamePref)
             etPassword.requestFocus()
         }
