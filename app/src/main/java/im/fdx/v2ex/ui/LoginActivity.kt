@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         button.setOnClickListener(this)
         tvSignup.setOnClickListener(this)
 
-        if (usernamePref.isNullOrEmpty()) {
+        if (!usernamePref.isNullOrEmpty()) {
             etUsername.setText(usernamePref)
             etPassword.requestFocus()
         }

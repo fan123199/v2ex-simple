@@ -36,6 +36,9 @@ import im.fdx.v2ex.utils.extensions.fullUrl
  */
 class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
+    //防止 Picasso，将target gc了， 导致图片无法显示
+    var targetList: MutableList<Target> = mutableListOf()
+
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
@@ -43,6 +46,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
     @Suppress("DEPRECATION")
     fun setGoodText(text: String?) {
+        targetList.clear();
         if (text.isNullOrEmpty()) {
             return
         }
@@ -178,7 +182,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
                 override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
                 }
             }
-
+            targetList.add(target)
             Picasso.with(context).load(source).into(target)
             return bitmapHolder
         }
