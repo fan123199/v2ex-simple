@@ -137,6 +137,10 @@ class NodeActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_node, menu)
         mMenu = menu!!
+        if (!MyApp.get().isLogin()) {
+            menu.findItem(R.id.menu_follow)?.isVisible = false
+        }
+
         return true
     }
 
