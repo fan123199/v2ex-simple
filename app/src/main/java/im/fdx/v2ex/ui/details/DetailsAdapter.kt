@@ -54,8 +54,8 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-        when {
-            getItemViewType(position) == TYPE_HEADER -> {
+        when (getItemViewType(position)) {
+            TYPE_HEADER -> {
 
                 val mainHolder = holder as TopicsRVAdapter.MainViewHolder
                 val topic = mAllList[position] as TopicModel
@@ -80,12 +80,12 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
                 mainHolder.ivAvatar.setOnClickListener(l)
 
             }
-            getItemViewType(position) == TYPE_FOOTER -> {
+            TYPE_FOOTER -> {
                 val tvMore = (holder as FooterViewHolder).tvLoadMore
                 tvMore.text = "加载更多"
                 tvMore.setOnClickListener { callback.onMethodCallback(2) }
             }
-            getItemViewType(position) == TYPE_ITEM -> {
+            TYPE_ITEM -> {
                 val itemVH = holder as ItemViewHolder
                 val replyItem = mAllList[position] as ReplyModel
                 if (position == itemCount - 1) {
