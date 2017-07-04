@@ -380,11 +380,7 @@ class DetailsActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
-            R.id.menu_favor -> if (isFavored) {
-                favorOrNot(mTopicId, token!!, isFavored)
-            } else {
-                favorOrNot(mTopicId, token!!, isFavored)
-            }
+            R.id.menu_favor -> favorOrNot(mTopicId, token!!, isFavored)
             R.id.menu_reply -> {
                 etSendReply.requestFocus()
                 val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -437,7 +433,7 @@ class DetailsActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 302) {
                     runOnUiThread {
-                        t("${if (doFavor) "" else "取消"}收藏成功")
+                        t("${if (doFavor) "取消" else ""}收藏成功")
                         getRepliesPageOne(mTopicId, false)
                     }
                 }
