@@ -3,7 +3,6 @@ package im.fdx.v2ex.network.cookie
 import android.content.Context
 import android.content.SharedPreferences
 import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.utils.extensions.d
 import okhttp3.Cookie
 import java.util.*
 
@@ -74,7 +73,6 @@ class SharedPrefsPersistor : CookiePersistor {
 
     fun loadByHost(url: String): List<Cookie> {
         val cookies = ArrayList<Cookie>()
-        d(url)
         val mapSet = sharedPreferences.all.entries
         mapSet.forEach { (key, value) ->
             if (key.contains(url)) {
