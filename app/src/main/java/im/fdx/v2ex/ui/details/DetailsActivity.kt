@@ -442,6 +442,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
 
+    @Suppress("UNUSED_PARAMETER")
     fun postReply(view: View) {
         etSendReply.clearFocus()
         XLog.tag(TAG).d("I clicked")

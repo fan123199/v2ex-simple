@@ -294,6 +294,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        @Suppress("DEPRECATION")
         when (item.itemId) {
             R.id.nav_daily -> dailyCheck()
             R.id.nav_node -> startActivity(Intent(this, AllNodesActivity::class.java))

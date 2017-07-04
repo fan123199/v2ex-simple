@@ -13,6 +13,7 @@ import android.widget.TextView
 import im.fdx.v2ex.R
 
 
+@Suppress("UNUSED_VARIABLE")
 @Deprecated("暂时不用，等以后实现")
 class WebViewActivity : AppCompatActivity() {
 

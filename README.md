@@ -1,5 +1,5 @@
 # V2ex-simple
-An simple android client for exploring V2EX.
+An simple android client for exploring V2EX. Better UI, Better UX.
 
 [![Build Status](https://travis-ci.org/fan123199/V2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/V2ex-simple)
 
@@ -18,9 +18,8 @@ An simple android client for exploring V2EX.
 ## next feature
 
 + 后台获取更新（jobScheduler），以及通知
-+ UI系列：颜色自定义
 
-## libraries
+## using libraries
 
 + Picasso
 + Volley
@@ -33,52 +32,8 @@ An simple android client for exploring V2EX.
 
 + [greatyao/v2ex-android](https://github.com/greatyao/v2ex-android/tree/master)
 The project guide me to start my project from zero.
-+ learn *twitter/google+/v2ex+/weico/...* for user experience
-
-##Change log
-
-
-
-### v 1.4
-
-
-add followings
-
-### v1.3
-
-add recent tab. title color change
-
-### v1.2
-
-add 
-
-
-### v1.1 (2017.03.29)
-
-add notification
-
-
-
-### v0.9 (2017.03.25)
-
-the last version before release on google play,
- all account-related function is added.
-
-### 2017.3.8
-
-use OkHttp to fetch data
-
-### 2016.12.8
-
-add travis CI
-
-### 2016.8.1
-
-restart the project
-
-### 2015.12.17
-
-add Circle image view
++ learn from *twitter/google+/v2ex+/weico/...* for excellent user experience
++ UI mostly designed by Evermoon [weibo_link](http://weibo.com/evermoon30964)
 
 ## License
 
