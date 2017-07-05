@@ -33,7 +33,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val notiHolder = holder as NotificationViewHolder
 
-        if (position <= number) {
+        if (position <= number - 1) {
             notiHolder.itemView.foregroundTintMode = PorterDuff.Mode.DST_IN
             notiHolder.itemView.foregroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.transparent))
         }

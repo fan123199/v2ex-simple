@@ -24,5 +24,5 @@ object Keys {
     const val FAVOR_FRAGMENT_TYPE = "type"
     const val PREF_KEY_IS_LOGIN = "is_login"
 
-    const val KEY_COUNT = "count"
+    const val KEY_UNREAD_COUNT = "count"
 }

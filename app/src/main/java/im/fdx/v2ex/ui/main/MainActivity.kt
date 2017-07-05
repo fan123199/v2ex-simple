@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.main
 
+import android.app.NotificationManager
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -25,11 +26,8 @@ import android.view.View
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import de.hdodenhof.circleimageview.CircleImageView
-import im.fdx.v2ex.BuildConfig
-import im.fdx.v2ex.MyApp
-import im.fdx.v2ex.R
+import im.fdx.v2ex.*
 import im.fdx.v2ex.R.id.nav_testNotify
-import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
@@ -97,7 +95,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 Keys.ACTION_GET_NOTIFICATION -> {
 
-                    count = intent.getIntExtra(Keys.KEY_COUNT, -1)
+                    count = intent.getIntExtra(Keys.KEY_UNREAD_COUNT, -1)
                     isGetNotification = true
                     invalidateOptionsMenu()
                 }
@@ -283,9 +281,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.menu_login -> startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), LOG_IN)
             R.id.menu_notification -> {
                 item.icon = resources.getDrawable(R.drawable.ic_notifications_white_24dp, theme)
+                val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                manager.cancel(AlarmReceiver.notifyID)
                 val intent = Intent(this, NotificationActivity::class.java)
                 when {
-                    count != -1 -> intent.putExtra(Keys.KEY_COUNT, count)
+                    count != -1 -> intent.putExtra(Keys.KEY_UNREAD_COUNT, count)
                 }
                 startActivity(intent)
             }

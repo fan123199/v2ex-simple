@@ -12,6 +12,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.showNoContent
 import im.fdx.v2ex.utils.extensions.t
 import okhttp3.Call
@@ -52,7 +53,7 @@ class NotificationActivity : AppCompatActivity() {
     }
 
     private fun parseIntent(intent: Intent) {
-        val numUnread = intent.getIntExtra("number", -1)
+        val numUnread = intent.getIntExtra(Keys.KEY_UNREAD_COUNT, -1)
         adapter.number = numUnread
         supportActionBar?.title = "${getString(R.string.notification)} ${when {
             numUnread != -1 -> "($numUnread 条未读)"
