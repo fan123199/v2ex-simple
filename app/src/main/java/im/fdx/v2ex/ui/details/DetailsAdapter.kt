@@ -60,7 +60,7 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
                 val mainHolder = holder as TopicsRVAdapter.MainViewHolder
                 val topic = mAllList[position] as TopicModel
                 mainHolder.tvTitle.text = topic.title
-                mainHolder.tvTitle.maxLines = 3
+                mainHolder.tvTitle.maxLines = 4
                 mainHolder.tvContent.isSelected = true
                 mainHolder.tvContent.setGoodText(topic.content_rendered)
                 Log.i(TAG, topic.content_rendered)
