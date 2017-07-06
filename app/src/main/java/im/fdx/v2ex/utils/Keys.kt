@@ -22,7 +22,12 @@ object Keys {
     const val ACTION_START_NOTIFICATION = "im.fdx.v2ex.notification"
     const val ACTION_PREFERENCE_CHANGED = "im.fdx.v2ex.preference"
     const val FAVOR_FRAGMENT_TYPE = "type"
-    const val PREF_KEY_IS_LOGIN = "is_login"
 
     const val KEY_UNREAD_COUNT = "count"
+
+
+    const val PREF_KEY_IS_LOGIN = "is_login"
+    const val PREF_ONLY_WIFI = "only_wifi"
+    const val PREF_RATES = "pref_rates"
+    const val PREF_LOGOUT = "pref_logout"
 }

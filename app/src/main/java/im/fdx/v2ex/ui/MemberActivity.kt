@@ -42,7 +42,7 @@ import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.showNoContent
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
 import okhttp3.Callback
@@ -440,7 +440,7 @@ class MemberActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     getBlockAndFollowWeb()
                     runOnUiThread {
-                        t("${if (isFollowed) "取消" else ""}关注成功")
+                        toast("${if (isFollowed) "取消" else ""}关注成功")
                     }
                 }
             }
@@ -461,7 +461,7 @@ class MemberActivity : AppCompatActivity() {
                         if (response.code() == 302) {
                             getBlockAndFollowWeb()
                             runOnUiThread {
-                                t("${if (isBlocked) "取消" else ""}屏蔽成功")
+                                toast("${if (isBlocked) "取消" else ""}屏蔽成功")
                             }
                         }
                     }

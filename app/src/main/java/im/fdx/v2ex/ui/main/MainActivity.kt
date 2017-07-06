@@ -37,7 +37,7 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -288,6 +288,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     count != -1 -> intent.putExtra(Keys.KEY_UNREAD_COUNT, count)
                 }
                 startActivity(intent)
+                count = -1
             }
         }
         return super.onOptionsItemSelected(item)
@@ -351,7 +352,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onResponse(call: Call, response: Response) {
 
                 if (response.code() == 302) {
-                    runOnUiThread { t("还未登录，请先登录") }
+                    runOnUiThread { toast("还未登录，请先登录") }
                     return
                 }
 
@@ -359,7 +360,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (body.contains("每日登录奖励已领取")) {
                     XLog.tag("MainActivity").w("已领取")
-                    runOnUiThread { t("已领取，明天再来") }
+                    runOnUiThread { toast("已领取，明天再来") }
                     return
                 }
 
@@ -385,7 +386,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 Log.w("MainActivity", "daily check ok")
-                runOnUiThread { t("领取成功") }
+                runOnUiThread { toast("领取成功") }
             }
         })
     }

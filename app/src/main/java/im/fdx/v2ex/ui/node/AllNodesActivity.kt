@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
@@ -17,6 +18,8 @@ import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.utils.extensions.dealError
+import im.fdx.v2ex.utils.extensions.stop
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -25,6 +28,7 @@ import java.util.*
 
 class AllNodesActivity : AppCompatActivity() {
     private lateinit var mAdapter: AllNodesAdapter
+    private lateinit var swipe: SwipeRefreshLayout;
 
 
     @SuppressLint("HandlerLeak")
@@ -47,26 +51,33 @@ class AllNodesActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         val rvNode: RecyclerView = findViewById(R.id.rv_node)
+        swipe = findViewById(R.id.swipe_container)
+        swipe.setColorSchemeResources(R.color.primary)
+        swipe.setOnRefreshListener { getAllNodes() }
+        swipe.isRefreshing = true
+        getAllNodes()
+        mAdapter = AllNodesAdapter(false)
+        rvNode.layoutManager = StaggeredGridLayoutManager(3, VERTICAL)
+        rvNode.adapter = mAdapter
+    }
 
+
+    fun getAllNodes() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder().url(NetManager.URL_ALL_NODE).build())
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
-
+                        dealError(-1, swipe)
                     }
 
                     @Throws(IOException::class)
                     override fun onResponse(call: Call, response: okhttp3.Response) {
+                        stop(swipe)
                         val type = object : TypeToken<ArrayList<NodeModel>>() {}.type
                         val nodeModels = NetManager.myGson.fromJson<ArrayList<NodeModel>>(response.body()?.string(), type)
                         mAdapter.setAllData(nodeModels)
                         handler.sendEmptyMessage(0)
                     }
                 })
-
-
-        mAdapter = AllNodesAdapter(false)
-        rvNode.layoutManager = StaggeredGridLayoutManager(3, VERTICAL)
-        rvNode.adapter = mAdapter
     }
 
 
@@ -77,6 +88,7 @@ class AllNodesActivity : AppCompatActivity() {
         val menuItemCompat = menu.findItem(R.id.search_node)
         val searchView = menuItemCompat.actionView as SearchView
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String) = false

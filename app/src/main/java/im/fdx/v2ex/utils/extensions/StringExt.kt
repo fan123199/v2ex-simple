@@ -5,6 +5,10 @@ package im.fdx.v2ex.utils.extensions
  * fdx will maintain it
  */
 
+
+/**
+ * 将链接转成完整链接，一般用 GoodTextView
+ */
 fun String.fullUrl() = this.replace("href=\"/member/", "href=\"https://www.v2ex.com/member/")
         .replace("href=\"/i/", "href=\"https://i.v2ex.co/")
         .replace("href=\"/t/", "href=\"https://www.v2ex.com/t/")

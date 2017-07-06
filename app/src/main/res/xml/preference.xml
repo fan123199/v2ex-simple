@@ -2,30 +2,32 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--<PreferenceCategory-->
+    <!--android:order="98"-->
     <!--android:key="group_general"-->
     <!--android:title="@string/general">-->
+
     <!--<SwitchPreference-->
-
     <!--android:defaultValue="false"-->
-    <!--android:key="pref_wifi"-->
-    <!--android:summaryOff="任何情况下加载图片"-->
-    <!--android:summaryOn="仅在Wifi下加载图片"-->
-    <!--android:title="节省流量" />-->
-
+    <!--android:key="only_wifi"-->
+    <!--android:summaryOff="总是显示图片"-->
+    <!--android:summaryOn="移动网络下不显示图片"-->
+    <!--android:title="是否显示图片"/>-->
 
     <!--</PreferenceCategory>-->
 
 
     <PreferenceCategory
-        android:title="@string/other"
-        android:order="99">
+        android:order="99"
+        android:title="@string/other">
+
         <Preference
             android:key="pref_rates"
-            android:title="@string/rate" />
+            android:title="@string/rate"/>
+
         <Preference
             android:key="pref_version"
-            android:title="版本" />
-    </PreferenceCategory>
+            android:title="版本"/>
 
+    </PreferenceCategory>
 
 </PreferenceScreen>

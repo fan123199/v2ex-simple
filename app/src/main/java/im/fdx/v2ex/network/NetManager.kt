@@ -14,7 +14,7 @@ import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.fullUrl
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -395,9 +395,9 @@ object NetManager {
             context.runOnUiThread {
                 swipe?.isRefreshing = false
                 when (errorCode) {
-                    -1 -> context.t(context.getString(R.string.error_network))
-                    302 -> context.t(context.getString(R.string.error_auth_failure))
-                    else -> context.t(context.getString(R.string.error_network))
+                    -1 -> context.toast(context.getString(R.string.error_network))
+                    302 -> context.toast(context.getString(R.string.error_auth_failure))
+                    else -> context.toast(context.getString(R.string.error_network))
                 }
             }
     }

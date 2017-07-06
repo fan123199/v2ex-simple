@@ -18,12 +18,11 @@ import com.elvishew.xlog.XLog
 import im.fdx.v2ex.AlarmReceiver
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
-import im.fdx.v2ex.R.xml.preference
 import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.T
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -53,7 +52,7 @@ class SettingsActivity : AppCompatActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
-            addPreferencesFromResource(preference)
+            addPreferencesFromResource(R.xml.preference)
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
 
             when {
@@ -61,7 +60,7 @@ class SettingsActivity : AppCompatActivity() {
 
                     addPreferencesFromResource(R.xml.preference_login)
                     findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
-                    findPreference(PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                    findPreference(Keys.PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
                         val alert = AlertDialog.Builder(activity)
                                 .setTitle("确定要退出吗")
                                 .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
@@ -69,10 +68,10 @@ class SettingsActivity : AppCompatActivity() {
                                     removeCookie()
                                     MyApp.get().setLogin(false)
                                     LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
-                                    findPreference(PREF_LOGOUT).isEnabled = false
+                                    findPreference(Keys.PREF_LOGOUT).isEnabled = false
                                     dialog.dismiss()
-                                    activity.finish();
-                                    activity.t("已退出登录")
+                                    activity.finish()
+                                    activity.toast("已退出登录")
                                 }.create()
                         alert.show()
                         true
@@ -90,14 +89,14 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
 
-            findPreference(PREF_RATES).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            findPreference(Keys.PREF_RATES).onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 try {
                     val uri = Uri.parse("market://details?id=" + activity.packageName)
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 } catch (e: Exception) {
-                    activity.t("没有找到V2EX客户端")
+                    activity.toast("没有找到V2EX客户端")
                 }
 
                 true
@@ -126,6 +125,7 @@ class SettingsActivity : AppCompatActivity() {
 
         }
 
+        @Suppress("unused")
         private fun addSettings() {
             val screen = this.preferenceScreen // "null". See onViewCreated.
 
@@ -188,12 +188,6 @@ class SettingsActivity : AppCompatActivity() {
                 "pref_add_row" -> {
                 }
             }
-        }
-
-        companion object {
-            val PREF_WIFI = "pref_wifi"
-            val PREF_RATES = "pref_rates"
-            val PREF_LOGOUT = "pref_logout"
         }
 
     }

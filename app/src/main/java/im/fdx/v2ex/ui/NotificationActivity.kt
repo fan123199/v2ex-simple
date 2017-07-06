@@ -14,7 +14,7 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.showNoContent
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -79,7 +79,7 @@ class NotificationActivity : AppCompatActivity() {
 
                 when (response.code()) {
                     302 -> runOnUiThread {
-                        t("您未登录或登录信息已过时，请重新登录")
+                        toast("您未登录或登录信息已过时，请重新登录")
                     }
                     200 -> {
                         val html = Jsoup.parse(response.body()?.string())

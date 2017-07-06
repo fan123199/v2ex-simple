@@ -28,7 +28,7 @@ import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -68,7 +68,7 @@ class NodeActivity : AppCompatActivity() {
                     mSwipeRefreshLayout.isRefreshing = false
                 }
                 msg.what == MSG_ERROR_AUTH -> {
-                    t("需要登录")
+                    toast("需要登录")
                     finish()
                 }
             }
@@ -166,7 +166,7 @@ class NodeActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 302) {
                     getInfoAndTopics(nodeName)
-                    runOnUiThread { t("${if (isFavorite) "取消" else ""}关注成功") }
+                    runOnUiThread { toast("${if (isFavorite) "取消" else ""}关注成功") }
                 }
             }
         })

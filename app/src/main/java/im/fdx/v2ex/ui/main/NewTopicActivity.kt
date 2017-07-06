@@ -21,7 +21,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.*
 import java.io.File
 import java.io.FileOutputStream
@@ -115,7 +115,7 @@ class NewTopicActivity : AppCompatActivity() {
                         out.flush()
                         out.close()
                         uploadImage(file)
-                        t(imageUri.toString())
+                        toast(imageUri.toString())
                     } catch (e: Exception) {
                         e.printStackTrace();
                     }
@@ -187,11 +187,11 @@ class NewTopicActivity : AppCompatActivity() {
             mContent = etContent.text.toString()
 
             when {
-                mTitle.isEmpty() -> t("标题和内容不能为空")
-                mContent.isEmpty() -> t("标题和内容不能为空")
-                mTitle.length > 120 -> t("标题字数超过限制")
-                mContent.length > 20000 -> t("主题内容不能超过 20000 个字符")
-                mNodename.isEmpty() -> t(getString(R.string.choose_node))
+                mTitle.isEmpty() -> toast("标题和内容不能为空")
+                mContent.isEmpty() -> toast("标题和内容不能为空")
+                mTitle.length > 120 -> toast("标题字数超过限制")
+                mContent.length > 20000 -> toast("主题内容不能超过 20000 个字符")
+                mNodename.isEmpty() -> toast(getString(R.string.choose_node))
                 else -> postNew()
             }
         }
@@ -265,7 +265,7 @@ class NewTopicActivity : AppCompatActivity() {
         val p = Pattern.compile("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)")
         val matcher = p.matcher(response.body()!!.string())
         if (!matcher.find()) {
-            runOnUiThread { t("无法发布主题，请退出后重试") }
+            runOnUiThread { toast("无法发布主题，请退出后重试") }
             return null
         }
         return matcher.group()

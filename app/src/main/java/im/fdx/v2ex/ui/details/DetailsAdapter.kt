@@ -30,7 +30,7 @@ import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.GoodTextView
 import okhttp3.*
 import java.io.IOException
@@ -170,7 +170,7 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
 
                 if (response.code() == 200) {
                     (mContext as Activity).runOnUiThread {
-                        mContext.t("感谢成功")
+                        mContext.toast("感谢成功")
                         replyItem.thanks = replyItem.thanks + 1
                         itemVH.tvThanks.text = (replyItem.thanks).toString()
                         itemVH.ivThank.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)

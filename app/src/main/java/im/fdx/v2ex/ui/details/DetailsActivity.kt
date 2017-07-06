@@ -31,7 +31,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.t
+import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.SmoothLayoutManager
 import okhttp3.*
 import org.jsoup.Jsoup
@@ -97,13 +97,13 @@ class DetailsActivity : AppCompatActivity() {
         when (msg.what) {
             MSG_OK_GET_TOPIC -> mSwipe.isRefreshing = false
             MSG_ERROR_AUTH -> {
-                t("需要登录后查看该主题")
+                toast("需要登录后查看该主题")
                 this@DetailsActivity.finish()
             }
             MSG_GO_TO_BOTTOM -> rvDetail.scrollToPosition(mAllContent.size - 1)
             MSG_ERROR_IO -> {
                 mSwipe.isRefreshing = false
-                t("无法打开该主题")
+                toast("无法打开该主题")
             }
         }
         false
@@ -433,7 +433,7 @@ class DetailsActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 302) {
                     runOnUiThread {
-                        t("${if (doFavor) "取消" else ""}收藏成功")
+                        toast("${if (doFavor) "取消" else ""}收藏成功")
                         getRepliesPageOne(mTopicId, false)
                     }
                 }
@@ -469,12 +469,12 @@ class DetailsActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     XLog.tag(TAG).d("成功发布")
                     handler.post {
-                        t("发表评论成功")
+                        toast("发表评论成功")
                         etSendReply.setText("")
                         getRepliesPageOne(mTopicId, true)
                     }
                 } else {
-                    t("发表评论失败")
+                    toast("发表评论失败")
                 }
             }
         })
