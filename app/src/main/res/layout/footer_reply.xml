@@ -20,7 +20,6 @@
         <EditText
             android:layout_weight="1"
             android:id="@+id/et_post_reply"
-
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="3dp"
