@@ -192,11 +192,6 @@
 
         <activity android:name=".ui.WebViewActivity" />
 
-        <receiver
-            android:name=".MyReceiver"
-            android:enabled="true"
-            android:exported="true" />
-
         <activity
             android:name=".ui.NotificationActivity"
             android:exported="true"

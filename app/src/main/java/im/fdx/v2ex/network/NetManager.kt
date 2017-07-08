@@ -280,6 +280,21 @@ object NetManager {
 
     }
 
+
+    /**
+     * 处理<pre>标签，使其带有一定的格式。
+     */
+    private fun handlerPreTag(chapter: Element?): Element? {
+        if (chapter == null) {
+            return null
+        }
+        val preElems = chapter.select("pre")
+        for (elem in preElems) {
+            elem.html(elem.html().replace("\n", "<br/>")/*.replace(" ", "&nbsp;")*/)
+        }
+        return chapter
+    }
+
     /**
      * @param body    网页
      * *
@@ -291,7 +306,9 @@ object NetManager {
         val topicModel = TopicModel(topicId)
 
         val title = body.getElementsByTag("h1").text()
-        val contentElement = body.getElementsByClass("topic_content").first()
+        val contentElementOrg = body.getElementsByClass("topic_content").first()
+
+        val contentElement = handlerPreTag(contentElementOrg)
 
         val content = if (contentElement == null) "" else contentElement.text()
         val contentRendered = if (contentElement == null) "" else contentElement.html()

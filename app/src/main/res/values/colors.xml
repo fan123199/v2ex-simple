@@ -9,6 +9,8 @@
     <!--red 600-->
     <color name="accent">#E53935</color>
 
+    <color name="chrome_tab">#00a1b2</color>
+
     <color name="primary_light">#ff4dd0e1</color>
 
     <color name="list_background">#e8e8e8</color>
