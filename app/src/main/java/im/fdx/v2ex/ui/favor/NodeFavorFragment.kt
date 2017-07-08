@@ -28,7 +28,6 @@ import java.io.IOException
  */
 class NodeFavorFragment : Fragment() {
 
-
     private lateinit var swipe: SwipeRefreshLayout
     private lateinit var adapter: AllNodesAdapter
     private lateinit var flContainer: FrameLayout
@@ -42,6 +41,9 @@ class NodeFavorFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(activity, 3)
         swipe = view.findViewById(R.id.swipe_container)
+        swipe.setColorSchemeResources(R.color.accent_orange)
+        swipe.setOnRefreshListener { getNode() }
+
         flContainer = view.findViewById(R.id.fl_container)
         return view
     }
@@ -49,6 +51,10 @@ class NodeFavorFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         swipe.isRefreshing = true
+        getNode()
+    }
+
+    private fun getNode() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .headers(HttpHelper.baseHeaders)
                 .url(Companion.nodeUrl)
