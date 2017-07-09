@@ -161,18 +161,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         if (MyApp.get().isLogin()) {
             showIcon(true)
-
             val username = sharedPreferences.getString(Keys.KEY_USERNAME, "")
             val avatar = sharedPreferences.getString(Keys.KEY_AVATAR, "")
             XLog.tag(TAG).d(username + "//// " + avatar)
             if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
                 setUserInfo(username, avatar)
             }
-
             shrinkFab()
-
         } else {
-
             showIcon(false)
             fab.hide()
         }
@@ -216,7 +212,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private fun showIcon(visible: Boolean) {
         navigationView.menu.findItem(R.id.nav_daily).isVisible = visible
         navigationView.menu.findItem(R.id.nav_favor).isVisible = visible
-        this@MainActivity.invalidateOptionsMenu()
+        invalidateOptionsMenu()
     }
 
 

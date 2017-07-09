@@ -223,16 +223,16 @@ class NewTopicActivity : AppCompatActivity() {
                         .url("https://www.v2ex.com/new")
                         .post(requestBody)
                         .build()).enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
+                    override fun onFailure(call1: Call, e: IOException) {
                         NetManager.dealError(this@NewTopicActivity)
                     }
 
                     @Throws(IOException::class)
-                    override fun onResponse(call: Call, response: Response) {
+                    override fun onResponse(call1: Call, response1: Response) {
 
-                        if (response.code() == 302) {
+                        if (response1.code() == 302) {
 
-                            val location = response.header("Location")
+                            val location = response1.header("Location")
                             val p = Pattern.compile("(?<=/t/)(\\d+)")
                             val matcher = p.matcher(location!!)
                             val topic: String
