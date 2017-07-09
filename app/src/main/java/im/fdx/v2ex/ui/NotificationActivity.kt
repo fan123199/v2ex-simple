@@ -6,13 +6,13 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.widget.FrameLayout
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.showNoContent
 import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.Call
@@ -34,11 +34,7 @@ class NotificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        setUpToolbar()
 
         flContainer = findViewById(R.id.fl_container)
         mSwipe = findViewById(R.id.swipe_container)
@@ -55,10 +51,8 @@ class NotificationActivity : AppCompatActivity() {
     private fun parseIntent(intent: Intent) {
         val numUnread = intent.getIntExtra(Keys.KEY_UNREAD_COUNT, -1)
         adapter.number = numUnread
-        supportActionBar?.title = "${getString(R.string.notification)} ${when {
-            numUnread != -1 -> "($numUnread 条未读)"
-            else -> ""
-        }}"
+        supportActionBar?.title = "${getString(R.string.notification)} " +
+                if (numUnread != -1) "($numUnread 条未读)" else ""
         mSwipe.isRefreshing = true
         fetchNotification()
     }
@@ -70,7 +64,6 @@ class NotificationActivity : AppCompatActivity() {
                 .url(url)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-
                 NetManager.dealError(this@NotificationActivity, swipe = mSwipe)
             }
 

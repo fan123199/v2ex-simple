@@ -34,6 +34,7 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.SmoothLayoutManager
 import okhttp3.*
+import org.jetbrains.anko.share
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.IOException
@@ -390,20 +391,15 @@ class DetailsActivity : AppCompatActivity() {
                 mSwipe.isRefreshing = true
                 getRepliesPageOne(mTopicId, false)
             }
-            R.id.menu_item_share -> {
-                val sendIntent = Intent()
-                sendIntent.action = Intent.ACTION_SEND
-                sendIntent.putExtra(Intent.EXTRA_TEXT,
-                        "来自V2EX的帖子：${(mAllContent[0] as TopicModel).title}  " +
-                                " ${NetManager.HTTPS_V2EX_BASE}/t/${(mAllContent[0] as TopicModel).id}")
-                sendIntent.type = "text/plain"
-                startActivity(Intent.createChooser(sendIntent, "分享到"))
-            }
+            R.id.menu_item_share -> share("来自V2EX的帖子：${(mAllContent[0] as TopicModel).title} \n" +
+                    " ${NetManager.HTTPS_V2EX_BASE}/t/${(mAllContent[0] as TopicModel).id}")
             R.id.menu_item_open_in_browser -> {
 
                 val topicId = (mAllContent[0] as TopicModel).id
                 val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
                 val uri = Uri.parse(url)
+
+//                browse(url)
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 intent.`package` = "com.android.chrome"
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

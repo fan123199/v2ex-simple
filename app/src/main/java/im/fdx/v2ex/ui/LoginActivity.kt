@@ -8,7 +8,6 @@ import android.preference.PreferenceManager
 import android.support.design.widget.TextInputEditText
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.View
 import android.view.View.VISIBLE
@@ -28,6 +27,7 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.T
+import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.*
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -51,20 +51,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-        actionBar?.setDisplayShowTitleEnabled(false)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-
+        setUpToolbar()
         etUsername = findViewById(R.id.input_username)
         etPassword = findViewById(R.id.input_password)
-
         pbLogin = findViewById(R.id.pb_login)
-
-
 
         val usernamePref = mSharedPreference?.getString("username", "")
 
@@ -126,11 +116,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
             }
         })
-
-
-        //            XLog.d( String.valueOf(htmlString.length()));
-        //            XLog.d(htmlString);
-
     }
 
     private fun postLogin(nameKey: String, passwordKey: String, onceCode: String) {
@@ -171,7 +156,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                             button.visibility = VISIBLE
                             T("登录成功")
                         }
-
                         finish()
                     }
                     200 -> runOnUiThread {

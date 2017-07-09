@@ -203,18 +203,12 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
+    override fun getItemCount() = mAllList.size + 1
 
-    override fun getItemCount(): Int {
-        return mAllList.size + 1
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        if (position == 0 && itemCount > 1) {
-            return TYPE_HEADER
-        } else if (position == itemCount - 1) {
-            return TYPE_FOOTER
-        } else
-            return TYPE_ITEM
+    override fun getItemViewType(position: Int) = when {
+        position == 0 && itemCount > 1 -> TYPE_HEADER
+        position == itemCount - 1 -> TYPE_FOOTER
+        else -> TYPE_ITEM
     }
 
     //我重用了MainAdapter中的MainViewHolder

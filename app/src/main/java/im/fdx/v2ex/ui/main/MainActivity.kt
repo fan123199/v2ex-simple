@@ -5,7 +5,6 @@ import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -42,6 +41,9 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
+import org.jetbrains.anko.email
+import org.jetbrains.anko.share
+import org.jetbrains.anko.startActivity
 import org.jsoup.Jsoup
 import java.io.IOException
 
@@ -298,42 +300,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         @Suppress("DEPRECATION")
         when (item.itemId) {
             R.id.nav_daily -> dailyCheck()
-            R.id.nav_node -> startActivity(Intent(this, AllNodesActivity::class.java))
-            R.id.nav_favor -> {
-                val intentFavor = Intent(this, FavorActivity::class.java)
-                startActivity(intentFavor)
-            }
-            R.id.nav_testMenu2 -> startActivity(Intent(this, WebViewActivity::class.java))
+            R.id.nav_node -> startActivity<AllNodesActivity>()
+            R.id.nav_favor -> startActivity<FavorActivity>()
+            R.id.nav_testMenu2 -> startActivity<WebViewActivity>()
             R.id.nav_testNotify -> {
                 val photoPickerIntent = Intent(Intent.ACTION_PICK)
                 photoPickerIntent.type = "image/*"
                 startActivityForResult(photoPickerIntent, 110)
             }
-            R.id.nav_share -> {
-                val intentShare = Intent(Intent.ACTION_SEND)
-                intentShare.type = "text/plain"
-                intentShare.putExtra(Intent.EXTRA_TEXT, "V2ex:" + "market://details?id=" + packageName)
-                startActivity(Intent.createChooser(intentShare, getString(R.string.share_to)))
-            }
-            R.id.nav_feedback -> {
-                val intentData = Intent(Intent.ACTION_SEND)
-
-                intentData.type = "message/rfc822"
-                intentData.putExtra(Intent.EXTRA_EMAIL, arrayOf<String>(Keys.AUTHOR_EMAIL))
-                intentData.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback_subject))
-                intentData.putExtra(Intent.EXTRA_TEXT, getString(R.string.feedback_hint) + "\n")
-                try {
-                    intentData.`package` = "com.google.android.apps.inbox"
-                    startActivity(intentData)
-                } catch (ex: ActivityNotFoundException) {
-                    intentData.`package` = null
-                    intentData.data = Uri.parse("mailto:${Keys.AUTHOR_EMAIL}")
-                    startActivity(intentData)
-                }
-            }
-            R.id.nav_setting -> {
-                startActivity(Intent(this@MainActivity, SettingsActivity::class.java))
-            }
+            R.id.nav_share -> share("https://play.google.com/store/apps/details?id=$packageName")
+            R.id.nav_feedback -> email(Keys.AUTHOR_EMAIL, getString(R.string.feedback_subject), getString(R.string.feedback_hint))
+            R.id.nav_setting -> startActivity<SettingsActivity>()
         }
         mDrawer.closeDrawer(GravityCompat.START)
         return true

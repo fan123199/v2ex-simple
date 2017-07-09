@@ -1,6 +1,8 @@
 package im.fdx.v2ex.utils.extensions
 
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -19,4 +21,14 @@ fun FrameLayout.showNoContent() {
     params.gravity = Gravity.CENTER_HORIZONTAL
     params.topMargin = 80.dp2px()
     this.addView(child, params)
+}
+
+
+fun AppCompatActivity.setUpToolbar(title: String? = "") {
+
+    val toolbar: Toolbar = findViewById(R.id.toolbar)
+    toolbar.title = title
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    toolbar.setNavigationOnClickListener { onBackPressed() }
 }

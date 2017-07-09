@@ -12,7 +12,6 @@ import android.preference.*
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.AlarmReceiver
@@ -22,6 +21,7 @@ import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.T
+import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.toast
 
 class SettingsActivity : AppCompatActivity() {
@@ -30,12 +30,7 @@ class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        val actionBar = supportActionBar
-        actionBar?.setDisplayHomeAsUpEnabled(true)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
+        setUpToolbar()
         fragmentManager.beginTransaction()
                 .add(R.id.container, SettingsFragment())
                 .commit()

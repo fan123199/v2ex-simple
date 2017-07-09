@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -21,6 +20,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.*
 import java.io.File
@@ -47,20 +47,10 @@ class NewTopicActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_topic)
-
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-
+        setUpToolbar(getString(R.string.new_top))
 
         etTitle = findViewById(R.id.et_title)
         etContent = findViewById(R.id.et_content)
-
-
-        title = getString(R.string.new_top)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-
 
         spinner = findViewById(R.id.search_spinner_node)
         spinner.setTitle(getString(R.string.choose_node))
