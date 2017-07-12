@@ -27,6 +27,7 @@ import im.fdx.v2ex.view.SmoothLayoutManager
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
+import org.jetbrains.anko.runOnUiThread
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.util.*
@@ -161,10 +162,10 @@ class TopicsFragment : Fragment() {
                     }
                     return
                 }
-
-                mTopicModels.clear()
-                mTopicModels.addAll(topicList)
-                handler.sendEmptyMessage(MSG_GET_DATA_BY_OK)
+                runOnUiThread {
+                    mAdapter?.updateItems(topicList)
+                    mSwipeLayout.isRefreshing = false
+                }
             }
         })
     }

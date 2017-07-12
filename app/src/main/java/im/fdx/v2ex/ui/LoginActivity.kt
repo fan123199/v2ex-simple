@@ -93,7 +93,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         pbLogin.visibility = View.VISIBLE
         button.visibility = View.GONE
-        // TODO: 2017/6/20 animation
         HttpHelper.OK_CLIENT.newCall(requestToGetOnce).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("FDX", "error in get login page")

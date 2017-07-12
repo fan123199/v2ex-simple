@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -54,6 +55,7 @@ import java.util.regex.Pattern
 
 
 /**
+ * // TODO: 2017/7/11 加入评论的列表
  * 获取user的主题，依然使用api的方式
  */
 class MemberActivity : AppCompatActivity() {
@@ -70,14 +72,14 @@ class MemberActivity : AppCompatActivity() {
     private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
 
     private lateinit var llInfo: ViewGroup
+    private lateinit var mAdapter: TopicsRVAdapter
 
 
+    private lateinit var member: MemberModel
     private val mTopics = ArrayList<TopicModel>()
 
     private var username: String? = null
-    private var mAdapter: TopicsRVAdapter? = null
     private var urlTopic: String? = null
-    private lateinit var member: MemberModel
     private var blockOfT: String? = null
     private var followOfOnce: String? = null
     private var isBlocked: Boolean = false
@@ -89,7 +91,6 @@ class MemberActivity : AppCompatActivity() {
         when (msg.what) {
             MSG_GET_USER_INFO -> showUser(msg.obj as String)
             MSG_GET_TOPIC -> {
-                mAdapter?.notifyDataSetChanged()
                 swipeRefreshLayout.isRefreshing = false
             }
         }
@@ -300,10 +301,8 @@ class MemberActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: okhttp3.Response) {
 
                 val body = response.body()!!.string()
-                val type = object : TypeToken<ArrayList<TopicModel>>() {
-
-                }.type
-                val topicModels = myGson.fromJson<List<TopicModel>>(body, type)
+                val type = object : TypeToken<ArrayList<TopicModel>>() {}.type
+                val topicModels = myGson.fromJson<MutableList<TopicModel>>(body, type)
                 if (topicModels == null || topicModels.isEmpty()) {
                     runOnUiThread {
                         swipeRefreshLayout.isRefreshing = false
@@ -311,7 +310,9 @@ class MemberActivity : AppCompatActivity() {
                     }
                     return
                 }
-                mAdapter!!.updateData(topicModels)
+                runOnUiThread {
+                    mAdapter.updateItems(topicModels)
+                }
                 XLog.tag("profile").i(topicModels[0].title)
                 Message.obtain(handler, MSG_GET_TOPIC).sendToTarget()
             }
@@ -359,6 +360,7 @@ class MemberActivity : AppCompatActivity() {
         CustomChrome(this).load("https://www.github.com/" + member.github)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showUser(response: String) {
         member = myGson.fromJson(response, MemberModel::class.java)
 

@@ -38,13 +38,12 @@ import org.jetbrains.anko.share
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.IOException
-import java.util.*
 import java.util.regex.Pattern
 
 class DetailsActivity : AppCompatActivity() {
 
-    private var mAdapter: DetailsAdapter? = null
-    private val mAllContent = ArrayList<BaseModel>()
+    private lateinit var mAdapter: DetailsAdapter
+    //    private val mAllContent = mutableListOf<BaseModel>()
     private var mMenu: Menu? = null
 
     private lateinit var ivSend: ImageView
@@ -84,11 +83,9 @@ class DetailsActivity : AppCompatActivity() {
                 XLog.tag("HEHE").d("MSG_GET  LocalBroadCast")
                 token = intent.getStringExtra("token")
                 val rm = intent.getParcelableArrayListExtra<ReplyModel>("replies")
-                mAllContent.addAll(rm)
-                mAdapter!!.notifyDataSetChanged()
-
+                mAdapter.updateItems(rm)
                 if (intent.getBooleanExtra("bottom", false)) {
-                    rvDetail.scrollToPosition(mAllContent.size - 1)
+                    rvDetail.scrollToPosition(mAdapter.itemCount - 1)
                 }
             }
         }
@@ -101,7 +98,7 @@ class DetailsActivity : AppCompatActivity() {
                 toast("需要登录后查看该主题")
                 this@DetailsActivity.finish()
             }
-            MSG_GO_TO_BOTTOM -> rvDetail.scrollToPosition(mAllContent.size - 1)
+            MSG_GO_TO_BOTTOM -> rvDetail.scrollToPosition(mAdapter.itemCount - 1)
             MSG_ERROR_IO -> {
                 mSwipe.isRefreshing = false
                 toast("无法打开该主题")
@@ -175,7 +172,7 @@ class DetailsActivity : AppCompatActivity() {
             }
         })
 
-        mAdapter = DetailsAdapter(this@DetailsActivity, mAllContent, callback)
+        mAdapter = DetailsAdapter(this@DetailsActivity, callback)
         rvDetail.adapter = mAdapter
 
         mSwipe = findViewById(R.id.swipe_details)
@@ -233,7 +230,7 @@ class DetailsActivity : AppCompatActivity() {
             }
             intent.getParcelableExtra<Parcelable>("model") != null -> {
                 val topicModel = intent.getParcelableExtra<TopicModel>("model")
-                mAllContent.add(0, topicModel)
+                mAdapter.addHeader(topicModel)
                 topicModel.id
             }
             intent.getStringExtra(Keys.KEY_TOPIC_ID) != null -> intent.getStringExtra(Keys.KEY_TOPIC_ID)
@@ -293,7 +290,7 @@ class DetailsActivity : AppCompatActivity() {
                         return
                     }
                     XLog.tag(TAG).d("verify" + token!!)
-                    mAdapter!!.verifyCode = token!!
+                    mAdapter.verifyCode = token!!
                     isFavored = parseIsFavored(body)
 
                     XLog.tag(TAG).d("isfavored" + isFavored.toString())
@@ -310,6 +307,7 @@ class DetailsActivity : AppCompatActivity() {
 
                 once = NetManager.parseOnce(body)
 
+                val mAllContent = mutableListOf<BaseModel>()
                 mAllContent.clear()
                 mAllContent.add(0, topicHeader!!)
                 mAllContent.addAll(repliesOne)
@@ -320,7 +318,7 @@ class DetailsActivity : AppCompatActivity() {
 
                 currentPage = NetManager.getPageValue(body)[0]
                 handler.post {
-                    mAdapter?.notifyDataSetChanged()
+                    mAdapter.updateItems(mAllContent)
                     mSwipe.isRefreshing = false
                     if (totalPage == 1 && scrollToBottom) {
                         handler.sendEmptyMessage(MSG_GO_TO_BOTTOM)
@@ -391,11 +389,11 @@ class DetailsActivity : AppCompatActivity() {
                 mSwipe.isRefreshing = true
                 getRepliesPageOne(mTopicId, false)
             }
-            R.id.menu_item_share -> share("来自V2EX的帖子：${(mAllContent[0] as TopicModel).title} \n" +
-                    " ${NetManager.HTTPS_V2EX_BASE}/t/${(mAllContent[0] as TopicModel).id}")
+            R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.mAllList[0] as TopicModel).title} \n" +
+                    " ${NetManager.HTTPS_V2EX_BASE}/t/${(mAdapter.mAllList[0] as TopicModel).id}")
             R.id.menu_item_open_in_browser -> {
 
-                val topicId = (mAllContent[0] as TopicModel).id
+                val topicId = (mAdapter.mAllList[0] as TopicModel).id
                 val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
                 val uri = Uri.parse(url)
 

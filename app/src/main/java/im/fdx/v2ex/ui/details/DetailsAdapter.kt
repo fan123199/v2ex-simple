@@ -7,6 +7,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.ContextCompat
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
@@ -27,6 +28,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.ui.main.DiffCallback
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.TimeUtil
@@ -39,8 +41,13 @@ import java.io.IOException
 /**
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
+ *
+ * // TODO: 2017/7/11 recyclerView的增量更新
  */
-class DetailsAdapter(private val mContext: Context, private val mAllList: List<BaseModel>, private val callback: DetailsAdapter.AdapterCallback) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DetailsAdapter(private val mContext: Context,
+                     private val callback: DetailsAdapter.AdapterCallback,
+                     val mAllList: MutableList<BaseModel> = mutableListOf<BaseModel>())
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     internal var verifyCode: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -209,6 +216,17 @@ class DetailsAdapter(private val mContext: Context, private val mAllList: List<B
         position == 0 && itemCount > 1 -> TYPE_HEADER
         position == itemCount - 1 -> TYPE_FOOTER
         else -> TYPE_ITEM
+    }
+
+    fun addHeader(items: TopicModel) {
+        mAllList.add(0, items)
+    }
+
+    fun updateItems(newItems: List<BaseModel>) {
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(mAllList, newItems))
+        diffResult.dispatchUpdatesTo(this)
+        mAllList.clear()
+        mAllList.addAll(newItems)
     }
 
     //我重用了MainAdapter中的MainViewHolder

@@ -127,59 +127,6 @@
                         android:layout_width="32dp"
                         android:src="@drawable/ic_website"
                         android:layout_height="32dp"/>
-
-                    <!--<TextView-->
-                    <!--android:id="@+id/tv_location"-->
-                    <!--style="@style/Text.Bg"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:drawableLeft="@drawable/ic_location"-->
-                    <!--android:drawablePadding="8dp"-->
-                    <!--tools:text="我在深圳"/>-->
-
-                    <!--<TextView-->
-                    <!--android:id="@+id/tv_bitcoin"-->
-                    <!--style="@style/Text.Bg"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:clickable="true"-->
-                    <!--tools:text="我的比特号"-->
-                    <!--android:drawableLeft="@drawable/ic_bitcoin"-->
-                    <!--android:drawablePadding="8dp"-->
-                    <!--/>-->
-
-                    <!--<TextView-->
-                    <!--android:id="@+id/tv_github"-->
-                    <!--style="@style/Text.Bg"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:drawableLeft="@drawable/ic_github"-->
-                    <!--android:drawablePadding="8dp"-->
-                    <!--tools:text=""-->
-                    <!--android:onClick="openGithub"-->
-                    <!--/>-->
-                    <!--<TextView-->
-                    <!--android:id="@+id/tv_twitter"-->
-                    <!--style="@style/Text.Bg"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:clickable="true"-->
-                    <!--android:drawableLeft="@drawable/ic_twitter"-->
-                    <!--android:drawablePadding="8dp"-->
-                    <!--android:gravity="center_vertical"-->
-                    <!--android:onClick="openTwitter"-->
-                    <!--tools:text=""/>-->
-
-                    <!--<TextView-->
-                    <!--android:id="@+id/tv_website"-->
-                    <!--style="@style/Text.Bg"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:drawableLeft="@drawable/ic_website"-->
-                    <!--android:drawablePadding="8dp"-->
-                    <!--android:onClick="openWeb"-->
-                    <!--tools:text=""/>-->
-
                 </LinearLayout>
 
 
