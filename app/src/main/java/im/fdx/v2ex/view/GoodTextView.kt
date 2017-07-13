@@ -20,10 +20,9 @@ import android.text.style.URLSpan
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import com.elvishew.xlog.XLog
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
-import com.squareup.picasso.Transformation
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.dp2px
@@ -35,8 +34,9 @@ import im.fdx.v2ex.utils.extensions.dp2px
  */
 class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
+
     //防止 Picasso，将target gc了， 导致图片无法显示
-    var targetList: MutableList<Target> = mutableListOf()
+    var targetList: MutableList<SimpleTarget<Drawable>> = mutableListOf()
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -45,7 +45,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
     @Suppress("DEPRECATION")
     fun setGoodText(text: String?) {
-        targetList.clear();
+        targetList.clear()
         if (text.isNullOrEmpty()) {
             return
         }
@@ -82,6 +82,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
         for (imageSpan in imageSpans) {
 
             val imageUrl = imageSpan.source
+
             val start = htmlSpannable.getSpanStart(imageSpan)
             val end = htmlSpannable.getSpanEnd(imageSpan)
 
@@ -113,7 +114,6 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
         private var vDrawable: Drawable? = null
 
-
         override fun draw(canvas: Canvas) {
             vDrawable?.draw(canvas)
         }
@@ -127,71 +127,47 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
     private inner class MyImageGetter : Html.ImageGetter {
 
         override fun getDrawable(source: String): Drawable {
-
-            //怪不得一样的图片。放在了类里。
             val bitmapHolder = BitmapHolder()
             Log.i(TAG, " Image url: " + source)
 
-            val target = object : Target {
-                override fun onBitmapLoaded(bitmap: Bitmap, from: Picasso.LoadedFrom) {
+            val target = object : SimpleTarget<Drawable>() {
+                override fun onResourceReady(drawable: Drawable, transition: Transition<in Drawable>?) {
 
-                    XLog.tag(TAG).d("bp.getByteCount() " + bitmap.byteCount
-                            + "\nbp.getAllocationByteCount() = " + bitmap.allocationByteCount
-                            + "\nbp.getWidth() = " + bitmap.width
-                            + "\nbp.getHeight() =" + bitmap.height
-                            + "\nbp.getDensity() = " + bitmap.density
-                            + "\ngetWidth() = " + this@GoodTextView.width
-                            + "\ngetHeight() = " + this@GoodTextView.height
-                            + "\ngetMeasuredWidth()" + measuredWidth
-                            + "\ngetMeasuredHeight()" + measuredHeight
-                    )
-
-
-                    var targetWidth = ViewUtil.screenSize[1] - 36.dp2px()
+                    val targetWidth: Int
                     val targetHeight: Int
 
-                    val minWidth = 12.dp2px()
                     when {
-                        bitmap.width > targetWidth -> {
-                            targetWidth = ViewUtil.screenSize[1] - 36.dp2px()
-                            targetHeight = (targetWidth * bitmap.height.toDouble() / bitmap.width.toDouble()).toInt()
+                        drawable.intrinsicWidth > bestWidth || drawable.intrinsicWidth > bestWidth * 0.4 -> {
+                            targetWidth = bestWidth
+                            targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
                         }
-                        bitmap.width < minWidth -> {
-                            targetWidth = minWidth
-                            targetHeight = (targetWidth * bitmap.height.toDouble() / bitmap.width.toDouble()).toInt()
+                        drawable.intrinsicWidth < smallestWidth -> {
+                            targetWidth = smallestWidth
+                            targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
                         }
+
                         else -> {
-                            targetWidth = bitmap.width
-                            targetHeight = bitmap.height
+                            targetWidth = drawable.intrinsicWidth
+                            targetHeight = drawable.intrinsicHeight
                         }
                     }
-
-                    val result = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true) //压缩
-                    val drawable = BitmapDrawable(context.resources, result)
-                    drawable.setBounds(0, 0, result.width, result.height)
-                    bitmapHolder.setBounds(0, 0, result.width, result.height)
+                    drawable.setBounds(0, 0, targetWidth, targetHeight)
+                    bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
                     bitmapHolder.setDrawable(drawable)
                     this@GoodTextView.text = this@GoodTextView.text
                     invalidate()
                 }
-
-                override fun onBitmapFailed(errorDrawable: Drawable?) {
-                }
-
-                override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-                }
             }
             targetList.add(target)
-            Picasso.with(context).load(source).into(target)
+            Glide.with(context).load(source).into(target)
             return bitmapHolder
         }
     }
 
 
     inner class UrlSpanNoUnderline : URLSpan {
-        constructor(src: URLSpan) : super(src.url) {}
-
-        constructor(url: String) : super(url) {}
+        constructor(src: URLSpan) : super(src.url)
+        constructor(url: String) : super(url)
 
         override fun updateDrawState(ds: TextPaint) {
             super.updateDrawState(ds)
@@ -203,45 +179,15 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
     }
 
 
-    /**
-     * 缩放图片
-     */
-    private inner class ImageTransform : Transformation {
-
-        private val key = "ImageTransform"
-
-        override fun transform(source: Bitmap): Bitmap {
-            val targetWidth = ViewUtil.screenSize[1] - 36.dp2px()
-            Log.i(TAG, targetWidth.toString() + "targetWidth")
-            if (source.width == 0) {
-                return source
-            }
-            //如果图片大于设置的宽度，做处理
-            if (source.width > targetWidth) {
-                val targetHeight = (targetWidth * source.height.toDouble() / source.width.toDouble()).toInt()
-
-                if (targetHeight != 0 && targetWidth != 0) {
-                    val result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, true) //true会压缩
-                    if (result != source) {
-                        // Same bitmap is returned if sizes are the same
-                        source.recycle()
-                    }
-                    return result
-                } else {
-                    return source
-                }
-            } else {
-                return source
-            }
-        }
-
-        override fun key() = key
-    }
-
     companion object {
 
         val REQUEST_CODE = 200
         private val TAG = GoodTextView::class.java.simpleName
+
+        val bestWidth = ViewUtil.screenSize[1] - 36.dp2px()
+
+        val smallestWidth = 12.dp2px()
+
 
         fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
             // Raw height and width of image
@@ -280,5 +226,8 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
         }
     }
 
+
 }
+
+
 

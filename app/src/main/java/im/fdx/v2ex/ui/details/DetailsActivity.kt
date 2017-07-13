@@ -83,7 +83,7 @@ class DetailsActivity : AppCompatActivity() {
                 XLog.tag("HEHE").d("MSG_GET  LocalBroadCast")
                 token = intent.getStringExtra("token")
                 val rm = intent.getParcelableArrayListExtra<ReplyModel>("replies")
-                mAdapter.updateItems(rm)
+                mAdapter.addItems(rm)
                 if (intent.getBooleanExtra("bottom", false)) {
                     rvDetail.scrollToPosition(mAdapter.itemCount - 1)
                 }
@@ -230,7 +230,8 @@ class DetailsActivity : AppCompatActivity() {
             }
             intent.getParcelableExtra<Parcelable>("model") != null -> {
                 val topicModel = intent.getParcelableExtra<TopicModel>("model")
-                mAdapter.addHeader(topicModel)
+                mAdapter.mAllList.add(0, topicModel)
+                mAdapter.notifyDataSetChanged()
                 topicModel.id
             }
             intent.getStringExtra(Keys.KEY_TOPIC_ID) != null -> intent.getStringExtra(Keys.KEY_TOPIC_ID)
@@ -248,10 +249,9 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun getRepliesPageOne(topicId: String, scrollToBottom: Boolean) {
-
         mSwipe.isRefreshing = true
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
-                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + "1")
+                .url("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=1")
                 .build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
@@ -350,6 +350,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
 
+    @Suppress("unused")
     private fun getNextReplies(totalPage: Int, currentPage: Int) {
         val intentGetMoreReply = Intent(this@DetailsActivity, MoreReplyService::class.java)
         intentGetMoreReply.action = "im.fdx.v2ex.get.one.more"
@@ -488,6 +489,7 @@ class DetailsActivity : AppCompatActivity() {
         private val MSG_ERROR_AUTH = 1
         private val MSG_ERROR_IO = 2
         private val MSG_GO_TO_BOTTOM = 3
+        @Suppress("unused")
         private val MSG_GET_MORE_REPLY = 4
     }
 }

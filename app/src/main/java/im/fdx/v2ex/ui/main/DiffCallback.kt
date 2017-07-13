@@ -24,7 +24,8 @@ class DiffCallback(val oldList: List<BaseModel>, val newList: List<BaseModel>) :
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         if (oldList[oldItemPosition] is TopicModel && newList[newItemPosition] is TopicModel) {
-            return (oldList[oldItemPosition] as TopicModel).replies == (newList[newItemPosition] as TopicModel).replies
+            return (oldList[oldItemPosition] as TopicModel).replies == (newList[newItemPosition] as TopicModel).replies &&
+                    (oldList[oldItemPosition] as TopicModel).content_rendered == (newList[newItemPosition] as TopicModel).content_rendered
         } else if (oldList[oldItemPosition] is ReplyModel && newList[newItemPosition] is ReplyModel)
             return (oldList[oldItemPosition] as ReplyModel).thanks == (newList[newItemPosition] as ReplyModel).thanks &&
                     (oldList[oldItemPosition] as ReplyModel).isThanked == (newList[newItemPosition] as ReplyModel).isThanked

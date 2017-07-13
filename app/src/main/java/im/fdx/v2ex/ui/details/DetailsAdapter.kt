@@ -218,15 +218,18 @@ class DetailsAdapter(private val mContext: Context,
         else -> TYPE_ITEM
     }
 
-    fun addHeader(items: TopicModel) {
-        mAllList.add(0, items)
-    }
-
     fun updateItems(newItems: List<BaseModel>) {
         val diffResult = DiffUtil.calculateDiff(DiffCallback(mAllList, newItems))
         diffResult.dispatchUpdatesTo(this)
         mAllList.clear()
         mAllList.addAll(newItems)
+    }
+
+    fun addItems(newItems: List<BaseModel>) {
+        val old = mAllList.toList()
+        mAllList.addAll(newItems)
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(old, mAllList))
+        diffResult.dispatchUpdatesTo(this)
     }
 
     //我重用了MainAdapter中的MainViewHolder

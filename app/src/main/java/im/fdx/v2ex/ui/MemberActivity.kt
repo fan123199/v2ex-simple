@@ -25,7 +25,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import com.google.gson.reflect.TypeToken
-import com.squareup.picasso.Picasso
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -41,6 +40,7 @@ import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.showNoContent
 import im.fdx.v2ex.utils.extensions.toast
@@ -364,8 +364,7 @@ class MemberActivity : AppCompatActivity() {
     private fun showUser(response: String) {
         member = myGson.fromJson(response, MemberModel::class.java)
 
-        Picasso.with(this).load(member.avatarLargeUrl)
-                .error(R.drawable.ic_person_outline_black_24dp).into(mIvAvatar)
+        mIvAvatar.load(member.avatarLargeUrl)
         mTvIntro.text = member.bio
         mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 

@@ -1,7 +1,7 @@
 package im.fdx.v2ex.utils.extensions
 
 import android.widget.ImageView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import im.fdx.v2ex.MyApp
 
 /**
@@ -10,5 +10,5 @@ import im.fdx.v2ex.MyApp
  */
 
 fun ImageView.load(url: String?) {
-    Picasso.with(MyApp.get()).load(url).into(this)
+    Glide.with(MyApp.get()).load(url).into(this)
 }
