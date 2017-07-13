@@ -33,7 +33,7 @@
         <activity
             android:name=".ui.details.DetailsActivity"
             android:label="@string/title_activity_details"
-            android:parentActivityName=".ui.main.MainActivity">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

@@ -1,13 +1,9 @@
 package im.fdx.v2ex.view
 
 import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.support.v4.content.ContextCompat
 import android.text.Html
 import android.text.SpannableStringBuilder
@@ -34,6 +30,7 @@ import im.fdx.v2ex.utils.extensions.dp2px
  */
 class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
+    var bestWidth = ViewUtil.screenSize[1] - 36.dp2px()
 
     //防止 Picasso，将target gc了， 导致图片无法显示
     var targetList: MutableList<SimpleTarget<Drawable>> = mutableListOf()
@@ -42,6 +39,11 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        bestWidth = width
+    }
 
     @Suppress("DEPRECATION")
     fun setGoodText(text: String?) {
@@ -89,8 +91,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
             //生成自定义可点击的span
             val newClickableSpan = object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(imageUrl))
-                    context.startActivity(intent)
+                    CustomChrome(context).load(imageUrl)
                 }
             }
 
@@ -180,50 +181,8 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
 
     companion object {
-
-        val REQUEST_CODE = 200
         private val TAG = GoodTextView::class.java.simpleName
-
-        val bestWidth = ViewUtil.screenSize[1] - 36.dp2px()
-
         val smallestWidth = 12.dp2px()
-
-
-        fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
-            // Raw height and width of image
-            val height = options.outHeight
-            val width = options.outWidth
-            var inSampleSize = 1
-
-            if (height > reqHeight || width > reqWidth) {
-
-                // Calculate ratios of height and width to requested height and width
-                val heightRatio = Math.round(height.toFloat() / reqHeight.toFloat())
-                val widthRatio = Math.round(width.toFloat() / reqWidth.toFloat())
-
-                // Choose the smallest ratio as inSampleSize value, this will guarantee
-                // a final image with both dimensions larger than or equal to the
-                // requested height and width.
-                inSampleSize = if (heightRatio < widthRatio) heightRatio else widthRatio
-            }
-
-            return inSampleSize
-        }
-
-        fun decodeSampledBitmapFromFile(path: String, reqWidth: Int, reqHeight: Int): Bitmap {
-
-            // First decode with inJustDecodeBounds=true to check dimensions
-            val options = BitmapFactory.Options()
-            options.inJustDecodeBounds = true
-            BitmapFactory.decodeFile(path, options)
-
-            // Calculate inSampleSize
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
-
-            // Decode bitmap with inSampleSize set
-            options.inJustDecodeBounds = false
-            return BitmapFactory.decodeFile(path, options)
-        }
     }
 
 

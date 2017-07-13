@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -31,6 +30,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.SmoothLayoutManager
 import okhttp3.*
@@ -72,7 +72,7 @@ class DetailsActivity : AppCompatActivity() {
 
     internal var receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            XLog.tag(TAG).d("get in lbc:" + intent.action)
+            XLog.tag("DetailsActivity").d("get in broadcast: " + intent.action)
             if (intent.action == Keys.ACTION_LOGIN) {
                 invalidateOptionsMenu()
                 setFootView(true)
@@ -115,41 +115,17 @@ class DetailsActivity : AppCompatActivity() {
         filter.addAction(Keys.ACTION_LOGOUT)
         filter.addAction("im.fdx.v2ex.reply")
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
-
-
         setFootView(MyApp.get().isLogin())
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        toolbar.setNavigationOnClickListener { onBackPressed() }
 
-        tvToolbar = toolbar.findViewById(R.id.tv_toolbar)
-        setSupportActionBar(toolbar)
-
-        val actionBar = supportActionBar
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true)
-            actionBar.title = ""
-        }
-
+        setUpToolbar()
+        tvToolbar = findViewById(R.id.tv_toolbar)
 
         rvDetail = findViewById(R.id.detail_recycler_view)
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
+//        原来不单单是这个原因， 而是focus的原因，focus会让系统自动滚动
         val mLayoutManager = SmoothLayoutManager(this)
         rvDetail.layoutManager = mLayoutManager
         rvDetail.smoothScrollToPosition(POSITION_START)
-//        rvDetail.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-//            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-//                super.onScrollStateChanged(recyclerView, newState)
-//                if (newState == RecyclerView.SCROLL_STATE_DRAGGING && etSendReply.hasFocus()) {
-//                    etSendReply.clearFocus()
-//                }
-//            }
-//
-//            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-//                super.onScrolled(recyclerView, dx, dy)
-//
-//            }
-//        })
-
         rvDetail.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             private var currentPosition = 0
@@ -224,10 +200,7 @@ class DetailsActivity : AppCompatActivity() {
     private fun parseIntent(intent: Intent) {
         val data = intent.data
         mTopicId = when {
-            data != null -> {
-                val params = data.pathSegments
-                params[1]
-            }
+            data != null -> data.pathSegments[1]
             intent.getParcelableExtra<Parcelable>("model") != null -> {
                 val topicModel = intent.getParcelableExtra<TopicModel>("model")
                 mAdapter.mAllList.add(0, topicModel)
@@ -239,8 +212,7 @@ class DetailsActivity : AppCompatActivity() {
         }
 
         getRepliesPageOne(mTopicId, false)
-
-        XLog.tag(TAG).d("TopicUrl: ${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId")
+        XLog.tag("DetailsActivity").d("TopicUrl: ${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId")
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -279,7 +251,6 @@ class DetailsActivity : AppCompatActivity() {
                 topicHeader = NetManager.parseResponseToTopic(body, topicId)
                 val repliesOne = NetManager.parseResponseToReplay(body)
 
-
                 if (MyApp.get().isLogin()) {
                     token = NetManager.parseToVerifyCode(body)
 
@@ -289,11 +260,11 @@ class DetailsActivity : AppCompatActivity() {
                         handler.sendEmptyMessage(MSG_ERROR_AUTH)
                         return
                     }
-                    XLog.tag(TAG).d("verify" + token!!)
+                    XLog.tag("DetailsActivity").d("verify" + token!!)
                     mAdapter.verifyCode = token!!
                     isFavored = parseIsFavored(body)
 
-                    XLog.tag(TAG).d("isfavored" + isFavored.toString())
+                    XLog.tag("DetailsActivity").d("isfavored" + isFavored.toString())
                     runOnUiThread {
                         if (isFavored) {
                             mMenu!!.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_white_24dp)
@@ -303,16 +274,16 @@ class DetailsActivity : AppCompatActivity() {
                             mMenu!!.findItem(R.id.menu_favor).setTitle(R.string.favor)
                         }
                     }
-                }
 
-                once = NetManager.parseOnce(body)
+                    once = NetManager.parseOnce(body)
+                }
 
                 val mAllContent = mutableListOf<BaseModel>()
                 mAllContent.clear()
                 mAllContent.add(0, topicHeader!!)
                 mAllContent.addAll(repliesOne)
 
-                XLog.tag(TAG).d("get first page done, next is get more page")
+                XLog.tag("DetailsActivity").d("got page 1 , next is more page")
 
                 val totalPage = NetManager.getPageValue(body)[1]  // [2,3]
 
@@ -326,7 +297,7 @@ class DetailsActivity : AppCompatActivity() {
                 }
 
                 if (totalPage > 1) {
-                    XLog.tag(TAG).d(totalPage)
+                    XLog.tag("DetailsActivity").d(totalPage.toString())
                     getMoreRepliesByOrder(totalPage, scrollToBottom)
                 }
             }
@@ -346,7 +317,7 @@ class DetailsActivity : AppCompatActivity() {
         intentGetMoreReply.putExtra("topic_id", mTopicId)
         intentGetMoreReply.putExtra("bottom", scrollToBottom)
         startService(intentGetMoreReply)
-        XLog.tag(TAG).d("yes I startIntentService")
+        XLog.tag("DetailsActivity").d("yes I startIntentService")
     }
 
 
@@ -397,8 +368,6 @@ class DetailsActivity : AppCompatActivity() {
                 val topicId = (mAdapter.mAllList[0] as TopicModel).id
                 val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
                 val uri = Uri.parse(url)
-
-//                browse(url)
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 intent.`package` = "com.android.chrome"
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -440,7 +409,7 @@ class DetailsActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun postReply(view: View) {
         etSendReply.clearFocus()
-        XLog.tag(TAG).d("I clicked")
+        XLog.tag("DetailsActivity").d("I clicked")
         val content = etSendReply.text.toString()
         val requestBody = FormBody.Builder()
                 .add("content", content)
@@ -462,7 +431,7 @@ class DetailsActivity : AppCompatActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
                 if (response.code() == 302) {
-                    XLog.tag(TAG).d("成功发布")
+                    XLog.tag("DetailsActivity").d("成功发布")
                     handler.post {
                         toast("发表评论成功")
                         etSendReply.setText("")
@@ -477,13 +446,12 @@ class DetailsActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        XLog.tag(TAG).d("onDestroy")
+        XLog.tag("DetailsActivity").d("onDestroy")
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
     companion object {
 
-        private val TAG = DetailsActivity::class.java.simpleName
         val POSITION_START = 0
         private val MSG_OK_GET_TOPIC = 0
         private val MSG_ERROR_AUTH = 1

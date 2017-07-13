@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import im.fdx.v2ex.R
@@ -22,8 +21,6 @@ fun Context.T(message: String) = Toast.makeText(this, message, Toast.LENGTH_LONG
 fun View.S(message: String) = Snackbar.make(this, message, Snackbar.LENGTH_LONG)
 
 fun View.s(message: String) = Snackbar.make(this, message, Snackbar.LENGTH_SHORT)
-
-fun Any.d(message: String) = Log.d(this.javaClass.simpleName, message)
 
 fun Context.dealError(errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
 

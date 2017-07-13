@@ -13,6 +13,11 @@ import im.fdx.v2ex.R
  * Created by fdx on 2017/6/14.
  * fdx will maintain it
  */
+
+
+/**
+ * 在中间位置显示"没有内容"信息
+ */
 fun FrameLayout.showNoContent() {
     val child = TextView(this.context)
     child.text = "没有内容"
@@ -24,6 +29,9 @@ fun FrameLayout.showNoContent() {
 }
 
 
+/**
+ * 为每个Activity设置基本toolbar，简化代码
+ */
 fun AppCompatActivity.setUpToolbar(title: String? = "") {
 
     val toolbar: Toolbar = findViewById(R.id.toolbar)
