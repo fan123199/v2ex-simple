@@ -32,6 +32,8 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
     var bestWidth = ViewUtil.screenSize[1] - 36.dp2px()
 
+    var popupListener: Popup.PopupListener? = null
+
     //防止 Picasso，将target gc了， 导致图片无法显示
     var targetList: MutableList<SimpleTarget<Drawable>> = mutableListOf()
 
@@ -175,8 +177,15 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
             ds.isUnderlineText = false
         }
 
-        override fun onClick(widget: View) = CustomChrome(context).load(url)
-
+        override fun onClick(widget: View) {
+            // url =  https://www.v2ex.com/member/fan123199
+            when {
+                url.contains("v2ex.com/member/") -> {
+                    popupListener?.onClick(widget, url)
+                }
+                else -> CustomChrome(context).load(url)
+            }
+        }
     }
 
 
@@ -184,7 +193,6 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
         private val TAG = GoodTextView::class.java.simpleName
         val smallestWidth = 12.dp2px()
     }
-
 
 }
 

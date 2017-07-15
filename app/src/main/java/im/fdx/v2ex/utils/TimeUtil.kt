@@ -4,6 +4,7 @@ import android.text.format.DateUtils
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.utils.extensions.getNum
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -82,9 +83,10 @@ object TimeUtil {
             when {
 //                theTime.isEmpty() -> return System.currentTimeMillis()/1000
                 second != -1 -> return created
-                hour != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, hour))) * 60 * 60 + java.lang.Long.parseLong(getNum(theTime.substring(hour + 2, minute))) * 60
-                day != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, day))) * 60 * 60 * 24
-                minute != -1 -> created -= java.lang.Long.parseLong(getNum(theTime.substring(0, minute))) * 60
+                hour != -1 -> created -= theTime.substring(0, hour).getNum().toLong() * 60 * 60 +
+                        theTime.substring(hour + 2, minute).getNum().toLong() * 60
+                day != -1 -> created -= theTime.substring(0, day).getNum().toLong() * 60 * 60 * 24
+                minute != -1 -> created -= theTime.substring(0, minute).getNum().toLong() * 60
                 now != -1 -> return created
                 else -> {
                     val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss +08:00", Locale.getDefault())
@@ -106,13 +108,13 @@ object TimeUtil {
      * *
      * @return
      */
-    fun getNum(str: String): String {
-        var str2 = ""
-        if (str.isNotBlank()) {
-            (0..str.length - 1)
-                    .filter { str[it].toInt() in 48..57 }
-                    .forEach { str2 += str[it] }
-        }
-        return str2
-    }
+    //    fun getNum(str: String): String {
+//        var str2 = ""
+//        if (str.isNotBlank()) {
+//            (0..str.length - 1)
+//                    .filter { str[it].toInt() in 48..57 }
+//                    .forEach { str2 += str[it] }
+//        }
+//        return str2
+//    }
 }

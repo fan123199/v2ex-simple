@@ -32,9 +32,11 @@ import im.fdx.v2ex.ui.main.DiffCallback
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.getPair
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.GoodTextView
+import im.fdx.v2ex.view.Popup
 import okhttp3.*
 import java.io.IOException
 
@@ -91,7 +93,7 @@ class DetailsAdapter(private val mContext: Context,
             TYPE_FOOTER -> {
                 val tvMore = (holder as FooterViewHolder).tvLoadMore
                 tvMore.text = "加载更多"
-                tvMore.setOnClickListener { callback.onMethodCallback(2) }
+                tvMore.setOnClickListener { callback.onMethodCallback(2, -1) }
             }
             TYPE_ITEM -> {
                 val itemVH = holder as ItemViewHolder
@@ -138,6 +140,29 @@ class DetailsAdapter(private val mContext: Context,
                 }
 
                 itemVH.tvContent.setGoodText(replyItem.content_rendered)
+
+                itemVH.tvContent.popupListener = object : Popup.PopupListener {
+                    override fun onClick(v: View, url: String) {
+                        val username = url.split("/").last()
+                        var index = replyItem.content.getPair(username)
+//
+
+                        if (index <= 0 || index > position) { //5
+                            mAllList.forEachIndexed { i, baseModel ->
+                                if (i in 1..(position - 1) && (baseModel as ReplyModel).member?.username == username) {
+                                    index = i
+                                }
+                            }
+                        }
+                        if (index <= 0 || index > position) {
+                            return
+                        }
+                        Popup(mContext).show(v, mAllList[index] as ReplyModel, index, View.OnClickListener {
+                            callback.onMethodCallback(-1, index)
+                        })
+                    }
+
+                }
 
                 XLog.i(replyItem.content_rendered)
                 itemVH.tvRow.text = "#$position"
@@ -251,7 +276,7 @@ class DetailsAdapter(private val mContext: Context,
     }
 
     interface AdapterCallback {
-        fun onMethodCallback(type: Int)
+        fun onMethodCallback(type: Int, position: Int)
     }
 
     companion object {

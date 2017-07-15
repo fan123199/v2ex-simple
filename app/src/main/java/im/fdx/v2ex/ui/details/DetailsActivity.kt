@@ -60,11 +60,13 @@ class DetailsActivity : AppCompatActivity() {
     private var currentPage: Int = 0 // TODO: 2017/5/30 滑动加载，减少流量
 
     private val callback = object : DetailsAdapter.AdapterCallback {
-        override fun onMethodCallback(type: Int) {
+        override fun onMethodCallback(type: Int, position: Int) {
             when (type) {
                 1 -> {
                 }
                 2 -> getMoreRepliesByOrder(1, false)
+
+                -1 -> rvDetail.smoothScrollToPosition(position)
             }
         }
     }

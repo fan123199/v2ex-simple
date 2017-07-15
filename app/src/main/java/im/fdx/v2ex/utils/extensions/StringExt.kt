@@ -14,3 +14,25 @@ fun String.fullUrl() = this.replace("href=\"/member/", "href=\"https://www.v2ex.
         .replace("href=\"/t/", "href=\"https://www.v2ex.com/t/")
         .replace("href=\"/go/", "href=\"https://www.v2ex.com/go/")
         .replace("<img src=\"//", "<img src=\"http://")
+
+
+fun String.getNum(): String {
+    var str2 = ""
+    if (isNotBlank()) {
+        (0..length - 1)
+                .filter { this[it].toInt() in 48..57 }
+                .forEach { str2 += this[it] }
+    }
+    return str2
+}
+
+
+fun String.getPair(name: String): Int {
+
+    val findAll = Regex("(?<=$name\\s{1,4}#)\\d+").findAll(this)
+
+    if (findAll.none()) {
+        return -1
+    }
+    return findAll.first().value.toInt()
+}

@@ -34,7 +34,7 @@ import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.getNum
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.Call
@@ -370,7 +370,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val onceElement = body.getElementsByAttributeValue("value", "领取 X 铜币").first() ?: return null
 //        location.href = '/mission/daily/redeem?once=83270';
         val onceOriginal = onceElement.attr("onClick")
-        return TimeUtil.getNum(onceOriginal)
+        return onceOriginal.getNum()
     }
 
     override fun onResume() {
