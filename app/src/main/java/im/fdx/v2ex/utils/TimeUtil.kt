@@ -5,6 +5,7 @@ import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.extensions.getNum
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,7 +61,7 @@ object TimeUtil {
      * *
      * @return long value
      */
-    fun toLong(timeStr: String): Long {
+    fun toUtcTime(timeStr: String): Long {
         var theTime = timeStr
 
         theTime = theTime.trim()
@@ -94,27 +95,19 @@ object TimeUtil {
                     created = date.time / 1000
                 }
             }
-        } catch (ignored: Exception) {
-            XLog.tag("TimeUtil").e("time str error: $theTime, $timeStr")
+        } catch (e1: NumberFormatException) {
+            XLog.tag("TimeUtil").e("time str number cast error: $theTime, $timeStr")
+        } catch (e2: ParseException) {
+            XLog.tag("TimeUtil").e("time str parse error: $theTime")
+            try {
+                val ccc = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.US)
+                val date = ccc.parse(theTime.trim())
+                created = date.time / 1000
+            } catch (ignore: ParseException) {
+
+            }
         }
 
         return created
     }
-
-
-    /**
-     * 在一堆奇怪的字符串里获取数字。（前后不一定都是空格）
-     * @param str
-     * *
-     * @return
-     */
-    //    fun getNum(str: String): String {
-//        var str2 = ""
-//        if (str.isNotBlank()) {
-//            (0..str.length - 1)
-//                    .filter { str[it].toInt() in 48..57 }
-//                    .forEach { str2 += str[it] }
-//        }
-//        return str2
-//    }
 }

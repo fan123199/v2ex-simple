@@ -131,7 +131,7 @@
             android:exported="false" />
 
         <activity
-            android:name=".ui.MemberActivity"
+            android:name=".ui.member.MemberActivity"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="im.fdx.v2ex.intent.profile" />

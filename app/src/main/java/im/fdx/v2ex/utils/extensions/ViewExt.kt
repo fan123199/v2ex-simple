@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import im.fdx.v2ex.R
+import org.jetbrains.anko.forEachChild
 
 /**
  * Created by fdx on 2017/6/14.
@@ -18,14 +19,32 @@ import im.fdx.v2ex.R
 /**
  * 在中间位置显示"没有内容"信息
  */
-fun FrameLayout.showNoContent() {
-    val child = TextView(this.context)
-    child.text = "没有内容"
-    child.setTextColor(ContextCompat.getColor(context, R.color.hint))
-    val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    params.gravity = Gravity.CENTER_HORIZONTAL
-    params.topMargin = 80.dp2px()
-    this.addView(child, params)
+fun FrameLayout.showNoContent(boolean: Boolean = true) {
+    if (!boolean) {
+        this.forEachChild { view ->
+            when {
+                view.tag == "no" -> removeView(view)
+            }
+        }
+    } else {
+        var b = false
+        this.forEachChild { view ->
+            when {
+                view.tag == "no" -> b = true
+            }
+        }
+        if (!b) {
+            val child = TextView(this.context)
+            child.tag = "no"
+            child.text = "没有内容"
+            child.setTextColor(ContextCompat.getColor(context, R.color.hint))
+            val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            params.gravity = Gravity.CENTER_HORIZONTAL
+            params.topMargin = 120.dp2px()
+            this.addView(child, -1, params)
+        }
+
+    }
 }
 
 

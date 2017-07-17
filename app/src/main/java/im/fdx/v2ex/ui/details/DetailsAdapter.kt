@@ -244,10 +244,15 @@ class DetailsAdapter(private val mContext: Context,
     }
 
     fun updateItems(newItems: List<BaseModel>) {
-        val diffResult = DiffUtil.calculateDiff(DiffCallback(mAllList, newItems))
-        diffResult.dispatchUpdatesTo(this)
-        mAllList.clear()
-        mAllList.addAll(newItems)
+        if (mAllList.isEmpty()) {
+            mAllList.addAll(newItems)
+            notifyDataSetChanged()
+        } else {
+            val diffResult = DiffUtil.calculateDiff(DiffCallback(mAllList, newItems))
+            mAllList.clear()
+            mAllList.addAll(newItems)
+            diffResult.dispatchUpdatesTo(this)
+        }
     }
 
     fun addItems(newItems: List<BaseModel>) {

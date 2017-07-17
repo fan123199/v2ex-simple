@@ -7,8 +7,7 @@ import com.google.gson.Gson
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.MemberModel
 import im.fdx.v2ex.model.NotificationModel
-import im.fdx.v2ex.network.NetManager.Source.FROM_HOME
-import im.fdx.v2ex.network.NetManager.Source.FROM_NODE
+import im.fdx.v2ex.network.NetManager.Source.*
 import im.fdx.v2ex.ui.details.ReplyModel
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.node.NodeModel
@@ -136,7 +135,7 @@ object NetManager {
     }
 
     enum class Source {
-        FROM_HOME, FROM_NODE
+        FROM_HOME, FROM_NODE, FROM_MEMBER
     }
 
     var myGson = Gson()
@@ -149,7 +148,7 @@ object NetManager {
         val body = html.body()
 
         val items = when (source) {
-            FROM_HOME -> body.getElementsByClass("cell item")
+            FROM_HOME, FROM_MEMBER -> body.getElementsByClass("cell item")
             FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
         }
         for (item in items!!) {
@@ -159,49 +158,48 @@ object NetManager {
             val linkWithReply = item.getElementsByClass("item_title").first()
                     .getElementsByTag("a").first().attr("href")
             val replies = Integer.parseInt(linkWithReply.split("reply".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1])
-            val p = Pattern.compile("(?<=/t/)\\d+")
-            val matcher = p.matcher(linkWithReply)
 
-            val id: String
-            if (matcher.find()) {
-                id = matcher.group()
-            } else {
-                return emptyList()
-            }
-
+            val regex = Regex("(?<=/t/)\\d+")
+            val id: String = regex.find(linkWithReply)?.value ?: return emptyList()
 
             val nodeModel = NodeModel()
-            if (source == FROM_HOME) {
-                //  <a class="node" href="/go/career">职场话题</a>
-                val nodeTitle = item.getElementsByClass("node").text()
-                val nodeName = item.getElementsByClass("node").attr("href").substring(4)
-                nodeModel.title = nodeTitle
-                nodeModel.name = nodeName
+            when (source) {
+                FROM_HOME, FROM_MEMBER -> {
+                    //  <a class="node" href="/go/career">职场话题</a>
+                    val nodeTitle = item.getElementsByClass("node").text()
+                    val nodeName = item.getElementsByClass("node").attr("href").substring(4)
+                    nodeModel.title = nodeTitle
+                    nodeModel.name = nodeName
 
-            } else if (source == FROM_NODE) {
-                val header = body.getElementsByClass("header").first()
-                val strHeader = header.text()
-                var nodeTitle = ""
-                if (strHeader.contains("›")) {
-                    nodeTitle = strHeader.split("›".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].trim { it <= ' ' }
                 }
+            //            <a href="/member/wineway">
+            // <img src="//v2" class="avatar" ></a>
+                FROM_NODE -> {
+                    val header = body.getElementsByClass("header").first()
+                    val strHeader = header.text()
+                    var nodeTitle = ""
+                    if (strHeader.contains("›")) {
+                        nodeTitle = strHeader.split("›".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1].trim { it <= ' ' }
+                    }
 
-                val elements = html.head().getElementsByTag("script")
-                val script = elements.last()
-                //注意，script 的tag 不含 text。
-                val strScript = script.html()
-                val nodeName = strScript.split("\"".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
-                nodeModel.title = nodeTitle
-                nodeModel.name = nodeName
+                    val elements = html.head().getElementsByTag("script")
+                    val script = elements.last()
+                    //注意，script 的tag 不含 text。
+                    val strScript = script.html()
+                    val nodeName = strScript.split("\"".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                    nodeModel.title = nodeTitle
+                    nodeModel.name = nodeName
+                }
             }
-
 
             topicModel.node = nodeModel
 
             val memberModel = MemberModel()
             //            <a href="/member/wineway">
             // <img src="//v2" class="avatar" border="0" align="default" style="max-width: 48px; max-height: 48px;"></a>
-            val username = item.getElementsByTag("a").first().attr("href").substring(8)
+//            val username = item.getElementsByTag("a").first().attr("href").substring(8)
+
+            val username = Regex("(?<=/member/)\\w+").find(item.html())?.value!!
 
             val avatarLarge = item.getElementsByClass("avatar").attr("src")
             memberModel.username = username
@@ -213,8 +211,8 @@ object NetManager {
             val created = when {
                 !smallItem.contains("最后回复") -> -1L
                 else -> {
-                    TimeUtil.toLong(when (source) {
-                        FROM_HOME -> smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]
+                    TimeUtil.toUtcTime(when (source) {
+                        FROM_HOME, FROM_MEMBER -> smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]
                         FROM_NODE -> smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
                     })
                 }
@@ -305,7 +303,7 @@ object NetManager {
     fun parseResponseToTopic(body: Element, topicId: String): TopicModel {
         val topicModel = TopicModel(topicId)
 
-        val title = body.getElementsByTag("h1").text()
+        val title = body.getElementsByTag("h1").first().text()
         val contentElementOrg = body.getElementsByClass("topic_content").first()
 
         val contentElement = handlerPreTag(contentElementOrg)
@@ -315,7 +313,7 @@ object NetManager {
         val createdUnformed = body.getElementsByClass("header").first().getElementsByClass("gray").first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
         val time = createdUnformed.split("·".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
-        val created = TimeUtil.toLong(time)
+        val created = TimeUtil.toUtcTime(time)
 
         var replyNum = ""
         val grays = body.getElementsByClass("gray")
@@ -393,7 +391,7 @@ object NetManager {
 
             val createdOriginal = item.getElementsByClass("ago").text()
             val replyContent = item.getElementsByClass("reply_content").first()
-            replyModel.created = TimeUtil.toLong(createdOriginal)
+            replyModel.created = TimeUtil.toUtcTime(createdOriginal)
             replyModel.member = memberModel
             replyModel.thanks = thanks
 

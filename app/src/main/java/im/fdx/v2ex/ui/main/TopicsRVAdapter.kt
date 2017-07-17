@@ -9,30 +9,25 @@ import android.view.ViewGroup
 import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
-import im.fdx.v2ex.ui.MemberActivity
 import im.fdx.v2ex.ui.details.DetailsActivity
+import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.view.GoodTextView
 import org.jetbrains.anko.startActivity
-import java.util.*
 
 /**
  * Created by a708 on 15-8-14.
  * 主页的Adapter，就一个普通的RecyclerView
  */
-class TopicsRVAdapter(private val mContext: Context, topicList: MutableList<TopicModel>)
+class TopicsRVAdapter(private val mContext: Context)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val mInflater = LayoutInflater.from(mContext)
-    private var mTopicList: MutableList<TopicModel> = ArrayList()
+    private var mTopicList: MutableList<TopicModel> = mutableListOf()
 
     var isNodeClickable = true
-
-    init {
-        mTopicList = topicList
-    }
 
 
     //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
@@ -55,7 +50,7 @@ class TopicsRVAdapter(private val mContext: Context, topicList: MutableList<Topi
         val holder = holder2 as MainViewHolder
         holder.tvTitle.maxLines = 2
         holder.tvTitle.text = currentTopic.title
-        holder.container.setOnClickListener(listener)
+        holder.itemView.setOnClickListener(listener)
         holder.tvContent.visibility = View.GONE
 
         //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -78,7 +73,7 @@ class TopicsRVAdapter(private val mContext: Context, topicList: MutableList<Topi
 
     // 这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来,。
     // 用static就是为了复用
-    class MainViewHolder(var container: View) : RecyclerView.ViewHolder(container) {
+    class MainViewHolder(container: View) : RecyclerView.ViewHolder(container) {
         var tvTitle: TextView = container.findViewById(R.id.tv_title)
         var tvContent: GoodTextView = container.findViewById(R.id.tv_content)
         var tvReplyNumber: TextView = container.findViewById(R.id.tv_reply_number)
@@ -90,14 +85,12 @@ class TopicsRVAdapter(private val mContext: Context, topicList: MutableList<Topi
     }
 
     class MyOnClickListener(private val context: Context, private val topic: TopicModel) : View.OnClickListener {
-
         override fun onClick(v: View) {
             when (v.id) {
                 R.id.iv_avatar_profile -> context.startActivity<MemberActivity>(Keys.KEY_USERNAME to topic.member?.username!!)
                 R.id.tv_node -> context.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to topic.node?.name!!)
                 R.id.main_text_view -> context.startActivity<DetailsActivity>("model" to topic)
             }
-
         }
     }
 }

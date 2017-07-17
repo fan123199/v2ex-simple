@@ -30,8 +30,12 @@ import im.fdx.v2ex.R.id.nav_testNotify
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
-import im.fdx.v2ex.ui.*
+import im.fdx.v2ex.ui.LoginActivity
+import im.fdx.v2ex.ui.NotificationActivity
+import im.fdx.v2ex.ui.SettingsActivity
+import im.fdx.v2ex.ui.WebViewActivity
 import im.fdx.v2ex.ui.favor.FavorActivity
+import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.getNum
@@ -131,11 +135,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .setIntent(intent)
                     .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
                     .build()
-            if (MyApp.get().isLogin()) {
-                shortcutManager?.addDynamicShortcuts(listOfNotNull<ShortcutInfo>(createTopicInfo))
-
-            } else {
-                shortcutManager?.removeDynamicShortcuts(shortcutIds)
+            when {
+                MyApp.get().isLogin() -> shortcutManager?.addDynamicShortcuts(listOfNotNull<ShortcutInfo>(createTopicInfo))
+                else -> shortcutManager?.removeDynamicShortcuts(shortcutIds)
             }
         }
 
@@ -188,7 +190,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         mTabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {}
-
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabReselected(tab: TabLayout.Tab) {

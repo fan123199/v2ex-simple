@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
@@ -32,7 +33,6 @@ import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.toast
-import im.fdx.v2ex.view.SmoothLayoutManager
 import okhttp3.*
 import org.jetbrains.anko.share
 import org.jsoup.Jsoup
@@ -64,7 +64,7 @@ class DetailsActivity : AppCompatActivity() {
             when (type) {
                 1 -> {
                 }
-                2 -> getMoreRepliesByOrder(1, false)
+                2 -> getMoreRepliesByOrder(totalPage = 1, scrollToBottom = false)
 
                 -1 -> rvDetail.smoothScrollToPosition(position)
             }
@@ -125,16 +125,14 @@ class DetailsActivity : AppCompatActivity() {
         rvDetail = findViewById(R.id.detail_recycler_view)
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
 //        原来不单单是这个原因， 而是focus的原因，focus会让系统自动滚动
-        val mLayoutManager = SmoothLayoutManager(this)
+        val mLayoutManager = LinearLayoutManager(this)
         rvDetail.layoutManager = mLayoutManager
         rvDetail.smoothScrollToPosition(POSITION_START)
         rvDetail.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-
             private var currentPosition = 0
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {}
 
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-
                 if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
                     if (currentPosition != 0) {
                         startAlphaAnimation(tvToolbar, 500, false)
@@ -269,11 +267,11 @@ class DetailsActivity : AppCompatActivity() {
                     XLog.tag("DetailsActivity").d("isfavored" + isFavored.toString())
                     runOnUiThread {
                         if (isFavored) {
-                            mMenu!!.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_white_24dp)
-                            mMenu!!.findItem(R.id.menu_favor).setTitle(R.string.unFavor)
+                            mMenu?.findItem(R.id.menu_favor)?.setIcon(R.drawable.ic_favorite_white_24dp)
+                            mMenu?.findItem(R.id.menu_favor)?.setTitle(R.string.unFavor)
                         } else {
-                            mMenu!!.findItem(R.id.menu_favor).setIcon(R.drawable.ic_favorite_border_white_24dp)
-                            mMenu!!.findItem(R.id.menu_favor).setTitle(R.string.favor)
+                            mMenu?.findItem(R.id.menu_favor)?.setIcon(R.drawable.ic_favorite_border_white_24dp)
+                            mMenu?.findItem(R.id.menu_favor)?.setTitle(R.string.favor)
                         }
                     }
 
@@ -290,7 +288,7 @@ class DetailsActivity : AppCompatActivity() {
                 val totalPage = NetManager.getPageValue(body)[1]  // [2,3]
 
                 currentPage = NetManager.getPageValue(body)[0]
-                handler.post {
+                runOnUiThread {
                     mAdapter.updateItems(mAllContent)
                     mSwipe.isRefreshing = false
                     if (totalPage == 1 && scrollToBottom) {

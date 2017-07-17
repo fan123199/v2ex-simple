@@ -30,12 +30,10 @@ import okhttp3.Request
 import org.jetbrains.anko.runOnUiThread
 import org.jsoup.Jsoup
 import java.io.IOException
-import java.util.*
 
 
 class TopicsFragment : Fragment() {
 
-    private val mTopicModels = ArrayList<TopicModel>()
     private var mAdapter: TopicsRVAdapter? = null
     private lateinit var mSwipeLayout: SwipeRefreshLayout
     private lateinit var mRecyclerView: RecyclerView
@@ -68,6 +66,7 @@ class TopicsFragment : Fragment() {
             args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> "$HTTPS_V2EX_BASE/my/topics"
             args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> "$HTTPS_V2EX_BASE/my/following"
             args.getString(Keys.KEY_TAB) == "recent" -> "$HTTPS_V2EX_BASE/recent"
+            args.getString(Keys.KEY_USERNAME) != null -> "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
             else -> "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
         }
         mSwipeLayout = layout.findViewById(R.id.swipe_container)
@@ -123,7 +122,7 @@ class TopicsFragment : Fragment() {
             })
 
 
-        mAdapter = TopicsRVAdapter(activity, mTopicModels)
+        mAdapter = TopicsRVAdapter(activity)
         mAdapter?.isNodeClickable = false
         mRecyclerView.adapter = mAdapter //大工告成
 
@@ -181,6 +180,7 @@ class TopicsFragment : Fragment() {
 
     fun scrollToTop() = mRecyclerView.smoothScrollToPosition(0)
 
+    @Suppress("unused")
     companion object {
 
         private val TAG = TopicsFragment::class.java.simpleName

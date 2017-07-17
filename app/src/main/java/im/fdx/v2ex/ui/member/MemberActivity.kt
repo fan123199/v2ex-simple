@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui
+package im.fdx.v2ex.ui.member
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -10,21 +10,18 @@ import android.preference.PreferenceManager
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
-import android.support.v4.widget.SwipeRefreshLayout
+import android.support.design.widget.TabLayout
+import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
-import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -37,12 +34,10 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.ui.main.TopicModel
-import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import im.fdx.v2ex.utils.extensions.showNoContent
 import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
@@ -51,7 +46,6 @@ import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.util.*
-import java.util.regex.Pattern
 
 
 /**
@@ -68,12 +62,11 @@ class MemberActivity : AppCompatActivity() {
     private lateinit var mTvGithub: ImageView
     private lateinit var mTvTwitter: ImageView
     private lateinit var mTvWebsite: ImageView
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var llInfo: ViewGroup
+    private lateinit var constraintLayout: ConstraintLayout
     private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
 
-    private lateinit var llInfo: ViewGroup
-    private lateinit var mAdapter: TopicsRVAdapter
-
+    private lateinit var mMenu: Menu
 
     private lateinit var member: MemberModel
     private val mTopics = ArrayList<TopicModel>()
@@ -84,15 +77,10 @@ class MemberActivity : AppCompatActivity() {
     private var followOfOnce: String? = null
     private var isBlocked: Boolean = false
     private var isFollowed: Boolean = false
-    private lateinit var constraintLayout: ConstraintLayout
-    private lateinit var container: FrameLayout
-    private lateinit var mMenu: Menu
+
     private val handler = Handler(Handler.Callback { msg ->
         when (msg.what) {
             MSG_GET_USER_INFO -> showUser(msg.obj as String)
-            MSG_GET_TOPIC -> {
-                swipeRefreshLayout.isRefreshing = false
-            }
         }
         true
     })
@@ -112,6 +100,8 @@ class MemberActivity : AppCompatActivity() {
         mTvTwitter = findViewById(R.id.tv_twitter)
         mTvWebsite = findViewById(R.id.tv_website)
 
+        constraintLayout = findViewById(R.id.constraint_member)
+        collapsingToolbarLayout = findViewById(R.id.ctl_profile)
         llInfo = findViewById(R.id.ll_info)
 
         run {
@@ -130,15 +120,17 @@ class MemberActivity : AppCompatActivity() {
             mTvWebsite.setOnClickListener(listener)
         }
 
-
         setUpToolbar()
 
-        swipeRefreshLayout = findViewById(R.id.swipe_container)
-        swipeRefreshLayout.setOnRefreshListener { getTopicsByUsernameAPI() }
+
+        username = getName()
+        val tabLayout: TabLayout = findViewById(R.id.tl_member)
+        val viewpager: ViewPager = findViewById(R.id.viewpager)
+        viewpager.adapter = MemberViewpagerAdapter(fragmentManager, username!!)
+        tabLayout.setupWithViewPager(viewpager)
 
         val appBarLayout: AppBarLayout = findViewById(R.id.al_profile)
 
-        collapsingToolbarLayout = findViewById(R.id.ctl_profile)
         appBarLayout.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
@@ -146,17 +138,14 @@ class MemberActivity : AppCompatActivity() {
             handleAlphaOnTitle(percentage)
         }
 
-        constraintLayout = findViewById(R.id.constraint_member)
+        getData()
+    }
 
-        container = findViewById(R.id.fl_container)
-
-        val rv: RecyclerView = findViewById(R.id.rv_container)
-        val layoutManager = LinearLayoutManager(this@MemberActivity)
-
-        rv.layoutManager = layoutManager
-        mAdapter = TopicsRVAdapter(this, mTopics)
-        rv.adapter = mAdapter
-        parseIntent(intent)
+    private fun getName() = when {
+        intent.data != null -> intent.data.pathSegments[1]
+        intent.extras != null -> intent.extras.getString(Keys.KEY_USERNAME)
+        BuildConfig.DEBUG -> "Livid"
+        else -> "null"
     }
 
     private fun handleAlphaOnTitle(percentage: Float) {
@@ -165,34 +154,13 @@ class MemberActivity : AppCompatActivity() {
         }
     }
 
-    private fun parseIntent(intent: Intent) {
-
-        val appLinkData = intent.data
-        var urlUserInfo = ""
-        when {
-            appLinkData != null -> {
-                val host = appLinkData.host
-                val params = appLinkData.pathSegments
-                if (host.contains("v2ex.com") && params[0].contains("member")) {
-                    username = params[1]
-                    urlUserInfo = API_USER + "?username=" + username
-                }
-            }
-            intent.extras != null -> {
-                username = getIntent().extras.getString(Keys.KEY_USERNAME)
-                urlUserInfo = API_USER + "?username=" + username
-            }
-            BuildConfig.DEBUG -> {
-                username = "Livid"
-                urlUserInfo = API_USER + "?username=" + username  //Livid's profile
-            }
-        }
+    private fun getData() {
+        val urlUserInfo = API_USER + "?username=" + username  //Livid's profile
         collapsingToolbarLayout.title = username
         urlTopic = "$API_TOPIC?username=$username"
         Log.i(TAG, "$urlUserInfo: \t$urlTopic")
         //// TODO: 2017/3/20 可以改成一步，分析下性能
         getUserInfoAPI(urlUserInfo)
-        getTopicsByUsernameAPI()
         getBlockAndFollowWeb()
     }
 
@@ -206,15 +174,15 @@ class MemberActivity : AppCompatActivity() {
                 .get().build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                NetManager.dealError(this@MemberActivity, swipe = swipeRefreshLayout)
+                NetManager.dealError(this@MemberActivity)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 200) {
                     val html = response.body()!!.string()
-                    isBlocked = parseIsBlock(html)
-                    isFollowed = parseIsFollowed(html)
+                    isBlocked = isBlockByHtml(html)
+                    isFollowed = isFollowedByHtml(html)
                     XLog.d("isBlocked: $isBlocked|isFollowed: $isFollowed")
 
 
@@ -233,7 +201,6 @@ class MemberActivity : AppCompatActivity() {
 
                     }
 
-
                     blockOfT = parseToBlock(html)
 
                     if (blockOfT == null) {
@@ -245,40 +212,11 @@ class MemberActivity : AppCompatActivity() {
         })
     }
 
-    private fun parseIsFollowed(html: String): Boolean {
-        val pFollow = Pattern.compile("un(?=follow/\\d{1,8}\\?once=)")
-        val matcher = pFollow.matcher(html)
-        return matcher.find()
-
-    }
-
-    private fun parseIsBlock(html: String): Boolean {
-        val pFollow = Pattern.compile("un(?=block/\\d{1,8}\\?t=)")
-        val matcher = pFollow.matcher(html)
-        return matcher.find()
-    }
-
-    /**
-     * @param html
-     * *
-     * @return the whole path url
-     */
-    private fun parseToBlock(html: String): String? {
-        //        <input type="button" value="Block" onclick="if (confirm('确认要屏蔽 SoulGem？'))
-        // { location.href = '/block/209351?t=1490028444'; }" class="super normal button">
-        val pFollow = Pattern.compile("block/\\d{1,8}\\?t=\\d{1,20}")
-        val matcher = pFollow.matcher(html)
-        if (matcher.find()) {
-            return matcher.group()
-        }
-        return null
-    }
-
     private fun getUserInfoAPI(urlUserInfo: String) {
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
                 .url(urlUserInfo).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity, swipe = swipeRefreshLayout)
+                dealError(this@MemberActivity)
             }
 
             @Throws(IOException::class)
@@ -288,37 +226,6 @@ class MemberActivity : AppCompatActivity() {
             }
         })
     }
-
-    private fun getTopicsByUsernameAPI() {
-
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
-                .url(urlTopic!!).build()).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity, swipe = swipeRefreshLayout)
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
-
-                val body = response.body()!!.string()
-                val type = object : TypeToken<ArrayList<TopicModel>>() {}.type
-                val topicModels = myGson.fromJson<MutableList<TopicModel>>(body, type)
-                if (topicModels == null || topicModels.isEmpty()) {
-                    runOnUiThread {
-                        swipeRefreshLayout.isRefreshing = false
-                        container.showNoContent()
-                    }
-                    return
-                }
-                runOnUiThread {
-                    mAdapter.updateItems(topicModels)
-                }
-                XLog.tag("profile").i(topicModels[0].title)
-                Message.obtain(handler, MSG_GET_TOPIC).sendToTarget()
-            }
-        })
-    }
-
 
     private var listener: View.OnClickListener = View.OnClickListener {
         when (it.id) {
@@ -349,15 +256,17 @@ class MemberActivity : AppCompatActivity() {
     }
 
     fun openWeb() {
-        if ((member.website).isNullOrEmpty()) {
-            return
+        when {
+            !(member.website).isNullOrEmpty() ->
+                CustomChrome(this).load(if (!member.website.contains("http")) "http://"
+                        + member.website else member.website)
         }
-        CustomChrome(this).load(if (!member.website.contains("http")) "http://" + member.website else member.website)
     }
 
     fun openGithub() {
-        if ((member.github).isNullOrEmpty()) return
-        CustomChrome(this).load("https://www.github.com/" + member.github)
+        when {
+            !(member.github).isNullOrEmpty() -> CustomChrome(this).load("https://www.github.com/" + member.github)
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -427,7 +336,7 @@ class MemberActivity : AppCompatActivity() {
                 .url("${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "un" else ""}$followOfOnce")
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity, swipe = swipeRefreshLayout)
+                dealError(this@MemberActivity)
             }
 
             @Throws(IOException::class)
@@ -448,7 +357,7 @@ class MemberActivity : AppCompatActivity() {
                 .url("$HTTPS_V2EX_BASE/${if (isBlocked) "un" else ""}$blockOfT").build())
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
-                        dealError(this@MemberActivity, swipe = swipeRefreshLayout)
+                        dealError(this@MemberActivity)
                     }
 
                     @Throws(IOException::class)
@@ -465,30 +374,28 @@ class MemberActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        parseIntent(intent)
+        username = getName()
+        getData()
     }
 
     companion object {
-
-
         var TAG: String? = MemberActivity::class.java.simpleName
         private val MSG_GET_USER_INFO = 0
-        private val MSG_GET_TOPIC = 1
 
+        private fun parseToOnce(html: String): String? = Regex("follow/\\d{1,8}\\?once=\\d{1,10}").find(html)?.value
 
-        fun parseToOnce(html: String): String? {
+        private fun isFollowedByHtml(html: String) = Regex("un(?=follow/\\d{1,8}\\?once=)").containsMatchIn(html)
 
-            //        <input type="button" value="加入特别关注"
-            // onclick="if (confirm('确认要开始关注 SoulGem？'))
-            // { location.href = '/follow/209351?once=61676'; }" class="super special button">
+        private fun isBlockByHtml(html: String) = Regex("un(?=block/\\d{1,8}\\?t=)").containsMatchIn(html)
 
-            val pFollow = Pattern.compile("follow/\\d{1,8}\\?once=\\d{1,10}")
-            val matcher = pFollow.matcher(html)
-            if (matcher.find()) {
-                return matcher.group()
-            }
-            return null
-        }
+        /**
+         * @param html
+         * <input type="button" value="Block" onclick="if (confirm('确认要屏蔽 SoulGem？'))
+         *   { location.href = '/block/209351?t=1490028444'; }" class="super normal button">
+         * *
+         * @return the whole path url
+         */
+        private fun parseToBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
 
         // 设置渐变的动画
         fun startAlphaAnimation(v: View, duration: Long, visibility: Int) {

@@ -73,15 +73,17 @@ class NodeFavorFragment : Fragment() {
                 val nodeModels = NetManager.parseToNode(response.body()!!.string())
                 if (nodeModels.isEmpty()) {
                     activity.runOnUiThread {
+                        adapter.clear()
+                        adapter.notifyDataSetChanged()
                         flContainer.showNoContent()
                         swipe.isRefreshing = false
                     }
                     return
                 }
-
                 adapter.clear()
                 adapter.addAll(nodeModels)
                 activity.runOnUiThread {
+                    flContainer.showNoContent(false)
                     adapter.notifyDataSetChanged()
                     swipe.isRefreshing = false
                 }
