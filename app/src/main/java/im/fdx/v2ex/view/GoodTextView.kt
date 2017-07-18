@@ -19,8 +19,8 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
-import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.dp2px
 
 
@@ -30,7 +30,7 @@ import im.fdx.v2ex.utils.extensions.dp2px
  */
 class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
-    var bestWidth = ViewUtil.screenSize[1] - 36.dp2px()
+    var bestWidth = 0
 
     var popupListener: Popup.PopupListener? = null
 
@@ -42,9 +42,11 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-        bestWidth = width
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+        XLog.tag(TAG).e("view width: $width")
+        if (bestWidth == 0)
+            bestWidth = width
     }
 
     @Suppress("DEPRECATION")
@@ -131,7 +133,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
         override fun getDrawable(source: String): Drawable {
             val bitmapHolder = BitmapHolder()
-            Log.i(TAG, " Image url: " + source)
+            Log.i(TAG, " begin getDrawable, Image url: " + source)
 
             val target = object : SimpleTarget<Drawable>() {
                 override fun onResourceReady(drawable: Drawable, transition: Transition<in Drawable>?) {
@@ -158,7 +160,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
                     bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
                     bitmapHolder.setDrawable(drawable)
                     this@GoodTextView.text = this@GoodTextView.text
-                    invalidate()
+                    Log.i(TAG, " end getDrawable, Image height: ${drawable.intrinsicHeight}, ${drawable.intrinsicWidth}, $targetHeight,$targetWidth")
                 }
             }
             targetList.add(target)
