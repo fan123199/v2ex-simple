@@ -120,10 +120,10 @@ class MemberActivity : AppCompatActivity() {
             mTvWebsite.setOnClickListener(listener)
         }
 
-        setUpToolbar()
-
+        val upToolbar = setUpToolbar()
 
         username = getName()
+        upToolbar.title = username
         val tabLayout: TabLayout = findViewById(R.id.tl_member)
         val viewpager: ViewPager = findViewById(R.id.viewpager)
         viewpager.adapter = MemberViewpagerAdapter(fragmentManager, username!!)
@@ -135,9 +135,10 @@ class MemberActivity : AppCompatActivity() {
 
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toFloat() / maxScroll.toFloat()
-            handleAlphaOnTitle(percentage)
+            when (percentage) {
+                in 0f..1f -> constraintLayout.alpha = 1 - percentage
+            }
         }
-
         getData()
     }
 
@@ -148,18 +149,11 @@ class MemberActivity : AppCompatActivity() {
         else -> "null"
     }
 
-    private fun handleAlphaOnTitle(percentage: Float) {
-        when (percentage) {
-            in 0f..1f -> constraintLayout.alpha = 1 - percentage
-        }
-    }
-
     private fun getData() {
         val urlUserInfo = API_USER + "?username=" + username  //Livid's profile
         collapsingToolbarLayout.title = username
         urlTopic = "$API_TOPIC?username=$username"
         Log.i(TAG, "$urlUserInfo: \t$urlTopic")
-        //// TODO: 2017/3/20 可以改成一步，分析下性能
         getUserInfoAPI(urlUserInfo)
         getBlockAndFollowWeb()
     }
@@ -310,7 +304,6 @@ class MemberActivity : AppCompatActivity() {
             else -> View.GONE
         }
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_member, menu)

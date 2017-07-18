@@ -19,7 +19,9 @@ import org.jetbrains.anko.startActivity
  * Created by fdx on 2017/7/15.
  * fdx will maintain it
  */
-class ReplyAdapter(val activity: Activity, var list: MutableList<MemberReplyModel> = mutableListOf()) : RecyclerView.Adapter<ReplyAdapter.ReplyViewHolder>() {
+class ReplyAdapter(val activity: Activity,
+                   var list: MutableList<MemberReplyModel> = mutableListOf())
+    : RecyclerView.Adapter<ReplyAdapter.ReplyViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
             ReplyViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.item_reply_member, parent, false))
 
@@ -27,13 +29,12 @@ class ReplyAdapter(val activity: Activity, var list: MutableList<MemberReplyMode
 
         val reply = list[position]
         holder.tvTitle.text = reply.topic.title
-        holder.tvContent.setGoodText(reply.content)
+        holder.tvContent.setGoodText(reply.content, true)
         holder.tvTime.text = TimeUtil.getRelativeTime(reply.create)
 
         holder.itemView.setOnClickListener {
             activity.startActivity<DetailsActivity>(Keys.KEY_TOPIC_ID to reply.topic.id)
         }
-
     }
 
 

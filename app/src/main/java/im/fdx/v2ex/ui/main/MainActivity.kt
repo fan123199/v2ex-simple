@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG || true) {
             navigationView.menu.removeItem(nav_testNotify)
             navigationView.menu.removeItem(R.id.nav_testMenu2)
         }

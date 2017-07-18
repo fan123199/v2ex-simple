@@ -22,6 +22,10 @@ class DiffCallback(val oldList: List<BaseModel>, val newList: List<BaseModel>) :
     override fun getOldListSize() = oldList.size
     override fun getNewListSize() = newList.size
 
+
+    /**
+     * 有点问题，GoodText不加载图片
+     */
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         if (oldList[oldItemPosition] is TopicModel && newList[newItemPosition] is TopicModel) {
             return (oldList[oldItemPosition] as TopicModel).replies == (newList[newItemPosition] as TopicModel).replies &&
@@ -30,5 +34,12 @@ class DiffCallback(val oldList: List<BaseModel>, val newList: List<BaseModel>) :
             return (oldList[oldItemPosition] as ReplyModel).thanks == (newList[newItemPosition] as ReplyModel).thanks &&
                     (oldList[oldItemPosition] as ReplyModel).isThanked == (newList[newItemPosition] as ReplyModel).isThanked
         else return false
+    }
+
+    /*
+    // TODO: 2017/7/18 高级用法，可用bundle 然后在onBindViewHolder（xx,xx, payload）中，复写，太多了~~
+     */
+    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        return super.getChangePayload(oldItemPosition, newItemPosition)
     }
 }

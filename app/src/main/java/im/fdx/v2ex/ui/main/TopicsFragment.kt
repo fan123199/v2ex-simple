@@ -138,7 +138,7 @@ class TopicsFragment : Fragment() {
                 .get()
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                XLog.tag("TopicFragment").e("error OK")
+                e.printStackTrace()
                 handler.sendEmptyMessage(MSG_FAILED)
             }
 
@@ -153,7 +153,7 @@ class TopicsFragment : Fragment() {
                 val html = Jsoup.parse(response.body()?.string())
                 val topicList = NetManager.parseTopicLists(html, NetManager.Source.FROM_HOME)
 
-                XLog.i("TOPICS" + topicList)
+                XLog.tag(TAG).v("TOPICS: $topicList")
                 if (topicList.isEmpty()) {
                     activity.runOnUiThread {
                         flContainer.showNoContent()

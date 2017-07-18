@@ -112,7 +112,7 @@
 
     <im.fdx.v2ex.view.GoodTextView
         android:id="@+id/tv_content"
-        style="@style/contentStyle"
+        style="@style/VText.ContentStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

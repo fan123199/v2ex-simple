@@ -212,8 +212,8 @@ object NetManager {
                 !smallItem.contains("最后回复") -> -1L
                 else -> {
                     TimeUtil.toUtcTime(when (source) {
-                        FROM_HOME, FROM_MEMBER -> smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[2]
-                        FROM_NODE -> smallItem.split("•".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+                        FROM_HOME, FROM_MEMBER -> smallItem.split("•")[2]
+                        FROM_NODE -> smallItem.split("•")[1]
                     })
                 }
             }

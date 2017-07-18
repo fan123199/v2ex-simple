@@ -50,7 +50,7 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
     }
 
     @Suppress("DEPRECATION")
-    fun setGoodText(text: String?) {
+    fun setGoodText(text: String?, removeClick: Boolean? = false) {
         targetList.clear()
         if (text.isNullOrEmpty()) {
             return
@@ -112,7 +112,9 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
         setText(htmlSpannable)
         //不设置这一句，点击图片会跑动。
-        movementMethod = LinkMovementMethod.getInstance()
+        when (removeClick) {
+            false -> movementMethod = LinkMovementMethod.getInstance()
+        }
     }
 
     private inner class BitmapHolder : BitmapDrawable() {

@@ -96,7 +96,9 @@ object TimeUtil {
                 }
             }
         } catch (e1: NumberFormatException) {
-            XLog.tag("TimeUtil").e("time str number cast error: $theTime, $timeStr")
+            XLog.tag("TimeUtil").e("NumberFormatException error: $theTime, $timeStr")
+        } catch (e2: StringIndexOutOfBoundsException) {
+            XLog.tag("TimeUtil").e(" StringIndexOutOfBoundsException error: $theTime, $timeStr")
         } catch (e2: ParseException) {
             XLog.tag("TimeUtil").e("time str parse error: $theTime")
             try {

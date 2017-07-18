@@ -260,11 +260,11 @@ class DetailsActivity : AppCompatActivity() {
                         handler.sendEmptyMessage(MSG_ERROR_AUTH)
                         return
                     }
-                    XLog.tag("DetailsActivity").d("verify" + token!!)
+                    XLog.tag("DetailsActivity").d("verifyCode is :" + token!!)
                     mAdapter.verifyCode = token!!
                     isFavored = parseIsFavored(body)
 
-                    XLog.tag("DetailsActivity").d("isfavored" + isFavored.toString())
+                    XLog.tag("DetailsActivity").d("is favored: " + isFavored.toString())
                     runOnUiThread {
                         if (isFavored) {
                             mMenu?.findItem(R.id.menu_favor)?.setIcon(R.drawable.ic_favorite_white_24dp)

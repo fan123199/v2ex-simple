@@ -51,11 +51,12 @@ fun FrameLayout.showNoContent(boolean: Boolean = true) {
 /**
  * 为每个Activity设置基本toolbar，简化代码
  */
-fun AppCompatActivity.setUpToolbar(title: String? = "") {
+fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
 
     val toolbar: Toolbar = findViewById(R.id.toolbar)
     toolbar.title = title
     setSupportActionBar(toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     toolbar.setNavigationOnClickListener { onBackPressed() }
+    return toolbar
 }

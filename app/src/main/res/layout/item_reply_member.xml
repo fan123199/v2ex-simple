@@ -5,49 +5,52 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="16dp"
-    android:paddingBottom="16dp"
-    android:orientation="vertical">
+    android:background="@color/white"
+    android:foreground="?selectableItemBackground"
+    android:orientation="vertical"
+    android:paddingBottom="12dp"
+    android:paddingTop="12dp">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-
-        tools:text="我回复了abcdef"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        style="@style/Theme.V2ex.TitleTextStyle"
         app:layout_constraintEnd_toStartOf="@+id/tv_create"
         app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginEnd="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="8dp"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="我回为什么了abcdef"/>
 
     <im.fdx.v2ex.view.GoodTextView
         android:id="@+id/tv_content_reply"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:text="我就是内容"
+        android:textAppearance="@style/VText.Hint"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_title"
-        />
+        tools:text="我就是内容"/>
 
     <TextView
         android:id="@+id/tv_create"
-        android:layout_width="36dp"
+        android:layout_width="72dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginStart="8dp"
-        android:text="TextView"
+        android:gravity="right"
+        android:layout_marginStart="0dp"
         android:maxLines="1"
+        android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_title"
-        app:layout_constraintTop_toTopOf="@+id/tv_title"
-        />
+        app:layout_constraintTop_toTopOf="@+id/tv_title"/>
 </android.support.constraint.ConstraintLayout>

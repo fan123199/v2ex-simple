@@ -3,6 +3,7 @@ package im.fdx.v2ex.ui.member
 import android.app.Fragment
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -34,28 +35,24 @@ class ReplyFragment : Fragment() {
     private lateinit var adapter: ReplyAdapter //
     private lateinit var flcontainer: FrameLayout
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val vg: View = inflater.inflate(R.layout.fragment_reply, container, false)
-
-        flcontainer = vg.findViewById(R.id.fl_container)
-
-        return vg
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
+            = inflater.inflate(R.layout.fragment_reply, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        flcontainer = view.findViewById(R.id.fl_container)
         swipeRefreshLayout = view.findViewById(R.id.swipe_container)
         swipeRefreshLayout.setColorSchemeResources(R.color.accent_orange)
         swipeRefreshLayout.setOnRefreshListener { getTopicsByUsernameAPI() }
 
-        val rv: RecyclerView = view.findViewById(R.id.rv_container)
+        val rvReply: RecyclerView = view.findViewById(R.id.rv_container)
         val layoutManager = LinearLayoutManager(activity)
 
-        rv.layoutManager = layoutManager
-        adapter = ReplyAdapter(activity)
-        rv.adapter = adapter
+        rvReply.layoutManager = layoutManager
+        rvReply.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
 
+        adapter = ReplyAdapter(activity)
+        rvReply.adapter = adapter
 
         swipeRefreshLayout.isRefreshing = true
         getTopicsByUsernameAPI()

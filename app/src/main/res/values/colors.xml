@@ -38,7 +38,7 @@
 
     <color name="nav_icon">@color/black54</color>
 
-    <color name="divider_color">#e0e0e0</color>
+    <color name="divider_color">#d5d5d5</color>
     <color name="transparent">#00ffffff</color>
 
 </resources>
