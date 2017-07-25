@@ -16,6 +16,7 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
@@ -42,7 +43,7 @@ class ReplyFragment : Fragment() {
 
         flcontainer = view.findViewById(R.id.fl_container)
         swipeRefreshLayout = view.findViewById(R.id.swipe_container)
-        swipeRefreshLayout.setColorSchemeResources(R.color.accent_orange)
+        swipeRefreshLayout.initTheme()
         swipeRefreshLayout.setOnRefreshListener { getTopicsByUsernameAPI() }
 
         val rvReply: RecyclerView = view.findViewById(R.id.rv_container)

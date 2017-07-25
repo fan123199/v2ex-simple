@@ -28,7 +28,9 @@ import im.fdx.v2ex.utils.extensions.dp2px
  * Created by fdx on 2016/9/11.
  * fdx will maintain it
  */
-class GoodTextView : android.support.v7.widget.AppCompatTextView {
+class GoodTextView @JvmOverloads constructor(
+        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+) : android.support.v7.widget.AppCompatTextView(context, attrs, defStyleAttr) {
 
     var bestWidth = 0
 
@@ -36,11 +38,6 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
 
     //防止 Picasso，将target gc了， 导致图片无法显示
     var targetList: MutableList<SimpleTarget<Drawable>> = mutableListOf()
-
-    constructor(context: Context) : super(context)
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
-
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -147,19 +144,24 @@ class GoodTextView : android.support.v7.widget.AppCompatTextView {
                         drawable.intrinsicWidth > bestWidth || drawable.intrinsicWidth > bestWidth * 0.4 -> {
                             targetWidth = bestWidth
                             targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
+                            drawable.setBounds(0, 0, targetWidth, targetHeight)
+                            bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
                         }
                         drawable.intrinsicWidth < smallestWidth -> {
                             targetWidth = smallestWidth
                             targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
+                            drawable.setBounds(0, 0, targetWidth, targetHeight)
+                            bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
                         }
 
                         else -> {
                             targetWidth = drawable.intrinsicWidth
                             targetHeight = drawable.intrinsicHeight
+                            drawable.setBounds((bestWidth - targetWidth) / 2, 0, (targetWidth + bestWidth) / 2, targetHeight)
+                            bitmapHolder.setBounds(0, 0, bestWidth, targetHeight)
                         }
                     }
-                    drawable.setBounds(0, 0, targetWidth, targetHeight)
-                    bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
+
                     bitmapHolder.setDrawable(drawable)
                     this@GoodTextView.text = this@GoodTextView.text
                     Log.i(TAG, " end getDrawable, Image height: ${drawable.intrinsicHeight}, ${drawable.intrinsicWidth}, $targetHeight,$targetWidth")

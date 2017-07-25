@@ -29,18 +29,25 @@ class TopicsRVAdapter(private val mContext: Context)
 
     var isNodeClickable = true
 
-
-    //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
-    // 20150916,可以对View进行Layout的设置。
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-        return MainViewHolder(mInflater.inflate(R.layout.item_topic_view, parent, false))
-    }
-
     fun updateItems(newItems: List<TopicModel>) {
         val diffResult = DiffUtil.calculateDiff(DiffCallback(mTopicList, newItems))
         diffResult.dispatchUpdatesTo(this)
         mTopicList.clear()
         mTopicList.addAll(newItems)
+    }
+
+    fun addAllItems(newItems: List<TopicModel>) {
+        mTopicList.clear()
+        mTopicList.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+
+
+    //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
+    // 20150916,可以对View进行Layout的设置。
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
+        return MainViewHolder(mInflater.inflate(R.layout.item_topic_view, parent, false))
     }
 
     //Done 对TextView进行赋值, 也就是操作

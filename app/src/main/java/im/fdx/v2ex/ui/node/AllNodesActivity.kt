@@ -19,6 +19,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.utils.extensions.dealError
+import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.stop
 import okhttp3.Call
 import okhttp3.Callback
@@ -52,7 +53,7 @@ class AllNodesActivity : AppCompatActivity() {
 
         val rvNode: RecyclerView = findViewById(R.id.rv_node)
         swipe = findViewById(R.id.swipe_container)
-        swipe.setColorSchemeResources(R.color.primary)
+        swipe.initTheme()
         swipe.setOnRefreshListener { getAllNodes() }
         swipe.isRefreshing = true
         getAllNodes()

@@ -9,7 +9,7 @@
     app:cardElevation="3dp"
     app:cardCornerRadius="3dp"
     android:layout_margin="4dp"
-    app:cardBackgroundColor="@color/white">
+    app:cardBackgroundColor="@color/nav_background">
 
     <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

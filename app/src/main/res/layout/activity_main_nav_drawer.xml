@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    tools:context="im.fdx.v2ex.ui.main.MainActivity"
     tools:openDrawer="start">
 
     <include
@@ -20,7 +21,8 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:background="@color/white"
+        android:foreground="@color/nav_fg"
+        android:background="@color/nav_background"
         app:itemTextAppearance="@style/VText"
         app:itemIconTint="@color/nav_icon"
         app:headerLayout="@layout/nav_header_nav_drawer"

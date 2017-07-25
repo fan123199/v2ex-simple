@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -22,8 +23,8 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
-import im.fdx.v2ex.view.SmoothLayoutManager
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -58,6 +59,8 @@ class TopicsFragment : Fragment() {
         setHasOptionsMenu(true)
     }
 
+    lateinit var smoothLayoutManager: LinearLayoutManager
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_tab_article, container, false)
@@ -70,7 +73,8 @@ class TopicsFragment : Fragment() {
             else -> "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
         }
         mSwipeLayout = layout.findViewById(R.id.swipe_container)
-        mSwipeLayout.setColorSchemeResources(R.color.accent_orange)
+
+        mSwipeLayout.initTheme()
         mSwipeLayout.setOnRefreshListener { getTopics(mRequestURL) }
 
         mSwipeLayout.isRefreshing = true
@@ -79,7 +83,8 @@ class TopicsFragment : Fragment() {
 
         //找出recyclerview,并赋予变量 //fdx最早的水平
         mRecyclerView = layout.findViewById(R.id.rv_container)
-        mRecyclerView.layoutManager = SmoothLayoutManager(activity)
+        smoothLayoutManager = LinearLayoutManager(activity)
+        mRecyclerView.layoutManager = smoothLayoutManager
 
         fab = activity.findViewById(R.id.fab_main)
         if (fab != null)
@@ -163,6 +168,7 @@ class TopicsFragment : Fragment() {
                 }
                 runOnUiThread {
                     mAdapter?.updateItems(topicList)
+                    smoothLayoutManager.scrollToPosition(0)
                     mSwipeLayout.isRefreshing = false
                 }
             }

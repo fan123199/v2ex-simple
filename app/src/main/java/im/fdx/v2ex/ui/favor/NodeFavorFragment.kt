@@ -14,6 +14,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.node.AllNodesAdapter
+import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
@@ -41,7 +42,7 @@ class NodeFavorFragment : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(activity, 3)
         swipe = view.findViewById(R.id.swipe_container)
-        swipe.setColorSchemeResources(R.color.accent_orange)
+        swipe.initTheme()
         swipe.setOnRefreshListener { getNode() }
 
         flContainer = view.findViewById(R.id.fl_container)

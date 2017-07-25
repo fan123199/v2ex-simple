@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/white"
+    android:background="@color/item_background"
     android:layout_height="wrap_content">
 
 
@@ -86,7 +86,7 @@
         android:id="@+id/divider"
         layout="@layout/divider"
         android:layout_width="0dp"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:layout_alignParentEnd="true"
         android:layout_alignStart="@+id/tv_replier"
         android:layout_below="@id/tv_reply_content"

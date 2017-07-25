@@ -12,6 +12,7 @@ import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.showNoContent
 import im.fdx.v2ex.utils.extensions.toast
@@ -38,7 +39,7 @@ class NotificationActivity : AppCompatActivity() {
 
         flContainer = findViewById(R.id.fl_container)
         mSwipe = findViewById(R.id.swipe_container)
-        mSwipe.setColorSchemeResources(R.color.primary)
+        mSwipe.initTheme()
         mSwipe.setOnRefreshListener { fetchNotification() }
 
         rvNotification = findViewById(R.id.rv_container)

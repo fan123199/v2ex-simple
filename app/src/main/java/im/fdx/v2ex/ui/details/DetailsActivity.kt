@@ -31,6 +31,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.*
@@ -152,7 +153,7 @@ class DetailsActivity : AppCompatActivity() {
         rvDetail.adapter = mAdapter
 
         mSwipe = findViewById(R.id.swipe_details)
-        mSwipe.setColorSchemeResources(R.color.accent_orange)
+        mSwipe.initTheme()
         mSwipe.setOnRefreshListener { getRepliesPageOne(mTopicId, false) }
 
         ivSend = findViewById(R.id.iv_send)

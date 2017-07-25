@@ -3,9 +3,11 @@ package im.fdx.v2ex
 import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import android.support.v7.app.AppCompatDelegate.*
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.Keys
+
 
 /**
  * Created by fdx on 2015/8/16.
@@ -20,8 +22,18 @@ class MyApp : Application() {
         }
     }
 
+    init {
+
+    }
+
     lateinit var mPrefs: SharedPreferences
     internal var isLogin = false
+
+
+    fun isNightModeOn(): Boolean {
+        return mPrefs.getBoolean("NIGHT_MODE", false)
+    }
+
 
     fun setLogin(login: Boolean) {
         isLogin = login
@@ -37,12 +49,13 @@ class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+        PreferenceManager.setDefaultValues(this, R.xml.preference, false)
+        setDefaultNightMode(if (isNightModeOn()) MODE_NIGHT_YES else MODE_NIGHT_NO)
         XLog.init(when {
             BuildConfig.DEBUG -> LogLevel.ALL
             else -> LogLevel.NONE
         })
-        PreferenceManager.setDefaultValues(this, R.xml.preference, false)
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         isLogin = mPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
         XLog.tag("MyApp").d("onCreate\nisLogin:$isLogin")
     }

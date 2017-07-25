@@ -1,6 +1,8 @@
 package im.fdx.v2ex.utils.extensions
 
+import android.app.Activity
 import android.support.v4.content.ContextCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
@@ -59,4 +61,15 @@ fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     toolbar.setNavigationOnClickListener { onBackPressed() }
     return toolbar
+}
+
+
+fun Activity.initSwipe(swipe: SwipeRefreshLayout) {
+    swipe.setColorSchemeResources(R.color.accent_orange)
+    swipe.setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
+}
+
+fun SwipeRefreshLayout.initTheme() {
+    setColorSchemeResources(R.color.accent_orange)
+    setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
 }

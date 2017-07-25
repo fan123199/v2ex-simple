@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Theme.V2ex" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.V2ex" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
@@ -90,28 +90,28 @@
 
     <style name="ExpendedCollapseTitle">
         <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/toolbar_text</item>
     </style>
 
     <style name="CollapseTitle">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/toolbar_text</item>
         <item name="android:textSize">20sp</item>
     </style>
 
     <style name="Theme.V2ex.TitleTextStyle">
-        <item name="android:textColor">@color/black87</item>
+        <item name="android:textColor">@color/title_text</item>
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
     </style>
 
     <style name="VText">
-        <item name="android:textColor">@color/black87</item>
+        <item name="android:textColor">@color/title_text</item>
         <item name="android:textSize">@dimen/text_size_medium</item>
     </style>
 
 
     <style name="VText.ToolbarStyle">
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/toolbar_text</item>
         <item name="android:textSize">@dimen/text_size_large</item>
         <item name="android:textStyle">bold</item>
     </style>

@@ -26,9 +26,7 @@
         <item
             android:id="@+id/nav_testNotify"
             android:title="Test Notify " />
-        <item
-            android:id="@+id/nav_testMenu2"
-            android:title="nav_testMenu2 " />
+
 
     </group>
 
@@ -48,6 +46,10 @@
             android:id="@+id/nav_setting"
             android:icon="@drawable/ic_settings_24dp"
             android:title="@string/settings" />
+
+        <item
+            android:id="@+id/nav_change_daylight"
+            android:title="nav_testMenu2 "/>
 
     </group>
 

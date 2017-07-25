@@ -26,6 +26,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.stop
 import im.fdx.v2ex.utils.extensions.toast
@@ -123,8 +124,7 @@ class NodeActivity : AppCompatActivity() {
         rvTopicsOfNode.layoutManager = LinearLayoutManager(this)
 
         mSwipeRefreshLayout = findViewById(R.id.swipe_of_node)
-
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent_orange)
+        mSwipeRefreshLayout.initTheme()
         mSwipeRefreshLayout.setOnRefreshListener { getInfoAndTopics(nodeName) }
         parseIntent(intent)
 

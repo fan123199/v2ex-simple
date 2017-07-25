@@ -17,16 +17,17 @@ import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
-import im.fdx.v2ex.R.id.nav_testNotify
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
@@ -161,6 +162,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fab.setOnClickListener { startActivity(Intent(this@MainActivity, NewTopicActivity::class.java)) }
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 
+
+        val ivMode = navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
+
+        ivMode.setOnClickListener {
+            if (sharedPreferences.getBoolean("NIGHT_MODE", false)) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                sharedPreferences.edit().putBoolean("NIGHT_MODE", false).apply()
+                recreate()
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                sharedPreferences.edit().putBoolean("NIGHT_MODE", true).apply()
+                recreate()
+            }
+        }
+
         if (MyApp.get().isLogin()) {
             showIcon(true)
             val username = sharedPreferences.getString(Keys.KEY_USERNAME, "")
@@ -198,8 +214,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         })
 
         if (!BuildConfig.DEBUG || true) {
-            navigationView.menu.removeItem(nav_testNotify)
-            navigationView.menu.removeItem(R.id.nav_testMenu2)
+            navigationView.menu.removeItem(R.id.nav_testNotify)
+            navigationView.menu.removeItem(R.id.nav_change_daylight)
         }
 
         vitent = Intent(this@MainActivity, UpdateService::class.java)
@@ -299,7 +315,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_daily -> dailyCheck()
             R.id.nav_node -> startActivity<AllNodesActivity>()
             R.id.nav_favor -> startActivity<FavorActivity>()
-            R.id.nav_testMenu2 -> startActivity<WebViewActivity>()
+            R.id.nav_change_daylight -> startActivity<WebViewActivity>()
             R.id.nav_testNotify -> {
                 val photoPickerIntent = Intent(Intent.ACTION_PICK)
                 photoPickerIntent.type = "image/*"
