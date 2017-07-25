@@ -4,7 +4,7 @@
 
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/primary</item>
+        <item name="colorAccent">@color/accent_orange</item>
         <item name="android:textColorLink">@color/primary</item>
         <item name="android:statusBarColor">@color/primary</item>
         <item name="android:listDivider">@drawable/divider</item>
@@ -22,7 +22,14 @@
     <style name="Theme.V2ex.FixStatus">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 
+    <style name="Theme.V2ex.FixCursor">
+        <item name="colorAccent">@color/white</item>
+    </style>
+
+    <style name="Theme.V2ex.Settings">
+        <item name="colorAccent">@color/primary</item>
     </style>
 
     <style name="Theme.V2ex.ForEdit">

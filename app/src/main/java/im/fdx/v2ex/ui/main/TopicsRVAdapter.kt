@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.MyCallback
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
@@ -30,8 +31,11 @@ class TopicsRVAdapter(private val mContext: Context)
     var isNodeClickable = true
 
     fun updateItems(newItems: List<TopicModel>) {
+
+        val callback = MyCallback()
+        callback.adapter = this
         val diffResult = DiffUtil.calculateDiff(DiffCallback(mTopicList, newItems))
-        diffResult.dispatchUpdatesTo(this)
+        diffResult.dispatchUpdatesTo(callback)
         mTopicList.clear()
         mTopicList.addAll(newItems)
     }

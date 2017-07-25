@@ -85,7 +85,6 @@ class TopicsFragment : Fragment() {
         mRecyclerView = layout.findViewById(R.id.rv_container)
         smoothLayoutManager = LinearLayoutManager(activity)
         mRecyclerView.layoutManager = smoothLayoutManager
-
         fab = activity.findViewById(R.id.fab_main)
         if (fab != null)
             mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -168,7 +167,6 @@ class TopicsFragment : Fragment() {
                 }
                 runOnUiThread {
                     mAdapter?.updateItems(topicList)
-                    smoothLayoutManager.scrollToPosition(0)
                     mSwipeLayout.isRefreshing = false
                 }
             }

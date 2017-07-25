@@ -95,7 +95,7 @@ class AllNodesActivity : AppCompatActivity() {
             override fun onQueryTextSubmit(query: String) = false
             override fun onQueryTextChange(newText: String): Boolean {
                 mAdapter.filter(newText)
-                return false
+                return true
             }
         })
         return true
