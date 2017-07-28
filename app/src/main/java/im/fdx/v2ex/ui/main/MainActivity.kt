@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 }
                 Keys.ACTION_LOGOUT -> {
                     showIcon(false)
-                    removeUserInfo()
+                    setUserInfo(null, null)
                     fab.hide()
                     mAdapter?.initFragment()
                     mAdapter?.notifyDataSetChanged()
@@ -239,26 +239,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
 
-    private fun setUserInfo(username: String, avatar: String) {
+    private fun setUserInfo(username: String?, avatar: String?) {
         val tvMyName: TextView = navigationView.getHeaderView(0).findViewById(R.id.tv_my_username)
-        tvMyName.text = username
         val ivMyAvatar: CircleImageView = navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar)
+        tvMyName.text = username
+        ivMyAvatar.load(avatar)
+        ivMyAvatar.visibility = if (avatar == null) View.INVISIBLE else View.VISIBLE
         ivMyAvatar.setOnClickListener {
             val intent = Intent(this@MainActivity, MemberActivity::class.java)
             intent.putExtra(Keys.KEY_USERNAME, username)
             startActivity(intent)
         }
 
-        ivMyAvatar.load(avatar)
-
-    }
-
-    private fun removeUserInfo() {
-        val tvMyName: TextView = findViewById(R.id.tv_my_username)
-        tvMyName.text = ""
-        val imageView: CircleImageView = findViewById(R.id.iv_my_avatar)
-        imageView.setImageDrawable(null)
-        imageView.visibility = View.INVISIBLE
 
     }
 

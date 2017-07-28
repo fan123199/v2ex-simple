@@ -190,7 +190,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 val member = myGson.fromJson(body, MemberModel::class.java)
                 avatar = member.avatarLargeUrl
 
-                mSharedPreference!!.edit().putString("avatar", avatar).apply()
+                mSharedPreference!!.edit().putString(Keys.KEY_AVATAR, avatar).apply()
                 val intent = Intent(Keys.ACTION_LOGIN).apply {
                     putExtra(Keys.KEY_USERNAME, username)
                     putExtra(Keys.KEY_AVATAR, avatar)
