@@ -20,6 +20,7 @@
 -dontwarn okio.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault
+-dontwarn org.greenrobot.greendao.**
 
 -keep class org.jsoup.**
 
@@ -32,3 +33,4 @@
 -keep class * implements android.os.Parcelable {
   *;
 }
+

@@ -5,13 +5,13 @@ apply plugin: 'org.greenrobot.greendao'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.0'
+    buildToolsVersion '26.0.1'
     defaultConfig {
         applicationId "im.fdx.v2ex"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 16
-        versionName "2.0.6"
+        versionCode 17
+        versionName "2.0.7"
 
     }
     lintOptions {
