@@ -17,6 +17,8 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.network.NetManager.Source.FROM_MEMBER
+import im.fdx.v2ex.network.NetManager.Source.FROM_NODE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.utils.EndlessRecyclerOnScrollListener
 import im.fdx.v2ex.utils.Keys
@@ -60,23 +62,27 @@ class TopicsFragment : Fragment() {
 
     lateinit var smoothLayoutManager: LinearLayoutManager
     lateinit var mScrollListener: EndlessRecyclerOnScrollListener
-    var currentMode = 0
+    var currentMode = NetManager.Source.FROM_HOME
     var totalPage = 0
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_tab_article, container, false)
-        val args = arguments
+        val args: Bundle? = arguments
         when {
-            args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
-            args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = "$HTTPS_V2EX_BASE/my/following"
-            args.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
-            args.getString(Keys.KEY_USERNAME) != null -> {
-                currentMode = USER_MODE
-                mRequestURL = "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
+            args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
+            args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = "$HTTPS_V2EX_BASE/my/following"
+            args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
+            args?.getString(Keys.KEY_USERNAME) != null -> {
+                currentMode = FROM_MEMBER
+                mRequestURL = "$HTTPS_V2EX_BASE/member/${args?.getString(Keys.KEY_USERNAME)}/topics"
             }
-            else -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
+            args?.getString(Keys.KEY_NODE_NAME) != null -> {
+                currentMode = FROM_NODE
+                mRequestURL = "$HTTPS_V2EX_BASE/go/${args?.getString(Keys.KEY_NODE_NAME)}"
+            }
+            else -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args?.getString(Keys.KEY_TAB)}"
         }
 
         mSwipeLayout = layout.findViewById(R.id.swipe_container)
@@ -101,8 +107,10 @@ class TopicsFragment : Fragment() {
                 getTopics("$mRequestURL?p=$current_page")
             }
         }
-        if (currentMode == USER_MODE) {
-            mRecyclerView.addOnScrollListener(mScrollListener)
+        when (currentMode) {
+            FROM_MEMBER, FROM_NODE -> mRecyclerView.addOnScrollListener(mScrollListener)
+            else -> {
+            }
         }
 
 
@@ -138,10 +146,14 @@ class TopicsFragment : Fragment() {
         mAdapter = TopicsRVAdapter(activity)
         mAdapter.isNodeClickable = false
         mRecyclerView.adapter = mAdapter //大工告成
+        //大工告成
 
         flContainer = layout.findViewById(R.id.fl_container)
         return layout
     }
+
+//    private val currentPage = 0
+
     private fun getTopics(requestURL: String) {
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
@@ -164,7 +176,7 @@ class TopicsFragment : Fragment() {
 
                 val bodyStr = response.body()?.string()
                 val html = Jsoup.parse(bodyStr)
-                val topicList = NetManager.parseTopicLists(html, NetManager.Source.FROM_HOME)
+                val topicList = NetManager.parseTopicLists(html, currentMode)
 
                 if (totalPage == 0) {
                     totalPage = getPage(bodyStr!!)
@@ -176,10 +188,14 @@ class TopicsFragment : Fragment() {
                     if (topicList.isEmpty()) {
                         flContainer.showNoContent()
                     } else {
-                        if (currentMode == USER_MODE) {
-                            mAdapter.addAllItems(topicList)
-                        } else {
-                            mAdapter.updateItems(topicList)
+                        when (currentMode) {
+                            FROM_MEMBER, FROM_NODE ->
+                                if (mScrollListener.current_page == 1) {
+                                    mAdapter.updateItems(topicList)
+                                } else {
+                                    mAdapter.addAllItems(topicList)
+                                }
+                            else -> mAdapter.updateItems(topicList)
                         }
                     }
                     mSwipeLayout.isRefreshing = false
@@ -188,13 +204,8 @@ class TopicsFragment : Fragment() {
         })
     }
 
-    private fun getPage(bodyStr: String): Int {
-//        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8" onkeydown="if (event.keyCode == 13)
-//        location.href = '?p=' + this.value">
-        val number = Regex("(?<=max=\")\\d{1,4}")
-        return number.find(bodyStr)?.value?.toInt() ?: 0
-    }
-
+    //        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8"
+    private fun getPage(bodyStr: String) = Regex("(?<=max=\")\\d{1,8}").find(bodyStr)?.value?.toInt() ?: 0
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_refresh) {
@@ -212,7 +223,6 @@ class TopicsFragment : Fragment() {
         private val TAG = TopicsFragment::class.java.simpleName
         private val MSG_FAILED = 3
         private val MSG_GET_DATA_BY_OK = 1
-        const val USER_MODE = 1
     }
 
 }

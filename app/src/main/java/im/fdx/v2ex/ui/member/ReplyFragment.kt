@@ -124,14 +124,8 @@ class ReplyFragment : Fragment() {
 
     private var totalPage = 0
 
-    private fun getTotalPage(body: String): Int {
-
-        val re = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+")
-        val find = re.find(body)
-        return find?.value?.toInt() ?: 0
-
-
-    }
+    private fun getTotalPage(body: String)
+            = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+").find(body)?.value?.toInt() ?: 0
 
     private fun parseToRepliess(body: String?): List<MemberReplyModel>? {
         val list = mutableListOf<MemberReplyModel>()
