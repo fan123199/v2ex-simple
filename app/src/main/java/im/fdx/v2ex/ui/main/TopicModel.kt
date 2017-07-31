@@ -3,7 +3,7 @@ package im.fdx.v2ex.ui.main
 import android.os.Parcel
 import android.os.Parcelable
 import im.fdx.v2ex.model.BaseModel
-import im.fdx.v2ex.model.MemberModel
+import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.ui.node.NodeModel
 
 /**

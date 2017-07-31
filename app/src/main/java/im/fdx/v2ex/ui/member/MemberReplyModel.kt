@@ -9,7 +9,10 @@ import im.fdx.v2ex.ui.main.TopicModel
  * Created by fdx on 2017/7/16.
  * fdx will maintain it
  */
-data class MemberReplyModel(var topic: TopicModel = TopicModel(), var content: String? = null, var create: Long = 0L) : BaseModel(), Parcelable {
+data class MemberReplyModel(var id: String? = "",
+                            var topic: TopicModel = TopicModel(),
+                            var content: String? = null,
+                            var create: Long = 0L) : BaseModel(), Parcelable {
     override fun parse(): BaseModel? = null
 
     companion object {
@@ -20,6 +23,7 @@ data class MemberReplyModel(var topic: TopicModel = TopicModel(), var content: S
     }
 
     constructor(source: Parcel) : this(
+            source.readString(),
             source.readParcelable<TopicModel>(TopicModel::class.java.classLoader),
             source.readString(),
             source.readLong()
@@ -28,6 +32,7 @@ data class MemberReplyModel(var topic: TopicModel = TopicModel(), var content: S
     override fun describeContents() = 0
 
     override fun writeToParcel(dest: Parcel, flags: Int) {
+        dest.writeString(id)
         dest.writeParcelable(topic, 0)
         dest.writeString(content)
         dest.writeLong(create)

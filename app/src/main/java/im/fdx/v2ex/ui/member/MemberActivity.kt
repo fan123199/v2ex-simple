@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.member
 
 import android.annotation.SuppressLint
+import android.app.FragmentManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +12,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.TabLayout
+import android.support.v13.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -25,7 +27,6 @@ import com.elvishew.xlog.XLog
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
-import im.fdx.v2ex.model.MemberModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.API_TOPIC
@@ -34,6 +35,7 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
@@ -44,6 +46,7 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
+import org.jetbrains.anko.bundleOf
 import java.io.IOException
 import java.util.*
 
@@ -401,5 +404,19 @@ class MemberActivity : AppCompatActivity() {
             alphaAnimation.fillAfter = true
             v.startAnimation(alphaAnimation)
         }
+    }
+
+    inner class MemberViewpagerAdapter(fm: FragmentManager?, var username: String) : FragmentPagerAdapter(fm) {
+
+        val titles = arrayOf("主题", "评论")
+
+        override fun getItem(position: Int) = when (position) {
+            0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
+            else -> ReplyFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
+        }
+
+        override fun getCount() = 2
+        override fun getPageTitle(position: Int) = titles[position]
+
     }
 }

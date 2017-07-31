@@ -1,7 +1,8 @@
-package im.fdx.v2ex.model
+package im.fdx.v2ex.ui.member
 
 import android.os.Parcel
 import android.os.Parcelable
+import im.fdx.v2ex.model.BaseModel
 
 /**
  * Created by a708 on 16-1-16.

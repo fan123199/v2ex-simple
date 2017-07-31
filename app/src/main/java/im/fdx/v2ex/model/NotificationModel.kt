@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.member.MemberModel
 
 /**
  * Created by fdx on 2017/3/24.

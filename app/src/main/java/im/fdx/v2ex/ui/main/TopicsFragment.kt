@@ -1,8 +1,6 @@
 package im.fdx.v2ex.ui.main
 
-import android.animation.ValueAnimator
 import android.app.Fragment
-import android.graphics.Point
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.FloatingActionButton
@@ -13,8 +11,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
 import android.widget.FrameLayout
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
@@ -22,23 +18,26 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
+import im.fdx.v2ex.utils.EndlessRecyclerOnScrollListener
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import org.jetbrains.anko.runOnUiThread
+import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
 
 
 class TopicsFragment : Fragment() {
 
-    private var mAdapter: TopicsRVAdapter? = null
+    private lateinit var mAdapter: TopicsRVAdapter
     private lateinit var mSwipeLayout: SwipeRefreshLayout
     private lateinit var mRecyclerView: RecyclerView
-    private var fab: FloatingActionButton? = null
+    private var fab: FloatingActionButton? = null //有可能为空
     private lateinit var flContainer: FrameLayout
 
     private lateinit var mRequestURL: String
@@ -46,7 +45,7 @@ class TopicsFragment : Fragment() {
     internal var handler = Handler(Handler.Callback { msg ->
         when (msg.what) {
             MSG_GET_DATA_BY_OK -> {
-                mAdapter!!.notifyDataSetChanged()
+                mAdapter.notifyDataSetChanged()
                 mSwipeLayout.isRefreshing = false
             }
             MSG_FAILED -> mSwipeLayout.isRefreshing = false
@@ -60,20 +59,27 @@ class TopicsFragment : Fragment() {
     }
 
     lateinit var smoothLayoutManager: LinearLayoutManager
+    lateinit var mScrollListener: EndlessRecyclerOnScrollListener
+    var currentMode = 0
+    var totalPage = 0
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val layout = inflater.inflate(R.layout.fragment_tab_article, container, false)
         val args = arguments
-        mRequestURL = when {
-            args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> "$HTTPS_V2EX_BASE/my/topics"
-            args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> "$HTTPS_V2EX_BASE/my/following"
-            args.getString(Keys.KEY_TAB) == "recent" -> "$HTTPS_V2EX_BASE/recent"
-            args.getString(Keys.KEY_USERNAME) != null -> "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
-            else -> "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
+        when {
+            args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
+            args.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = "$HTTPS_V2EX_BASE/my/following"
+            args.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
+            args.getString(Keys.KEY_USERNAME) != null -> {
+                currentMode = USER_MODE
+                mRequestURL = "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
+            }
+            else -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
         }
-        mSwipeLayout = layout.findViewById(R.id.swipe_container)
 
+        mSwipeLayout = layout.findViewById(R.id.swipe_container)
         mSwipeLayout.initTheme()
         mSwipeLayout.setOnRefreshListener { getTopics(mRequestURL) }
 
@@ -85,30 +91,33 @@ class TopicsFragment : Fragment() {
         mRecyclerView = layout.findViewById(R.id.rv_container)
         smoothLayoutManager = LinearLayoutManager(activity)
         mRecyclerView.layoutManager = smoothLayoutManager
-        fab = activity.findViewById(R.id.fab_main)
+
+        mScrollListener = object : EndlessRecyclerOnScrollListener(smoothLayoutManager, mRecyclerView) {
+            override fun onCompleted() = toast(getString(R.string.no_more_data))
+
+            override fun onLoadMore(current_page: Int) {
+                mScrollListener.loading = true
+                mSwipeLayout.isRefreshing = true
+                getTopics("$mRequestURL?p=$current_page")
+            }
+        }
+        if (currentMode == USER_MODE) {
+            mRecyclerView.addOnScrollListener(mScrollListener)
+        }
+
+
         if (fab != null)
             mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
                 internal var isFabShowing = true
 
-                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-
-                    val animator = ValueAnimator.ofInt(100, 200, 300, 400)
-                    animator.duration = 1000
-                    val animation = TranslateAnimation(Animation.ABSOLUTE.toFloat(), Animation.ABSOLUTE.toFloat(), Animation.ABSOLUTE.toFloat(), 100f)
-                    animation.repeatCount = 1
-                    when {
-                        dy > 0 -> hideFab()
-                        else -> showFab()
-                    }
-                }
+                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int)
+                        = if (dy > 0) hideFab() else showFab()
 
                 private fun hideFab() {
                     if (isFabShowing) {
                         isFabShowing = false
-                        val point = Point()
-                        activity.window.windowManager.defaultDisplay.getSize(point)
-                        val translation = fab?.y?.minus(point.y)
+                        val translation = fab?.y?.minus(ViewUtil.screenSize[1])
                         fab?.animate()?.translationYBy(-translation!!)?.setDuration(500)?.start()
                     }
                 }
@@ -127,14 +136,12 @@ class TopicsFragment : Fragment() {
 
 
         mAdapter = TopicsRVAdapter(activity)
-        mAdapter?.isNodeClickable = false
+        mAdapter.isNodeClickable = false
         mRecyclerView.adapter = mAdapter //大工告成
 
         flContainer = layout.findViewById(R.id.fl_container)
         return layout
     }
-
-
     private fun getTopics(requestURL: String) {
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
@@ -143,34 +150,49 @@ class TopicsFragment : Fragment() {
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
+                mScrollListener.loading = false
                 handler.sendEmptyMessage(MSG_FAILED)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-
+                mScrollListener.loading = false
                 if (response.code() != 200) {
                     dealError(activity, response.code(), mSwipeLayout)
                     return
                 }
 
-                val html = Jsoup.parse(response.body()?.string())
+                val bodyStr = response.body()?.string()
+                val html = Jsoup.parse(bodyStr)
                 val topicList = NetManager.parseTopicLists(html, NetManager.Source.FROM_HOME)
 
-                XLog.tag(TAG).v("TOPICS: $topicList")
-                if (topicList.isEmpty()) {
-                    activity.runOnUiThread {
-                        flContainer.showNoContent()
-                        mSwipeLayout.isRefreshing = false
-                    }
-                    return
+                if (totalPage == 0) {
+                    totalPage = getPage(bodyStr!!)
+                    mScrollListener.totalPage = totalPage
                 }
+
+                XLog.tag(TAG).v("TOPICS: $topicList")
                 runOnUiThread {
-                    mAdapter?.updateItems(topicList)
+                    if (topicList.isEmpty()) {
+                        flContainer.showNoContent()
+                    } else {
+                        if (currentMode == USER_MODE) {
+                            mAdapter.addAllItems(topicList)
+                        } else {
+                            mAdapter.updateItems(topicList)
+                        }
+                    }
                     mSwipeLayout.isRefreshing = false
                 }
             }
         })
+    }
+
+    private fun getPage(bodyStr: String): Int {
+//        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8" onkeydown="if (event.keyCode == 13)
+//        location.href = '?p=' + this.value">
+        val number = Regex("(?<=max=\")\\d{1,4}")
+        return number.find(bodyStr)?.value?.toInt() ?: 0
     }
 
 
@@ -190,6 +212,7 @@ class TopicsFragment : Fragment() {
         private val TAG = TopicsFragment::class.java.simpleName
         private val MSG_FAILED = 3
         private val MSG_GET_DATA_BY_OK = 1
+        const val USER_MODE = 1
     }
 
 }

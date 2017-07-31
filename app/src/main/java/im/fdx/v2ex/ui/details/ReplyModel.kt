@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 import im.fdx.v2ex.model.BaseModel
-import im.fdx.v2ex.model.MemberModel
+import im.fdx.v2ex.ui.member.MemberModel
 
 /**
  * Created by a708 on 15-9-8.

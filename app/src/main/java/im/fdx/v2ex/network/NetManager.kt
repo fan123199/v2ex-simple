@@ -5,11 +5,11 @@ import android.content.Context
 import android.support.v4.widget.SwipeRefreshLayout
 import com.google.gson.Gson
 import im.fdx.v2ex.R
-import im.fdx.v2ex.model.MemberModel
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.NetManager.Source.*
 import im.fdx.v2ex.ui.details.ReplyModel
 import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.fullUrl

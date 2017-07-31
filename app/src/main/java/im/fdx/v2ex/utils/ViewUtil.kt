@@ -14,9 +14,9 @@ object ViewUtil {
         get() {
             val metrics = Resources.getSystem().displayMetrics
 
-            val height = metrics.heightPixels
             val width = metrics.widthPixels
+            val height = metrics.heightPixels
 
-            return intArrayOf(height, width)
+            return intArrayOf(width, height)
         }
 }

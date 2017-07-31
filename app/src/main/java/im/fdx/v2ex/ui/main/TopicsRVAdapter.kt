@@ -25,9 +25,9 @@ import org.jetbrains.anko.startActivity
  */
 class TopicsRVAdapter(private val mContext: Context)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     private val mInflater = LayoutInflater.from(mContext)
     private var mTopicList: MutableList<TopicModel> = mutableListOf()
-
     var isNodeClickable = true
 
     fun updateItems(newItems: List<TopicModel>) {
@@ -41,11 +41,11 @@ class TopicsRVAdapter(private val mContext: Context)
     }
 
     fun addAllItems(newItems: List<TopicModel>) {
-        mTopicList.clear()
+        val old = mTopicList.toList()
         mTopicList.addAll(newItems)
-        notifyDataSetChanged()
+        val diffResult = DiffUtil.calculateDiff(DiffCallback(old, mTopicList))
+        diffResult.dispatchUpdatesTo(this)
     }
-
 
 
     //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动

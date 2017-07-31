@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.details.DetailsActivity
-import im.fdx.v2ex.ui.main.DiffCallback
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.view.GoodTextView
@@ -22,6 +21,7 @@ import org.jetbrains.anko.startActivity
 class ReplyAdapter(val activity: Activity,
                    var list: MutableList<MemberReplyModel> = mutableListOf())
     : RecyclerView.Adapter<ReplyAdapter.ReplyViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
             ReplyViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.item_reply_member, parent, false))
 
@@ -38,13 +38,21 @@ class ReplyAdapter(val activity: Activity,
     }
 
 
-    fun updateItems(newItems: List<MemberReplyModel>) {
-        val diffResult = DiffUtil.calculateDiff(DiffCallback(list, newItems))
-        diffResult.dispatchUpdatesTo(this)
+    fun firstLoadItems(newItems: List<MemberReplyModel>) {
+//        val diffResult = DiffUtil.calculateDiff(DiffReply(list, newItems))
         list.clear()
         list.addAll(newItems)
+        notifyDataSetChanged()
+//        diffResult.dispatchUpdatesTo(this)
+
     }
 
+    fun addItems(newItems: List<MemberReplyModel>) {
+        val old = list.toList()
+        list.addAll(newItems)
+        val diffResult = DiffUtil.calculateDiff(DiffReply(old, list))
+        diffResult.dispatchUpdatesTo(this)
+    }
 
     override fun getItemCount() = list.size
 
