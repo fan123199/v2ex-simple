@@ -14,7 +14,7 @@ import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.utils.EndlessRecyclerOnScrollListener
+import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.initTheme
@@ -39,9 +39,9 @@ class ReplyFragment : Fragment() {
     private lateinit var flcontainer: FrameLayout
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
-            = inflater.inflate(R.layout.fragment_reply, container, false)
+            = inflater.inflate(R.layout.fragment_tab_article, container, false)
 
-    private var mScrollListener: EndlessRecyclerOnScrollListener? = null
+    private var mScrollListener: EndlessOnScrollListener? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
@@ -49,7 +49,7 @@ class ReplyFragment : Fragment() {
         swipeRefreshLayout = view.findViewById(R.id.swipe_container)
         swipeRefreshLayout.initTheme()
         swipeRefreshLayout.setOnRefreshListener {
-            mScrollListener?.current_page = 1
+            mScrollListener?.pageToLoad = 1
             getRepliesByWeb(1)/* 刷新则重头开始 */
         }
 
@@ -61,7 +61,7 @@ class ReplyFragment : Fragment() {
         rvReply.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
 
         // enable pull up for endless loading
-        mScrollListener = object : EndlessRecyclerOnScrollListener(layoutManager, rvReply) {
+        mScrollListener = object : EndlessOnScrollListener(layoutManager, rvReply) {
             override fun onCompleted() {
                 toast(getString(R.string.no_more_data))
             }
@@ -71,7 +71,6 @@ class ReplyFragment : Fragment() {
                 swipeRefreshLayout.isRefreshing = true
                 mScrollListener?.loading = true
                 getRepliesByWeb(current_page)
-
             }
         }
 
@@ -111,6 +110,7 @@ class ReplyFragment : Fragment() {
                         if (page == 1) {
                             adapter.firstLoadItems(replyModels)
                         } else {
+                            mScrollListener?.pageAfterLoaded = page
                             adapter.addItems(replyModels)
                         }
                         XLog.tag("__REPLY").i(replyModels[0].topic.title)

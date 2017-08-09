@@ -84,7 +84,7 @@ class TopicsRVAdapter(private val mContext: Context)
 
     // 这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来,。
     // 用static就是为了复用
-    class MainViewHolder(container: View) : RecyclerView.ViewHolder(container) {
+    open class MainViewHolder(container: View) : RecyclerView.ViewHolder(container) {
         var tvTitle: TextView = container.findViewById(R.id.tv_title)
         var tvContent: GoodTextView = container.findViewById(R.id.tv_content)
         var tvReplyNumber: TextView = container.findViewById(R.id.tv_reply_number)

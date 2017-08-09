@@ -8,6 +8,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.NetManager.Source.*
 import im.fdx.v2ex.ui.details.ReplyModel
+import im.fdx.v2ex.ui.main.Comment
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.ui.node.NodeModel
@@ -306,13 +307,31 @@ object NetManager {
         val title = body.getElementsByTag("h1").first().text()
         val contentElementOrg = body.getElementsByClass("topic_content").first()
 
+        val commentsEle = body.getElementsByClass("subtle")
+        val comments = commentsEle.map {
+            Comment().apply {
+                this.title = it.getElementsByClass("fade").text().split("·")[0].trim()
+                created = TimeUtil.toUtcTime(it.getElementsByClass("fade").text().split("·")[1].trim())
+                content = it.getElementsByClass("topic_content").html()
+            }
+        }
+
+        topicModel.comments = comments.toMutableList()
+
+
         val contentElement = handlerPreTag(contentElementOrg)
 
         val content = if (contentElement == null) "" else contentElement.text()
+        topicModel.content = content
+
         val contentRendered = if (contentElement == null) "" else contentElement.html()
+
+
+        topicModel.content_rendered = contentRendered.fullUrl()
+
         val createdUnformed = body.getElementsByClass("header").first().getElementsByClass("gray").first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
-        val time = createdUnformed.split("·".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
+        val time = createdUnformed.split("·")[1]
         val created = TimeUtil.toUtcTime(time)
 
         var replyNum = ""
@@ -335,7 +354,6 @@ object NetManager {
             else -> 0
         }
 
-        topicModel.content_rendered = contentRendered.fullUrl() //done
 
         val member = MemberModel()
         val username = body.getElementsByClass("header").first()
@@ -357,7 +375,6 @@ object NetManager {
         topicModel.replies = replies //done
         topicModel.created = created //done
         topicModel.title = title //done
-        topicModel.content = content //done
         topicModel.node = nodeModel//done
         return topicModel
     }

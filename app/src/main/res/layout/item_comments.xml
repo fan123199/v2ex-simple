@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_comment_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:textAppearance="@style/VText.Hint"
+        android:text="DINFUYAN"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"/>
+
+    <TextView
+        android:id="@+id/tv_comment_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="0dp"
+        android:textAppearance="@style/VText.Hint"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_comment_id"
+        app:layout_constraintStart_toEndOf="@+id/tv_comment_id"
+        app:layout_constraintTop_toTopOf="@+id/tv_comment_id"
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="1分前"/>
+
+    <im.fdx.v2ex.view.GoodTextView
+        android:id="@+id/tv_comment_content"
+        style="@style/VText.ContentStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        tools:text="TextViewTextViewTextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_comment_id"
+        app:layout_constraintStart_toStartOf="@+id/tv_comment_id"/>
+</android.support.constraint.ConstraintLayout>

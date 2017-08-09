@@ -20,6 +20,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import de.hdodenhof.circleimageview.CircleImageView
@@ -54,7 +55,7 @@ class DetailsAdapter(private val mContext: Context,
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         when (viewType) {
-            TYPE_HEADER -> return TopicsRVAdapter.MainViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_topic_view, parent, false))
+            TYPE_HEADER -> return TopicWithCommentsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_topic_with_comments, parent, false))
             TYPE_ITEM -> return ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false))
             TYPE_FOOTER -> return FooterViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_load_more, parent, false))
             else -> throw RuntimeException(" No type that matches $viewType + Make sure using types correctly")
@@ -67,7 +68,7 @@ class DetailsAdapter(private val mContext: Context,
         when (getItemViewType(position)) {
             TYPE_HEADER -> {
 
-                val mainHolder = holder as TopicsRVAdapter.MainViewHolder
+                val mainHolder = holder as TopicWithCommentsViewHolder
                 val topic = mAllList[position] as TopicModel
                 mainHolder.tvTitle.text = topic.title
                 mainHolder.tvTitle.maxLines = 4
@@ -84,6 +85,19 @@ class DetailsAdapter(private val mContext: Context,
                 mainHolder.tvNode.text = topic.node!!.title
                 mainHolder.tvCreated.text = TimeUtil.getRelativeTime(topic.created)
                 mainHolder.ivAvatar.load(topic.member!!.avatarNormalUrl)
+
+                if (topic.comments.isNotEmpty()) {
+                    mainHolder.ll.removeAllViews()
+                    topic.comments.forEach {
+                        val view = LayoutInflater.from(mContext).inflate(R.layout.item_comments, mainHolder.ll, false)
+                        val th = CommentsViewHolder(view)
+                        th.tvCTitle.text = it.title
+                        th.tvCTime.text = TimeUtil.getRelativeTime(it.created)
+                        th.tvCContent.setGoodText(it.content)
+                        mainHolder.ll.addView(view)
+                    }
+                }
+
 
                 val l = TopicsRVAdapter.MyOnClickListener(mContext, topic)
                 mainHolder.tvNode.setOnClickListener(l)
@@ -122,14 +136,14 @@ class DetailsAdapter(private val mContext: Context,
                         menu.findItem(R.id.menu_thank).setOnMenuItemClickListener(menuListener)
                         menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener)
                     }
+                    itemVH.ivThank.setOnClickListener { thank(replyItem, itemVH) }
+                    itemVH.tvThanks.setOnClickListener { thank(replyItem, itemVH) }
                     itemVH.tvReply.setOnClickListener { reply(replyItem, position) }
                 }
 
                 itemVH.tvReplyTime.text = TimeUtil.getRelativeTime(replyItem.created)
                 itemVH.tvReplier.text = replyItem.member!!.username
                 itemVH.tvThanks.text = replyItem.thanks.toString()
-                itemVH.ivThank.setOnClickListener { thank(replyItem, itemVH) }
-                itemVH.tvThanks.setOnClickListener { thank(replyItem, itemVH) }
 
                 if (replyItem.isThanked) {
                     itemVH.ivThank.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
@@ -275,6 +289,17 @@ class DetailsAdapter(private val mContext: Context,
         internal var ivUserAvatar: CircleImageView = itemView.findViewById(R.id.iv_reply_avatar)
         internal var divider: View = itemView.findViewById(R.id.divider)
     }
+
+    class TopicWithCommentsViewHolder(itemView: View) : TopicsRVAdapter.MainViewHolder(itemView) {
+        internal var ll: LinearLayout = itemView.findViewById(R.id.ll_comments)
+    }
+
+    class CommentsViewHolder(itemView: View) {
+        internal var tvCTitle: TextView = itemView.findViewById(R.id.tv_comment_id)
+        internal var tvCTime: TextView = itemView.findViewById(R.id.tv_comment_time)
+        internal var tvCContent: GoodTextView = itemView.findViewById(R.id.tv_comment_content)
+    }
+
 
     private class FooterViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal val tvLoadMore: TextView = itemView.findViewById(R.id.tv_load_more)

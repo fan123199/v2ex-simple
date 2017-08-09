@@ -19,7 +19,6 @@ import android.view.View
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.extensions.dp2px
 
@@ -41,7 +40,7 @@ class GoodTextView @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        XLog.tag(TAG).e("view width: $width")
+//        XLog.tag(TAG).e("view width: $width")
         if (bestWidth == 0)
             bestWidth = width
     }
@@ -64,28 +63,21 @@ class GoodTextView @JvmOverloads constructor(
 
 
         val htmlSpannable = SpannableStringBuilder(spannedText)
-        //
-        //分离 图片 span
-        val imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length, ImageSpan::class.java)
 
+        //移除url的下划线
         val urlSpans = htmlSpannable.getSpans(0, htmlSpannable.length, URLSpan::class.java)
-
         for (urlSpan in urlSpans) {
-
             val spanStart = htmlSpannable.getSpanStart(urlSpan)
             val spanEnd = htmlSpannable.getSpanEnd(urlSpan)
             val newUrlSpan = UrlSpanNoUnderline(urlSpan.url)
-
             htmlSpannable.removeSpan(urlSpan)
             htmlSpannable.setSpan(newUrlSpan, spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
         }
 
-
+        //分离 图片 span
+        val imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length, ImageSpan::class.java)
         for (imageSpan in imageSpans) {
-
             val imageUrl = imageSpan.source
-
             val start = htmlSpannable.getSpanStart(imageSpan)
             val end = htmlSpannable.getSpanEnd(imageSpan)
 
@@ -141,12 +133,21 @@ class GoodTextView @JvmOverloads constructor(
                     val targetHeight: Int
 
                     when {
-                        drawable.intrinsicWidth > bestWidth || drawable.intrinsicWidth > bestWidth * 0.4 -> {
+                        drawable.intrinsicWidth > bestWidth || drawable.intrinsicWidth > bestWidth * 0.3 -> {
                             targetWidth = bestWidth
                             targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
                             drawable.setBounds(0, 0, targetWidth, targetHeight)
                             bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
                         }
+
+
+                        drawable.intrinsicWidth >= smallestWidth && drawable.intrinsicWidth <= bestWidth * 0.3 -> {
+                            targetWidth = bestWidth
+                            targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
+                            drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+                            bitmapHolder.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+                        }
+
                         drawable.intrinsicWidth < smallestWidth -> {
                             targetWidth = smallestWidth
                             targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()

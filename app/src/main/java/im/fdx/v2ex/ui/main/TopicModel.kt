@@ -47,11 +47,18 @@ import im.fdx.v2ex.ui.node.NodeModel
 //        },
 //        {some of above}
 //    ]
-class TopicModel(var id: String = "", var title: String = "", var url: String = "",
-                 var content: String? = null, var content_rendered: String? = null, var replies: Int = 0,
-                 var member: MemberModel? = null, var node: NodeModel? = null, var created: Long = 0,
-                 var last_modified: Long = 0, var last_touched: Long = 0) : BaseModel(), Parcelable {
-
+class TopicModel(var id: String = "",
+                 var title: String = "",
+                 var url: String = "",
+                 var content: String? = null,
+                 var content_rendered: String? = null,
+                 var replies: Int = 0,
+                 var member: MemberModel? = null,
+                 var node: NodeModel? = null,
+                 var created: Long = 0,
+                 var last_modified: Long = 0,
+                 var last_touched: Long = 0
+                 , var comments: MutableList<Comment> = mutableListOf()) : BaseModel(), Parcelable {
     constructor(id: String) : this() {
         this.id = id
     }
@@ -88,7 +95,8 @@ class TopicModel(var id: String = "", var title: String = "", var url: String = 
             source.readParcelable<NodeModel>(NodeModel::class.java.classLoader),
             source.readLong(),
             source.readLong(),
-            source.readLong()
+            source.readLong(),
+            ArrayList<Comment>().apply { source.readList(this, Comment::class.java.classLoader) }
     )
 
     override fun describeContents() = 0
@@ -105,5 +113,7 @@ class TopicModel(var id: String = "", var title: String = "", var url: String = 
         dest.writeLong(created)
         dest.writeLong(last_modified)
         dest.writeLong(last_touched)
+        dest.writeList(comments)
     }
 }
+

@@ -2,7 +2,6 @@ package im.fdx.v2ex.utils.extensions
 
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import im.fdx.v2ex.MyApp
 
 /**
  * Created by fdx on 2017/7/3.
@@ -10,5 +9,5 @@ import im.fdx.v2ex.MyApp
  */
 
 fun ImageView.load(url: String?) {
-    Glide.with(MyApp.get()).load(url).into(this)
+    Glide.with(context).load(url).into(this)
 }

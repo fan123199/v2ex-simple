@@ -82,20 +82,6 @@
         app:layout_constraintStart_toStartOf="@+id/iv_reply_avatar"
         android:layout_marginStart="0dp"/>
 
-    <include
-        android:id="@+id/divider"
-        layout="@layout/divider"
-        android:layout_width="0dp"
-        android:layout_height="1dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/tv_replier"
-        android:layout_below="@id/tv_reply_content"
-        android:layout_marginTop="8dp"
-        android:visibility="visible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_reply_content"
-        app:layout_constraintTop_toBottomOf="@+id/tv_reply_content"
-        />
 
 
     <ImageView
@@ -148,4 +134,18 @@
         android:layout_marginRight="16dp"
         app:layout_constraintRight_toRightOf="parent"/>
 
+    <include
+        android:id="@+id/divider"
+        layout="@layout/divider"
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:layout_alignParentEnd="true"
+        android:layout_alignStart="@+id/tv_replier"
+        android:layout_below="@id/tv_reply_content"
+        android:layout_marginTop="8dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_reply_content"
+        app:layout_constraintTop_toBottomOf="@+id/tv_reply_content"
+        />
 </android.support.constraint.ConstraintLayout>

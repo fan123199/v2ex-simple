@@ -33,4 +33,6 @@
 -keep class * implements android.os.Parcelable {
   *;
 }
+-keep class com.bumptech.glide.integration.okhttp.OkHttpGlideModule
+
 

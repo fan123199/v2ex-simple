@@ -20,7 +20,7 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.Source.FROM_MEMBER
 import im.fdx.v2ex.network.NetManager.Source.FROM_NODE
 import im.fdx.v2ex.network.NetManager.dealError
-import im.fdx.v2ex.utils.EndlessRecyclerOnScrollListener
+import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.initTheme
@@ -61,7 +61,7 @@ class TopicsFragment : Fragment() {
     }
 
     lateinit var smoothLayoutManager: LinearLayoutManager
-    lateinit var mScrollListener: EndlessRecyclerOnScrollListener
+    lateinit var mScrollListener: EndlessOnScrollListener
     var currentMode = NetManager.Source.FROM_HOME
     var totalPage = 0
 
@@ -98,13 +98,13 @@ class TopicsFragment : Fragment() {
         smoothLayoutManager = LinearLayoutManager(activity)
         mRecyclerView.layoutManager = smoothLayoutManager
 
-        mScrollListener = object : EndlessRecyclerOnScrollListener(smoothLayoutManager, mRecyclerView) {
+        mScrollListener = object : EndlessOnScrollListener(smoothLayoutManager, mRecyclerView) {
             override fun onCompleted() = toast(getString(R.string.no_more_data))
 
             override fun onLoadMore(current_page: Int) {
                 mScrollListener.loading = true
                 mSwipeLayout.isRefreshing = true
-                getTopics("$mRequestURL?p=$current_page")
+                getTopics(mRequestURL, current_page)
             }
         }
         when (currentMode) {
@@ -154,10 +154,10 @@ class TopicsFragment : Fragment() {
 
 //    private val currentPage = 0
 
-    private fun getTopics(requestURL: String) {
+    private fun getTopics(requestURL: String, currentPage: Int = 1) {
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
-                .url(requestURL)
+                .url(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL)
                 .get()
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -190,9 +190,10 @@ class TopicsFragment : Fragment() {
                     } else {
                         when (currentMode) {
                             FROM_MEMBER, FROM_NODE ->
-                                if (mScrollListener.current_page == 1) {
+                                if (mScrollListener.pageToLoad == 1) {
                                     mAdapter.updateItems(topicList)
                                 } else {
+                                    mScrollListener.pageAfterLoaded = currentPage
                                     mAdapter.addAllItems(topicList)
                                 }
                             else -> mAdapter.updateItems(topicList)
