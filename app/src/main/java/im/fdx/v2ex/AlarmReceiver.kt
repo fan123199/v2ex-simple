@@ -9,9 +9,9 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.os.Build
+import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.NotificationCompat
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
@@ -82,7 +82,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val c = ContextCompat.getColor(context, R.color.primary)
-        val mBuilder = NotificationCompat.Builder(context)
+        val mBuilder = NotificationCompat.Builder(context, notifyID.toString())
         mBuilder
                 //                .setSubText("subtext")
                 .setContentTitle(context.getString(R.string.you_have_notifications, number))

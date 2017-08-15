@@ -106,6 +106,7 @@ class GoodTextView @JvmOverloads constructor(
         }
     }
 
+    @Suppress("DEPRECATION")
     private inner class BitmapHolder : BitmapDrawable() {
 
         private var vDrawable: Drawable? = null

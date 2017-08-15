@@ -4,6 +4,7 @@ import org.junit.Test
 import java.text.SimpleDateFormat
 import java.util.*
 
+@Suppress("UNUSED_VARIABLE")
 /**
  * Created by fdx on 2017/7/16.
  * fdx will maintain it

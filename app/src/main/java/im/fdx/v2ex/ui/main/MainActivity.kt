@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package im.fdx.v2ex.ui.main
 
 import android.app.NotificationManager

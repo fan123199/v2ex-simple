@@ -76,11 +76,11 @@ class TopicsFragment : Fragment() {
             args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
             args?.getString(Keys.KEY_USERNAME) != null -> {
                 currentMode = FROM_MEMBER
-                mRequestURL = "$HTTPS_V2EX_BASE/member/${args?.getString(Keys.KEY_USERNAME)}/topics"
+                mRequestURL = "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
             }
             args?.getString(Keys.KEY_NODE_NAME) != null -> {
                 currentMode = FROM_NODE
-                mRequestURL = "$HTTPS_V2EX_BASE/go/${args?.getString(Keys.KEY_NODE_NAME)}"
+                mRequestURL = "$HTTPS_V2EX_BASE/go/${args.getString(Keys.KEY_NODE_NAME)}"
             }
             else -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args?.getString(Keys.KEY_TAB)}"
         }
