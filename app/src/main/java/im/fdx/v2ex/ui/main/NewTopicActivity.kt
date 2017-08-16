@@ -120,7 +120,7 @@ class NewTopicActivity : AppCompatActivity() {
         val url = "https://sm.ms/api/upload"
         val body: RequestBody = RequestBody.create(MEDIA_TYPE_PNG, file)
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .post(body)
                 .url(url).build()).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
@@ -192,7 +192,6 @@ class NewTopicActivity : AppCompatActivity() {
     private fun postNew() {
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url("https://www.v2ex.com/new")
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -219,7 +218,6 @@ class NewTopicActivity : AppCompatActivity() {
                         .build()
 
                 HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                        .headers(HttpHelper.baseHeaders)
                         .url("https://www.v2ex.com/new")
                         .post(requestBody)
                         .build()).enqueue(object : Callback {

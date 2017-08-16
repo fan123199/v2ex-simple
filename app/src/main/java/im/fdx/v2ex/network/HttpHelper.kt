@@ -14,16 +14,7 @@ import okhttp3.OkHttpClient
 
 object HttpHelper {
 
-    val myCookieJar = MyCookieJar(SharedPrefsPersistor(MyApp.get().applicationContext))
-    val OK_CLIENT: OkHttpClient = OkHttpClient().newBuilder()
-//                        .addInterceptor(HttpLoggingInterceptor())
-            //            .connectTimeout(10, TimeUnit.SECONDS)
-            //            .writeTimeout(10, TimeUnit.SECONDS)
-            //            .readTimeout(30, TimeUnit.SECONDS)
-            .followRedirects(false)  //禁止重定向
-            .addInterceptor(ChuckInterceptor(MyApp.get().applicationContext))//好东西，查看Okhttp数据
-            .cookieJar(myCookieJar)
-            .build()
+    val myCookieJar: MyCookieJar = MyCookieJar(SharedPrefsPersistor(MyApp.get().applicationContext))
     val baseHeaders: Headers = Headers.Builder()
             .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
             .add("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
@@ -33,6 +24,23 @@ object HttpHelper {
             //  .add("X-Requested-With", "com.android.browser")
             //  .add("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
             .add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36")
+            .build()
+
+    val OK_CLIENT: OkHttpClient = OkHttpClient().newBuilder()
+//                        .addInterceptor(HttpLoggingInterceptor())
+            //            .connectTimeout(10, TimeUnit.SECONDS)
+            //            .writeTimeout(10, TimeUnit.SECONDS)
+            //            .readTimeout(30, TimeUnit.SECONDS)
+            .followRedirects(false)  //禁止重定向
+            .addInterceptor(ChuckInterceptor(MyApp.get().applicationContext))//好东西，查看Okhttp数据
+            .addInterceptor { chain ->
+                val request = chain.request()
+                        .newBuilder()
+                        .headers(baseHeaders)
+                        .build()
+                chain.proceed(request)
+            }
+            .cookieJar(myCookieJar)
             .build()
 
 }

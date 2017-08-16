@@ -137,7 +137,7 @@ class NodeActivity : AppCompatActivity() {
     }
 
     private fun switchFollowAndRefresh(isFavorite: Boolean) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url("${NetManager.HTTPS_V2EX_BASE}/${if (isFavorite) "un" else ""}$token")
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -165,7 +165,6 @@ class NodeActivity : AppCompatActivity() {
         val requestURL = "${NetManager.HTTPS_V2EX_BASE}/go/$nodeName"
         XLog.tag(TAG).d("url:$requestURL")
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url(requestURL).build())
                 .enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

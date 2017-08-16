@@ -223,7 +223,7 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun getRepliesPageOne(topicId: String, scrollToBottom: Boolean) {
         mSwipe.isRefreshing = true
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=1")
                 .build()).enqueue(object : Callback {
 
@@ -386,7 +386,6 @@ class DetailsActivity : AppCompatActivity() {
 
     private fun favorOrNot(topicId: String, token: String, doFavor: Boolean) {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url("${NetManager.HTTPS_V2EX_BASE}/${if (doFavor) "un" else ""}favorite/topic/$topicId?t=$token")
                 .get().build()).enqueue(object : Callback {
 
@@ -417,7 +416,6 @@ class DetailsActivity : AppCompatActivity() {
                 .add("once", once!!)
                 .build()
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .header("Origin", NetManager.HTTPS_V2EX_BASE)
                 .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
                 .header("Content-Type", "application/x-www-form-urlencoded")

@@ -85,8 +85,7 @@ class ReplyFragment : Fragment() {
     private fun getRepliesByWeb(page: Int) {
 
         val url = "${NetManager.HTTPS_V2EX_BASE}/member/${arguments.getString(Keys.KEY_USERNAME)}/replies?p=$page"
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
-                .url(url).build()).enqueue(object : Callback {
+        HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(activity, -1, swipeRefreshLayout)
                 mScrollListener?.loading = false

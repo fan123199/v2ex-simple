@@ -36,7 +36,6 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
         try {
             for (i in 2..totalPage) {
                 val response = HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                        .headers(HttpHelper.baseHeaders)
                         .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + i)
                         .build()).execute()
                 val body = Jsoup.parse(response.body()!!.string())
@@ -75,8 +74,7 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
 
         try {
             val response = HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                    .headers(HttpHelper.baseHeaders)
-                    .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + currentPage)
+                    .url("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$currentPage")
                     .build()).execute()
             val body = Jsoup.parse(response.body()!!.string())
             val replies = NetManager.parseResponseToReplay(body)

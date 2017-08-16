@@ -326,7 +326,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun dailyCheck() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url(DAILY_CHECK).get().build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("MainActivity", "daily mission failed")
@@ -360,7 +359,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun postDailyCheck(once: String) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url(HTTPS_V2EX_BASE + "/mission/daily/redeem?once=" + once)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

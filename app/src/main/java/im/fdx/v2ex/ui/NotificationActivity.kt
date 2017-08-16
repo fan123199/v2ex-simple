@@ -61,7 +61,6 @@ class NotificationActivity : AppCompatActivity() {
     private fun fetchNotification() {
         val url = "https://www.v2ex.com/notifications"
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url(url)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

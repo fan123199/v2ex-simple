@@ -204,8 +204,7 @@ class DetailsAdapter(private val mContext: Context,
         val body = FormBody.Builder().add("t", verifyCode).build()
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
-                .url("https://www.v2ex.com/thank/reply/" + replyItem.id)
+                .url("https://www.v2ex.com/thank/reply/${replyItem.id}")
                 .post(body)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

@@ -57,7 +57,6 @@ class NodeFavorFragment : Fragment() {
 
     private fun getNode() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url(Companion.nodeUrl)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

@@ -15,9 +15,11 @@ import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.fullUrl
 import im.fdx.v2ex.utils.extensions.toast
+import okhttp3.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import java.io.IOException
 import java.lang.Integer.parseInt
 import java.util.*
 import java.util.regex.Pattern
@@ -436,7 +438,6 @@ object NetManager {
 
     fun parseOnce(body: Element) = body.getElementsByAttributeValue("name", "once").first()?.attr("value")
 
-
     fun parseToVerifyCode(body: Element): String? {
 
         //        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
@@ -456,6 +457,41 @@ object NetManager {
             }
         }
         return null
+    }
+
+
+    fun finishLogin(code: String, activity: Activity) {
+        val twoStepUrl = "https://www.v2ex.com/2fa"
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
+                .url(twoStepUrl)
+                .build()).enqueue(object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {//todo
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {//todo
+                if (response?.code() == 200) {
+                    val bodyStr = response.body()?.string()
+                    val once = parseOnce(Jsoup.parse(bodyStr)) ?: "0"
+                    val body: RequestBody = FormBody.Builder()
+                            .add("code", code)
+                            .add("once", once).build()
+                    HttpHelper.OK_CLIENT.newCall(Request.Builder()
+                            .post(body)
+                            .url(twoStepUrl)
+                            .build()).enqueue(object : Callback {
+                        override fun onFailure(call: Call?, e: IOException?) {//todo
+                        }
+
+                        override fun onResponse(call: Call?, response: Response?) {//todo
+                            activity.runOnUiThread {
+                                if (response?.code() == 302) activity.toast("登录成功")
+                                else activity.toast("登录失败")
+                            }
+                        }
+                    })
+                }
+            }
+        })
     }
 
     fun parseToNode(string: String): ArrayList<NodeModel> {

@@ -34,8 +34,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun notificationUnRead(context: Context) {
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
-                .url(url).build()).enqueue(object : Callback {
+        HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(context, -1)
             }

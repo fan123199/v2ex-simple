@@ -60,7 +60,7 @@ class SettingsActivity : AppCompatActivity() {
                                 .setTitle("确定要退出吗")
                                 .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
                                 .setPositiveButton(R.string.ok) { dialog, _ ->
-                                    removeCookie()
+                                    HttpHelper.myCookieJar.clear()
                                     MyApp.get().setLogin(false)
                                     LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
                                     findPreference(Keys.PREF_LOGOUT).isEnabled = false
@@ -137,10 +137,6 @@ class SettingsActivity : AppCompatActivity() {
             checkBoxPref.isChecked = true
 
             category.addPreference(checkBoxPref)
-        }
-
-        private fun removeCookie() {
-            HttpHelper.myCookieJar.clear()
         }
 
         override fun onResume() {

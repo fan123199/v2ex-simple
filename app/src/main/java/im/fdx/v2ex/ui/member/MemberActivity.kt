@@ -166,7 +166,7 @@ class MemberActivity : AppCompatActivity() {
             return
         }
         val webUrl = "https://www.v2ex.com/member/" + username
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url(webUrl)
                 .get().build()).enqueue(object : Callback {
 
@@ -210,7 +210,7 @@ class MemberActivity : AppCompatActivity() {
     }
 
     private fun getUserInfoAPI(urlUserInfo: String) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url(urlUserInfo).build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dealError(this@MemberActivity)
@@ -328,7 +328,7 @@ class MemberActivity : AppCompatActivity() {
     }
 
     private fun switchFollowAndRefresh(isFollowed: Boolean) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().headers(HttpHelper.baseHeaders)
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url("${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "un" else ""}$followOfOnce")
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -349,7 +349,6 @@ class MemberActivity : AppCompatActivity() {
 
     private fun switchBlockAndRefresh(isBlocked: Boolean) {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url("$HTTPS_V2EX_BASE/${if (isBlocked) "un" else ""}$blockOfT").build())
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {

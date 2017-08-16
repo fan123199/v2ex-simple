@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.TextInputEditText
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.View.VISIBLE
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.elvishew.xlog.XLog
@@ -31,6 +33,7 @@ import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.*
 import org.jsoup.Jsoup
 import java.io.IOException
+import java.util.*
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -87,7 +90,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun getLoginData() {
         username = etUsername.text.toString()
         password = etPassword.text.toString()
-        val requestToGetOnce = Request.Builder().headers(HttpHelper.baseHeaders)
+        val requestToGetOnce = Request.Builder()
                 .url(SIGN_IN_URL)
                 .build()
 
@@ -124,7 +127,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 .add("once", onceCode)
                 .build()
 
-        val request = Request.Builder().headers(HttpHelper.baseHeaders)
+        val request = Request.Builder()
                 .url(SIGN_IN_URL)
                 .header("Origin", HTTPS_V2EX_BASE)
                 .header("Referer", SIGN_IN_URL)
@@ -145,17 +148,37 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
                 when (httpcode) {
                     302 -> {
-                        MyApp.get().setLogin(true)
-                        mSharedPreference?.edit()
-                                ?.putString("username", username)
-                                ?.apply()
-                        goMyHomePage()
-                        runOnUiThread {
-                            pbLogin.visibility = View.GONE
-                            button.visibility = VISIBLE
-                            T("登录成功")
+                        when (Objects.equals("/2fa", response.header("Location"))) {
+                            true -> {
+                                runOnUiThread {
+                                    val etCode = EditText(this@LoginActivity)
+                                    etCode.hint = "您开启了两步验证，请输入验证码"
+                                    AlertDialog.Builder(this@LoginActivity)
+                                            .setPositiveButton("验证") { p0, p1 ->
+                                                NetManager.finishLogin(etCode.text.toString(), this@LoginActivity)
+                                            }
+                                            .setNegativeButton("取消") { p0, p1 ->
+                                                HttpHelper.myCookieJar.clear()
+                                                MyApp.get().setLogin(false)
+                                                LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+                                            }
+                                            .setView(etCode).show()
+                                }
+                            }
+                            else -> {
+                                MyApp.get().setLogin(true)
+                                mSharedPreference?.edit()
+                                        ?.putString("username", username)
+                                        ?.apply()
+                                goMyHomePage()
+                                runOnUiThread {
+                                    pbLogin.visibility = View.GONE
+                                    button.visibility = VISIBLE
+                                    T("登录成功")
+                                }
+                                finish()
+                            }
                         }
-                        finish()
                     }
                     200 -> runOnUiThread {
                         pbLogin.visibility = View.GONE
@@ -173,7 +196,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun goMyHomePage() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .headers(HttpHelper.baseHeaders)
                 .url("$API_USER?username=$username").build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dealError(this@LoginActivity)
