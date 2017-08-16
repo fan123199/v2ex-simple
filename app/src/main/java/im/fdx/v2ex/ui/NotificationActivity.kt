@@ -15,11 +15,11 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.showNoContent
-import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
+import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
 

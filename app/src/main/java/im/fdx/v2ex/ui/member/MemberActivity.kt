@@ -40,19 +40,18 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
 import org.jetbrains.anko.bundleOf
+import org.jetbrains.anko.toast
 import java.io.IOException
 import java.util.*
 
 
 /**
- * // TODO: 2017/7/11 加入评论的列表
  * 获取user的主题，依然使用api的方式
  */
 class MemberActivity : AppCompatActivity() {

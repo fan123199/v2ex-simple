@@ -20,9 +20,9 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.T
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import im.fdx.v2ex.utils.extensions.toast
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -112,7 +112,7 @@ class SettingsActivity : AppCompatActivity() {
             findPreference("pref_version").onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 if (count < 0) {
                     count = 7
-                    activity.T(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
+                    activity.longToast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
                 }
                 count--
                 true

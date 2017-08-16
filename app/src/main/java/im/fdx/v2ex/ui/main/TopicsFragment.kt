@@ -1,23 +1,18 @@
 package im.fdx.v2ex.ui.main
 
 import android.app.Fragment
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.FloatingActionButton
-import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.FrameLayout
 import com.elvishew.xlog.XLog
-import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
@@ -177,18 +172,8 @@ class TopicsFragment : Fragment() {
                 if (response.code() == 302) {
                     if (Objects.equals("/2fa", response.header("Location"))) {
                         runOnUiThread {
-                            val etCode = EditText(activity)
-                            etCode.hint = "您开启了两步验证，请输入验证码"
-                            AlertDialog.Builder(activity)
-                                    .setPositiveButton("验证") { p0, p1 ->
-                                        NetManager.finishLogin(etCode.text.toString(), activity)
-                                    }
-                                    .setNegativeButton("取消") { p0, p1 ->
-                                        HttpHelper.myCookieJar.clear()
-                                        MyApp.get().setLogin(false)
-                                        LocalBroadcastManager.getInstance(this@TopicsFragment.activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
-                                    }
-                                    .setView(etCode).show()
+                            NetManager.showTwoStepDialog(activity)
+
                         }
                     }
                 } else if (response.code() != 200) {
@@ -209,7 +194,9 @@ class TopicsFragment : Fragment() {
                 runOnUiThread {
                     if (topicList.isEmpty()) {
                         flContainer.showNoContent()
+                        mAdapter.clear()
                     } else {
+                        flContainer.showNoContent(false)
                         when (currentMode) {
                             FROM_MEMBER, FROM_NODE ->
                                 if (mScrollListener.pageToLoad == 1) {
@@ -226,6 +213,7 @@ class TopicsFragment : Fragment() {
             }
         })
     }
+
 
     //        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8"
     private fun getPage(bodyStr: String) = Regex("(?<=max=\")\\d{1,8}").find(bodyStr)?.value?.toInt() ?: 0

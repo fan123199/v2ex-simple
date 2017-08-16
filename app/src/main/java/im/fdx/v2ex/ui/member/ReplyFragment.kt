@@ -137,7 +137,6 @@ class ReplyFragment : Fragment() {
                 val model = MemberReplyModel()
                 val titleElement = e.getElementsByAttributeValueContaining("href", "/t/").first()
                 val title = titleElement.text()
-                // TODO: 2017/7/16 暂时不知道怎么Id有用吗？但是没有Id的model好像没有什么灵魂
                 val fakeId = titleElement.attr("href").removePrefix("/t/")
                 val create = e.getElementsByClass("fade").first().ownText()
                 model.topic.title = title

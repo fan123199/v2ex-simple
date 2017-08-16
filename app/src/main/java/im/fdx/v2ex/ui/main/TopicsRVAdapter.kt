@@ -31,13 +31,17 @@ class TopicsRVAdapter(private val mContext: Context)
     var isNodeClickable = true
 
     fun updateItems(newItems: List<TopicModel>) {
-
         val callback = MyCallback()
         callback.adapter = this
         val diffResult = DiffUtil.calculateDiff(DiffCallback(mTopicList, newItems))
         diffResult.dispatchUpdatesTo(callback)
         mTopicList.clear()
         mTopicList.addAll(newItems)
+    }
+
+    fun clear() {
+        mTopicList.clear()
+        notifyDataSetChanged()
     }
 
     fun addAllItems(newItems: List<TopicModel>) {

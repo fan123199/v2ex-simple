@@ -85,15 +85,11 @@
         <item name="android:background">@color/primary_dark</item>
     </style>
 
-    <!--<style name="AppTheme.NoActionBar" parent="Theme.AppCompat.NoActionBar">-->
-    <!--<item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
-    <!--</style>-->
-
-    <style name="Text.Bg" parent="TextAppearance.AppCompat">
-        <item name="android:background">@drawable/select_background</item>
-        <item name="android:paddingTop">4dp</item>
-        <item name="android:paddingBottom">4dp</item>
+    <style name="AppTheme.Simple" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:textColorPrimary">@color/primary</item>
     </style>
+
 
     <style name="ExpendedCollapseTitle">
         <item name="android:textSize">20sp</item>

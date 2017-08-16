@@ -21,8 +21,8 @@ import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.*
+import org.jetbrains.anko.toast
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException

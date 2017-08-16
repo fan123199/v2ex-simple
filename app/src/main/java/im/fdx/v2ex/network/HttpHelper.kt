@@ -36,7 +36,14 @@ object HttpHelper {
             .addInterceptor { chain ->
                 val request = chain.request()
                         .newBuilder()
-                        .headers(baseHeaders)
+                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        .header("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
+                        .header("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
+                        .header("Host", "www.v2ex.com")
+                        .header("Cache-Control", "max-age=0")
+                        //  .header("X-Requested-With", "com.android.browser")
+                        //  .header("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36")
                         .build()
                 chain.proceed(request)
             }

@@ -33,9 +33,9 @@ import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.*
 import org.jetbrains.anko.share
+import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.IOException
@@ -58,7 +58,7 @@ class DetailsActivity : AppCompatActivity() {
     private var token: String? = null
     private var isFavored: Boolean = false
     private var once: String? = null
-    private var currentPage: Int = 0 // TODO: 2017/5/30 滑动加载，减少流量
+    private var currentPage: Int = 0
 
     private val callback = object : DetailsAdapter.AdapterCallback {
         override fun onMethodCallback(type: Int, position: Int) {

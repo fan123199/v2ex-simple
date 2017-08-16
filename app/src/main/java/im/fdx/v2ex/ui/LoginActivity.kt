@@ -7,13 +7,11 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.design.widget.TextInputEditText
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.View.VISIBLE
 import android.widget.Button
-import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.elvishew.xlog.XLog
@@ -28,9 +26,10 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.T
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.*
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
 import java.util.*
@@ -146,55 +145,53 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 XLog.tag("LoginActivity").d("http code: ${response.code()}")
                 XLog.tag("LoginActivity").d("errorMsg: $errorMsg")
 
+
                 when (httpcode) {
                     302 -> {
-                        when (Objects.equals("/2fa", response.header("Location"))) {
-                            true -> {
-                                runOnUiThread {
-                                    val etCode = EditText(this@LoginActivity)
-                                    etCode.hint = "您开启了两步验证，请输入验证码"
-                                    AlertDialog.Builder(this@LoginActivity)
-                                            .setPositiveButton("验证") { p0, p1 ->
-                                                NetManager.finishLogin(etCode.text.toString(), this@LoginActivity)
-                                            }
-                                            .setNegativeButton("取消") { p0, p1 ->
-                                                HttpHelper.myCookieJar.clear()
-                                                MyApp.get().setLogin(false)
-                                                LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
-                                            }
-                                            .setView(etCode).show()
+                        MyApp.get().setLogin(true)
+                        mSharedPreference?.edit()
+                                ?.putString("username", username)
+                                ?.apply()
+
+                        HttpHelper.OK_CLIENT.newCall(Request.Builder()
+                                .url(HTTPS_V2EX_BASE)
+                                .build()).enqueue(object : Callback {
+                            override fun onFailure(call: Call, e: IOException) {
+                                e.printStackTrace()
+                            }
+
+                            @Throws(IOException::class)
+                            override fun onResponse(call: Call, response: okhttp3.Response) {
+                                if (response.code() == 302) {
+                                    if (Objects.equals("/2fa", response.header("Location"))) {
+                                        runOnUiThread {
+                                            NetManager.showTwoStepDialog(this@LoginActivity)
+                                        }
+                                    }
+                                } else {
+                                    runOnUiThread {
+                                        toast("登录成功")
+                                        finish()
+                                    }
                                 }
                             }
-                            else -> {
-                                MyApp.get().setLogin(true)
-                                mSharedPreference?.edit()
-                                        ?.putString("username", username)
-                                        ?.apply()
-                                goMyHomePage()
-                                runOnUiThread {
-                                    pbLogin.visibility = View.GONE
-                                    button.visibility = VISIBLE
-                                    T("登录成功")
-                                }
-                                finish()
-                            }
-                        }
+                        })
+                        getUsernameAndAvatar()
+
                     }
                     200 -> runOnUiThread {
-                        pbLogin.visibility = View.GONE
-                        button.visibility = VISIBLE
-                        T("登录失败:\n $errorMsg")
+                        longToast("登录失败:\n $errorMsg")
                     }
-                    else -> runOnUiThread {
-                        pbLogin.visibility = View.GONE
-                        button.visibility = VISIBLE
-                    }
+                }
+                runOnUiThread {
+                    pbLogin.visibility = View.GONE
+                    button.visibility = VISIBLE
                 }
             }
         })
     }
 
-    private fun goMyHomePage() {
+    private fun getUsernameAndAvatar() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url("$API_USER?username=$username").build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -224,11 +221,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private fun getErrorMsg(body: String?): String {
-
         XLog.tag(TAG).d(body)
         val element = Jsoup.parse(body).body()
         val message = element.getElementsByClass("problem") ?: return ""
-        return message.text().trim { it <= ' ' }
+        return message.text().trim()
     }
 
     private val isValidated: Boolean

@@ -35,17 +35,16 @@ import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.getPair
 import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.toast
 import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
 import okhttp3.*
+import org.jetbrains.anko.toast
 import java.io.IOException
 
 /**
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
  *
- * // TODO: 2017/7/11 recyclerView的增量更新
  */
 class DetailsAdapter(private val mContext: Context,
                      private val callback: DetailsAdapter.AdapterCallback,

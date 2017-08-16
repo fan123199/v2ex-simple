@@ -2,20 +2,28 @@ package im.fdx.v2ex.network
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AlertDialog
+import android.view.LayoutInflater
+import android.widget.EditText
 import com.google.gson.Gson
+import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.NetManager.Source.*
+import im.fdx.v2ex.ui.LoginActivity
 import im.fdx.v2ex.ui.details.ReplyModel
 import im.fdx.v2ex.ui.main.Comment
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.ui.node.NodeModel
+import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.fullUrl
-import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.*
+import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -320,14 +328,12 @@ object NetManager {
 
         topicModel.comments = comments.toMutableList()
 
-
         val contentElement = handlerPreTag(contentElementOrg)
 
         val content = if (contentElement == null) "" else contentElement.text()
         topicModel.content = content
 
         val contentRendered = if (contentElement == null) "" else contentElement.html()
-
 
         topicModel.content_rendered = contentRendered.fullUrl()
 
@@ -459,16 +465,31 @@ object NetManager {
         return null
     }
 
+    fun showTwoStepDialog(activity: Activity) {
+        val dialogEt = LayoutInflater.from(activity).inflate(R.layout.dialog_et, null)
+        val etCode = dialogEt.findViewById<EditText>(R.id.et_two_step_code)
+        AlertDialog.Builder(activity, R.style.AppTheme_Simple)
+                .setTitle("您开启了两步验证")
+                .setPositiveButton("验证") { _, _ ->
+                    NetManager.finishLogin(etCode.text.toString(), activity)
+                }
+                .setNegativeButton("退出登录") { _, _ ->
+                    HttpHelper.myCookieJar.clear()
+                    MyApp.get().setLogin(false)
+                    LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+                }
+                .setView(dialogEt).show()
+    }
 
     fun finishLogin(code: String, activity: Activity) {
         val twoStepUrl = "https://www.v2ex.com/2fa"
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url(twoStepUrl)
                 .build()).enqueue(object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {//todo
+            override fun onFailure(call: Call?, e: IOException?) {
             }
 
-            override fun onResponse(call: Call?, response: Response?) {//todo
+            override fun onResponse(call: Call?, response: Response?) {
                 if (response?.code() == 200) {
                     val bodyStr = response.body()?.string()
                     val once = parseOnce(Jsoup.parse(bodyStr)) ?: "0"
@@ -479,12 +500,17 @@ object NetManager {
                             .post(body)
                             .url(twoStepUrl)
                             .build()).enqueue(object : Callback {
-                        override fun onFailure(call: Call?, e: IOException?) {//todo
+                        override fun onFailure(call: Call?, e: IOException?) {
                         }
 
-                        override fun onResponse(call: Call?, response: Response?) {//todo
+                        override fun onResponse(call: Call?, response: Response?) {
                             activity.runOnUiThread {
-                                if (response?.code() == 302) activity.toast("登录成功")
+                                if (response?.code() == 302) {
+                                    activity.toast("登录成功")
+                                    if (activity is LoginActivity) {
+                                        activity.finish()
+                                    }
+                                }
                                 else activity.toast("登录失败")
                             }
                         }

@@ -43,7 +43,6 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.getNum
 import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.toast
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -51,6 +50,7 @@ import okhttp3.Response
 import org.jetbrains.anko.email
 import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
 
@@ -343,7 +343,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (body.contains("每日登录奖励已领取")) {
                     XLog.tag("MainActivity").w("已领取")
-                    runOnUiThread { toast("已领取，明天再来") }
+                    runOnUiThread { toast("每日登录奖励已领取") }
                     return
                 }
 
@@ -369,7 +369,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 Log.w("MainActivity", "daily check ok")
-                runOnUiThread { toast("领取成功") }
+                runOnUiThread { toast("每日登录奖励领取成功") }
             }
         })
     }
