@@ -70,7 +70,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             etUsername.setText(usernamePref)
             etPassword.requestFocus()
         }
-
     }
 
     override fun onClick(v: View) {
