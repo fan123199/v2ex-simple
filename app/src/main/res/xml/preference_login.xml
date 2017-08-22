@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:title="@string/user"
-        android:key="group_user">
-        <Preference
-            android:key="pref_logout"
-            android:title="@string/logout" />
-    </PreferenceCategory>
 
     <PreferenceCategory
         android:title="个性化"
@@ -16,8 +9,8 @@
             android:title="是否在回复时加入楼层"
             android:key="pref_add_row"
             android:defaultValue="false"
-            android:summaryOn="格式: @user #n "
-            android:summaryOff="格式: @user "/>
+            android:summaryOn="当前格式: @user #n "
+            android:summaryOff="当前格式: @user "/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -41,5 +34,13 @@
             android:entryValues="@array/period_int"
             android:key="pref_msg_period"
             android:title="获取消息间隔" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/user"
+        android:key="group_user">
+        <Preference
+            android:key="pref_logout"
+            android:title="@string/logout"/>
     </PreferenceCategory>
 </PreferenceScreen>

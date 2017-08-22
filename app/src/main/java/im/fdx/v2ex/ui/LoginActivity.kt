@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var button: Button
 
     private var mSharedPreference: SharedPreferences? = null
-    private lateinit var pbLogin: ProgressBar
+    private lateinit var progressBar: ProgressBar
     private var username: String? = null
     private var password: String? = null
     private var avatar: String? = null
@@ -56,7 +56,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         setUpToolbar()
         etUsername = findViewById(R.id.input_username)
         etPassword = findViewById(R.id.input_password)
-        pbLogin = findViewById(R.id.pb_login)
+        progressBar = findViewById(R.id.pb_login)
 
         val usernamePref = mSharedPreference?.getString("username", "")
 
@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.btn_login -> {
                 if (!isValidated) return
-                getLoginData()
+                startLogin()
             }
             R.id.link_sign_up -> {
                 val openUrl = Intent(Intent.ACTION_VIEW, Uri.parse(NetManager.SIGN_UP_URL))
@@ -85,14 +85,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun getLoginData() {
+    private fun startLogin() {
         username = etUsername.text.toString()
         password = etPassword.text.toString()
         val requestToGetOnce = Request.Builder()
                 .url(SIGN_IN_URL)
                 .build()
 
-        pbLogin.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
         button.visibility = View.GONE
         HttpHelper.OK_CLIENT.newCall(requestToGetOnce).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -134,7 +134,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 .build()
         HttpHelper.OK_CLIENT.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("FDX", "error in Post Login")
+                Log.e("LoginActivity", "error in Post Login")
             }
 
             @Throws(IOException::class)
@@ -143,7 +143,6 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 val errorMsg = getErrorMsg(response.body()?.string())
                 XLog.tag("LoginActivity").d("http code: ${response.code()}")
                 XLog.tag("LoginActivity").d("errorMsg: $errorMsg")
-
 
                 when (httpcode) {
                     302 -> {
@@ -164,6 +163,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                 if (response.code() == 302) {
                                     if (Objects.equals("/2fa", response.header("Location"))) {
                                         runOnUiThread {
+                                            progressBar.visibility = View.GONE
+                                            button.visibility = VISIBLE
                                             NetManager.showTwoStepDialog(this@LoginActivity)
                                         }
                                     }
@@ -180,12 +181,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     }
                     200 -> runOnUiThread {
                         longToast("登录失败:\n $errorMsg")
+                        progressBar.visibility = View.GONE
+                        button.visibility = VISIBLE
                     }
                 }
-                runOnUiThread {
-                    pbLogin.visibility = View.GONE
-                    button.visibility = VISIBLE
-                }
+
             }
         })
     }
