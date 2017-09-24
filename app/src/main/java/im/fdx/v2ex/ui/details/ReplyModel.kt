@@ -34,23 +34,14 @@ data class ReplyModel(var id: String = "",
                       var content_rendered: String = "",
                       var thanks: Int = 0,
                       var created: Long = 0,
-                      var isThanked: Boolean,
-                      var member: MemberModel? = MemberModel()
+                      var isThanked: Boolean = false,
+                      var member: MemberModel? = null,
+                      var isLouzu: Boolean = false
 ) : BaseModel(), Parcelable {
-
-
-    constructor() : this("", "", "", 0, 0, false, null)
 
     override fun toString() = "ReplyModel{content='$content_rendered}"
 
     override fun parse(): BaseModel? = null
-
-    companion object {
-        @JvmField val CREATOR: Parcelable.Creator<ReplyModel> = object : Parcelable.Creator<ReplyModel> {
-            override fun createFromParcel(source: Parcel): ReplyModel = ReplyModel(source)
-            override fun newArray(size: Int): Array<ReplyModel?> = arrayOfNulls(size)
-        }
-    }
 
     constructor(source: Parcel) : this(
             source.readString(),
@@ -59,18 +50,28 @@ data class ReplyModel(var id: String = "",
             source.readInt(),
             source.readLong(),
             1 == source.readInt(),
-            source.readParcelable<MemberModel>(MemberModel::class.java.classLoader)
+            source.readParcelable<MemberModel>(MemberModel::class.java.classLoader),
+            1 == source.readInt()
     )
 
     override fun describeContents() = 0
 
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(id)
-        dest.writeString(content)
-        dest.writeString(content_rendered)
-        dest.writeInt(thanks)
-        dest.writeLong(created)
-        dest.writeInt((if (isThanked) 1 else 0))
-        dest.writeParcelable(member, 0)
+    override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
+        writeString(id)
+        writeString(content)
+        writeString(content_rendered)
+        writeInt(thanks)
+        writeLong(created)
+        writeInt((if (isThanked) 1 else 0))
+        writeParcelable(member, 0)
+        writeInt((if (isLouzu) 1 else 0))
+    }
+
+    companion object {
+        @JvmField
+        val CREATOR: Parcelable.Creator<ReplyModel> = object : Parcelable.Creator<ReplyModel> {
+            override fun createFromParcel(source: Parcel): ReplyModel = ReplyModel(source)
+            override fun newArray(size: Int): Array<ReplyModel?> = arrayOfNulls(size)
+        }
     }
 }

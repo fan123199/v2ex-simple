@@ -21,6 +21,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
@@ -53,6 +54,7 @@ class DetailsActivity : AppCompatActivity() {
     private lateinit var etSendReply: EditText
     private lateinit var tvToolbar: TextView
 
+    private lateinit var pb: ProgressBar
     private lateinit var mTopicId: String
     private var topicHeader: TopicModel? = null
     private var token: String? = null
@@ -122,6 +124,10 @@ class DetailsActivity : AppCompatActivity() {
 
         setUpToolbar()
         tvToolbar = findViewById(R.id.tv_toolbar)
+        ivSend = findViewById(R.id.iv_send)
+        mSwipe = findViewById(R.id.swipe_details)
+
+        pb = findViewById<ProgressBar>(R.id.pb_send)
 
         rvDetail = findViewById(R.id.detail_recycler_view)
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
@@ -152,11 +158,9 @@ class DetailsActivity : AppCompatActivity() {
         mAdapter = DetailsAdapter(this@DetailsActivity, callback)
         rvDetail.adapter = mAdapter
 
-        mSwipe = findViewById(R.id.swipe_details)
         mSwipe.initTheme()
         mSwipe.setOnRefreshListener { getRepliesPageOne(mTopicId, false) }
 
-        ivSend = findViewById(R.id.iv_send)
         etSendReply = findViewById(R.id.et_post_reply)
         etSendReply.setOnFocusChangeListener { v, hasFocus ->
 
@@ -229,7 +233,6 @@ class DetailsActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call, e: IOException) {
                 handler.sendEmptyMessage(MSG_ERROR_IO)
-                XLog.tag("DetailsActivity").d("failed " + e.message)
             }
 
             @Throws(IOException::class)
@@ -415,6 +418,10 @@ class DetailsActivity : AppCompatActivity() {
                 .add("content", content)
                 .add("once", once!!)
                 .build()
+
+        pb.visibility = View.VISIBLE
+        ivSend.visibility = View.INVISIBLE
+
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .header("Origin", NetManager.HTTPS_V2EX_BASE)
                 .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
@@ -424,20 +431,26 @@ class DetailsActivity : AppCompatActivity() {
                 .build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
+                runOnUiThread {
+                    pb.visibility = View.GONE
+                    ivSend.visibility = View.VISIBLE
+                }
                 dealError(this@DetailsActivity, swipe = mSwipe)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                if (response.code() == 302) {
-                    XLog.tag("DetailsActivity").d("成功发布")
-                    handler.post {
+                runOnUiThread {
+                    pb.visibility = View.GONE
+                    ivSend.visibility = View.VISIBLE
+                    if (response.code() == 302) {
+                        XLog.tag("DetailsActivity").d("成功发布")
                         toast("发表评论成功")
                         etSendReply.setText("")
                         getRepliesPageOne(mTopicId, true)
+                    } else {
+                        runOnUiThread { toast("发表评论失败") }
                     }
-                } else {
-                    toast("发表评论失败")
                 }
             }
         })

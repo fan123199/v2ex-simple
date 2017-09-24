@@ -1,5 +1,6 @@
 package im.fdx.v2ex.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -21,7 +22,7 @@ import im.fdx.v2ex.utils.extensions.load
 
 class Popup(mActivity: Context) {
     private val popupWindow: PopupWindow
-    var contentView: View = LayoutInflater.from(mActivity).inflate(R.layout.item_reply_view, null)
+    private var contentView: View = LayoutInflater.from(mActivity).inflate(R.layout.item_reply_view, null)
 
     init {
         popupWindow = PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -31,13 +32,16 @@ class Popup(mActivity: Context) {
     }
 
 
+    @SuppressLint("SetTextI18n")
     fun show(v: View, data: ReplyModel, position: Int, clickListener: View.OnClickListener) {
 
         popupWindow.width = v.width
         val hd = DetailsAdapter.ItemViewHolder(contentView)
         hd.tvContent.movementMethod = ScrollingMovementMethod.getInstance();
         hd.tvContent.maxLines = 4
+        hd.tvContent.isVerticalScrollBarEnabled = true
         hd.tvContent.setGoodText(data.content_rendered)
+        hd.tvLouzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
         hd.tvRow.text = "#$position"
         hd.tvReplier.text = data.member?.username
         hd.ivThank.visibility = View.INVISIBLE

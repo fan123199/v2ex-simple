@@ -18,7 +18,7 @@ abstract class EndlessOnScrollListener(private val mLinearLayoutManager: LinearL
     internal var pageAfterLoaded = pageToLoad
 
     override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-        XLog.d("onScrolled")
+        XLog.d("onScrolled + $dy")
 
         if (dy < 0) {
             return

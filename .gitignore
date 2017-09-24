@@ -4,6 +4,7 @@
 /.idea/libraries
 /app/build
 /build
+/app/app.iml
 .DS_Store
 /captures
 /app/app-release.apk

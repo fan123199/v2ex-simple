@@ -8,7 +8,9 @@
         <item name="android:textColorLink">@color/primary</item>
         <item name="android:statusBarColor">@color/primary</item>
         <item name="android:listDivider">@drawable/divider</item>
-
+        <item name="text_medium">@dimen/text_size_medium</item>
+        <item name="text_small">@dimen/text_size_small</item>
+        <item name="text_large">@dimen/text_size_large</item>
 
         <!--<item name="android:windowContentTransitions">true</item>-->
         <!--<item name="android:windowEnterTransition">@transition/explode</item>-->
@@ -17,6 +19,12 @@
         <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
         <!--<item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>-->
         <!--<item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>-->
+    </style>
+
+    <style name="Theme.V2ex.zhong">
+        <item name="text_small">@dimen/text_size_small_2</item>
+        <item name="text_medium">@dimen/text_size_medium_2</item>
+        <item name="text_large">@dimen/text_size_large_2</item>
     </style>
 
     <style name="Theme.V2ex.FixStatus">
@@ -96,10 +104,10 @@
         <item name="android:textColor">@color/toolbar_text</item>
     </style>
 
-    <style name="CollapseTitle">
-        <item name="android:textColor">@color/toolbar_text</item>
-        <item name="android:textSize">20sp</item>
-    </style>
+    <!--<style name="CollapseTitle">-->
+    <!--<item name="android:textColor">@color/toolbar_text</item>-->
+    <!--<item name="android:textSize">20sp</item>-->
+    <!--</style>-->
 
     <style name="Theme.V2ex.TitleTextStyle">
         <item name="android:textColor">@color/title_text</item>
@@ -109,25 +117,25 @@
 
     <style name="VText">
         <item name="android:textColor">@color/title_text</item>
-        <item name="android:textSize">@dimen/text_size_medium</item>
+        <item name="android:textSize">?text_medium</item>
     </style>
 
 
     <style name="VText.ToolbarStyle">
         <item name="android:textColor">@color/toolbar_text</item>
-        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textSize">?text_large</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="VText.ContentStyle">
         <item name="android:lineSpacingMultiplier">1.2</item>
         <item name="android:textColor">@color/content_font_color</item>
-        <item name="android:textSize">@dimen/content_font_size</item>
+        <item name="android:textSize">?attr/text_medium</item>
     </style>
 
     <style name="VText.Hint">
         <item name="android:textColor">@color/hint</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">?text_small</item>
     </style>
 
     <style name="VText.LightHint">

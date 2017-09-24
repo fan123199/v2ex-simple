@@ -154,7 +154,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View?) {
                 val menu = navigationView.menu
-                (0..menu.size() - 1).forEach { j -> menu.getItem(j).isChecked = false }
+                (0 until menu.size()).forEach { j -> menu.getItem(j).isChecked = false }
             }
         })
 
@@ -187,7 +187,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
                 setUserInfo(username, avatar)
             }
-            shrinkFab()
         } else {
             showIcon(false)
             fab.hide()
@@ -211,7 +210,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-                mAdapter!!.getItem(tab.position).scrollToTop()
+                mAdapter?.getItem(tab.position)?.scrollToTop()
             }
         })
 
@@ -234,7 +233,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         invalidateOptionsMenu()
     }
 
-
+    @Deprecated("好像很费cpu")
     private fun shrinkFab() {
         fab.animate().rotation(360f)
                 .setDuration(1000).start()

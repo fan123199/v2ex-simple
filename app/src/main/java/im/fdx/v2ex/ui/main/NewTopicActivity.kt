@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package im.fdx.v2ex.ui.main
 
 import android.content.Intent
@@ -149,7 +151,7 @@ class NewTopicActivity : AppCompatActivity() {
             mNodename = intent.getStringExtra(Keys.KEY_NODE_NAME)
             XLog.d(mNodename + "|" + spinner.count + "|" + adapter.count)
             val nodeTitle: String?
-            for (i in 0..adapter.count - 1) {
+            for (i in 0 until adapter.count) {
                 if (mNodename == adapter.getItem(i)?.name) {
                     XLog.d("yes, $i")
                     nodeTitle = adapter.getItem(i)?.title

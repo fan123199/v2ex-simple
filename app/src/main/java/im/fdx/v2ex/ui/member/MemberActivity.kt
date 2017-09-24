@@ -5,8 +5,6 @@ import android.app.FragmentManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.preference.PreferenceManager
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.AppBarLayout
@@ -80,12 +78,6 @@ class MemberActivity : AppCompatActivity() {
     private var isBlocked: Boolean = false
     private var isFollowed: Boolean = false
 
-    private val handler = Handler(Handler.Callback { msg ->
-        when (msg.what) {
-            MSG_GET_USER_INFO -> showUser(msg.obj as String)
-        }
-        true
-    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +86,6 @@ class MemberActivity : AppCompatActivity() {
         mIvAvatar = findViewById(R.id.iv_avatar_profile)
         mTvUserCreatedPrefix = findViewById(R.id.tv_prefix_created)
         mTvIntro = findViewById(R.id.tv_intro)
-
 
         mTvLocation = findViewById(R.id.tv_location)
         mTvBitCoin = findViewById(R.id.tv_bitcoin)
@@ -177,8 +168,8 @@ class MemberActivity : AppCompatActivity() {
             override fun onResponse(call: Call, response: Response) {
                 if (response.code() == 200) {
                     val html = response.body()!!.string()
-                    isBlocked = isBlockByHtml(html)
-                    isFollowed = isFollowedByHtml(html)
+                    isBlocked = isBlock(html)
+                    isFollowed = isFollowed(html)
                     XLog.d("isBlocked: $isBlocked|isFollowed: $isFollowed")
 
 
@@ -197,12 +188,12 @@ class MemberActivity : AppCompatActivity() {
 
                     }
 
-                    blockOfT = parseToBlock(html)
+                    blockOfT = geOnceInBlock(html)
 
                     if (blockOfT == null) {
                         MyApp.get().setLogin(false)
                     }
-                    followOfOnce = parseToOnce(html)
+                    followOfOnce = getOnceInFollow(html)
                 }
             }
         })
@@ -217,8 +208,14 @@ class MemberActivity : AppCompatActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                val body = response.body()?.string()
-                Message.obtain(handler, MSG_GET_USER_INFO, body).sendToTarget()
+                if (response.code() != 200) {
+                    dealError(this@MemberActivity)
+                } else {
+                    val body = response.body()?.string()
+                    runOnUiThread {
+                        body?.let { showUser(it) }
+                    }
+                }
             }
         })
     }
@@ -227,41 +224,26 @@ class MemberActivity : AppCompatActivity() {
         when (it.id) {
             R.id.tv_location -> {
             }
-            R.id.tv_github -> openGithub()
-            R.id.tv_twitter -> openTwitter()
-            R.id.tv_website -> openWeb()
-        }
-    }
-
-    fun openTwitter() {
-        if ((member.twitter).isNullOrEmpty()) {
-            return
-        }
-        val intent: Intent
-        try {
-            // get the Twitter app if possible
-            this.packageManager.getPackageInfo("com.twitter.android", 0)
-            intent = Intent(Intent.ACTION_VIEW,
-                    Uri.parse("twitter://user?screen_name=" + member.twitter))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        } catch (e: Exception) {
-            // no Twitter app, revert to browser
-            CustomChrome(this).load("https://twitter.com/" + member.twitter)
-        }
-    }
-
-    fun openWeb() {
-        when {
-            !(member.website).isNullOrEmpty() ->
-                CustomChrome(this).load(if (!member.website.contains("http")) "http://"
-                        + member.website else member.website)
-        }
-    }
-
-    fun openGithub() {
-        when {
-            !(member.github).isNullOrEmpty() -> CustomChrome(this).load("https://www.github.com/" + member.github)
+            R.id.tv_github -> if (!(member.github).isEmpty()) CustomChrome(this).load("https://www.github.com/" + member.github)
+            R.id.tv_twitter -> {
+                if (!(member.twitter).isEmpty()) {
+                    val intent: Intent
+                    try {
+                        packageManager.getPackageInfo("com.twitter.android", 0)
+                        intent = Intent(Intent.ACTION_VIEW,
+                                Uri.parse("twitter://user?screen_name=" + member.twitter))
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        startActivity(intent)
+                    } catch (e: Exception) {
+                        CustomChrome(this).load("https://twitter.com/" + member.twitter)
+                    }
+                }
+            }
+            R.id.tv_website -> when {
+                !(member.website).isEmpty() ->
+                    CustomChrome(this).load(if (!member.website.contains("http")) "http://"
+                            + member.website else member.website)
+            }
         }
     }
 
@@ -273,36 +255,16 @@ class MemberActivity : AppCompatActivity() {
         mTvIntro.text = member.bio
         mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
-        mTvBitCoin.visibility = when {
-            (member.btc).isNullOrEmpty() -> View.GONE
-            else -> View.VISIBLE
-        }
-        mTvGithub.visibility = when {
-            (member.github).isNullOrEmpty() -> View.GONE
-            else -> View.VISIBLE
-        }
+        mTvBitCoin.visibility = if ((member.btc).isEmpty()) View.GONE else View.VISIBLE
+        mTvGithub.visibility = if ((member.github).isEmpty()) View.GONE else View.VISIBLE
+        mTvLocation.visibility = if ((member.location).isEmpty()) View.GONE else View.VISIBLE
+        mTvTwitter.visibility = if ((member.twitter).isEmpty()) View.GONE else View.VISIBLE
+        mTvWebsite.visibility = if ((member.website).isEmpty()) View.GONE else View.VISIBLE
 
-        mTvLocation.visibility = when {
-            (member.location).isNullOrEmpty() -> View.GONE
-            else -> View.VISIBLE
-        }
+        mTvIntro.visibility = if ((member.bio).isEmpty()) View.GONE else View.VISIBLE
 
-        mTvTwitter.visibility = when {
-            (member.twitter).isNullOrEmpty() -> View.GONE
-            else -> View.VISIBLE
-        }
-
-        mTvWebsite.visibility = when {
-            (member.website).isNullOrEmpty() -> View.GONE
-            else -> View.VISIBLE
-        }
-
-        mTvIntro.visibility = when {
-            (member.bio).isNullOrEmpty() -> View.GONE
-            else -> View.VISIBLE
-        }
         llInfo.visibility = when {
-            !(member.website + member.twitter + member.github + member.btc + member.location).isNullOrEmpty() -> View.VISIBLE
+            !(member.website + member.twitter + member.github + member.btc + member.location).isEmpty() -> View.VISIBLE
             else -> View.GONE
         }
     }
@@ -373,23 +335,15 @@ class MemberActivity : AppCompatActivity() {
     }
 
     companion object {
-        var TAG: String? = MemberActivity::class.java.simpleName
-        private val MSG_GET_USER_INFO = 0
+        var TAG: String = MemberActivity::class.java.simpleName
 
-        private fun parseToOnce(html: String): String? = Regex("follow/\\d{1,8}\\?once=\\d{1,10}").find(html)?.value
+        private fun isFollowed(html: String) = Regex("un(?=follow/\\d{1,8}\\?once=)").containsMatchIn(html)
 
-        private fun isFollowedByHtml(html: String) = Regex("un(?=follow/\\d{1,8}\\?once=)").containsMatchIn(html)
+        private fun getOnceInFollow(html: String): String? = Regex("follow/\\d{1,8}\\?once=\\d{1,10}").find(html)?.value
 
-        private fun isBlockByHtml(html: String) = Regex("un(?=block/\\d{1,8}\\?t=)").containsMatchIn(html)
+        private fun isBlock(html: String) = Regex("un(?=block/\\d{1,8}\\?t=)").containsMatchIn(html)
 
-        /**
-         * @param html
-         * <input type="button" value="Block" onclick="if (confirm('确认要屏蔽 SoulGem？'))
-         *   { location.href = '/block/209351?t=1490028444'; }" class="super normal button">
-         * *
-         * @return the whole path url
-         */
-        private fun parseToBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
+        private fun geOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
 
         // 设置渐变的动画
         fun startAlphaAnimation(v: View, duration: Long, visibility: Int) {
@@ -406,14 +360,14 @@ class MemberActivity : AppCompatActivity() {
 
     inner class MemberViewpagerAdapter(fm: FragmentManager?, var username: String) : FragmentPagerAdapter(fm) {
 
-        val titles = arrayOf("主题", "评论")
+        private val titles = arrayOf("主题", "评论")
 
         override fun getItem(position: Int) = when (position) {
             0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
             else -> ReplyFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
         }
 
-        override fun getCount() = 2
+        override fun getCount() = titles.size
         override fun getPageTitle(position: Int) = titles[position]
 
     }

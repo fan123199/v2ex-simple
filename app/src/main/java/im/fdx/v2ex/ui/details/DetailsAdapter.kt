@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.content.Intent
 import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
@@ -32,12 +31,15 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.main.DiffCallback
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
+import im.fdx.v2ex.ui.member.MemberActivity
+import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.getPair
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
 import okhttp3.*
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
 
@@ -53,10 +55,10 @@ class DetailsAdapter(private val mContext: Context,
     internal var verifyCode: String? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (viewType) {
-            TYPE_HEADER -> return TopicWithCommentsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_topic_with_comments, parent, false))
-            TYPE_ITEM -> return ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false))
-            TYPE_FOOTER -> return FooterViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_load_more, parent, false))
+        return when (viewType) {
+            TYPE_HEADER -> TopicWithCommentsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_topic_with_comments, parent, false))
+            TYPE_ITEM -> ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false))
+            TYPE_FOOTER -> FooterViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_load_more, parent, false))
             else -> throw RuntimeException(" No type that matches $viewType + Make sure using types correctly")
         }
     }
@@ -80,10 +82,10 @@ class DetailsAdapter(private val mContext: Context,
                 //            }
 
                 mainHolder.tvReplyNumber.text = topic.replies.toString()
-                mainHolder.tvAuthor.text = topic.member!!.username
-                mainHolder.tvNode.text = topic.node!!.title
+                mainHolder.tvAuthor.text = topic.member?.username
+                mainHolder.tvNode.text = topic.node?.title
                 mainHolder.tvCreated.text = TimeUtil.getRelativeTime(topic.created)
-                mainHolder.ivAvatar.load(topic.member!!.avatarNormalUrl)
+                mainHolder.ivAvatar.load(topic.member?.avatarNormalUrl)
 
                 if (topic.comments.isNotEmpty()) {
                     mainHolder.ll.removeAllViews()
@@ -111,6 +113,7 @@ class DetailsAdapter(private val mContext: Context,
             TYPE_ITEM -> {
                 val itemVH = holder as ItemViewHolder
                 val replyItem = mAllList[position] as ReplyModel
+                replyItem.isLouzu = replyItem.member?.username == (mAllList[0] as TopicModel).member?.username
                 if (position == itemCount - 1) {
                     itemVH.divider.visibility = View.GONE
                 }
@@ -140,9 +143,21 @@ class DetailsAdapter(private val mContext: Context,
                     itemVH.tvReply.setOnClickListener { reply(replyItem, position) }
                 }
 
+                XLog.i(replyItem.content_rendered)
                 itemVH.tvReplyTime.text = TimeUtil.getRelativeTime(replyItem.created)
-                itemVH.tvReplier.text = replyItem.member!!.username
+                itemVH.tvReplier.text = replyItem.member?.username
                 itemVH.tvThanks.text = replyItem.thanks.toString()
+                itemVH.tvContent.setGoodText(replyItem.content_rendered)
+                itemVH.tvRow.text = "#$position"
+                itemVH.ivUserAvatar.load(replyItem.member?.avatarLargeUrl)
+                itemVH.ivUserAvatar.setOnClickListener {
+                    mContext.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
+                }
+                if (replyItem.member?.username == (mAllList[0] as TopicModel).member?.username) {
+                    itemVH.tvLouzu.visibility = View.VISIBLE
+                } else {
+                    itemVH.tvLouzu.visibility = View.GONE
+                }
 
                 if (replyItem.isThanked) {
                     itemVH.ivThank.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
@@ -152,17 +167,13 @@ class DetailsAdapter(private val mContext: Context,
                     itemVH.ivThank.imageTintList = null
                 }
 
-                itemVH.tvContent.setGoodText(replyItem.content_rendered)
-
                 itemVH.tvContent.popupListener = object : Popup.PopupListener {
                     override fun onClick(v: View, url: String) {
                         val username = url.split("/").last()
                         var index = replyItem.content.getPair(username)
-//
-
                         if (index <= 0 || index > position) { //5
                             mAllList.forEachIndexed { i, baseModel ->
-                                if (i in 1..(position - 1) && (baseModel as ReplyModel).member?.username == username) {
+                                if (i in 1 until position && (baseModel as ReplyModel).member?.username == username) {
                                     index = i
                                 }
                             }
@@ -176,15 +187,6 @@ class DetailsAdapter(private val mContext: Context,
                     }
 
                 }
-
-                XLog.i(replyItem.content_rendered)
-                itemVH.tvRow.text = "#$position"
-                itemVH.ivUserAvatar.load(replyItem.member!!.avatarLargeUrl)
-                itemVH.ivUserAvatar.setOnClickListener {
-                    val itProfile = Intent("im.fdx.v2ex.intent.profile")
-                    itProfile.putExtra("username", replyItem.member!!.username)
-                    mContext.startActivity(itProfile)
-                }
             }
         }
     }
@@ -192,11 +194,11 @@ class DetailsAdapter(private val mContext: Context,
     private fun copyText(replyItem: ReplyModel) {
         XLog.d("I click menu copy")
         val manager = mContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        manager.primaryClip = ClipData.newPlainText("wtf", replyItem.content)
+        manager.primaryClip = ClipData.newPlainText("item", replyItem.content)
     }
 
     private fun thank(replyItem: ReplyModel, itemVH: ItemViewHolder): Boolean {
-        XLog.tag(TAG).d("hehe" + verifyCode!!)
+        XLog.tag(TAG).d("hehe" + verifyCode)
         if (verifyCode == null) {
             return true
         }
@@ -237,7 +239,7 @@ class DetailsAdapter(private val mContext: Context,
                 if (MyApp.get().mPrefs.getBoolean("pref_add_row", false)) "#$position " else ""
         if (!editText.text.toString().contains(text)) {
             val spanString = SpannableString(text)
-            val span: ForegroundColorSpan = ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.primary))
+            val span = ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.primary))
             spanString.setSpan(span, 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             editText.append(spanString)
         }
@@ -286,6 +288,7 @@ class DetailsAdapter(private val mContext: Context,
         internal var ivThank: ImageView = itemView.findViewById(R.id.iv_thanks)
         internal var ivUserAvatar: CircleImageView = itemView.findViewById(R.id.iv_reply_avatar)
         internal var divider: View = itemView.findViewById(R.id.divider)
+        internal var tvLouzu: TextView = itemView.findViewById(R.id.tv_louzu)
     }
 
     class TopicWithCommentsViewHolder(itemView: View) : TopicsRVAdapter.MainViewHolder(itemView) {
@@ -308,9 +311,9 @@ class DetailsAdapter(private val mContext: Context,
     }
 
     companion object {
-        val TYPE_FOOTER = 2
         private val TAG = DetailsAdapter::class.java.simpleName
         private val TYPE_HEADER = 0
         private val TYPE_ITEM = 1
+        private val TYPE_FOOTER = 2
     }
 }

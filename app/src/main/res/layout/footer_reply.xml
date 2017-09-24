@@ -36,18 +36,30 @@
             android:textAllCaps="false"
             />
 
-        <ImageView
-            android:id="@+id/iv_send"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="bottom"
+        <FrameLayout
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_gravity="bottom"
             android:layout_marginRight="16dp"
-            android:onClick="postReply"
-            android:src="@drawable/ic_send_hint_24dp"
-            android:contentDescription="@string/reply"/>
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_send"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:onClick="postReply"
+                android:src="@drawable/ic_send_hint_24dp"
+                android:contentDescription="@string/reply"/>
+
+            <ProgressBar
+                android:visibility="gone"
+                android:id="@+id/pb_send"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+
+        </FrameLayout>
 
     </LinearLayout>
 

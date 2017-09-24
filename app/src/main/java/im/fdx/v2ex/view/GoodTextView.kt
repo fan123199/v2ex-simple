@@ -16,7 +16,6 @@ import android.text.style.URLSpan
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.R
@@ -170,7 +169,7 @@ class GoodTextView @JvmOverloads constructor(
                 }
             }
             targetList.add(target)
-            Glide.with(context).load(source).into(target)
+            GlideApp.with(context).load(source).into(target)
             return bitmapHolder
         }
     }

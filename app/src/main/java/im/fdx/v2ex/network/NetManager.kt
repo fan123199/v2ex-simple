@@ -27,6 +27,7 @@ import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
+import org.jsoup.select.Elements
 import java.io.IOException
 import java.lang.Integer.parseInt
 import java.util.*
@@ -69,7 +70,10 @@ object NetManager {
     @Deprecated("")
     val API_REPLIES = HTTPS_V2EX_BASE + "/api/replies/show.json"
 
+    @Deprecated("使用web端，达到更高的分类度")
     val URL_ALL_NODE = HTTPS_V2EX_BASE + "/api/nodes/all.json"
+
+    val URL_ALL_NODE_WEB = HTTPS_V2EX_BASE + "/planes"
 
     fun parseToNotifications(html: Document): List<NotificationModel> {
         val body = html.body()
@@ -546,5 +550,31 @@ object NetManager {
         }
 
         return nodeModels
+    }
+
+    fun getAllNode(html: String): MutableMap<String, MutableList<NodeModel>> {
+        val allNodes = mutableMapOf<String, MutableList<NodeModel>>()
+
+        val document: Document = Jsoup.parse(html)
+        val body = document.body()
+        val main = body.getElementsByAttributeValue("id", "Main").getOrNull(0)
+        val boxes: Elements? = main?.getElementsByClass("box")
+
+        boxes?.filterIndexed { index, _ -> index > 0 }?.forEach {
+            val title = it.getElementsByClass("header").first().ownText()
+
+            val nodes = mutableListOf<NodeModel>()
+            val nodeElements = it.getElementsByClass("inner").first().getElementsByClass("item_node")
+            for (item in nodeElements) {
+                val node = NodeModel()
+                val name = item.attr("href").replace("/go/", "")
+                node.name = name
+                node.title = item.text()
+                nodes.add(node)
+            }
+
+            allNodes[title] = nodes
+        }
+        return allNodes
     }
 }

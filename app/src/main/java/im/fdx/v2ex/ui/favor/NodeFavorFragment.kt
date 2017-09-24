@@ -3,13 +3,15 @@ package im.fdx.v2ex.ui.favor
 import android.app.Fragment
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.elvishew.xlog.XLog
+import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexboxLayoutManager
+import com.google.android.flexbox.JustifyContent
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
@@ -40,7 +42,10 @@ class NodeFavorFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.rv_container)
         adapter = AllNodesAdapter(true)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = GridLayoutManager(activity, 3)
+        recyclerView.layoutManager = FlexboxLayoutManager(activity, FlexDirection.ROW).apply {
+            justifyContent = JustifyContent.FLEX_START
+        }
+
         swipe = view.findViewById(R.id.swipe_container)
         swipe.initTheme()
         swipe.setOnRefreshListener { getNode() }
@@ -57,7 +62,7 @@ class NodeFavorFragment : Fragment() {
 
     private fun getNode() {
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(Companion.nodeUrl)
+                .url("https://www.v2ex.com/my/nodes")
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(activity, swipe = swipe)
@@ -89,10 +94,6 @@ class NodeFavorFragment : Fragment() {
                 }
             }
         })
-    }
-
-    companion object {
-        const val nodeUrl = "https://www.v2ex.com/my/nodes"
     }
 
 }

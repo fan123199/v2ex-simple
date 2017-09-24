@@ -1,16 +1,16 @@
 package im.fdx.v2ex.ui.node
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
+import org.jetbrains.anko.startActivity
 import java.util.*
 
 /**
@@ -18,7 +18,7 @@ import java.util.*
  * 所有节点页面
  */
 
-class AllNodesAdapter(val isShowImg: Boolean) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
+class AllNodesAdapter(val isShowImg: Boolean = false) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
 
     private var mNodeModels: MutableList<NodeModel> = ArrayList()
     private var realAllNodes: MutableList<NodeModel> = ArrayList()
@@ -26,21 +26,17 @@ class AllNodesAdapter(val isShowImg: Boolean) : RecyclerView.Adapter<AllNodesAda
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             AllNodeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_all_nodes, parent, false))
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: AllNodeViewHolder, position: Int) {
+        XLog.tag("RV_INNER").e("$position")
         val node = mNodeModels[position]
 
-        when {
-            isShowImg -> holder.ivNodeIcon.load(node.avatarLargeUrl)
-            else -> holder.ivNodeIcon.visibility = View.GONE
+        if (isShowImg) holder.ivNodeIcon.load(node.avatarLargeUrl)
+        else {
+            holder.ivNodeIcon.visibility = View.GONE
         }
-        holder.tvNodeName.text = "${node.title} (${node.topics})"
+        holder.tvNodeName.text = node.title
         holder.itemView.setOnClickListener {
-            val intent = Intent().apply {
-                setClass(it.context, NodeActivity::class.java)
-                putExtra(Keys.KEY_NODE_NAME, node.name)
-            }
-            it.context.startActivity(intent)
+            it.context.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to node.name)
         }
 
     }
@@ -60,7 +56,7 @@ class AllNodesAdapter(val isShowImg: Boolean) : RecyclerView.Adapter<AllNodesAda
 
     fun filter(newText: String) {
 
-        if (newText.isNullOrEmpty()) {
+        if (newText.isEmpty()) {
             mNodeModels = realAllNodes
             notifyDataSetChanged()
             return

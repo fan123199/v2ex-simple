@@ -22,10 +22,6 @@ class MyApp : Application() {
         }
     }
 
-    init {
-
-    }
-
     lateinit var mPrefs: SharedPreferences
     internal var isLogin = false
 
