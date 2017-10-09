@@ -8,6 +8,9 @@ import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.Keys
 
+val pref: SharedPreferences by lazy {
+    MyApp.get().mPrefs
+}
 
 /**
  * Created by fdx on 2015/8/16.
@@ -15,8 +18,8 @@ import im.fdx.v2ex.utils.Keys
  */
 class MyApp : Application() {
     companion object {
-        private lateinit var INSTANCE: MyApp
 
+        private lateinit var INSTANCE: MyApp
         fun get(): MyApp {
             return INSTANCE
         }

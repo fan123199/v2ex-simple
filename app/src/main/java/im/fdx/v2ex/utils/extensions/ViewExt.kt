@@ -7,7 +7,9 @@ import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.TextView
+import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import org.jetbrains.anko.forEachChild
 
@@ -65,4 +67,13 @@ fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
 fun SwipeRefreshLayout.initTheme() {
     setColorSchemeResources(R.color.accent_orange)
     setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
+}
+
+/**
+ * Created by fdx on 2017/7/3.
+ * fdx will maintain it
+ */
+
+fun ImageView.load(url: Any?) {
+    GlideApp.with(context).load(url).into(this)
 }

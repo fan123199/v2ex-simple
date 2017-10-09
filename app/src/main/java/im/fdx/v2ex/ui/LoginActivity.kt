@@ -1,20 +1,18 @@
 package im.fdx.v2ex.ui
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.support.design.widget.TextInputEditText
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.view.View.VISIBLE
-import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.TextView
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
 import com.elvishew.xlog.XLog
+import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
@@ -24,9 +22,12 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
+import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.item_verify_code.*
 import okhttp3.*
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
@@ -34,94 +35,98 @@ import org.jsoup.Jsoup
 import java.io.IOException
 import java.util.*
 
-class LoginActivity : AppCompatActivity(), View.OnClickListener {
+class LoginActivity : AppCompatActivity() {
 
-    private lateinit var etUsername: TextInputEditText
-    private lateinit var etPassword: TextInputEditText
-    private lateinit var button: Button
-
-    private var mSharedPreference: SharedPreferences? = null
     private lateinit var progressBar: ProgressBar
+
     private var username: String? = null
     private var password: String? = null
     private var avatar: String? = null
+
+    var onceCode: String? = null
+    var passwordKey: String? = null
+    var nameKey: String? = null
+    var imageCodeKey: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        mSharedPreference = PreferenceManager.getDefaultSharedPreferences(this)
-
         setUpToolbar()
-        etUsername = findViewById(R.id.input_username)
-        etPassword = findViewById(R.id.input_password)
         progressBar = findViewById(R.id.pb_login)
 
-        val usernamePref = mSharedPreference?.getString("username", "")
-
-        button = findViewById<Button>(R.id.btn_login)
-        val tvSignup = findViewById<TextView>(R.id.link_sign_up)
-
-        button.setOnClickListener(this)
-        tvSignup.setOnClickListener(this)
+        val usernamePref = pref.getString("username", "")
+        btn_login.setOnClickListener {
+            if (!isValidated()) return@setOnClickListener
+            username = input_username.text.toString()
+            password = input_password.text.toString()
+            progressBar.visibility = View.VISIBLE
+            btn_login.visibility = View.GONE
+            postLogin(nameKey!!, passwordKey!!, onceCode = onceCode!!, imageCodeKey = imageCodeKey!!)
+        }
+        link_sign_up.setOnClickListener {
+            val openUrl = Intent(Intent.ACTION_VIEW, Uri.parse(NetManager.SIGN_UP_URL))
+            startActivity(openUrl)
+        }
+        iv_code.setOnClickListener {
+            getLoginElement()
+        }
 
         if (!usernamePref.isNullOrEmpty()) {
-            etUsername.setText(usernamePref)
-            etPassword.requestFocus()
+            input_username.setText(usernamePref)
+            input_password.requestFocus()
         }
+
+        getLoginElement()
     }
 
-    override fun onClick(v: View) {
-        when (v.id) {
-            R.id.btn_login -> {
-                if (!isValidated) return
-                startLogin()
-            }
-            R.id.link_sign_up -> {
-                val openUrl = Intent(Intent.ACTION_VIEW, Uri.parse(NetManager.SIGN_UP_URL))
-                startActivity(openUrl)
-            }
-        }
-    }
+    private fun getLoginElement() {
 
-    private fun startLogin() {
-        username = etUsername.text.toString()
-        password = etPassword.text.toString()
         val requestToGetOnce = Request.Builder()
                 .url(SIGN_IN_URL)
                 .build()
 
-        progressBar.visibility = View.VISIBLE
-        button.visibility = View.GONE
         HttpHelper.OK_CLIENT.newCall(requestToGetOnce).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("FDX", "error in get login page")
+                XLog.tag("LoginActivity").e("error in get login page")
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response0: Response) {
                 val htmlString = response0.body()?.string()
                 val body = Jsoup.parse(htmlString).body()
-                val nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮箱地址").attr("name")
-                val passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
-                val onceCode = body.getElementsByAttributeValue("name", "once").attr("value")
+                nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮箱地址").attr("name")
+                passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
+                onceCode = body.getElementsByAttributeValue("name", "once").attr("value")
+                imageCodeKey = body.getElementsByAttributeValue("placeholder", "请输入上图中的验证码").attr("name")
+                runOnUiThread {
+                    val str = "https://www.v2ex.com/_captcha?once=$onceCode"
 
-                XLog.tag("LoginActivity").d("$nameKey|$passwordKey|$onceCode")
-                //            XLog.d(request.headers().toString());
-                //            XLog.d(request.toString());
-                //            XLog.d(request.isHttps() + request.method() +request.body().toString() );
-
-                postLogin(nameKey, passwordKey, onceCode)
-
+                    val headers: LazyHeaders = LazyHeaders.Builder()
+                            .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                            .addHeader("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
+                            .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
+                            .addHeader("Host", "www.v2ex.com")
+                            .addHeader("Cache-Control", "max-age=0")
+                            //  .addHeader("X-Requested-With", "com.android.browser")
+                            //  .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
+                            .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36")
+                            .addHeader("cookie", HttpHelper.myCookieJar.loadForRequest(HttpUrl.parse(str)!!).joinToString(separator = ";"))
+                            .build()
+                    val url = GlideUrl(str, headers)
+                    GlideApp.with(iv_code).load(url).centerCrop().into(iv_code)
+                }
+                XLog.tag("LoginActivity").d("$nameKey|$passwordKey|$onceCode|$imageCodeKey")
             }
         })
     }
 
-    private fun postLogin(nameKey: String, passwordKey: String, onceCode: String) {
+    private fun postLogin(nameKey: String, passwordKey: String, onceCode: String, imageCodeKey: String) {
         val requestBody = FormBody.Builder()
-                .add(nameKey, username!!)
-                .add(passwordKey, password!!)
+                .add(nameKey, input_username.text.toString())
+                .add(passwordKey, input_password.text.toString())
+                .add(imageCodeKey, et_input_code.text.toString())
                 .add("once", onceCode)
                 .build()
 
@@ -147,7 +152,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 when (httpcode) {
                     302 -> {
                         MyApp.get().setLogin(true)
-                        mSharedPreference?.edit()
+                        pref.edit()
                                 ?.putString("username", username)
                                 ?.apply()
 
@@ -164,7 +169,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                     if (Objects.equals("/2fa", response.header("Location"))) {
                                         runOnUiThread {
                                             progressBar.visibility = View.GONE
-                                            button.visibility = VISIBLE
+                                            btn_login.visibility = VISIBLE
                                             NetManager.showTwoStepDialog(this@LoginActivity)
                                         }
                                     }
@@ -182,7 +187,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     200 -> runOnUiThread {
                         longToast("登录失败:\n $errorMsg")
                         progressBar.visibility = View.GONE
-                        button.visibility = VISIBLE
+                        btn_login.visibility = VISIBLE
                     }
                 }
 
@@ -208,7 +213,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 val member = myGson.fromJson(body, MemberModel::class.java)
                 avatar = member.avatarLargeUrl
 
-                mSharedPreference!!.edit().putString(Keys.KEY_AVATAR, avatar).apply()
+                pref.edit().putString(Keys.KEY_AVATAR, avatar).apply()
                 val intent = Intent(Keys.ACTION_LOGIN).apply {
                     putExtra(Keys.KEY_USERNAME, username)
                     putExtra(Keys.KEY_AVATAR, avatar)
@@ -226,24 +231,28 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         return message.text().trim()
     }
 
-    private val isValidated: Boolean
-        get() {
-            var valid = true
-            val username = etUsername.text.toString()
-            val password = etPassword.text.toString()
+    private fun isValidated(): Boolean {
+        val username = input_username.text.toString()
+        val password = input_password.text.toString()
 
-            if (password.isEmpty()) {
-                etPassword.error = "密码不能为空"
-                etPassword.requestFocus()
-                valid = false
-            }
-            if (username.isEmpty()) {
-                etUsername.error = "名字不能为空"
-                etUsername.requestFocus()
-                valid = false
-            }
-            return valid
+        if (username.isEmpty()) {
+            input_username.error = "名字不能为空"
+            input_username.requestFocus()
+            return false
         }
+        if (password.isEmpty()) {
+            input_password.error = "密码不能为空"
+            input_password.requestFocus()
+            return false
+        }
+        if (et_input_code.text.isEmpty()) {
+            et_input_code.error = "验证码不能为空"
+            et_input_code.requestFocus()
+            return false
+        }
+
+        return true
+    }
 
     companion object {
         private val TAG = LoginActivity::class.java.canonicalName;

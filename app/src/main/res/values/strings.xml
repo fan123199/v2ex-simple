@@ -142,6 +142,7 @@
     <string name="follow">Follow</string>
     <string name="block">Block</string>
     <string name="no_more_data">没有更多数据</string>
+    <string name="verify_code">code</string>
 
     <string-array name="j" translatable="false">
         <item>一颗赛艇</item>

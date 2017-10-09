@@ -18,6 +18,7 @@ import android.util.Log
 import android.view.View
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
+import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.extensions.dp2px
 

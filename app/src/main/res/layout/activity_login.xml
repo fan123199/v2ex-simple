@@ -57,6 +57,7 @@
                     android:textColor="@color/white"/>
             </android.support.design.widget.TextInputLayout>
 
+
             <!-- Password Label -->
             <android.support.design.widget.TextInputLayout
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -76,6 +77,8 @@
                     android:inputType="textPassword"
                     android:textColor="@color/white"/>
             </android.support.design.widget.TextInputLayout>
+
+            <include layout="@layout/item_verify_code"/>
 
 
             <Button

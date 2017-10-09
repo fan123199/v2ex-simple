@@ -39,7 +39,7 @@ class TopicsFragment : Fragment() {
 
     private lateinit var mAdapter: TopicsRVAdapter
     private lateinit var mSwipeLayout: SwipeRefreshLayout
-    private lateinit var mRecyclerView: RecyclerView
+    private var mRecyclerView: RecyclerView? = null
     private var fab: FloatingActionButton? = null //有可能为空
     private lateinit var flContainer: FrameLayout
 
@@ -97,9 +97,9 @@ class TopicsFragment : Fragment() {
         //找出recyclerview,并赋予变量 //fdx最早的水平
         mRecyclerView = layout.findViewById(R.id.rv_container)
         smoothLayoutManager = LinearLayoutManager(activity)
-        mRecyclerView.layoutManager = smoothLayoutManager
+        mRecyclerView?.layoutManager = smoothLayoutManager
 
-        mScrollListener = object : EndlessOnScrollListener(smoothLayoutManager, mRecyclerView) {
+        mScrollListener = object : EndlessOnScrollListener(smoothLayoutManager, mRecyclerView!!) {
             override fun onCompleted() = toast(getString(R.string.no_more_data))
 
             override fun onLoadMore(current_page: Int) {
@@ -109,14 +109,14 @@ class TopicsFragment : Fragment() {
             }
         }
         when (currentMode) {
-            FROM_MEMBER, FROM_NODE -> mRecyclerView.addOnScrollListener(mScrollListener)
+            FROM_MEMBER, FROM_NODE -> mRecyclerView?.addOnScrollListener(mScrollListener)
             else -> {
             }
         }
 
 
         if (fab != null)
-            mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            mRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
                 internal var isFabShowing = true
 
@@ -146,7 +146,7 @@ class TopicsFragment : Fragment() {
 
         mAdapter = TopicsRVAdapter(activity)
         mAdapter.isNodeClickable = false
-        mRecyclerView.adapter = mAdapter //大工告成
+        mRecyclerView?.adapter = mAdapter //大工告成
         //大工告成
 
         flContainer = layout.findViewById(R.id.fl_container)
@@ -226,7 +226,7 @@ class TopicsFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun scrollToTop() = mRecyclerView.smoothScrollToPosition(0)
+    fun scrollToTop() = mRecyclerView?.smoothScrollToPosition(0)
 
     @Suppress("unused")
     companion object {
