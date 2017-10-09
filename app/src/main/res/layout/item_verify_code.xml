@@ -34,19 +34,19 @@
 
     <ImageView
 
-        android:background="@color/white"
         android:id="@+id/iv_code"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@color/white"
+        android:contentDescription="验证码"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
-        tools:background="@color/black54"
-        android:contentDescription="验证码"/>
+        tools:background="@color/black54"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"

@@ -8,11 +8,20 @@
     <TextView
         android:id="@+id/tv_node_category"
         android:layout_width="match_parent"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:layout_height="wrap_content"
         tools:text="混沌世界:"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         />

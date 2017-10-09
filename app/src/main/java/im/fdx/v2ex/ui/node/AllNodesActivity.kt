@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.support.v7.widget.Toolbar
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -46,7 +47,7 @@ class AllNodesActivity() : AppCompatActivity() {
         with(rvNode) {
 
             //这里是后续不卡的关键，但是第一次滑动还是卡
-            setHasFixedSize(true)
+            setHasFixedSize(true) //要做filter，不能用
             setItemViewCacheSize(20);
         }
 
@@ -79,7 +80,7 @@ class AllNodesActivity() : AppCompatActivity() {
                         }
 
                         val nodeModels = NetManager.getAllNode(response.body()?.string()!!)
-                        mAdapter.map.putAll(nodeModels)
+                        mAdapter.setData(nodeModels)
                         runOnUiThread {
                             swipe.isRefreshing = false
                             rvNode.adapter = mAdapter
@@ -101,8 +102,7 @@ class AllNodesActivity() : AppCompatActivity() {
 
             override fun onQueryTextSubmit(query: String) = false
             override fun onQueryTextChange(newText: String): Boolean {
-//                mAdapter.filter(newText)
-                // TODO: 2017/9/2  大重构
+                mAdapter.filter(newText)
                 return true
             }
         })
@@ -110,21 +110,28 @@ class AllNodesActivity() : AppCompatActivity() {
     }
 }
 
-class AllNodesAdapterNew(val map: MutableMap<String, MutableList<NodeModel>> = linkedMapOf(),
-                         val context: Context) : RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
+class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
+
+    private var filterMap = mutableMapOf<String, MutableList<NodeModel>>()
+    private var map = mapOf<String, MutableList<NodeModel>>()
+
+    fun setData(amap: MutableMap<String, MutableList<NodeModel>>) {
+        filterMap = amap
+        map = amap
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): NodeVH {
         return NodeVH(LayoutInflater.from(parent?.context).inflate(R.layout.item_node_with_category, null, false))
     }
 
-    override fun getItemCount() = map.size
+    override fun getItemCount() = filterMap.size
 
     override fun onBindViewHolder(holder: NodeVH, position: Int) {
 
         XLog.tag("RV_OUTER").e("$position")
-        val key = map.keys.elementAt(position)
+        val key = filterMap.keys.elementAt(position)
         holder.tvCategory.text = key
-        val simpleNodesTextAdapter = SimpleNodesTextAdapter(map[key]!!)
+        val simpleNodesTextAdapter = SimpleNodesTextAdapter(filterMap[key]!!)
         holder.rv.setHasFixedSize(true)
         simpleNodesTextAdapter.setHasStableIds(true)
         holder.rv.adapter = simpleNodesTextAdapter
@@ -144,6 +151,33 @@ class AllNodesAdapterNew(val map: MutableMap<String, MutableList<NodeModel>> = l
                 justifyContent = JustifyContent.FLEX_START
             }
         }
+    }
+
+
+    fun filter(newText: String) {
+        if (newText.isEmpty()) {
+            filterMap = map.toMutableMap()
+            notifyDataSetChanged()
+            return
+        }
+
+
+        for (entry in map) {
+            val value = entry.value
+            val filterNodeModel = value.filter {
+                it.name.contains(newText) || it.title.contains(newText) || it.title_alternative.contains(newText)
+            }.toMutableList()
+
+            if (filterNodeModel.isNotEmpty()) {
+                filterMap[entry.key] = filterNodeModel
+            } else {
+                filterMap.remove(entry.key)
+            }
+        }
+
+        Log.e("fffff", filterMap.toString())
+
+        notifyDataSetChanged()
     }
 }
 

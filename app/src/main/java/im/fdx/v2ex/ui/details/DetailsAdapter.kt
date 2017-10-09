@@ -202,7 +202,7 @@ class DetailsAdapter(private val mContext: Context,
         if (verifyCode == null) {
             return true
         }
-        val body = FormBody.Builder().add("t", verifyCode).build()
+        val body = FormBody.Builder().add("t", verifyCode!!).build()
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url("https://www.v2ex.com/thank/reply/${replyItem.id}")

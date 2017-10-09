@@ -8,9 +8,8 @@ import android.widget.TextView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.Keys
 import org.jetbrains.anko.startActivity
-import java.util.*
 
-class SimpleNodesTextAdapter(private var mNodeModels: MutableList<NodeModel> = ArrayList())
+class SimpleNodesTextAdapter(private var mNodeModels: MutableList<NodeModel> = mutableListOf<NodeModel>())
     : RecyclerView.Adapter<SimpleNodesTextAdapter.SimpleVH>() {
 
     override fun onBindViewHolder(holder: SimpleVH, position: Int) {

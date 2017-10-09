@@ -216,7 +216,7 @@ class NewTopicActivity : AppCompatActivity() {
                         .add("title", mTitle)
                         .add("content", mContent)
                         .add("node_name", mNodename)
-                        .add("once", once)
+                        .add("once", once!!)
                         .build()
 
                 HttpHelper.OK_CLIENT.newCall(Request.Builder()
