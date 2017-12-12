@@ -53,12 +53,11 @@ class GoodTextView @JvmOverloads constructor(
         }
         setLinkTextColor(ContextCompat.getColor(context, R.color.primary))
 
-        val formContent = text
         val imageGetter = MyImageGetter()
         val spannedText = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            Html.fromHtml(formContent, Html.FROM_HTML_MODE_LEGACY, imageGetter, null)
+            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY, imageGetter, null)
         } else {
-            Html.fromHtml(formContent, imageGetter, null)
+            Html.fromHtml(text, imageGetter, null)
         }
 
 

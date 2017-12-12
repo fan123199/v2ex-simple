@@ -17,8 +17,8 @@ val pref: SharedPreferences by lazy {
  * 用于启动时获取app状态
  */
 class MyApp : Application() {
-    companion object {
 
+    companion object {
         private lateinit var INSTANCE: MyApp
         fun get(): MyApp {
             return INSTANCE
@@ -29,7 +29,7 @@ class MyApp : Application() {
     internal var isLogin = false
 
 
-    fun isNightModeOn(): Boolean {
+    private fun isNightModeOn(): Boolean {
         return mPrefs.getBoolean("NIGHT_MODE", false)
     }
 
@@ -58,5 +58,4 @@ class MyApp : Application() {
         isLogin = mPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
         XLog.tag("MyApp").d("onCreate\nisLogin:$isLogin")
     }
-
 }

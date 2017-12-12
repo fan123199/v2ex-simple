@@ -63,7 +63,7 @@ class LoginActivity : AppCompatActivity() {
             password = input_password.text.toString()
             progressBar.visibility = View.VISIBLE
             btn_login.visibility = View.GONE
-            postLogin(nameKey!!, passwordKey!!, onceCode = onceCode!!, imageCodeKey = imageCodeKey!!)
+            postLogin(nameKey ?: "", passwordKey ?: "", onceCode = onceCode ?: "", imageCodeKey = imageCodeKey ?: "")
         }
         link_sign_up.setOnClickListener {
             val openUrl = Intent(Intent.ACTION_VIEW, Uri.parse(NetManager.SIGN_UP_URL))

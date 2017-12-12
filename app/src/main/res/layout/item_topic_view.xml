@@ -8,8 +8,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1px"
-    android:foreground="?selectableItemBackground"
-    android:background="@color/item_background">
+    android:background="@color/item_background"
+    android:foreground="?selectableItemBackground">
 
     <TextView
         android:id="@+id/tv_title"
@@ -17,17 +17,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:ellipsize="end"
         android:textAppearance="@style/Theme.V2ex.TitleTextStyle"
-        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/tv_reply_number"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginEnd="8dp"
         app:layout_goneMarginStart="16dp"
-        tools:text="@string/content"/>
+        tools:text="@string/content" />
 
     <TextView
         android:id="@+id/tv_author"
@@ -57,15 +55,14 @@
         android:textColor="@color/hint"
         android:textSize="@dimen/text_size_small"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_author"
-        app:layout_constraintLeft_toRightOf="@+id/tv_author"/>
+        app:layout_constraintLeft_toRightOf="@+id/tv_author" />
 
     <TextView
         android:id="@+id/tv_reply_number"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/tv_title"
         android:layout_alignTop="@+id/tv_author"
-        android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:drawablePadding="4dp"
         android:drawableStart="@drawable/ic_message_black_24dp"
@@ -73,9 +70,10 @@
         android:textSize="@dimen/text_size_small"
         app:layout_constraintBottom_toBottomOf="@+id/tv_title"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/tv_title"
         app:layout_constraintVertical_bias="0.14999998"
-        tools:text="@string/reply"/>
+        tools:text="1190" />
 
     <TextView
         android:id="@+id/tv_node"
@@ -92,7 +90,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/tv_created"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintLeft_toRightOf="@+id/tv_created"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -108,19 +106,19 @@
         android:src="@drawable/ic_profile"
         app:civ_border_width="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_title"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
     <im.fdx.v2ex.view.GoodTextView
         android:id="@+id/tv_content"
         style="@style/VText.ContentStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/tv_title"
         app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile"
-        tools:text="@string/content"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        tools:text="@string/content" />
 
     <include
         android:id="@+id/divider"
@@ -132,6 +130,13 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_content"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_content" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="64dp" />
 
 </android.support.constraint.ConstraintLayout>

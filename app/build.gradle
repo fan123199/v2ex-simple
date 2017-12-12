@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'org.greenrobot.greendao'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
@@ -16,12 +15,12 @@ def getSignConfig() {
 
 android {
 
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.1'
     defaultConfig {
         applicationId "im.fdx.v2ex"
         minSdkVersion 21
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 20
         versionName "2.1.0"
 
@@ -64,8 +63,8 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:1.10.19'
     debugImplementation 'com.readystatesoftware.chuck:library:1.1.0'
     releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
-    implementation 'com.elvishew:xlog:1.3.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+    implementation 'com.elvishew:xlog:1.4.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     //test end
     //local start
     implementation project(':searchablespinnerlibrary')
@@ -88,12 +87,12 @@ dependencies {
     //    implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
     implementation "com.android.support:design:$support_version"
     implementation 'org.greenrobot:greendao:3.2.2'
-    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1'
     implementation 'org.jsoup:jsoup:1.10.2'
 //    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
-    implementation 'com.github.bumptech.glide:glide:4.1.1'
-    kapt 'com.github.bumptech.glide:compiler:4.1.1'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.3.1'
+    kapt 'com.github.bumptech.glide:compiler:4.3.1'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.3.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.1.3'
 //    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.google.android:flexbox:0.3.0'

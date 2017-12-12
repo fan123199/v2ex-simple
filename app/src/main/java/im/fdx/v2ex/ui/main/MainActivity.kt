@@ -152,7 +152,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mDrawToggle.syncState()
 
         mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-            override fun onDrawerClosed(drawerView: View?) {
+            override fun onDrawerClosed(drawerView: View) {
                 val menu = navigationView.menu
                 (0 until menu.size()).forEach { j -> menu.getItem(j).isChecked = false }
             }
