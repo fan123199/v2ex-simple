@@ -245,12 +245,13 @@ object NetManager {
         return topics
     }
 
+    @Throws(Exception::class)
     fun parseToNode(html: Document): NodeModel {
 
         val nodeModel = NodeModel()
         //        Document html = Jsoup.parse(response);
         val body = html.body()
-        val header = body.getElementsByClass("header").first()
+        val header = body.getElementsByClass("node_header").first()
         val contentElement = header.getElementsByClass("f12 gray").first()
         val content = if (contentElement == null) "" else contentElement.text()
         val number = header.getElementsByTag("strong").first().text()

@@ -181,7 +181,11 @@ class NodeActivity : AppCompatActivity() {
                 }
                 val body = response.body()?.string()
                 val html = Jsoup.parse(body)
-                mNodeModel = NetManager.parseToNode(html)
+                try {
+                    mNodeModel = NetManager.parseToNode(html)
+                } catch (e: Exception) {
+                    toast(e.message ?: "unknown error")
+                }
                 Message.obtain(handler, MSG_GET_NODE_INFO).sendToTarget()
 
                 isFollowed = parseIsFollowed(body!!)
