@@ -252,10 +252,10 @@ object NetManager {
         //        Document html = Jsoup.parse(response);
         val body = html.body()
         val header = body.getElementsByClass("node_header").first()
-        val contentElement = header.getElementsByClass("f12 gray").first()
+        val contentElement = header.getElementsByClass("node_info").first().child(0)
         val content = if (contentElement == null) "" else contentElement.text()
         val number = header.getElementsByTag("strong").first().text()
-        val strHeader = header.ownText().trim { it <= ' ' }
+        val strHeader = header.ownText().trim()
 
         if (header.getElementsByTag("img").first() != null) {
             val avatarLarge = header.getElementsByTag("img").first().attr("src")
