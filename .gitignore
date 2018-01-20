@@ -4,6 +4,7 @@
 /.idea/libraries
 /.idea/caches
 /app/build
+*.iml
 /build
 /app/app.iml
 .DS_Store

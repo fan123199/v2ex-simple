@@ -33,6 +33,7 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.*
 import org.jetbrains.anko.share
@@ -412,7 +413,7 @@ class DetailsActivity : AppCompatActivity() {
     @Suppress("UNUSED_PARAMETER")
     fun postReply(view: View) {
         etSendReply.clearFocus()
-        XLog.tag("DetailsActivity").d("I clicked")
+        logd("I clicked")
         val content = etSendReply.text.toString()
         val requestBody = FormBody.Builder()
                 .add("content", content)
@@ -444,7 +445,7 @@ class DetailsActivity : AppCompatActivity() {
                     pb.visibility = View.GONE
                     ivSend.visibility = View.VISIBLE
                     if (response.code() == 302) {
-                        XLog.tag("DetailsActivity").d("成功发布")
+                        logd("成功发布")
                         toast("发表评论成功")
                         etSendReply.setText("")
                         getRepliesPageOne(mTopicId, true)
@@ -464,11 +465,11 @@ class DetailsActivity : AppCompatActivity() {
 
     companion object {
 
-        val POSITION_START = 0
-        private val MSG_OK_GET_TOPIC = 0
-        private val MSG_ERROR_AUTH = 1
-        private val MSG_ERROR_IO = 2
-        private val MSG_GO_TO_BOTTOM = 3
+        const val POSITION_START = 0
+        private const val MSG_OK_GET_TOPIC = 0
+        private const val MSG_ERROR_AUTH = 1
+        private const val MSG_ERROR_IO = 2
+        private const val MSG_GO_TO_BOTTOM = 3
         @Suppress("unused")
         private val MSG_GET_MORE_REPLY = 4
     }

@@ -3,6 +3,7 @@ package im.fdx.v2ex.utils.extensions
 import android.app.Activity
 import android.content.Context
 import android.support.v4.widget.SwipeRefreshLayout
+import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
 import org.jetbrains.anko.toast
 
@@ -24,3 +25,9 @@ fun Context.dealError(errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
         }
     }
 }
+
+
+fun Any.logd(msg: String?) = XLog.tag(this::class.java.simpleName).d(msg)
+fun Any.logi(msg: String?) = XLog.tag(this::class.java.simpleName).i(msg)
+fun Any.logw(msg: Any?) = XLog.tag(this::class.java.simpleName).w(msg)
+fun Any.loge(msg: Any?) = XLog.tag(this::class.java.simpleName).e(msg)

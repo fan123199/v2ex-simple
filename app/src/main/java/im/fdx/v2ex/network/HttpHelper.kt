@@ -4,8 +4,8 @@ import com.readystatesoftware.chuck.ChuckInterceptor
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
-import okhttp3.Headers
-import okhttp3.OkHttpClient
+import okhttp3.*
+import java.io.IOException
 
 /**
  * Created by fdx on 2016/11/20.
@@ -51,3 +51,17 @@ object HttpHelper {
             .build()
 
 }
+
+fun vCall(url: String): Call = HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).build())
+
+fun Call.get(
+        onResponse: (Call, Response) -> Unit,
+        onFailure: (Call, Exception) -> Unit) {
+    enqueue(object : Callback {
+        override fun onFailure(call: Call, e: IOException) = onFailure.invoke(call, e)
+        @Throws(IOException::class)
+        override fun onResponse(call: Call, response: Response) = onResponse.invoke(call, response)
+    })
+}
+
+

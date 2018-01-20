@@ -20,7 +20,10 @@ import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.PhotoActivity
+import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dp2px
+import org.jetbrains.anko.startActivity
 
 
 /**
@@ -75,7 +78,10 @@ class GoodTextView @JvmOverloads constructor(
 
         //分离 图片 span
         val imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length, ImageSpan::class.java)
-        for (imageSpan in imageSpans) {
+
+        val photos = ArrayList(imageSpans.map { PhotoActivity.AirPhoto(it.source) })
+
+        imageSpans.forEachIndexed { index, imageSpan ->
             val imageUrl = imageSpan.source
             val start = htmlSpannable.getSpanStart(imageSpan)
             val end = htmlSpannable.getSpanEnd(imageSpan)
@@ -83,7 +89,8 @@ class GoodTextView @JvmOverloads constructor(
             //生成自定义可点击的span
             val newClickableSpan = object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    CustomChrome(context).load(imageUrl)
+                    widget.context.startActivity<PhotoActivity>(Keys.KEY_PHOTO to photos,
+                            Keys.KEY_POSITION to index)
                 }
             }
 

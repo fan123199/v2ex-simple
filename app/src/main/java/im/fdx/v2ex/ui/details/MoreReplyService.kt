@@ -6,6 +6,7 @@ import android.support.v4.content.LocalBroadcastManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.utils.extensions.logd
 import okhttp3.Request
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -28,8 +29,8 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
         val topicId = intent.getStringExtra("topic_id")
         val isToBottom = intent.getBooleanExtra("bottom", false)
 
-        XLog.tag("DetailsActivity").d(totalPage.toString() + " | " + topicId)
-        if (totalPage == -1 || topicId == null) {
+        logd(totalPage.toString() + " | " + topicId)
+        if (totalPage <= 1 || topicId == null) {
             return
         }
 
@@ -42,7 +43,8 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
                 val replies = NetManager.parseResponseToReplay(body)
                 val token = NetManager.parseToVerifyCode(body)
 
-                XLog.tag("DetailsActivity").d(replies[0].content)
+                if (replies.isEmpty()) return
+//                logd(replies[0].content)
                 val it = Intent()
                 it.action = "im.fdx.v2ex.reply"
                 it.putExtra("token", token)

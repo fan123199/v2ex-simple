@@ -16,6 +16,11 @@ object Keys {
     const val KEY_AVATAR = "avatar"
     const val KEY_USERNAME = "username"
     const val KEY_NODE_TITLE = "node_title"
+
+    const val KEY_PHOTO = "extra_photo"
+
+    const val KEY_POSITION = "extra_position"
+
     const val ACTION_GET_NOTIFICATION = "im.fdx.v2ex.get.notification"
     const val ACTION_LOGIN = "im.fdx.v2ex.event.login"
     const val ACTION_LOGOUT = "im.fdx.v2ex.event.logout"

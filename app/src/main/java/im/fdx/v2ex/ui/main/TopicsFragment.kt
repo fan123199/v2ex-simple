@@ -183,7 +183,12 @@ class TopicsFragment : Fragment() {
 
                 val bodyStr = response.body()?.string()
                 val html = Jsoup.parse(bodyStr)
-                val topicList = NetManager.parseTopicLists(html, currentMode)
+                val topicList = try {
+                    NetManager.parseTopicLists(html, currentMode)
+                } catch (e: Exception) {
+                    toast(e.message ?: "unknown error")
+                    null
+                }
 
                 if (totalPage == 0) {
                     totalPage = getPage(bodyStr!!)
@@ -192,7 +197,7 @@ class TopicsFragment : Fragment() {
 
                 XLog.tag(TAG).v("TOPICS: $topicList")
                 runOnUiThread {
-                    if (topicList.isEmpty()) {
+                    if (topicList?.isEmpty() == true) {
                         flContainer.showNoContent()
                         mAdapter.clear()
                     } else {
@@ -200,12 +205,12 @@ class TopicsFragment : Fragment() {
                         when (currentMode) {
                             FROM_MEMBER, FROM_NODE ->
                                 if (mScrollListener.pageToLoad == 1) {
-                                    mAdapter.updateItems(topicList)
+                                    topicList?.let { mAdapter.updateItems(it) }
                                 } else {
                                     mScrollListener.pageAfterLoaded = currentPage
-                                    mAdapter.addAllItems(topicList)
+                                    topicList?.let { mAdapter.addAllItems(it) }
                                 }
-                            else -> mAdapter.updateItems(topicList)
+                            else -> topicList?.let { mAdapter.updateItems(it) }
                         }
                     }
                     mSwipeLayout.isRefreshing = false

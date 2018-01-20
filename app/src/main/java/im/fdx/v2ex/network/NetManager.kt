@@ -44,7 +44,7 @@ object NetManager {
 
     private val TAG = NetManager::class.java.simpleName
 
-    val HTTPS_V2EX_BASE = "https://www.v2ex.com"
+    const val HTTPS_V2EX_BASE = "https://www.v2ex.com"
 
     val API_HOT = HTTPS_V2EX_BASE + "/api/topics/hot.json"
     val API_LATEST = HTTPS_V2EX_BASE + "/api/topics/latest.json"
@@ -155,6 +155,8 @@ object NetManager {
 
     var myGson = Gson()
 
+
+    @Throws(Exception::class)
     fun parseTopicLists(html: Document, source: Source): List<TopicModel> {
         val topics = ArrayList<TopicModel>()
 
@@ -190,7 +192,7 @@ object NetManager {
             //            <a href="/member/wineway">
             // <img src="//v2" class="avatar" ></a>
                 FROM_NODE -> {
-                    val header = body.getElementsByClass("header").first()
+                    val header = body.getElementsByClass("node_header").first()
                     val strHeader = header.text()
                     var nodeTitle = ""
                     if (strHeader.contains("›")) {
@@ -255,7 +257,7 @@ object NetManager {
         val contentElement = header.getElementsByClass("node_info").first().child(0)
         val content = if (contentElement == null) "" else contentElement.text()
         val number = header.getElementsByTag("strong").first().text()
-        val strHeader = header.ownText().trim()
+        val strHeader = header.getElementsByClass("node_info").first().ownText().trim()
 
         if (header.getElementsByTag("img").first() != null) {
             val avatarLarge = header.getElementsByTag("img").first().attr("src")

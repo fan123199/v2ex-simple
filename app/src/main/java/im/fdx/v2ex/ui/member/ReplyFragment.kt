@@ -12,8 +12,8 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -21,7 +21,6 @@ import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.Request
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
@@ -85,7 +84,8 @@ class ReplyFragment : Fragment() {
     private fun getRepliesByWeb(page: Int) {
 
         val url = "${NetManager.HTTPS_V2EX_BASE}/member/${arguments.getString(Keys.KEY_USERNAME)}/replies?p=$page"
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).build()).enqueue(object : Callback {
+
+        vCall(url).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(activity, -1, swipeRefreshLayout)
                 mScrollListener?.loading = false
