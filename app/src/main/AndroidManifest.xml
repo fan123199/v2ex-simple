@@ -215,6 +215,9 @@
             android:name=".ui.favor.FavorActivity"
             android:exported="true"/>
         <activity android:name=".ui.PhotoActivity" />
+        <activity
+            android:name=".ui.TestActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

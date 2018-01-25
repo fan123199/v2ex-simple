@@ -374,7 +374,7 @@ class MemberActivity : AppCompatActivity() {
         private val titles = arrayOf("主题", "评论")
 
         override fun getItem(position: Int) = when (position) {
-            0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username, Keys.KEY_AVATAR to avatar) }
+            0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
             else -> ReplyFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
         }
 

@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,21 +13,21 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.elvishew.xlog.XLog
+import com.esafirm.imagepicker.features.ImagePicker
 import com.google.gson.reflect.TypeToken
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import im.fdx.v2ex.R
+import im.fdx.v2ex.network.Api
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.openImagePicker
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.*
 import org.jetbrains.anko.toast
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.lang.Exception
 import java.util.*
 import java.util.regex.Pattern
 
@@ -92,47 +91,28 @@ class NewTopicActivity : AppCompatActivity() {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, imageReturnedIntent: Intent) {
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        when (requestCode) {
-            110 ->
-                if (resultCode == RESULT_OK) {
-                    try {
-                        val imageUri = imageReturnedIntent.data;
-                        val imageStream = contentResolver.openInputStream(imageUri);
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
+            // Get a list of picked images
+            val images = ImagePicker.getImages(data)
 
-                        val file = File("new_file")
-                        val out: FileOutputStream = FileOutputStream(file);
-                        out.write(imageStream.readBytes())
-                        out.flush()
-                        out.close()
-                        uploadImage(file)
-                        toast(imageUri.toString())
-                    } catch (e: Exception) {
-                        e.printStackTrace();
+            images.forEach { image ->
+                Api.uploadImage(image.path, image.name, { s, i ->
+                    runOnUiThread {
+                        when (i) {
+                            0 -> {
+                                etContent.append("![image]($s)\n") //todo 做到点击删除。那就完美了
+                                etContent.setSelection(etContent.length())
+                            }
+                            1 -> toast("网络错误")
+                            2 -> toast(s?.msg ?: "上传失败")
+                        }
                     }
+                })
+            }
 
-                }
         }
-    }
-
-    private fun uploadImage(file: File) {
-
-        val MEDIA_TYPE_PNG = MediaType.parse("image/*");
-        val url = "https://sm.ms/api/upload"
-        val body: RequestBody = RequestBody.create(MEDIA_TYPE_PNG, file)
-
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .post(body)
-                .url(url).build()).enqueue(object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
-                e?.printStackTrace()
-            }
-
-            override fun onResponse(call: Call?, response: Response?) {
-                Log.d("haha", response?.body().toString())
-            }
-        })
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private fun parseIntent(intent: Intent) {
@@ -165,28 +145,40 @@ class NewTopicActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menu.add(0, Menu.FIRST, Menu.NONE, "send")
+        menu.add(0, 123, 1, "send")
                 .setIcon(R.drawable.ic_send_white_24dp)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        menu.add(0, 124, 0, "upload")
+                .setIcon(R.drawable.ic_image)
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
-        if (item.itemId == Menu.FIRST) {
+        when (item.itemId) {
+            123 -> {
 
-            mTitle = etTitle.text.toString()
-            mContent = etContent.text.toString()
+                mTitle = etTitle.text.toString()
+                mContent = etContent.text.toString()
 
-            when {
-                mTitle.isEmpty() -> toast("标题和内容不能为空")
-                mContent.isEmpty() -> toast("标题和内容不能为空")
-                mTitle.length > 120 -> toast("标题字数超过限制")
-                mContent.length > 20000 -> toast("主题内容不能超过 20000 个字符")
-                mNodename.isEmpty() -> toast(getString(R.string.choose_node))
-                else -> postNew()
+                when {
+                    mTitle.isEmpty() -> toast("标题和内容不能为空")
+                    mContent.isEmpty() -> toast("标题和内容不能为空")
+                    mTitle.length > 120 -> toast("标题字数超过限制")
+                    mContent.length > 20000 -> toast("主题内容不能超过 20000 个字符")
+                    mNodename.isEmpty() -> toast(getString(R.string.choose_node))
+                    else -> postNew()
+                }
             }
+
+            124 -> {
+                openImagePicker()
+            }
+
         }
+
         return true
     }
 
@@ -260,6 +252,7 @@ class NewTopicActivity : AppCompatActivity() {
         }
         return matcher.group()
     }
+
 
     companion object {
 

@@ -116,8 +116,8 @@ class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAd
     private var map = mapOf<String, MutableList<NodeModel>>()
 
     fun setData(amap: MutableMap<String, MutableList<NodeModel>>) {
-        filterMap = amap
-        map = amap
+        filterMap = LinkedHashMap(amap)
+        map = LinkedHashMap(amap)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): NodeVH {

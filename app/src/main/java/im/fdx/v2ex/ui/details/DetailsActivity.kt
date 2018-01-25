@@ -24,6 +24,7 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.elvishew.xlog.XLog
+import com.esafirm.imagepicker.features.ImagePicker
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.BaseModel
@@ -455,6 +456,11 @@ class DetailsActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+
+    fun uploadImage() {
+        ImagePicker.create(this).start();
     }
 
     override fun onDestroy() {

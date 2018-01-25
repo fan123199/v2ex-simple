@@ -35,4 +35,5 @@ object Keys {
     const val PREF_ONLY_WIFI = "only_wifi"
     const val PREF_RATES = "pref_rates"
     const val PREF_LOGOUT = "pref_logout"
+    const val KEY_NEED_WARN = "key_warn_image_upload"
 }
