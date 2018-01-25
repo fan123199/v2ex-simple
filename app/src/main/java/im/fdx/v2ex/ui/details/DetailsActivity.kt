@@ -30,6 +30,7 @@ import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
@@ -69,14 +70,13 @@ class DetailsActivity : AppCompatActivity() {
                 1 -> {
                 }
                 2 -> getMoreRepliesByOrder(totalPage = 1, scrollToBottom = false)
-
                 -1 -> rvDetail.smoothScrollToPosition(position)
             }
         }
     }
 
 
-    internal var receiver: BroadcastReceiver = object : BroadcastReceiver() {
+    private var receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             XLog.tag("DetailsActivity").d("get in broadcast: " + intent.action)
             if (intent.action == Keys.ACTION_LOGIN) {
@@ -128,7 +128,7 @@ class DetailsActivity : AppCompatActivity() {
         ivSend = findViewById(R.id.iv_send)
         mSwipe = findViewById(R.id.swipe_details)
 
-        pb = findViewById<ProgressBar>(R.id.pb_send)
+        pb = findViewById(R.id.pb_send)
 
         rvDetail = findViewById(R.id.detail_recycler_view)
         //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
@@ -217,6 +217,7 @@ class DetailsActivity : AppCompatActivity() {
             else -> ""
         }
 
+        mSwipe.isRefreshing = true
         getRepliesPageOne(mTopicId, false)
         XLog.tag("DetailsActivity").d("TopicUrl: ${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId")
     }
@@ -227,10 +228,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun getRepliesPageOne(topicId: String, scrollToBottom: Boolean) {
-        mSwipe.isRefreshing = true
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=1")
-                .build()).enqueue(object : Callback {
+        vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=1").enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 handler.sendEmptyMessage(MSG_ERROR_IO)
@@ -238,6 +236,7 @@ class DetailsActivity : AppCompatActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
+                mSwipe.isRefreshing = false
                 val code = response.code()
                 if (code == 302) {
                     //权限问题，需要登录
@@ -295,7 +294,6 @@ class DetailsActivity : AppCompatActivity() {
                 currentPage = NetManager.getPageValue(body)[0]
                 runOnUiThread {
                     mAdapter.updateItems(mAllContent)
-                    mSwipe.isRefreshing = false
                     if (totalPage == 1 && scrollToBottom) {
                         handler.sendEmptyMessage(MSG_GO_TO_BOTTOM)
                     }
@@ -402,6 +400,7 @@ class DetailsActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     runOnUiThread {
                         toast("${if (doFavor) "取消" else ""}收藏成功")
+                        mSwipe.isRefreshing = true
                         getRepliesPageOne(mTopicId, false)
                     }
                 }
@@ -448,9 +447,10 @@ class DetailsActivity : AppCompatActivity() {
                         logd("成功发布")
                         toast("发表评论成功")
                         etSendReply.setText("")
+                        mSwipe.isRefreshing = true
                         getRepliesPageOne(mTopicId, true)
                     } else {
-                        runOnUiThread { toast("发表评论失败") }
+                        toast("发表评论失败")
                     }
                 }
             }

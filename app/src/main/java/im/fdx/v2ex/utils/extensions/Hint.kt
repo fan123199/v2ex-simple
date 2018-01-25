@@ -27,7 +27,8 @@ fun Context.dealError(errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
 }
 
 
-fun Any.logd(msg: String?) = XLog.tag(this::class.java.simpleName).d(msg)
-fun Any.logi(msg: String?) = XLog.tag(this::class.java.simpleName).i(msg)
-fun Any.logw(msg: Any?) = XLog.tag(this::class.java.simpleName).w(msg)
-fun Any.loge(msg: Any?) = XLog.tag(this::class.java.simpleName).e(msg)
+fun Any.logv(msg: String?) = XLog.tag("abc").v(msg)
+fun Any.logd(msg: String?) = XLog.tag("abc").d(msg)
+fun Any.logi(msg: String?) = XLog.tag("abc").i(msg)
+fun Any.logw(msg: Any?) = XLog.tag("abc").w(msg)
+fun Any.loge(msg: Any?) = XLog.tag("abc").e(msg)

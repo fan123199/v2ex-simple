@@ -1,8 +1,8 @@
 package im.fdx.v2ex.ui.member
 
-import android.os.Parcel
 import android.os.Parcelable
 import im.fdx.v2ex.model.BaseModel
+import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by a708 on 16-1-16.
@@ -30,6 +30,7 @@ import im.fdx.v2ex.model.BaseModel
 //        "created" : 1357733451
 //        }
 
+@Parcelize
 data class MemberModel(
         var id: String = "",
         var username: String = "",
@@ -47,52 +48,6 @@ data class MemberModel(
 ) : BaseModel(), Parcelable {
 
     override fun parse() = null
-
-    companion object {
-        @JvmField val CREATOR: Parcelable.Creator<MemberModel> = object : Parcelable.Creator<MemberModel> {
-            override fun createFromParcel(source: Parcel): MemberModel = MemberModel(source)
-            override fun newArray(size: Int): Array<MemberModel?> = arrayOfNulls(size)
-        }
-    }
-
-    constructor(source: Parcel) : this(
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readString()
-    )
-
-    override fun describeContents() = 0
-
-    override fun writeToParcel(dest: Parcel, flags: Int) {
-        dest.writeString(id)
-        dest.writeString(username)
-        dest.writeString(tagline)
-        dest.writeString(avatar_mini)
-        dest.writeString(created)
-        dest.writeString(avatar_normal)
-        dest.writeString(avatar_large)
-        dest.writeString(github)
-        dest.writeString(btc)
-        dest.writeString(location)
-        dest.writeString(bio)
-        dest.writeString(twitter)
-        dest.writeString(website)
-    }
-    //    constructor(id: Long, username: String) {
-//        this.id = id
-//        this.username = username
-//    }
-
 
     val avatarNormalUrl: String
         get() = "http:" + avatar_normal

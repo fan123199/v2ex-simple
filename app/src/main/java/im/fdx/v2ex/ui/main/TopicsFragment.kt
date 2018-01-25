@@ -12,22 +12,22 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.Source.FROM_MEMBER
 import im.fdx.v2ex.network.NetManager.Source.FROM_NODE
 import im.fdx.v2ex.network.NetManager.dealError
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.initTheme
+import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.Request
 import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
@@ -45,11 +45,16 @@ class TopicsFragment : Fragment() {
 
     private lateinit var mRequestURL: String
 
+    lateinit var smoothLayoutManager: LinearLayoutManager
+    lateinit var mScrollListener: EndlessOnScrollListener
+    var currentMode = NetManager.Source.FROM_HOME
+    var totalPage = 0
+
     internal var handler = Handler(Handler.Callback { msg ->
         when (msg.what) {
             MSG_GET_DATA_BY_OK -> {
-                mAdapter.notifyDataSetChanged()
                 mSwipeLayout.isRefreshing = false
+                mAdapter.notifyDataSetChanged()
             }
             MSG_FAILED -> mSwipeLayout.isRefreshing = false
         }
@@ -60,12 +65,6 @@ class TopicsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
-
-    lateinit var smoothLayoutManager: LinearLayoutManager
-    lateinit var mScrollListener: EndlessOnScrollListener
-    var currentMode = NetManager.Source.FROM_HOME
-    var totalPage = 0
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -138,9 +137,6 @@ class TopicsFragment : Fragment() {
                     }
                 }
 
-                override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                }
             })
 
 
@@ -157,9 +153,7 @@ class TopicsFragment : Fragment() {
 
     private fun getTopics(requestURL: String, currentPage: Int = 1) {
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL)
-                .build()).enqueue(object : Callback {
+        vCall(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
                 mScrollListener.loading = false
@@ -168,6 +162,7 @@ class TopicsFragment : Fragment() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
+                mSwipeLayout.isRefreshing = false
                 mScrollListener.loading = false
                 if (response.code() == 302) {
                     if (Objects.equals("/2fa", response.header("Location"))) {
@@ -181,22 +176,26 @@ class TopicsFragment : Fragment() {
                     return
                 }
 
+                val time = System.currentTimeMillis()
                 val bodyStr = response.body()?.string()
                 val html = Jsoup.parse(bodyStr)
+                logi("time cost in parseTopicLists2:" + (System.currentTimeMillis() - time).toString())
                 val topicList = try {
                     NetManager.parseTopicLists(html, currentMode)
                 } catch (e: Exception) {
                     toast(e.message ?: "unknown error")
                     null
                 }
+                logi("time cost in parseTopicLists3:" + (System.currentTimeMillis() - time).toString())
 
                 if (totalPage == 0) {
-                    totalPage = getPage(bodyStr!!)
+                    totalPage = getTotalPage(bodyStr!!)
                     mScrollListener.totalPage = totalPage
                 }
-
-                XLog.tag(TAG).v("TOPICS: $topicList")
+                logi("time cost in parseTopicLists4:" + (System.currentTimeMillis() - time).toString())
+                logd("TOPICS: $topicList")
                 runOnUiThread {
+                    logi("time cost in parseTopicLists5:" + (System.currentTimeMillis() - time).toString())
                     if (topicList?.isEmpty() == true) {
                         flContainer.showNoContent()
                         mAdapter.clear()
@@ -213,7 +212,7 @@ class TopicsFragment : Fragment() {
                             else -> topicList?.let { mAdapter.updateItems(it) }
                         }
                     }
-                    mSwipeLayout.isRefreshing = false
+                    logi("time cost in parseTopicLists6:" + (System.currentTimeMillis() - time).toString())
                 }
             }
         })
@@ -221,7 +220,8 @@ class TopicsFragment : Fragment() {
 
 
     //        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8"
-    private fun getPage(bodyStr: String) = Regex("(?<=max=\")\\d{1,8}").find(bodyStr)?.value?.toInt() ?: 0
+    private fun getTotalPage(bodyStr: String) = Regex("(?<=max=\")\\d{1,8}").find(bodyStr)?.value?.toInt()
+            ?: 0
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_refresh) {

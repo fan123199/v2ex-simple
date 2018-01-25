@@ -37,6 +37,7 @@ import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
@@ -79,6 +80,10 @@ class MemberActivity : AppCompatActivity() {
     private var isFollowed: Boolean = false
 
 
+    private val memberViewpagerAdapter: MemberViewpagerAdapter by lazy {
+        MemberViewpagerAdapter(fragmentManager)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
@@ -119,7 +124,8 @@ class MemberActivity : AppCompatActivity() {
         upToolbar.title = username
         val tabLayout: TabLayout = findViewById(R.id.tl_member)
         val viewpager: ViewPager = findViewById(R.id.viewpager)
-        viewpager.adapter = MemberViewpagerAdapter(fragmentManager, username!!)
+        memberViewpagerAdapter.username = username ?: ""
+        viewpager.adapter = memberViewpagerAdapter
         tabLayout.setupWithViewPager(viewpager)
 
         val appBarLayout: AppBarLayout = findViewById(R.id.al_profile)
@@ -249,9 +255,12 @@ class MemberActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showUser(response: String) {
+        logi(response)
         member = myGson.fromJson(response, MemberModel::class.java)
 
         mIvAvatar.load(member.avatarLargeUrl)
+
+
         mTvIntro.text = member.bio
         mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
@@ -358,12 +367,14 @@ class MemberActivity : AppCompatActivity() {
         }
     }
 
-    inner class MemberViewpagerAdapter(fm: FragmentManager?, var username: String) : FragmentPagerAdapter(fm) {
+    inner class MemberViewpagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
 
+        lateinit var username: String
+        lateinit var avatar: String
         private val titles = arrayOf("主题", "评论")
 
         override fun getItem(position: Int) = when (position) {
-            0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
+            0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username, Keys.KEY_AVATAR to avatar) }
             else -> ReplyFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
         }
 

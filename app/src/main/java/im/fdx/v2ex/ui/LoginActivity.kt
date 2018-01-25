@@ -17,13 +17,10 @@ import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.NetManager.API_USER
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
-import im.fdx.v2ex.network.NetManager.dealError
-import im.fdx.v2ex.network.NetManager.myGson
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.pref
-import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import kotlinx.android.synthetic.main.activity_login.*
@@ -39,9 +36,11 @@ class LoginActivity : AppCompatActivity() {
 
     private lateinit var progressBar: ProgressBar
 
-    private var username: String? = null
+    /**
+     * 不一定是用户名，可能是邮箱
+     */
+    private var loginName: String? = null
     private var password: String? = null
-    private var avatar: String? = null
 
     var onceCode: String? = null
     var passwordKey: String? = null
@@ -59,7 +58,7 @@ class LoginActivity : AppCompatActivity() {
         val usernamePref = pref.getString("username", "")
         btn_login.setOnClickListener {
             if (!isValidated()) return@setOnClickListener
-            username = input_username.text.toString()
+            loginName = input_username.text.toString()
             password = input_password.text.toString()
             progressBar.visibility = View.VISIBLE
             btn_login.visibility = View.GONE
@@ -152,13 +151,8 @@ class LoginActivity : AppCompatActivity() {
                 when (httpcode) {
                     302 -> {
                         MyApp.get().setLogin(true)
-                        pref.edit()
-                                ?.putString("username", username)
-                                ?.apply()
 
-                        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                                .url(HTTPS_V2EX_BASE)
-                                .build()).enqueue(object : Callback {
+                        vCall(HTTPS_V2EX_BASE).enqueue(object : Callback {
                             override fun onFailure(call: Call, e: IOException) {
                                 e.printStackTrace()
                             }
@@ -174,6 +168,19 @@ class LoginActivity : AppCompatActivity() {
                                         }
                                     }
                                 } else {
+
+
+                                    val body = response.body()?.string()
+                                    val html = Jsoup.parse(body)
+                                    val myInfo = NetManager.parseMember(html)
+
+                                    pref.edit().putString(Keys.KEY_USERNAME, myInfo.username).apply()
+                                    pref.edit().putString(Keys.KEY_AVATAR, myInfo.avatarNormalUrl).apply()
+                                    val intent = Intent(Keys.ACTION_LOGIN).apply {
+                                        putExtra(Keys.KEY_USERNAME, myInfo.username)
+                                        putExtra(Keys.KEY_AVATAR, myInfo.avatarNormalUrl)
+                                    }
+                                    LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
                                     runOnUiThread {
                                         toast("登录成功")
                                         finish()
@@ -181,7 +188,6 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                         })
-                        getUsernameAndAvatar()
 
                     }
                     200 -> runOnUiThread {
@@ -194,35 +200,6 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
-
-    private fun getUsernameAndAvatar() {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url("$API_USER?username=$username").build()).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                dealError(this@LoginActivity)
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-
-                if (response.code() != 200) {
-                    dealError(this@LoginActivity, response.code())
-                    return
-                }
-                val body = response.body()?.string()
-                val member = myGson.fromJson(body, MemberModel::class.java)
-                avatar = member.avatarLargeUrl
-
-                pref.edit().putString(Keys.KEY_AVATAR, avatar).apply()
-                val intent = Intent(Keys.ACTION_LOGIN).apply {
-                    putExtra(Keys.KEY_USERNAME, username)
-                    putExtra(Keys.KEY_AVATAR, avatar)
-                }
-                LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
-            }
-        })
-    }
-
 
     private fun getErrorMsg(body: String?): String {
         XLog.tag(TAG).d(body)

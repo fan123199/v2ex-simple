@@ -344,7 +344,8 @@ object NetManager {
 
         topicModel.content_rendered = contentRendered.fullUrl()
 
-        val createdUnformed = body.getElementsByClass("header").first().getElementsByClass("gray").first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
+        val headerTopic = body.getElementById("Main").getElementsByClass("header").first()
+        val createdUnformed = headerTopic.getElementsByClass("gray").first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
         val time = createdUnformed.split("·")[1]
         val created = TimeUtil.toUtcTime(time)
@@ -371,14 +372,14 @@ object NetManager {
 
 
         val member = MemberModel()
-        val username = body.getElementsByClass("header").first()
+        val username = headerTopic
                 .getElementsByAttributeValueStarting("href", "/member/").text()
         member.username = username
-        val largeAvatar = body.getElementsByClass("header").first()
+        val largeAvatar = headerTopic
                 .getElementsByClass("avatar").attr("src")
         member.avatar_large = largeAvatar
         member.avatar_normal = largeAvatar.replace("large", "normal")
-        val nodeElement = body.getElementsByClass("header").first()
+        val nodeElement = headerTopic
                 .getElementsByAttributeValueStarting("href", "/go/").first()
         val nodeName = nodeElement.attr("href").replace("/go/", "")
         val nodeTitle = nodeElement.text()
@@ -579,5 +580,19 @@ object NetManager {
             allNodes[title] = nodes
         }
         return allNodes
+    }
+
+    fun parseMember(body: Document): MemberModel {
+        //member model
+
+//        https@ //v2ex.assets.uxengine.net/gravatar/afff3555384ccab3cd9c51f9682bef51?s=48&d=retro
+        val rightbar = body.getElementById("Rightbar")
+        val memberElement = rightbar.getElementsByTag("a").first()
+        val username = memberElement.attr("href").replace("/member/", "")
+        val avatarUrl = memberElement.getElementsByClass("avatar").first().attr("src")
+        val memberModel = MemberModel()
+        memberModel.username = username
+        memberModel.avatar_normal = avatarUrl
+        return memberModel
     }
 }

@@ -33,7 +33,7 @@ class TopicsRVAdapter(private val mContext: Context)
     fun updateItems(newItems: List<TopicModel>) {
         val callback = MyCallback()
         callback.adapter = this
-        val diffResult = DiffUtil.calculateDiff(DiffCallback(mTopicList, newItems))
+        val diffResult = DiffUtil.calculateDiff(MyDiffCallback(mTopicList, newItems))
         diffResult.dispatchUpdatesTo(callback)
         mTopicList.clear()
         mTopicList.addAll(newItems)
@@ -47,7 +47,7 @@ class TopicsRVAdapter(private val mContext: Context)
     fun addAllItems(newItems: List<TopicModel>) {
         val old = mTopicList.toList()
         mTopicList.addAll(newItems)
-        val diffResult = DiffUtil.calculateDiff(DiffCallback(old, mTopicList))
+        val diffResult = DiffUtil.calculateDiff(MyDiffCallback(old, mTopicList))
         diffResult.dispatchUpdatesTo(this)
     }
 

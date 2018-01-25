@@ -28,7 +28,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.ui.main.DiffCallback
+import im.fdx.v2ex.ui.main.MyDiffCallback
 import im.fdx.v2ex.ui.main.TopicModel
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -50,7 +50,7 @@ import java.io.IOException
  */
 class DetailsAdapter(private val mContext: Context,
                      private val callback: DetailsAdapter.AdapterCallback,
-                     val mAllList: MutableList<BaseModel> = mutableListOf<BaseModel>())
+                     val mAllList: MutableList<BaseModel> = mutableListOf())
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     internal var verifyCode: String? = null
 
@@ -261,7 +261,7 @@ class DetailsAdapter(private val mContext: Context,
             mAllList.addAll(newItems)
             notifyDataSetChanged()
         } else {
-            val diffResult = DiffUtil.calculateDiff(DiffCallback(mAllList, newItems))
+            val diffResult = DiffUtil.calculateDiff(MyDiffCallback(mAllList, newItems))
             mAllList.clear()
             mAllList.addAll(newItems)
             diffResult.dispatchUpdatesTo(this)
@@ -271,7 +271,7 @@ class DetailsAdapter(private val mContext: Context,
     fun addItems(newItems: List<BaseModel>) {
         val old = mAllList.toList()
         mAllList.addAll(newItems)
-        val diffResult = DiffUtil.calculateDiff(DiffCallback(old, mAllList))
+        val diffResult = DiffUtil.calculateDiff(MyDiffCallback(old, mAllList))
         diffResult.dispatchUpdatesTo(this)
     }
 

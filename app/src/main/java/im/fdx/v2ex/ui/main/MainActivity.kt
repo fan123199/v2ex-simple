@@ -33,6 +33,7 @@ import im.fdx.v2ex.*
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.LoginActivity
 import im.fdx.v2ex.ui.NotificationActivity
 import im.fdx.v2ex.ui.SettingsActivity
@@ -43,6 +44,8 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.getNum
 import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.loge
+import im.fdx.v2ex.utils.extensions.logw
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -139,7 +142,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
                     .build()
             when {
-                MyApp.get().isLogin() -> shortcutManager?.addDynamicShortcuts(listOfNotNull<ShortcutInfo>(createTopicInfo))
+                MyApp.get().isLogin() -> shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
                 else -> shortcutManager?.removeDynamicShortcuts(shortcutIds)
             }
         }
@@ -245,11 +248,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val ivMyAvatar: CircleImageView = navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar)
         tvMyName.text = username
         ivMyAvatar.load(avatar)
-        ivMyAvatar.visibility = if (avatar == null) View.INVISIBLE else View.VISIBLE
         ivMyAvatar.setOnClickListener {
-            val intent = Intent(this@MainActivity, MemberActivity::class.java)
-            intent.putExtra(Keys.KEY_USERNAME, username)
-            startActivity(intent)
+            username?.let { startActivity<MemberActivity>(Keys.KEY_USERNAME to it) }
         }
 
 
@@ -341,7 +341,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val body = response.body()!!.string()
 
                 if (body.contains("每日登录奖励已领取")) {
-                    XLog.tag("MainActivity").w("已领取")
+                    logw("已领取")
                     runOnUiThread { toast("每日登录奖励已领取") }
                     return
                 }
@@ -349,7 +349,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val once = parseDailyOnce(body)
 
                 if (once == null) {
-                    XLog.tag(TAG).e("null once")
+                    loge("null once")
                     return
                 }
                 postDailyCheck(once)
@@ -358,25 +358,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun postDailyCheck(once: String) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(HTTPS_V2EX_BASE + "/mission/daily/redeem?once=" + once)
-                .build()).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                Log.e("MainActivity", "daily mission failed")
-            }
+        vCall(HTTPS_V2EX_BASE + "/mission/daily/redeem?once=" + once)
+                .enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        Log.e("MainActivity", "daily mission failed")
+                    }
 
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                Log.w("MainActivity", "daily check ok")
-                runOnUiThread { toast("每日登录奖励领取成功") }
-            }
-        })
+                    @Throws(IOException::class)
+                    override fun onResponse(call: Call, response: Response) {
+                        Log.w("MainActivity", "daily check ok")
+                        runOnUiThread { toast("每日登录奖励领取成功") }
+                    }
+                })
     }
 
     private fun parseDailyOnce(string: String): String? {
 
         val body = Jsoup.parse(string).body()
-        val onceElement = body.getElementsByAttributeValue("value", "领取 X 铜币").first() ?: return null
+        val onceElement = body.getElementsByAttributeValue("value", "领取 X 铜币").first()
+                ?: return null
 //        location.href = '/mission/daily/redeem?once=83270';
         val onceOriginal = onceElement.attr("onClick")
         return onceOriginal.getNum()

@@ -75,5 +75,7 @@ fun SwipeRefreshLayout.initTheme() {
  */
 
 fun ImageView.load(url: Any?) {
-    GlideApp.with(context).load(url).into(this)
+    GlideApp.with(context)
+            .load(url)
+            .into(this)
 }

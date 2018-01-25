@@ -50,8 +50,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
@@ -92,7 +92,7 @@ dependencies {
     implementation "com.android.support:design:$support_version"
     implementation 'org.greenrobot:greendao:3.2.2'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1'
-    implementation 'org.jsoup:jsoup:1.10.2'
+    implementation 'org.jsoup:jsoup:1.11.2'
 //    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     implementation 'com.github.bumptech.glide:glide:4.5.0'
     kapt 'com.github.bumptech.glide:compiler:4.5.0'

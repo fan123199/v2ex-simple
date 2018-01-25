@@ -8,7 +8,7 @@ import im.fdx.v2ex.ui.details.ReplyModel
  * Created by fdx on 2017/7/11.
  * fdx will maintain it
  */
-class DiffCallback(val oldList: List<BaseModel>, val newList: List<BaseModel>) : DiffUtil.Callback() {
+class MyDiffCallback(private val oldList: List<BaseModel>, private val newList: List<BaseModel>) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
 
