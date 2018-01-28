@@ -16,7 +16,7 @@ def getSignConfig() {
 android {
 
     compileSdkVersion 27
-    buildToolsVersion '27.0.1'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "im.fdx.v2ex"
         minSdkVersion 21
