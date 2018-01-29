@@ -48,7 +48,8 @@ object TimeUtil {
         _created *= 1000
 
         //        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
-        val format1 = SimpleDateFormat("yyyy/MM/dd")
+        val format1 = SimpleDateFormat("yyyy/MM/dd", Locale.US)
+        format1.timeZone = TimeZone.getTimeZone("GMT+8:00")
         return format1.format(_created)
     }
 

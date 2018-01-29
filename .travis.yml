@@ -26,6 +26,7 @@ cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
+script: "./gradlew assembleDebug"
 deploy:
   provider: releases
   api_key:
@@ -34,5 +35,4 @@ deploy:
   skip_cleanup: true
   on:
     tags: true
-    repo: fan123199/V2ex-simple
-script: "./gradlew assembleDebug"
+
