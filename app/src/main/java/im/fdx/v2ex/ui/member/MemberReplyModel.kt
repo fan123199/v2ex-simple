@@ -3,14 +3,14 @@ package im.fdx.v2ex.ui.member
 import android.os.Parcel
 import android.os.Parcelable
 import im.fdx.v2ex.model.BaseModel
-import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.main.Topic
 
 /**
  * Created by fdx on 2017/7/16.
  * fdx will maintain it
  */
 data class MemberReplyModel(var id: String? = "",
-                            var topic: TopicModel = TopicModel(),
+                            var topic: Topic = Topic(),
                             var content: String? = null,
                             var create: Long = 0L) : BaseModel(), Parcelable {
     override fun parse(): BaseModel? = null
@@ -24,7 +24,7 @@ data class MemberReplyModel(var id: String? = "",
 
     constructor(source: Parcel) : this(
             source.readString(),
-            source.readParcelable<TopicModel>(TopicModel::class.java.classLoader),
+            source.readParcelable<Topic>(Topic::class.java.classLoader),
             source.readString(),
             source.readLong()
     )

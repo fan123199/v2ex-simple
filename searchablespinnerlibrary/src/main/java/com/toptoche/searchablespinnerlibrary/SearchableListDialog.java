@@ -12,11 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +22,8 @@ import android.widget.SearchView;
 import java.io.Serializable;
 import java.util.List;
 
-import static android.view.WindowManager.LayoutParams.*;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN;
+import static android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN;
 
 public class SearchableListDialog extends DialogFragment implements
         SearchView.OnQueryTextListener, SearchView.OnCloseListener {
@@ -197,6 +194,12 @@ public class SearchableListDialog extends DialogFragment implements
     @Override
     public boolean onClose() {
         return false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        dismiss();
     }
 
     @Override

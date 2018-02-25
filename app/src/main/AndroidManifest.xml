@@ -202,14 +202,9 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".AlarmReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="im.fdx.v2ex.get.notificaiton" />
-            </intent-filter>
-        </receiver>
+        <service
+            android:name=".MyJobSchedule"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <activity
             android:name=".ui.favor.FavorActivity"

@@ -1,16 +1,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              tools:context="im.fdx.v2ex.ui.details.DetailsActivity"
-              app:layout_behavior="@string/appbar_scrolling_view_behavior"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="im.fdx.v2ex.ui.details.DetailsActivity">
 
     <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_details"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:id="@+id/swipe_details"
         android:layout_weight="1">
 
         <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -20,5 +20,5 @@
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <include layout="@layout/footer_reply"/>
+    <include layout="@layout/footer_reply" />
 </LinearLayout>

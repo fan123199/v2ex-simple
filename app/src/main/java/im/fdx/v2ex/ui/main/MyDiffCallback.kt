@@ -12,8 +12,8 @@ class MyDiffCallback(private val oldList: List<BaseModel>, private val newList: 
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
 
-        if (oldList[oldItemPosition] is TopicModel && newList[newItemPosition] is TopicModel) {
-            return (oldList[oldItemPosition] as TopicModel).id == (newList[newItemPosition] as TopicModel).id
+        if (oldList[oldItemPosition] is Topic && newList[newItemPosition] is Topic) {
+            return (oldList[oldItemPosition] as Topic).id == (newList[newItemPosition] as Topic).id
         } else if (oldList[oldItemPosition] is ReplyModel && newList[newItemPosition] is ReplyModel)
             return (oldList[oldItemPosition] as ReplyModel).id == (newList[newItemPosition] as ReplyModel).id
         else return false
@@ -27,9 +27,9 @@ class MyDiffCallback(private val oldList: List<BaseModel>, private val newList: 
      * 有点问题，GoodText不加载图片
      */
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        if (oldList[oldItemPosition] is TopicModel && newList[newItemPosition] is TopicModel) {
-            return (oldList[oldItemPosition] as TopicModel).replies == (newList[newItemPosition] as TopicModel).replies &&
-                    (oldList[oldItemPosition] as TopicModel).content_rendered == (newList[newItemPosition] as TopicModel).content_rendered
+        if (oldList[oldItemPosition] is Topic && newList[newItemPosition] is Topic) {
+            return (oldList[oldItemPosition] as Topic).replies == (newList[newItemPosition] as Topic).replies &&
+                    (oldList[oldItemPosition] as Topic).content_rendered == (newList[newItemPosition] as Topic).content_rendered
         } else if (oldList[oldItemPosition] is ReplyModel && newList[newItemPosition] is ReplyModel)
             return (oldList[oldItemPosition] as ReplyModel).thanks == (newList[newItemPosition] as ReplyModel).thanks &&
                     (oldList[oldItemPosition] as ReplyModel).isThanked == (newList[newItemPosition] as ReplyModel).isThanked

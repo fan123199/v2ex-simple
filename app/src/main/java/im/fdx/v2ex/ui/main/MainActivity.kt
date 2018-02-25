@@ -29,7 +29,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import de.hdodenhof.circleimageview.CircleImageView
-import im.fdx.v2ex.*
+import im.fdx.v2ex.BuildConfig
+import im.fdx.v2ex.MyApp
+import im.fdx.v2ex.R
+import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
@@ -290,7 +293,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.menu_notification -> {
                 item.icon = resources.getDrawable(R.drawable.ic_notifications_white_24dp, theme)
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                manager.cancel(AlarmReceiver.notifyID)
+                manager.cancel(Keys.notifyID)
                 val intent = Intent(this, NotificationActivity::class.java)
                 when {
                     count != -1 -> intent.putExtra(Keys.KEY_UNREAD_COUNT, count)

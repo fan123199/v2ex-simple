@@ -14,12 +14,12 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.elvishew.xlog.XLog
-import im.fdx.v2ex.AlarmReceiver
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.Keys.notifyID
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
@@ -162,7 +162,7 @@ class SettingsActivity : AppCompatActivity() {
                         findPreference("pref_background_msg").isEnabled = true
                     } else {
                         val notificationManager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                        notificationManager.cancel(AlarmReceiver.notifyID)
+                        notificationManager.cancel(notifyID)
                         activity.stopService(intent)
                         findPreference("pref_msg_period").isEnabled = false
                         findPreference("pref_background_msg").isEnabled = false

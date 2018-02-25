@@ -44,13 +44,12 @@ object TimeUtil {
 
 
     fun getAbsoluteTime(created: Long): String {
-        var _created = created
-        _created *= 1000
+        val obj = 1000 * created
 
         //        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
         val format1 = SimpleDateFormat("yyyy/MM/dd", Locale.US)
         format1.timeZone = TimeZone.getTimeZone("GMT+8:00")
-        return format1.format(_created)
+        return format1.format(obj)
     }
 
     /**

@@ -1,10 +1,12 @@
 package im.fdx.v2ex.view
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.v4.content.ContextCompat
 import im.fdx.v2ex.R
+import org.jetbrains.anko.browse
 
 
 /**
@@ -21,7 +23,12 @@ class CustomChrome(private val context: Context) {
     }
 
     fun load(url: String) {
+
         val customTabsIntent = builder.build()
-        customTabsIntent.launchUrl(context, Uri.parse(url))
+        try {
+            customTabsIntent.launchUrl(context, Uri.parse(url))
+        } catch (e: ActivityNotFoundException) {
+            context.browse(url)
+        }
     }
 }

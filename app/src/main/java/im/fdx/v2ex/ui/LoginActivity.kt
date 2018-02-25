@@ -19,6 +19,7 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
+import im.fdx.v2ex.network.NetManager.getErrorMsg
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
@@ -199,13 +200,6 @@ class LoginActivity : AppCompatActivity() {
 
             }
         })
-    }
-
-    private fun getErrorMsg(body: String?): String {
-        XLog.tag(TAG).d(body)
-        val element = Jsoup.parse(body).body()
-        val message = element.getElementsByClass("problem") ?: return ""
-        return message.text().trim()
     }
 
     private fun isValidated(): Boolean {

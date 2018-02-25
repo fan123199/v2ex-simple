@@ -32,7 +32,7 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.logd
@@ -59,7 +59,7 @@ class DetailsActivity : AppCompatActivity() {
 
     private lateinit var pb: ProgressBar
     private lateinit var mTopicId: String
-    private var topicHeader: TopicModel? = null
+    private var topicHeader: Topic? = null
     private var token: String? = null
     private var isFavored: Boolean = false
     private var once: String? = null
@@ -172,6 +172,10 @@ class DetailsActivity : AppCompatActivity() {
             }
         }
 
+        ivSend.setOnClickListener {
+            postReply()
+        }
+
         etSendReply.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
@@ -209,7 +213,7 @@ class DetailsActivity : AppCompatActivity() {
         mTopicId = when {
             data != null -> data.pathSegments[1]
             intent.getParcelableExtra<Parcelable>("model") != null -> {
-                val topicModel = intent.getParcelableExtra<TopicModel>("model")
+                val topicModel = intent.getParcelableExtra<Topic>("model")
                 mAdapter.mAllList.add(0, topicModel)
                 mAdapter.notifyDataSetChanged()
                 topicModel.id
@@ -245,7 +249,6 @@ class DetailsActivity : AppCompatActivity() {
                     return
                 }
                 if (code != 200) {
-                    dealError(this@DetailsActivity, code, mSwipe)
                     handler.sendEmptyMessage(MSG_ERROR_IO)
                     return
                 }
@@ -365,11 +368,11 @@ class DetailsActivity : AppCompatActivity() {
                 mSwipe.isRefreshing = true
                 getRepliesPageOne(mTopicId, false)
             }
-            R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.mAllList[0] as TopicModel).title} \n" +
-                    " ${NetManager.HTTPS_V2EX_BASE}/t/${(mAdapter.mAllList[0] as TopicModel).id}")
+            R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.mAllList[0] as Topic).title} \n" +
+                    " ${NetManager.HTTPS_V2EX_BASE}/t/${(mAdapter.mAllList[0] as Topic).id}")
             R.id.menu_item_open_in_browser -> {
 
-                val topicId = (mAdapter.mAllList[0] as TopicModel).id
+                val topicId = (mAdapter.mAllList[0] as Topic).id
                 val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
                 val uri = Uri.parse(url)
                 val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -410,8 +413,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
 
-    @Suppress("UNUSED_PARAMETER")
-    fun postReply(view: View) {
+    fun postReply() {
         etSendReply.clearFocus()
         logd("I clicked")
         val content = etSendReply.text.toString()

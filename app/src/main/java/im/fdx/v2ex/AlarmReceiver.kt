@@ -81,7 +81,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val c = ContextCompat.getColor(context, R.color.primary)
-        val mBuilder = NotificationCompat.Builder(context, notifyID.toString())
+        val mBuilder = NotificationCompat.Builder(context, Keys.notifyID.toString())
         mBuilder
                 //                .setSubText("subtext")
                 .setContentTitle(context.getString(R.string.you_have_notifications, number))
@@ -101,12 +101,8 @@ class AlarmReceiver : BroadcastReceiver() {
         }
         val mNotificationCompat = mBuilder.build()
         val mNotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(notifyID, mNotificationCompat)
-    }
-
-    companion object {
-
-        val notifyID = 1223
+        mNotificationManager.notify(Keys.notifyID, mNotificationCompat)
     }
 
 }
+

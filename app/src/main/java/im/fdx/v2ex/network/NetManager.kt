@@ -8,6 +8,7 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.EditText
+import com.elvishew.xlog.XLog
 import com.google.gson.Gson
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -16,7 +17,7 @@ import im.fdx.v2ex.network.NetManager.Source.*
 import im.fdx.v2ex.ui.LoginActivity
 import im.fdx.v2ex.ui.details.ReplyModel
 import im.fdx.v2ex.ui.main.Comment
-import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.member.MemberModel
 import im.fdx.v2ex.ui.node.NodeModel
 import im.fdx.v2ex.utils.Keys
@@ -106,7 +107,7 @@ object NetManager {
             memberModel.avatar_normal = avatarUrl
             notification.member = memberModel // 3/6
 
-            val topicModel = TopicModel()
+            val topicModel = Topic()
 
             val topicElement = item.getElementsByClass("fade").first()
             //            <a href="/t/348757#reply1">交互式《线性代数》学习资料</a>
@@ -157,8 +158,8 @@ object NetManager {
 
 
     @Throws(Exception::class)
-    fun parseTopicLists(html: Document, source: Source): List<TopicModel> {
-        val topics = ArrayList<TopicModel>()
+    fun parseTopicLists(html: Document, source: Source): List<Topic> {
+        val topics = ArrayList<Topic>()
 
         //用okhttp模拟登录的话获取不到Content内容，必须再一步。
 
@@ -169,7 +170,7 @@ object NetManager {
             FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
         }
         for (item in items!!) {
-            val topicModel = TopicModel()
+            val topicModel = Topic()
             val title = item.getElementsByClass("item_title").first().text()
 
             val linkWithReply = item.getElementsByClass("item_title").first()
@@ -316,10 +317,10 @@ object NetManager {
      * *
      * @param topicId todo 可以省略
      * *
-     * @return TopicModel
+     * @return Topic
      */
-    fun parseResponseToTopic(body: Element, topicId: String): TopicModel {
-        val topicModel = TopicModel(topicId)
+    fun parseResponseToTopic(body: Element, topicId: String): Topic {
+        val topicModel = Topic(topicId)
 
         val title = body.getElementsByTag("h1").first().text()
         val contentElementOrg = body.getElementsByClass("topic_content").first()
@@ -437,9 +438,10 @@ object NetManager {
 
     }
 
-    @JvmOverloads fun dealError(context: Context, errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
+    @JvmOverloads
+    fun dealError(context: Context?, errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
 
-        if (context is Activity)
+        if (context is Activity && !context.isFinishing) {
             context.runOnUiThread {
                 swipe?.isRefreshing = false
                 when (errorCode) {
@@ -448,6 +450,14 @@ object NetManager {
                     else -> context.toast(context.getString(R.string.error_network))
                 }
             }
+        }
+    }
+
+    fun getErrorMsg(body: String?): String {
+        XLog.tag(TAG).d(body)
+        val element = Jsoup.parse(body).body()
+        val message = element.getElementsByClass("problem") ?: return ""
+        return message.text().trim()
     }
 
     fun parseOnce(body: Element) = body.getElementsByAttributeValue("name", "once").first()?.attr("value")
@@ -518,8 +528,7 @@ object NetManager {
                                     if (activity is LoginActivity) {
                                         activity.finish()
                                     }
-                                }
-                                else activity.toast("登录失败")
+                                } else activity.toast("登录失败")
                             }
                         }
                     })

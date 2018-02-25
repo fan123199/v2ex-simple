@@ -32,7 +32,7 @@ import im.fdx.v2ex.network.NetManager.API_USER
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
-import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -70,7 +70,7 @@ class MemberActivity : AppCompatActivity() {
     private lateinit var mMenu: Menu
 
     private lateinit var member: MemberModel
-    private val mTopics = ArrayList<TopicModel>()
+    private val mTopics = ArrayList<Topic>()
 
     private var username: String? = null
     private var urlTopic: String? = null
@@ -87,7 +87,6 @@ class MemberActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
-
         mIvAvatar = findViewById(R.id.iv_avatar_profile)
         mTvUserCreatedPrefix = findViewById(R.id.tv_prefix_created)
         mTvIntro = findViewById(R.id.tv_intro)
@@ -141,11 +140,11 @@ class MemberActivity : AppCompatActivity() {
         getData()
     }
 
-    private fun getName() = when {
+    private fun getName(): String? = when {
         intent.data != null -> intent.data.pathSegments[1]
         intent.extras != null -> intent.extras.getString(Keys.KEY_USERNAME)
         BuildConfig.DEBUG -> "Livid"
-        else -> "null"
+        else -> null
     }
 
     private fun getData() {
@@ -218,8 +217,10 @@ class MemberActivity : AppCompatActivity() {
                     dealError(this@MemberActivity)
                 } else {
                     val body = response.body()?.string()
-                    runOnUiThread {
-                        body?.let { showUser(it) }
+                    if (!this@MemberActivity.isFinishing) {
+                        runOnUiThread {
+                            body?.let { showUser(it) }
+                        }
                     }
                 }
             }

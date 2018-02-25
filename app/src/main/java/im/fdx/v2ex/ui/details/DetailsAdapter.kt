@@ -29,7 +29,7 @@ import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.ui.main.MyDiffCallback
-import im.fdx.v2ex.ui.main.TopicModel
+import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.utils.Keys
@@ -69,7 +69,7 @@ class DetailsAdapter(private val mContext: Context,
             TYPE_HEADER -> {
 
                 val mainHolder = holder as TopicWithCommentsViewHolder
-                val topic = mAllList[position] as TopicModel
+                val topic = mAllList[position] as Topic
                 mainHolder.tvTitle.text = topic.title
                 mainHolder.tvTitle.maxLines = 4
                 mainHolder.tvContent.isSelected = true
@@ -112,7 +112,7 @@ class DetailsAdapter(private val mContext: Context,
             TYPE_ITEM -> {
                 val itemVH = holder as ItemViewHolder
                 val replyItem = mAllList[position] as ReplyModel
-                replyItem.isLouzu = replyItem.member?.username == (mAllList[0] as TopicModel).member?.username
+                replyItem.isLouzu = replyItem.member?.username == (mAllList[0] as Topic).member?.username
                 if (position == itemCount - 1) {
                     itemVH.divider.visibility = View.GONE
                 }
@@ -152,7 +152,7 @@ class DetailsAdapter(private val mContext: Context,
                 itemVH.ivUserAvatar.setOnClickListener {
                     mContext.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
                 }
-                if (replyItem.member?.username == (mAllList[0] as TopicModel).member?.username) {
+                if (replyItem.member?.username == (mAllList[0] as Topic).member?.username) {
                     itemVH.tvLouzu.visibility = View.VISIBLE
                 } else {
                     itemVH.tvLouzu.visibility = View.GONE

@@ -13,10 +13,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import im.fdx.v2ex.R
+import im.fdx.v2ex.database.DbHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
-import im.fdx.v2ex.network.NetManager.Source.FROM_MEMBER
-import im.fdx.v2ex.network.NetManager.Source.FROM_NODE
+import im.fdx.v2ex.network.NetManager.Source.*
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.EndlessOnScrollListener
@@ -90,7 +90,7 @@ class TopicsFragment : Fragment() {
         mSwipeLayout.setOnRefreshListener { getTopics(mRequestURL) }
 
         mSwipeLayout.isRefreshing = true
-        getTopics(mRequestURL)
+
 
 
         //找出recyclerview,并赋予变量 //fdx最早的水平
@@ -146,6 +146,7 @@ class TopicsFragment : Fragment() {
         //大工告成
 
         flContainer = layout.findViewById(R.id.fl_container)
+        getTopics(mRequestURL)
         return layout
     }
 
@@ -184,7 +185,7 @@ class TopicsFragment : Fragment() {
                     NetManager.parseTopicLists(html, currentMode)
                 } catch (e: Exception) {
                     toast(e.message ?: "unknown error")
-                    null
+                    return
                 }
                 logi("time cost in parseTopicLists3:" + (System.currentTimeMillis() - time).toString())
 
@@ -193,10 +194,13 @@ class TopicsFragment : Fragment() {
                     mScrollListener.totalPage = totalPage
                 }
                 logi("time cost in parseTopicLists4:" + (System.currentTimeMillis() - time).toString())
-                logd("TOPICS: $topicList")
+                logd(topicList)
+
+                DbHelper.db.topicDao().insertUsers(*topicList.toTypedArray())
+
                 runOnUiThread {
                     logi("time cost in parseTopicLists5:" + (System.currentTimeMillis() - time).toString())
-                    if (topicList?.isEmpty() == true) {
+                    if (topicList.isEmpty()) {
                         flContainer.showNoContent()
                         mAdapter.clear()
                     } else {
@@ -204,12 +208,12 @@ class TopicsFragment : Fragment() {
                         when (currentMode) {
                             FROM_MEMBER, FROM_NODE ->
                                 if (mScrollListener.pageToLoad == 1) {
-                                    topicList?.let { mAdapter.updateItems(it) }
+                                    topicList.let { mAdapter.updateItems(it) }
                                 } else {
                                     mScrollListener.pageAfterLoaded = currentPage
-                                    topicList?.let { mAdapter.addAllItems(it) }
+                                    topicList.let { mAdapter.addAllItems(it) }
                                 }
-                            else -> topicList?.let { mAdapter.updateItems(it) }
+                            FROM_HOME -> topicList.let { mAdapter.updateItems(it) }
                         }
                     }
                     logi("time cost in parseTopicLists6:" + (System.currentTimeMillis() - time).toString())

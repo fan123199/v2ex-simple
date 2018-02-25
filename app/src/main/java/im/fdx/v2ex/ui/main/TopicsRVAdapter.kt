@@ -27,10 +27,10 @@ class TopicsRVAdapter(private val mContext: Context)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val mInflater = LayoutInflater.from(mContext)
-    private var mTopicList: MutableList<TopicModel> = mutableListOf()
+    private var mTopicList: MutableList<Topic> = mutableListOf()
     var isNodeClickable = true
 
-    fun updateItems(newItems: List<TopicModel>) {
+    fun updateItems(newItems: List<Topic>) {
         val callback = MyCallback()
         callback.adapter = this
         val diffResult = DiffUtil.calculateDiff(MyDiffCallback(mTopicList, newItems))
@@ -44,7 +44,7 @@ class TopicsRVAdapter(private val mContext: Context)
         notifyDataSetChanged()
     }
 
-    fun addAllItems(newItems: List<TopicModel>) {
+    fun addAllItems(newItems: List<Topic>) {
         val old = mTopicList.toList()
         mTopicList.addAll(newItems)
         val diffResult = DiffUtil.calculateDiff(MyDiffCallback(old, mTopicList))
@@ -99,7 +99,7 @@ class TopicsRVAdapter(private val mContext: Context)
         var view: View = container.findViewById(R.id.divider)
     }
 
-    class MyOnClickListener(private val context: Context, private val topic: TopicModel) : View.OnClickListener {
+    class MyOnClickListener(private val context: Context, private val topic: Topic) : View.OnClickListener {
         override fun onClick(v: View) {
             when (v.id) {
                 R.id.iv_avatar_profile -> context.startActivity<MemberActivity>(Keys.KEY_USERNAME to topic.member?.username!!)

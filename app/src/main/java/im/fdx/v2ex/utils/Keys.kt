@@ -30,6 +30,7 @@ object Keys {
 
     const val KEY_UNREAD_COUNT = "count"
 
+    const val notifyID = 1223
 
     const val PREF_KEY_IS_LOGIN = "is_login"
     const val PREF_ONLY_WIFI = "only_wifi"
