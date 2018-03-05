@@ -51,11 +51,11 @@ class NodeActivity : AppCompatActivity() {
             when {
                 msg.what == MSG_GET_NODE_INFO -> {
 
-                    ivNodeIcon.load(mNodeModel?.avatarLargeUrl)
-                    XLog.d(mNodeModel?.title)
-                    collapsingToolbarLayout?.title = mNodeModel?.title
-                    tvNodeHeader.text = mNodeModel?.header
-                    tvNodeNum.text = getString(R.string.topic_number, mNodeModel?.topics)
+                    ivNodeIcon.load(mNode?.avatarLargeUrl)
+                    XLog.d(mNode?.title)
+                    collapsingToolbarLayout?.title = mNode?.title
+                    tvNodeHeader.text = mNode?.header
+                    tvNodeNum.text = getString(R.string.topic_number, mNode?.topics)
                 }
             }
         }
@@ -63,7 +63,7 @@ class NodeActivity : AppCompatActivity() {
     private var token: String? = null
     private var isFollowed = false
     private lateinit var nodeName: String
-    private var mNodeModel: NodeModel? = null
+    private var mNode: Node? = null
     private lateinit var mMenu: Menu
 
     private var collapsingToolbarLayout: CollapsingToolbarLayout? = null
@@ -182,7 +182,7 @@ class NodeActivity : AppCompatActivity() {
                 val body = response.body()?.string()
                 val html = Jsoup.parse(body)
                 try {
-                    mNodeModel = NetManager.parseToNode(html)
+                    mNode = NetManager.parseToNode(html)
                 } catch (e: Exception) {
                     toast(e.message ?: "unknown error")
                 }

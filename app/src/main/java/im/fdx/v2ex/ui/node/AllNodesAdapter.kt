@@ -20,15 +20,15 @@ import java.util.*
 
 class AllNodesAdapter(val isShowImg: Boolean = false) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
 
-    private var mNodeModels: MutableList<NodeModel> = ArrayList()
-    private var realAllNodes: MutableList<NodeModel> = ArrayList()
+    private var mNodes: MutableList<Node> = ArrayList()
+    private var realAllNodes: MutableList<Node> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             AllNodeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_all_nodes, parent, false))
 
     override fun onBindViewHolder(holder: AllNodeViewHolder, position: Int) {
         XLog.tag("RV_INNER").e("$position")
-        val node = mNodeModels[position]
+        val node = mNodes[position]
 
         if (isShowImg) holder.ivNodeIcon.load(node.avatarLargeUrl)
         else {
@@ -41,28 +41,28 @@ class AllNodesAdapter(val isShowImg: Boolean = false) : RecyclerView.Adapter<All
 
     }
 
-    override fun getItemCount() = mNodeModels.size
+    override fun getItemCount() = mNodes.size
 
-    fun setAllData(nodeModels: MutableList<NodeModel>) {
-        mNodeModels = nodeModels
-        realAllNodes = nodeModels
+    fun setAllData(nodes: MutableList<Node>) {
+        mNodes = nodes
+        realAllNodes = nodes
     }
 
-    fun addAll(nodeModels: List<NodeModel>) {
-        mNodeModels.addAll(nodeModels)
+    fun addAll(nodes: List<Node>) {
+        mNodes.addAll(nodes)
     }
 
-    fun clear() = mNodeModels.clear()
+    fun clear() = mNodes.clear()
 
     fun filter(newText: String) {
 
         if (newText.isEmpty()) {
-            mNodeModels = realAllNodes
+            mNodes = realAllNodes
             notifyDataSetChanged()
             return
         }
 
-        mNodeModels = realAllNodes.filter {
+        mNodes = realAllNodes.filter {
             it.name.contains(newText) || it.title.contains(newText) || it.title_alternative.contains(newText)
         }.toMutableList()
         notifyDataSetChanged()

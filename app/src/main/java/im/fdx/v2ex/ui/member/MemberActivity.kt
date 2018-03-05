@@ -69,7 +69,7 @@ class MemberActivity : AppCompatActivity() {
 
     private lateinit var mMenu: Menu
 
-    private lateinit var member: MemberModel
+    private lateinit var member: Member
     private val mTopics = ArrayList<Topic>()
 
     private var username: String? = null
@@ -257,7 +257,7 @@ class MemberActivity : AppCompatActivity() {
     @SuppressLint("SetTextI18n")
     private fun showUser(response: String) {
         logi(response)
-        member = myGson.fromJson(response, MemberModel::class.java)
+        member = myGson.fromJson(response, Member::class.java)
 
         mIvAvatar.load(member.avatarLargeUrl)
 

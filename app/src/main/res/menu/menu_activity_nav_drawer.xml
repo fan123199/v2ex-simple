@@ -24,6 +24,7 @@
         <!--android:icon="@drawable/ic_notifications_none_black_24dp"-->
         <!--android:title="@string/notification" />-->
         <item
+            android:visible="false"
             android:id="@+id/nav_testNotify"
             android:title="Test Notify " />
 
@@ -48,6 +49,7 @@
             android:title="@string/settings" />
 
         <item
+            android:visible="false"
             android:id="@+id/nav_change_daylight"
             android:title="nav_testMenu2 "/>
 

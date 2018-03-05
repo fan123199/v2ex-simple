@@ -1,9 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.2.30'
     ext.support_version = '27.0.2'
-    ext.anko_version = '0.10.1'
+    ext.anko_version = '0.10.4'
     repositories {
         google()
         jcenter()
@@ -14,10 +14,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.google.gms:google-services:3.1.1'
+        classpath 'com.google.gms:google-services:3.2.0'
         classpath 'com.android.tools.build:gradle:3.2.0-alpha04'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath 'io.fabric.tools:gradle:1.24.4'
+        classpath 'io.fabric.tools:gradle:1.25.1'
     }
 }
 

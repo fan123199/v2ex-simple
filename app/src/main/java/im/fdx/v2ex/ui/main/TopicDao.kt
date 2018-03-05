@@ -4,22 +4,22 @@ import android.arch.persistence.room.*
 
 
 @Dao
-interface TopicsDao {
+interface TopicDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUsers(vararg users: Topic)
 
     @Insert
-    fun insertBothTopicModels(user1: Topic, user2: Topic)
+    fun insertBothTopic(user1: Topic, user2: Topic)
 
     @Insert
-    fun insertTopicModelsAndFriends(user: Topic, friends: List<Topic>)
+    fun insertTopicAndFriends(user: Topic, friends: List<Topic>)
 
     @Update
-    fun updateTopicModels(vararg users: Topic)
+    fun updateTopic(vararg users: Topic)
 
     @Delete
-    fun deleteTopicModels(vararg users: Topic)
+    fun deleteTopic(vararg users: Topic)
 
 
     @Query("SELECT * FROM topic WHERE replies > :replyNum")

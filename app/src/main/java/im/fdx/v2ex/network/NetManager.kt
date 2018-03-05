@@ -18,8 +18,8 @@ import im.fdx.v2ex.ui.LoginActivity
 import im.fdx.v2ex.ui.details.ReplyModel
 import im.fdx.v2ex.ui.main.Comment
 import im.fdx.v2ex.ui.main.Topic
-import im.fdx.v2ex.ui.member.MemberModel
-import im.fdx.v2ex.ui.node.NodeModel
+import im.fdx.v2ex.ui.member.Member
+import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.fullUrl
@@ -68,10 +68,9 @@ object NetManager {
     //以下接收参数：
     //     topic_id: 主题ID
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
-    @Deprecated("")
+    @Deprecated("不是实时的")
     val API_REPLIES = HTTPS_V2EX_BASE + "/api/replies/show.json"
 
-    @Deprecated("使用web端，达到更高的分类度")
     val URL_ALL_NODE = HTTPS_V2EX_BASE + "/api/nodes/all.json"
 
     val URL_ALL_NODE_WEB = HTTPS_V2EX_BASE + "/planes"
@@ -102,7 +101,7 @@ object NetManager {
             val memberElement = item.getElementsByTag("a").first()
             val username = memberElement.attr("href").replace("/member/", "")
             val avatarUrl = memberElement.getElementsByClass("avatar").first().attr("src")
-            val memberModel = MemberModel()
+            val memberModel = Member()
             memberModel.username = username
             memberModel.avatar_normal = avatarUrl
             notification.member = memberModel // 3/6
@@ -180,7 +179,7 @@ object NetManager {
             val regex = Regex("(?<=/t/)\\d+")
             val id: String = regex.find(linkWithReply)?.value ?: return emptyList()
 
-            val nodeModel = NodeModel()
+            val nodeModel = Node()
             when (source) {
                 FROM_HOME, FROM_MEMBER -> {
                     //  <a class="node" href="/go/career">职场话题</a>
@@ -212,7 +211,7 @@ object NetManager {
 
             topicModel.node = nodeModel
 
-            val memberModel = MemberModel()
+            val memberModel = Member()
             //            <a href="/member/wineway">
             // <img src="//v2" class="avatar" border="0" align="default" style="max-width: 48px; max-height: 48px;"></a>
 //            val username = item.getElementsByTag("a").first().attr("href").substring(8)
@@ -249,9 +248,9 @@ object NetManager {
     }
 
     @Throws(Exception::class)
-    fun parseToNode(html: Document): NodeModel {
+    fun parseToNode(html: Document): Node {
 
-        val nodeModel = NodeModel()
+        val nodeModel = Node()
         //        Document html = Jsoup.parse(response);
         val body = html.body()
         val header = body.getElementsByClass("node_header").first()
@@ -372,7 +371,7 @@ object NetManager {
         }
 
 
-        val member = MemberModel()
+        val member = Member()
         val username = headerTopic
                 .getElementsByAttributeValueStarting("href", "/member/").text()
         member.username = username
@@ -384,7 +383,7 @@ object NetManager {
                 .getElementsByAttributeValueStarting("href", "/go/").first()
         val nodeName = nodeElement.attr("href").replace("/go/", "")
         val nodeTitle = nodeElement.text()
-        val nodeModel = NodeModel()
+        val nodeModel = Node()
         nodeModel.name = nodeName
         nodeModel.title = nodeTitle
 
@@ -407,7 +406,7 @@ object NetManager {
             val id = item.id().substring(2)
 
             val replyModel = ReplyModel()
-            val memberModel = MemberModel()
+            val memberModel = Member()
             val avatar = item.getElementsByClass("avatar").attr("src")
             val username = item.getElementsByTag("strong").first().getElementsByAttributeValueStarting("href", "/member/").first().text()
 
@@ -537,14 +536,14 @@ object NetManager {
         })
     }
 
-    fun parseToNode(string: String): ArrayList<NodeModel> {
+    fun parseToNode(string: String): ArrayList<Node> {
         val element = Jsoup.parse(string).body()
 
-        val nodeModels = ArrayList<NodeModel>()
+        val nodeModels = ArrayList<Node>()
         val items = element.getElementsByClass("grid_item")
 
         for (item in items) {
-            val nodeModel = NodeModel()
+            val nodeModel = Node()
             val id = item.attr("id").substring(2)
             nodeModel.id = id
 
@@ -565,8 +564,8 @@ object NetManager {
         return nodeModels
     }
 
-    fun getAllNode(html: String): MutableMap<String, MutableList<NodeModel>> {
-        val allNodes = mutableMapOf<String, MutableList<NodeModel>>()
+    fun getAllNode(html: String): MutableMap<String, MutableList<Node>> {
+        val allNodes = mutableMapOf<String, MutableList<Node>>()
 
         val document: Document = Jsoup.parse(html)
         val body = document.body()
@@ -576,10 +575,10 @@ object NetManager {
         boxes?.filterIndexed { index, _ -> index > 0 }?.forEach {
             val title = it.getElementsByClass("header").first().ownText()
 
-            val nodes = mutableListOf<NodeModel>()
+            val nodes = mutableListOf<Node>()
             val nodeElements = it.getElementsByClass("inner").first().getElementsByClass("item_node")
             for (item in nodeElements) {
-                val node = NodeModel()
+                val node = Node()
                 val name = item.attr("href").replace("/go/", "")
                 node.name = name
                 node.title = item.text()
@@ -591,7 +590,7 @@ object NetManager {
         return allNodes
     }
 
-    fun parseMember(body: Document): MemberModel {
+    fun parseMember(body: Document): Member {
         //member model
 
 //        https@ //v2ex.assets.uxengine.net/gravatar/afff3555384ccab3cd9c51f9682bef51?s=48&d=retro
@@ -599,7 +598,7 @@ object NetManager {
         val memberElement = rightbar.getElementsByTag("a").first()
         val username = memberElement.attr("href").replace("/member/", "")
         val avatarUrl = memberElement.getElementsByClass("avatar").first().attr("src")
-        val memberModel = MemberModel()
+        val memberModel = Member()
         memberModel.username = username
         memberModel.avatar_normal = avatarUrl
         return memberModel

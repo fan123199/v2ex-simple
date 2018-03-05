@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 import im.fdx.v2ex.model.BaseModel
-import im.fdx.v2ex.ui.member.MemberModel
+import im.fdx.v2ex.ui.member.Member
 
 /**
  * Created by a708 on 15-9-8.
@@ -35,7 +35,7 @@ data class ReplyModel(var id: String = "",
                       var thanks: Int = 0,
                       var created: Long = 0,
                       var isThanked: Boolean = false,
-                      var member: MemberModel? = null,
+                      var member: Member? = null,
                       var isLouzu: Boolean = false
 ) : BaseModel(), Parcelable {
 
@@ -50,7 +50,7 @@ data class ReplyModel(var id: String = "",
             source.readInt(),
             source.readLong(),
             1 == source.readInt(),
-            source.readParcelable<MemberModel>(MemberModel::class.java.classLoader),
+            source.readParcelable<Member>(Member::class.java.classLoader),
             1 == source.readInt()
     )
 

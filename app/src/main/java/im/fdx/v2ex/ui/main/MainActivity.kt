@@ -3,6 +3,7 @@
 package im.fdx.v2ex.ui.main
 
 import android.app.NotificationManager
+import android.app.job.JobInfo
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -29,11 +30,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
 import de.hdodenhof.circleimageview.CircleImageView
-import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.UpdateService
-import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.vCall
@@ -45,13 +44,9 @@ import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.getNum
-import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.loge
-import im.fdx.v2ex.utils.extensions.logw
+import im.fdx.v2ex.utils.extensions.*
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.Request
 import okhttp3.Response
 import org.jetbrains.anko.email
 import org.jetbrains.anko.share
@@ -63,7 +58,7 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    internal lateinit var mDrawer: DrawerLayout
+    private lateinit var mDrawer: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var mViewPager: ViewPager
@@ -220,17 +215,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        if (!BuildConfig.DEBUG || true) {
-            navigationView.menu.removeItem(R.id.nav_testNotify)
-            navigationView.menu.removeItem(R.id.nav_change_daylight)
-        }
+        val builder = JobInfo.Builder(1,
+                ComponentName(packageName,
+                        UpdateService::class.java.name))
+        builder.setPeriodic(3000)
 
         vitent = Intent(this@MainActivity, UpdateService::class.java)
         vitent!!.action = Keys.ACTION_START_NOTIFICATION
         if (MyApp.get().isLogin() && isOpenMessage) {
             startService(vitent)
         }
-
     }
 
     private fun showIcon(visible: Boolean) {
@@ -327,8 +321,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
 
     private fun dailyCheck() {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(DAILY_CHECK).get().build()).enqueue(object : Callback {
+        vCall(DAILY_CHECK).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("MainActivity", "daily mission failed")
             }
@@ -344,7 +337,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val body = response.body()!!.string()
 
                 if (body.contains("每日登录奖励已领取")) {
-                    logw("已领取")
+                    logi("已领取")
                     runOnUiThread { toast("每日登录奖励已领取") }
                     return
                 }
@@ -392,25 +385,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onPause() {
         super.onPause()
-        XLog.tag(TAG).d("onPause")
+        logd("onPause")
     }
 
     override fun onRestart() {
         super.onRestart()
-        XLog.tag(TAG).d("onRestart")
+        logd("onRestart")
     }
 
     override fun onStop() {
         super.onStop()
-        XLog.tag(TAG).d("onStop")
+        logd("onStop")
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        XLog.tag(TAG).d("onDestroy")
+        logd("onDestroy")
         if (MyApp.get().isLogin() && isOpenMessage && !isBackground) {
-            stopService(intent)
+            stopService(vitent)
         }
         mViewPager.clearOnPageChangeListeners()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)

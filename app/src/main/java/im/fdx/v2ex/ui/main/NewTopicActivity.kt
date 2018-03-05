@@ -28,7 +28,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.getErrorMsg
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.details.DetailsActivity
-import im.fdx.v2ex.ui.node.NodeModel
+import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.openImagePicker
 import im.fdx.v2ex.utils.extensions.setUpToolbar
@@ -42,7 +42,7 @@ import java.util.regex.Pattern
 
 class NewTopicActivity : AppCompatActivity() {
 
-    private lateinit var adapter: ArrayAdapter<NodeModel>
+    private lateinit var adapter: ArrayAdapter<Node>
     private var mNodename: String = ""
     private lateinit var etTitle: TextInputEditText
     private lateinit var etContent: EditText
@@ -51,7 +51,7 @@ class NewTopicActivity : AppCompatActivity() {
     private var mTitle: String = ""
     private var mContent: String = ""
     private var once: String? = null
-    private val nodeModels = ArrayList<NodeModel>()
+    private val nodeModels = ArrayList<Node>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +68,7 @@ class NewTopicActivity : AppCompatActivity() {
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                mNodename = (parent.getItemAtPosition(position) as NodeModel).name
+                mNodename = (parent.getItemAtPosition(position) as Node).name
                 XLog.tag(TAG).d(mNodename)
             }
 
@@ -82,8 +82,8 @@ class NewTopicActivity : AppCompatActivity() {
 
                     @Throws(IOException::class)
                     override fun onResponse(call: Call, response: okhttp3.Response) {
-                        val type = object : TypeToken<ArrayList<NodeModel>>() {}.type
-                        val nodes = NetManager.myGson.fromJson<ArrayList<NodeModel>>(response.body()!!.string(), type)
+                        val type = object : TypeToken<ArrayList<Node>>() {}.type
+                        val nodes = NetManager.myGson.fromJson<ArrayList<Node>>(response.body()!!.string(), type)
                         runOnUiThread {
                             adapter.addAll(nodes)
                             adapter.notifyDataSetChanged()

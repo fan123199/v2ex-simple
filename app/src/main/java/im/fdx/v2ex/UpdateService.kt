@@ -1,53 +1,34 @@
 package im.fdx.v2ex
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.app.Service
+import android.app.job.JobScheduler
 import android.content.Context
 import android.content.Intent
 import android.os.IBinder
-import android.preference.PreferenceManager
 import com.elvishew.xlog.XLog
 
 
 class UpdateService : Service() {
 
-    private lateinit var alarmManager: AlarmManager
-
     override fun onCreate() {
         super.onCreate()
         XLog.d("service onCreate")
 
-        //// TODO: 2017/3/24 JobScheduler or period settings.
-        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 
     }
 
     override fun onBind(intent: Intent): IBinder? {
-        throw UnsupportedOperationException("Not yet implemented")
+        return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        alarmManager.cancel(operationIntent)
-        val interval = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString("pref_msg_period", "60").toLong() * 1000L
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + 5 * 1000, interval,
-                operationIntent)
-        XLog.d("updateService alarmManager: time" + interval)
         return Service.START_NOT_STICKY
     }
-
-    private val operationIntent: PendingIntent
-        get() {
-            val intent = Intent(this, AlarmReceiver::class.java)
-            return PendingIntent.getBroadcast(this, 199, intent, PendingIntent.FLAG_CANCEL_CURRENT)
-        }
 
     override fun onDestroy() {
         super.onDestroy()
         XLog.d("service onDestroy")
-        alarmManager.cancel(operationIntent)
     }
 }
 

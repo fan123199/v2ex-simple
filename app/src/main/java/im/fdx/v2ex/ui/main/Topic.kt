@@ -1,12 +1,10 @@
 package im.fdx.v2ex.ui.main
 
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.Ignore
-import android.arch.persistence.room.PrimaryKey
+import android.arch.persistence.room.*
 import android.os.Parcelable
 import im.fdx.v2ex.model.BaseModel
-import im.fdx.v2ex.ui.member.MemberModel
-import im.fdx.v2ex.ui.node.NodeModel
+import im.fdx.v2ex.ui.member.Member
+import im.fdx.v2ex.ui.node.Node
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -60,18 +58,16 @@ class Topic(
         var content: String? = null,
         var content_rendered: String? = null,
         var replies: Int = 0,
-        @Ignore
-        var member: MemberModel? = null,
-        @Ignore
-        var node: NodeModel? = null,
+        @Embedded
+        var member: Member? = null,
+        @Embedded
+        var node: Node? = null,
+        @ColumnInfo(name = "topic_created")
         var created: Long = 0,
         var last_modified: Long = 0,
         var last_touched: Long = 0,
         @Ignore
         var comments: MutableList<Comment> = mutableListOf()) : BaseModel(), Parcelable {
-    constructor(id: String) : this() {
-        this.id = id
-    }
 
     override fun toString() = "标题：$title,\n内容：$content"
 

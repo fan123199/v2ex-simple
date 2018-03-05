@@ -112,10 +112,10 @@ class AllNodesActivity() : AppCompatActivity() {
 
 class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
 
-    private var filterMap = mutableMapOf<String, MutableList<NodeModel>>()
-    private var map = mapOf<String, MutableList<NodeModel>>()
+    private var filterMap = mutableMapOf<String, MutableList<Node>>()
+    private var map = mapOf<String, MutableList<Node>>()
 
-    fun setData(amap: MutableMap<String, MutableList<NodeModel>>) {
+    fun setData(amap: MutableMap<String, MutableList<Node>>) {
         filterMap = LinkedHashMap(amap)
         map = LinkedHashMap(amap)
     }
