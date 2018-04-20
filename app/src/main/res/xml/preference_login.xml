@@ -6,34 +6,34 @@
         android:title="个性化"
         android:key="group_custom">
         <SwitchPreference
-            android:title="是否在回复时加入楼层"
+            android:title="回复时加入楼层"
             android:key="pref_add_row"
             android:defaultValue="false"
-            android:summaryOn="当前格式: @user #n "
-            android:summaryOff="当前格式: @user "/>
+            android:summaryOn="加入-格式: @user #n "
+            android:summaryOff="不加-格式: @user " />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="消息"
         android:key="group_msg">
         <SwitchPreference
-            android:title="是否启用未读信息通知"
+            android:title="是否启用未读消息通知"
             android:key="pref_msg"
             android:defaultValue="true"
-            android:summaryOn="启用通知"
-            android:summaryOff="关闭通知" />
+            android:summaryOn="启用"
+            android:summaryOff="关闭" />
         <SwitchPreference
             android:key="pref_background_msg"
-            android:title="后台接收未读信息"
-            android:summaryOn="接收"
-            android:summaryOff="不接收"
+            android:title="后台获取未读消息"
+            android:summaryOn="获取"
+            android:summaryOff="不获取"
             android:defaultValue="false" />
         <ListPreference
             android:defaultValue="60"
             android:entries="@array/period_string"
             android:entryValues="@array/period_int"
             android:key="pref_msg_period"
-            android:title="获取消息间隔" />
+            android:title="消息间隔" />
     </PreferenceCategory>
 
     <PreferenceCategory

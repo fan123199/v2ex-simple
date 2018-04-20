@@ -47,33 +47,35 @@ object NetManager {
 
     const val HTTPS_V2EX_BASE = "https://www.v2ex.com"
 
-    val API_HOT = HTTPS_V2EX_BASE + "/api/topics/hot.json"
-    val API_LATEST = HTTPS_V2EX_BASE + "/api/topics/latest.json"
+    const val API_HOT = HTTPS_V2EX_BASE + "/api/topics/hot.json"
+    const val API_LATEST = HTTPS_V2EX_BASE + "/api/topics/latest.json"
 
     //以下,接受参数： name: 节点名
-    val API_NODE = HTTPS_V2EX_BASE + "/api/nodes/show.json"
+    const val API_NODE = HTTPS_V2EX_BASE + "/api/nodes/show.json"
 
 
-    val API_TOPIC = HTTPS_V2EX_BASE + "/api/topics/show.json"
+    const val API_TOPIC = HTTPS_V2EX_BASE + "/api/topics/show.json"
 
-    val DAILY_CHECK = HTTPS_V2EX_BASE + "/mission/daily"
+    const val DAILY_CHECK = HTTPS_V2EX_BASE + "/mission/daily"
 
-    val SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup"
+    const val SIGN_UP_URL = HTTPS_V2EX_BASE + "/signup"
 
-    val SIGN_IN_URL = HTTPS_V2EX_BASE + "/signin"
+    const val SIGN_IN_URL = HTTPS_V2EX_BASE + "/signin"
     //以下,接受以下参数之一：
     //    username: 用户名
     //    id: 用户在 V2EX 的数字 ID
-    val API_USER = HTTPS_V2EX_BASE + "/api/members/show.json"
+    const val API_USER = HTTPS_V2EX_BASE + "/api/members/show.json"
     //以下接收参数：
     //     topic_id: 主题ID
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
     @Deprecated("不是实时的")
-    val API_REPLIES = HTTPS_V2EX_BASE + "/api/replies/show.json"
+    const val API_REPLIES = HTTPS_V2EX_BASE + "/api/replies/show.json"
 
-    val URL_ALL_NODE = HTTPS_V2EX_BASE + "/api/nodes/all.json"
+    const val URL_ALL_NODE = HTTPS_V2EX_BASE + "/api/nodes/all.json"
 
-    val URL_ALL_NODE_WEB = HTTPS_V2EX_BASE + "/planes"
+    const val URL_ALL_NODE_WEB = HTTPS_V2EX_BASE + "/planes"
+
+    const val URL_FOLLOWING = "$HTTPS_V2EX_BASE/my/following"
 
     fun parseToNotifications(html: Document): List<NotificationModel> {
         val body = html.body()
@@ -224,7 +226,7 @@ object NetManager {
             memberModel.avatar_normal = avatarLarge.replace("large", "normal")
 
 
-            val smallItem = item.getElementsByClass("small fade").first().text()
+            val smallItem = item.getElementsByClass("topic_info").first().ownText()
             val created = when {
                 !smallItem.contains("最后回复") -> -1L
                 else -> {

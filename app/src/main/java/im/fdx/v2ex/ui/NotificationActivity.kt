@@ -9,15 +9,14 @@ import android.support.v7.widget.RecyclerView
 import android.widget.FrameLayout
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
-import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.Request
 import okhttp3.Response
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
@@ -60,9 +59,7 @@ class NotificationActivity : AppCompatActivity() {
 
     private fun fetchNotification() {
         val url = "https://www.v2ex.com/notifications"
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(url)
-                .build()).enqueue(object : Callback {
+        vCall(url).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(this@NotificationActivity, swipe = mSwipe)
             }

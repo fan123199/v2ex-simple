@@ -120,7 +120,7 @@ class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAd
         map = LinkedHashMap(amap)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): NodeVH {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeVH {
         return NodeVH(LayoutInflater.from(parent?.context).inflate(R.layout.item_node_with_category, null, false))
     }
 

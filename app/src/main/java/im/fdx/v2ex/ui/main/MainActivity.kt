@@ -4,6 +4,7 @@ package im.fdx.v2ex.ui.main
 
 import android.app.NotificationManager
 import android.app.job.JobInfo
+import android.app.job.JobScheduler
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -28,11 +29,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import com.elvishew.xlog.XLog
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.MyApp
+import im.fdx.v2ex.MyJobSchedule
 import im.fdx.v2ex.R
-import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.vCall
@@ -44,6 +44,7 @@ import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
 import im.fdx.v2ex.utils.extensions.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -66,20 +67,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private var mAdapter: MyViewPagerAdapter? = null
     private val shortcutId = "create_topic"
-    private var vitent: Intent? = null
     private var shortcutManager: ShortcutManager? = null
     private val shortcutIds = listOf("create_topic")
     private var createTopicInfo: ShortcutInfo? = null
     private var isGetNotification: Boolean = false
 
     private var count: Int = -1
+    val LOG_IN = 0
 
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
             val action = intent.action
-            XLog.tag(TAG).d("getAction: " + action)
+            logd("getAction: " + action)
             when (action) {
                 Keys.ACTION_LOGIN -> {
                     showIcon(true)
@@ -116,34 +117,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_nav_drawer)
-        XLog.tag(TAG).d("onCreate")
+        logd("onCreate")
 
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(Keys.ACTION_LOGIN)
-        intentFilter.addAction(Keys.ACTION_LOGOUT)
-        intentFilter.addAction(Keys.ACTION_GET_NOTIFICATION)
+        val intentFilter = IntentFilter().apply {
+            addAction(Keys.ACTION_LOGIN)
+            addAction(Keys.ACTION_LOGOUT)
+            addAction(Keys.ACTION_GET_NOTIFICATION)
+        }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
 
         val mToolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(mToolbar)
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
-            shortcutManager = getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
-            val intent = Intent(this, NewTopicActivity::class.java)
-            intent.action = "android.intent.action.MAIN"
-            createTopicInfo = ShortcutInfo.Builder(this, shortcutId)
-                    .setActivity(componentName)
-                    .setShortLabel(getString(R.string.create_topic))
-                    .setLongLabel(getString(R.string.create_topic))
-                    .setIntent(intent)
-                    .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
-                    .build()
-            when {
-                MyApp.get().isLogin() -> shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
-                else -> shortcutManager?.removeDynamicShortcuts(shortcutIds)
-            }
-        }
+        createShortCut()
 
 
         mDrawer = findViewById(R.id.drawer_layout)
@@ -163,11 +150,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navigationView.setNavigationItemSelectedListener(this)
         fab = findViewById(R.id.fab_main)
         fab.setOnClickListener { startActivity(Intent(this@MainActivity, NewTopicActivity::class.java)) }
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-
-
         val ivMode = navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         ivMode.setOnClickListener {
             if (sharedPreferences.getBoolean("NIGHT_MODE", false)) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -184,7 +169,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             showIcon(true)
             val username = sharedPreferences.getString(Keys.KEY_USERNAME, "")
             val avatar = sharedPreferences.getString(Keys.KEY_AVATAR, "")
-            XLog.tag(TAG).d(username + "//// " + avatar)
+            logd("$username//// $avatar")
             if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
                 setUserInfo(username, avatar)
             }
@@ -215,15 +200,44 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         })
 
-        val builder = JobInfo.Builder(1,
-                ComponentName(packageName,
-                        UpdateService::class.java.name))
-        builder.setPeriodic(3000)
+        startGetNotification()
+    }
 
-        vitent = Intent(this@MainActivity, UpdateService::class.java)
-        vitent!!.action = Keys.ACTION_START_NOTIFICATION
+    private fun createShortCut() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            shortcutManager = getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
+            val intent = Intent(this, NewTopicActivity::class.java)
+            intent.action = "android.intent.action.MAIN"
+            createTopicInfo = ShortcutInfo.Builder(this, shortcutId)
+                    .setActivity(componentName)
+                    .setShortLabel(getString(R.string.create_topic))
+                    .setLongLabel(getString(R.string.create_topic))
+                    .setIntent(intent)
+                    .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
+                    .build()
+            when {
+                MyApp.get().isLogin() -> shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
+                else -> shortcutManager?.removeDynamicShortcuts(shortcutIds)
+            }
+        }
+    }
+
+    private fun startGetNotification() {
         if (MyApp.get().isLogin() && isOpenMessage) {
-            startService(vitent)
+            val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+
+            val builder = JobInfo.Builder(JOB_ID_GET_NOTIFICATION,
+                    ComponentName(MyApp.get().packageName, MyJobSchedule::class.java.name))
+            val timeSec = sharedPreferences.getString("pref_msg_period", "30").toInt()
+            builder.setPeriodic((timeSec * 1000).toLong())
+            mJobScheduler.schedule(builder.build())
+        }
+    }
+
+    private fun stopGetNotification() {
+        if (MyApp.get().isLogin() && isOpenMessage && !isBackground) {
+            val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            mJobScheduler.cancel(JOB_ID_GET_NOTIFICATION)
         }
     }
 
@@ -354,7 +368,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun postDailyCheck(once: String) {
-        vCall(HTTPS_V2EX_BASE + "/mission/daily/redeem?once=" + once)
+        vCall("$HTTPS_V2EX_BASE/mission/daily/redeem?once=$once")
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         Log.e("MainActivity", "daily mission failed")
@@ -380,7 +394,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onResume() {
         super.onResume()
-        XLog.tag(TAG).d("onResume")
+        logd("onResume")
     }
 
     override fun onPause() {
@@ -402,9 +416,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onDestroy() {
         super.onDestroy()
         logd("onDestroy")
-        if (MyApp.get().isLogin() && isOpenMessage && !isBackground) {
-            stopService(vitent)
-        }
+        stopGetNotification()
         mViewPager.clearOnPageChangeListeners()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
@@ -414,12 +426,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private val isOpenMessage: Boolean
         get() = sharedPreferences.getBoolean("pref_msg", true)
-
-    companion object {
-
-        private val TAG = "MainActivity"
-        private val LOG_IN = 0
-    }
-
 }
 

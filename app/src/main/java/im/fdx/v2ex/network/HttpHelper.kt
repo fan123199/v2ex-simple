@@ -1,13 +1,13 @@
 package im.fdx.v2ex.network
 
+import com.crashlytics.android.Crashlytics
 import com.readystatesoftware.chuck.ChuckInterceptor
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
-import okhttp3.Call
-import okhttp3.Headers
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
+import org.jetbrains.anko.toast
+import java.io.IOException
 
 /**
  * Created by fdx on 2016/11/20.
@@ -36,6 +36,10 @@ object HttpHelper {
             .followRedirects(false)  //禁止重定向
             .addInterceptor(ChuckInterceptor(MyApp.get().applicationContext))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
+                var body = chain.request().body()
+                chain.proceed(chain.request())
+            }
+            .addInterceptor { chain ->
                 val request = chain.request()
                         .newBuilder()
                         .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
@@ -55,5 +59,24 @@ object HttpHelper {
 }
 
 fun vCall(url: String): Call = HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).build())
+
+
+fun Call.start(callback: Callback) {
+    this.enqueue(object : Callback {
+        override fun onFailure(call: Call?, e: IOException?) {
+            callback.onFailure(call, e)
+        }
+
+        override fun onResponse(call: Call?, response: Response?) {
+            try {
+                callback.onResponse(call, response)
+            } catch (e: Exception) {
+                Crashlytics.logException(e)
+                MyApp.get().toast("未知应用错误")
+            }
+
+        }
+    })
+}
 
 

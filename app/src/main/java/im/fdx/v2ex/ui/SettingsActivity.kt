@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui
 
 import android.app.NotificationManager
+import android.app.job.JobScheduler
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -16,9 +17,10 @@ import android.util.Log
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
-import im.fdx.v2ex.UpdateService
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
+import im.fdx.v2ex.utils.Keys.PREF_VERSION
 import im.fdx.v2ex.utils.Keys.notifyID
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import org.jetbrains.anko.longToast
@@ -26,11 +28,10 @@ import org.jetbrains.anko.toast
 
 class SettingsActivity : AppCompatActivity() {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        setUpToolbar()
+        setUpToolbar("设置")
         fragmentManager.beginTransaction()
                 .add(R.id.container, SettingsFragment())
                 .commit()
@@ -39,24 +40,24 @@ class SettingsActivity : AppCompatActivity() {
 
 
     class SettingsFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
-        internal lateinit var sharedPreferences: SharedPreferences
-        private var listPreference: ListPreference? = null
+        private lateinit var sharedPreferences: SharedPreferences
+        private lateinit var listPreference: ListPreference
+        private lateinit var jobSchedule: JobScheduler
 
         private var count: Int = 0
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-
             addPreferencesFromResource(R.xml.preference)
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-
+            jobSchedule = activity.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             when {
                 MyApp.get().isLogin() -> {
 
                     addPreferencesFromResource(R.xml.preference_login)
                     findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
                     findPreference(Keys.PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        val alert = AlertDialog.Builder(activity)
+                        AlertDialog.Builder(activity)
                                 .setTitle("确定要退出吗")
                                 .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
                                 .setPositiveButton(R.string.ok) { dialog, _ ->
@@ -67,14 +68,15 @@ class SettingsActivity : AppCompatActivity() {
                                     dialog.dismiss()
                                     activity.finish()
                                     activity.toast("已退出登录")
-                                }.create()
-                        alert.show()
+                                }.show()
                         true
                     }
 
                     listPreference = findPreference("pref_msg_period") as ListPreference
-                    if (listPreference?.entry != null) {
-                        listPreference?.summary = listPreference?.entry//初始化时设置summary
+                    if (listPreference.entry != null) {
+                        listPreference.entry?.let {
+                            listPreference.summary = it//初始化时设置summary
+                        }
                     }
 
                     if (!sharedPreferences.getBoolean("pref_msg", false)) {
@@ -84,6 +86,35 @@ class SettingsActivity : AppCompatActivity() {
                 }
             }
 
+            prefRate()
+            prefVersion()
+
+        }
+
+
+        private fun prefVersion() {
+            val manager = activity.packageManager
+
+            try {
+                val info: PackageInfo = manager.getPackageInfo(activity.packageName, 0)
+                findPreference(PREF_VERSION).summary = info.versionName
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            }
+
+            val ha = resources.getStringArray(R.array.j)
+            count = 7
+            findPreference(PREF_VERSION).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+                if (count < 0) {
+                    count = 5
+                    activity.longToast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
+                }
+                count--
+                true
+            }
+        }
+
+        private fun prefRate() {
             findPreference(Keys.PREF_RATES).onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 try {
                     val uri = Uri.parse("market://details?id=" + activity.packageName)
@@ -91,36 +122,13 @@ class SettingsActivity : AppCompatActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 } catch (e: Exception) {
-                    activity.toast("没有找到V2EX客户端")
+                    activity.toast("没有可用的应用商店，请安装后重试")
                 }
-
                 true
             }
-
-            val manager = activity.packageManager
-            val info: PackageInfo
-            try {
-                info = manager.getPackageInfo(activity.packageName, 0)
-                findPreference("pref_version").summary = info.versionName
-            } catch (e: PackageManager.NameNotFoundException) {
-                e.printStackTrace()
-            }
-
-
-            val ha = resources.getStringArray(R.array.j)
-            count = 7
-            findPreference("pref_version").onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                if (count < 0) {
-                    count = 7
-                    activity.longToast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
-                }
-                count--
-                true
-            }
-
         }
 
-        @Suppress("unused")
+        @Suppress("unused，仅测试手动加preference")
         private fun addSettings() {
             val screen = this.preferenceScreen // "null". See onViewCreated.
 
@@ -152,18 +160,16 @@ class SettingsActivity : AppCompatActivity() {
 
         override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
             Log.w("PREF", key)
-            val intent = Intent(activity, UpdateService::class.java)
             when (key) {
                 "pref_msg" ->
 
                     if (sharedPreferences.getBoolean(key, false)) {
-                        activity.startService(intent)
                         findPreference("pref_msg_period").isEnabled = true
                         findPreference("pref_background_msg").isEnabled = true
                     } else {
                         val notificationManager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                         notificationManager.cancel(notifyID)
-                        activity.stopService(intent)
+                        jobSchedule.cancel(JOB_ID_GET_NOTIFICATION)
                         findPreference("pref_msg_period").isEnabled = false
                         findPreference("pref_background_msg").isEnabled = false
 
@@ -171,8 +177,7 @@ class SettingsActivity : AppCompatActivity() {
                 "pref_background_msg" -> {
                 }
                 "pref_msg_period" -> {
-                    listPreference?.summary = listPreference?.entry
-                    activity.startService(intent)
+                    listPreference.summary = listPreference.entry
                     XLog.d("pref_msg_period changed")
                 }
 

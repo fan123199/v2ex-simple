@@ -18,6 +18,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.Source.*
 import im.fdx.v2ex.network.NetManager.dealError
+import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
@@ -99,7 +100,9 @@ class TopicsFragment : Fragment() {
         mRecyclerView?.layoutManager = smoothLayoutManager
 
         mScrollListener = object : EndlessOnScrollListener(smoothLayoutManager, mRecyclerView!!) {
-            override fun onCompleted() = toast(getString(R.string.no_more_data))
+            override fun onCompleted() {
+                toast(getString(R.string.no_more_data))
+            }
 
             override fun onLoadMore(current_page: Int) {
                 mScrollListener.loading = true
@@ -154,7 +157,7 @@ class TopicsFragment : Fragment() {
 
     private fun getTopics(requestURL: String, currentPage: Int = 1) {
 
-        vCall(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL).enqueue(object : Callback {
+        vCall(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL).start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
                 mScrollListener.loading = false
@@ -184,7 +187,10 @@ class TopicsFragment : Fragment() {
                 val topicList = try {
                     NetManager.parseTopicLists(html, currentMode)
                 } catch (e: Exception) {
-                    toast(e.message ?: "unknown error")
+                    e.printStackTrace()
+                    runOnUiThread {
+                        toast(e.message ?: "unknown error")
+                    }
                     return
                 }
                 logi("time cost in parseTopicLists3:" + (System.currentTimeMillis() - time).toString())

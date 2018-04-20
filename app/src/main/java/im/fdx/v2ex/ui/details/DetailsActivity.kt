@@ -105,7 +105,6 @@ class DetailsActivity : AppCompatActivity() {
                 toast("需要登录后查看该主题")
                 this@DetailsActivity.finish()
             }
-            MSG_GO_TO_BOTTOM -> rvDetail.scrollToPosition(mAdapter.itemCount - 1)
             MSG_ERROR_IO -> {
                 mSwipe.isRefreshing = false
                 toast("无法打开该主题")
@@ -299,7 +298,7 @@ class DetailsActivity : AppCompatActivity() {
                 runOnUiThread {
                     mAdapter.updateItems(mAllContent)
                     if (totalPage == 1 && scrollToBottom) {
-                        handler.sendEmptyMessage(MSG_GO_TO_BOTTOM)
+                        rvDetail.scrollToPosition(mAdapter.itemCount - 1)
                     }
                 }
 
@@ -477,7 +476,6 @@ class DetailsActivity : AppCompatActivity() {
         private const val MSG_OK_GET_TOPIC = 0
         private const val MSG_ERROR_AUTH = 1
         private const val MSG_ERROR_IO = 2
-        private const val MSG_GO_TO_BOTTOM = 3
         @Suppress("unused")
         private val MSG_GET_MORE_REPLY = 4
     }

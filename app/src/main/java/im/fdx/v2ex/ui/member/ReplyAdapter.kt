@@ -22,8 +22,8 @@ class ReplyAdapter(val activity: Activity,
                    var list: MutableList<MemberReplyModel> = mutableListOf())
     : RecyclerView.Adapter<ReplyAdapter.ReplyViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int) =
-            ReplyViewHolder(LayoutInflater.from(parent?.context).inflate(R.layout.item_reply_member, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+            ReplyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_reply_member, parent, false))
 
     override fun onBindViewHolder(holder: ReplyViewHolder, position: Int) {
 
