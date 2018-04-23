@@ -226,14 +226,26 @@ object NetManager {
             memberModel.avatar_normal = avatarLarge.replace("large", "normal")
 
 
-            val smallItem = item.getElementsByClass("topic_info").first().ownText()
-            val created = when {
-                !smallItem.contains("最后回复") -> -1L
-                else -> {
-                    TimeUtil.toUtcTime(when (source) {
-                        FROM_HOME, FROM_MEMBER -> smallItem.split("•")[2]
-                        FROM_NODE -> smallItem.split("•")[1]
-                    })
+            val created = when (source) {
+                FROM_HOME, FROM_MEMBER -> {
+                    val smallItem = item.getElementsByClass("topic_info").first().ownText()
+
+                    when {
+                        !smallItem.contains("最后回复") -> -1L
+                        else -> {
+                            TimeUtil.toUtcTime(smallItem.split("•")[2])
+                        }
+                    }
+                }
+                FROM_NODE -> {
+                    val smallItem = item.getElementsByClass("small fade").first().ownText()
+
+                    when {
+                        !smallItem.contains("最后回复") -> -1L
+                        else -> {
+                            TimeUtil.toUtcTime(smallItem.split("•")[1])
+                        }
+                    }
                 }
             }
             topicModel.replies = replies

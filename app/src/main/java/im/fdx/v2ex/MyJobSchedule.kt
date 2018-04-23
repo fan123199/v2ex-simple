@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
+import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.NotificationActivity
 import im.fdx.v2ex.utils.Keys
@@ -39,10 +40,10 @@ class MyJobSchedule : JobService() {
 
     private fun getNotification(context: Context, params: JobParameters?) {
 
-        vCall(URL_FOLLOWING).enqueue(object : Callback {
+        vCall(URL_FOLLOWING).start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(context, -1)
-                jobFinished(null, true)
+                jobFinished(params, true)
             }
 
             @Throws(IOException::class)
@@ -50,7 +51,7 @@ class MyJobSchedule : JobService() {
                 val code = response.code()
                 if (code != 200) {
                     NetManager.dealError(context, code)
-                    jobFinished(null, false)
+                    jobFinished(params, false)
                     return
                 }
 

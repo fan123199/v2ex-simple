@@ -159,15 +159,16 @@ class TopicsFragment : Fragment() {
 
         vCall(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL).start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
                 mScrollListener.loading = false
                 handler.sendEmptyMessage(MSG_FAILED)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                mSwipeLayout.isRefreshing = false
-                mScrollListener.loading = false
+                runOnUiThread {
+                    mSwipeLayout.isRefreshing = false
+                    mScrollListener.loading = false
+                }
                 if (response.code() == 302) {
                     if (Objects.equals("/2fa", response.header("Location"))) {
                         runOnUiThread {
@@ -188,9 +189,6 @@ class TopicsFragment : Fragment() {
                     NetManager.parseTopicLists(html, currentMode)
                 } catch (e: Exception) {
                     e.printStackTrace()
-                    runOnUiThread {
-                        toast(e.message ?: "unknown error")
-                    }
                     return
                 }
                 logi("time cost in parseTopicLists3:" + (System.currentTimeMillis() - time).toString())
@@ -247,8 +245,8 @@ class TopicsFragment : Fragment() {
     companion object {
 
         private val TAG = TopicsFragment::class.java.simpleName
-        private val MSG_FAILED = 3
-        private val MSG_GET_DATA_BY_OK = 1
+        private const val MSG_FAILED = 3
+        private const val MSG_GET_DATA_BY_OK = 1
     }
 
 }

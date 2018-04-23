@@ -31,6 +31,7 @@ import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
+import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
@@ -232,7 +233,7 @@ class DetailsActivity : AppCompatActivity() {
     }
 
     private fun getRepliesPageOne(topicId: String, scrollToBottom: Boolean) {
-        vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=1").enqueue(object : Callback {
+        vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=1").start(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 handler.sendEmptyMessage(MSG_ERROR_IO)

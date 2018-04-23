@@ -6,7 +6,6 @@ import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
 import okhttp3.*
-import org.jetbrains.anko.toast
 import java.io.IOException
 
 /**
@@ -62,9 +61,14 @@ fun vCall(url: String): Call = HttpHelper.OK_CLIENT.newCall(Request.Builder().ur
 
 
 fun Call.start(callback: Callback) {
-    this.enqueue(object : Callback {
+    enqueue(object : Callback {
         override fun onFailure(call: Call?, e: IOException?) {
-            callback.onFailure(call, e)
+            Crashlytics.logException(e)
+            try {
+                callback.onFailure(call, e)
+            } catch (e2: Exception) {
+                Crashlytics.logException(e2)
+            }
         }
 
         override fun onResponse(call: Call?, response: Response?) {
@@ -72,7 +76,6 @@ fun Call.start(callback: Callback) {
                 callback.onResponse(call, response)
             } catch (e: Exception) {
                 Crashlytics.logException(e)
-                MyApp.get().toast("未知应用错误")
             }
 
         }
