@@ -473,8 +473,10 @@ object NetManager {
         return message.text().trim()
     }
 
+    @Throws(Exception::class)
     fun parseOnce(body: Element) = body.getElementsByAttributeValue("name", "once").first()?.attr("value")
 
+    @Throws(Exception::class)
     fun parseToVerifyCode(body: Element): String? {
 
         //        <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>

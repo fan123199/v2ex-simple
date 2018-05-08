@@ -179,7 +179,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         mViewPager = findViewById(R.id.viewpager_main)
-        mAdapter = MyViewPagerAdapter(fragmentManager, this@MainActivity)
+        mAdapter = MyViewPagerAdapter(supportFragmentManager, this@MainActivity)
         mViewPager.adapter = mAdapter
 
         val mTabLayout: TabLayout = findViewById(R.id.sliding_tabs)

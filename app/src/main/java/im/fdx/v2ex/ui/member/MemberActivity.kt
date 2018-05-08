@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.member
 
 import android.annotation.SuppressLint
-import android.app.FragmentManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,7 +9,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.TabLayout
-import android.support.v13.app.FragmentPagerAdapter
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -81,7 +80,7 @@ class MemberActivity : AppCompatActivity() {
 
 
     private val memberViewpagerAdapter: MemberViewpagerAdapter by lazy {
-        MemberViewpagerAdapter(fragmentManager)
+        MemberViewpagerAdapter(supportFragmentManager)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -368,7 +367,7 @@ class MemberActivity : AppCompatActivity() {
         }
     }
 
-    inner class MemberViewpagerAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
+    inner class MemberViewpagerAdapter(fm: android.support.v4.app.FragmentManager?) : FragmentPagerAdapter(fm) {
 
         lateinit var username: String
         lateinit var avatar: String

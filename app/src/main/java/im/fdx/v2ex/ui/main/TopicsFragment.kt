@@ -1,9 +1,9 @@
 package im.fdx.v2ex.ui.main
 
-import android.app.Fragment
 import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -29,7 +29,6 @@ import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
-import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -101,7 +100,7 @@ class TopicsFragment : Fragment() {
 
         mScrollListener = object : EndlessOnScrollListener(smoothLayoutManager, mRecyclerView!!) {
             override fun onCompleted() {
-                toast(getString(R.string.no_more_data))
+                activity?.toast(getString(R.string.no_more_data))
             }
 
             override fun onLoadMore(current_page: Int) {
@@ -143,7 +142,7 @@ class TopicsFragment : Fragment() {
             })
 
 
-        mAdapter = TopicsRVAdapter(activity)
+        mAdapter = TopicsRVAdapter(activity!!)
         mAdapter.isNodeClickable = false
         mRecyclerView?.adapter = mAdapter //大工告成
         //大工告成
@@ -165,14 +164,14 @@ class TopicsFragment : Fragment() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                runOnUiThread {
+                activity?.runOnUiThread {
                     mSwipeLayout.isRefreshing = false
                     mScrollListener.loading = false
                 }
                 if (response.code() == 302) {
                     if (Objects.equals("/2fa", response.header("Location"))) {
-                        runOnUiThread {
-                            NetManager.showTwoStepDialog(activity)
+                        activity?.runOnUiThread {
+                            NetManager.showTwoStepDialog(activity!!)
 
                         }
                     }
@@ -202,7 +201,7 @@ class TopicsFragment : Fragment() {
 
                 DbHelper.db.topicDao().insertUsers(*topicList.toTypedArray())
 
-                runOnUiThread {
+                activity?.runOnUiThread {
                     logi("time cost in parseTopicLists5:" + (System.currentTimeMillis() - time).toString())
                     if (topicList.isEmpty()) {
                         flContainer.showNoContent()

@@ -20,6 +20,7 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
 import im.fdx.v2ex.network.NetManager.getErrorMsg
+import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
@@ -31,7 +32,6 @@ import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
-import java.util.*
 
 class LoginActivity : AppCompatActivity() {
 
@@ -115,7 +115,9 @@ class LoginActivity : AppCompatActivity() {
                             .addHeader("cookie", HttpHelper.myCookieJar.loadForRequest(HttpUrl.parse(str)!!).joinToString(separator = ";"))
                             .build()
                     val url = GlideUrl(str, headers)
-                    GlideApp.with(iv_code).load(url).centerCrop().into(iv_code)
+                    if (!this@LoginActivity.isDestroyed) {
+                        GlideApp.with(iv_code).load(url).centerCrop().into(iv_code)
+                    }
                 }
                 XLog.tag("LoginActivity").d("$nameKey|$passwordKey|$onceCode|$imageCodeKey")
             }
@@ -137,7 +139,7 @@ class LoginActivity : AppCompatActivity() {
                 .header("Content-Type", "application/x-www-form-urlencoded")
                 .post(requestBody)
                 .build()
-        HttpHelper.OK_CLIENT.newCall(request).enqueue(object : Callback {
+        HttpHelper.OK_CLIENT.newCall(request).start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("LoginActivity", "error in Post Login")
             }
@@ -153,7 +155,7 @@ class LoginActivity : AppCompatActivity() {
                     302 -> {
                         MyApp.get().setLogin(true)
 
-                        vCall(HTTPS_V2EX_BASE).enqueue(object : Callback {
+                        vCall(HTTPS_V2EX_BASE).start(object : Callback {
                             override fun onFailure(call: Call, e: IOException) {
                                 e.printStackTrace()
                             }
@@ -161,7 +163,7 @@ class LoginActivity : AppCompatActivity() {
                             @Throws(IOException::class)
                             override fun onResponse(call: Call, response: okhttp3.Response) {
                                 if (response.code() == 302) {
-                                    if (Objects.equals("/2fa", response.header("Location"))) {
+                                    if (("/2fa" == response.header("Location"))) {
                                         runOnUiThread {
                                             progressBar.visibility = View.GONE
                                             btn_login.visibility = VISIBLE

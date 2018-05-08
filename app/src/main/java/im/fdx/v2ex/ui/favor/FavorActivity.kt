@@ -18,7 +18,7 @@ class FavorActivity : AppCompatActivity() {
         val tabLayout: TabLayout = findViewById(R.id.tl_favor)
         val viewPager: ViewPager = findViewById(R.id.viewpager_follow)
         viewPager.offscreenPageLimit = FavorViewPagerAdapter.titles.size
-        viewPager.adapter = FavorViewPagerAdapter(fragmentManager)
+        viewPager.adapter = FavorViewPagerAdapter(supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
     }
 }

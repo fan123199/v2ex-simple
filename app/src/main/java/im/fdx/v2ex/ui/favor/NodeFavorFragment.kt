@@ -1,7 +1,7 @@
 package im.fdx.v2ex.ui.favor
 
-import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -77,7 +77,7 @@ class NodeFavorFragment : Fragment() {
                 }
                 val nodeModels = NetManager.parseToNode(response.body()!!.string())
                 if (nodeModels.isEmpty()) {
-                    activity.runOnUiThread {
+                    activity?.runOnUiThread {
                         adapter.clear()
                         adapter.notifyDataSetChanged()
                         flContainer.showNoContent()
@@ -87,7 +87,7 @@ class NodeFavorFragment : Fragment() {
                 }
                 adapter.clear()
                 adapter.addAll(nodeModels)
-                activity.runOnUiThread {
+                activity?.runOnUiThread {
                     flContainer.showNoContent(false)
                     adapter.notifyDataSetChanged()
                     swipe.isRefreshing = false

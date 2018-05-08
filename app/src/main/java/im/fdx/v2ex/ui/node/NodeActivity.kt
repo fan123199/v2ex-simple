@@ -107,7 +107,7 @@ class NodeActivity : AppCompatActivity() {
             intent.getStringExtra(Keys.KEY_NODE_NAME) != null ->
                 nodeName = intent.getStringExtra(Keys.KEY_NODE_NAME)
         }
-        val fragmentTransaction = fragmentManager.beginTransaction();
+        val fragmentTransaction = supportFragmentManager.beginTransaction();
         val fragment: TopicsFragment = TopicsFragment().apply {
             arguments = bundleOf(Keys.KEY_NODE_NAME to nodeName)
         }

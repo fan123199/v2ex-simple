@@ -241,7 +241,6 @@ class DetailsActivity : AppCompatActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                mSwipe.isRefreshing = false
                 val code = response.code()
                 if (code == 302) {
                     //权限问题，需要登录
@@ -297,6 +296,7 @@ class DetailsActivity : AppCompatActivity() {
 
                 currentPage = NetManager.getPageValue(body)[0]
                 runOnUiThread {
+                    mSwipe.isRefreshing = false
                     mAdapter.updateItems(mAllContent)
                     if (totalPage == 1 && scrollToBottom) {
                         rvDetail.scrollToPosition(mAdapter.itemCount - 1)

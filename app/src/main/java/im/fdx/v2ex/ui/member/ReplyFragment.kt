@@ -1,7 +1,7 @@
 package im.fdx.v2ex.ui.member
 
-import android.app.Fragment
 import android.os.Bundle
+import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -21,7 +21,6 @@ import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
-import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
@@ -53,7 +52,7 @@ class ReplyFragment : Fragment() {
         }
 
         val rvReply: RecyclerView = view.findViewById(R.id.rv_container)
-        val layoutManager = LinearLayoutManager(activity)
+        val layoutManager = LinearLayoutManager(activity!!)
 
 
         rvReply.layoutManager = layoutManager
@@ -62,7 +61,7 @@ class ReplyFragment : Fragment() {
         // enable pull up for endless loading
         mScrollListener = object : EndlessOnScrollListener(layoutManager, rvReply) {
             override fun onCompleted() {
-                toast(getString(R.string.no_more_data))
+                activity?.toast(getString(R.string.no_more_data))
             }
 
             override fun onLoadMore(current_page: Int) {
@@ -74,7 +73,7 @@ class ReplyFragment : Fragment() {
         }
 
         rvReply.addOnScrollListener(mScrollListener)
-        adapter = ReplyAdapter(activity)
+        adapter = ReplyAdapter(activity!!)
         rvReply.adapter = adapter
         swipeRefreshLayout.isRefreshing = true
         getRepliesByWeb(1)
@@ -83,7 +82,7 @@ class ReplyFragment : Fragment() {
 
     private fun getRepliesByWeb(page: Int) {
 
-        val url = "${NetManager.HTTPS_V2EX_BASE}/member/${arguments.getString(Keys.KEY_USERNAME)}/replies?p=$page"
+        val url = "${NetManager.HTTPS_V2EX_BASE}/member/${arguments?.getString(Keys.KEY_USERNAME)}/replies?p=$page"
 
         vCall(url).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -100,7 +99,7 @@ class ReplyFragment : Fragment() {
                     totalPage = getTotalPage(body)
                     mScrollListener?.totalPage = totalPage
                 }
-                runOnUiThread {
+                activity?.runOnUiThread {
                     if ((replyModels == null || replyModels.isEmpty())) {
                         if (page == 1) {
                             flcontainer.showNoContent()

@@ -1,9 +1,9 @@
 package im.fdx.v2ex.ui.main
 
-import android.app.FragmentManager
 import android.content.Context
 import android.os.Bundle
-import android.support.v13.app.FragmentStatePagerAdapter
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentStatePagerAdapter
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.Keys
