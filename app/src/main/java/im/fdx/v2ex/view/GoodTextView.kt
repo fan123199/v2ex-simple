@@ -176,7 +176,13 @@ class GoodTextView @JvmOverloads constructor(
                 }
             }
             targetList.add(target)
-            GlideApp.with(context).load(source).into(target)
+            GlideApp.with(context)
+                    .apply {
+                        if (source.endsWith(".gif")) {
+                            asGif()
+                        }
+                    }
+                    .load(source).into(target)
             return bitmapHolder
         }
     }
