@@ -7,13 +7,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.preference.*
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import androidx.core.net.toUri
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -117,7 +117,7 @@ class SettingsActivity : AppCompatActivity() {
         private fun prefRate() {
             findPreference(Keys.PREF_RATES).onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 try {
-                    val uri = Uri.parse("market://details?id=" + activity.packageName)
+                    val uri = "market://details?id=im.fdx.v2ex".toUri()
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)

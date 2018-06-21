@@ -9,8 +9,8 @@
             android:title="回复时加入楼层"
             android:key="pref_add_row"
             android:defaultValue="false"
-            android:summaryOn="加入-格式: @user #n "
-            android:summaryOff="不加-格式: @user " />
+            android:summaryOn="当前格式: @user #n "
+            android:summaryOff="当前格式: @user " />
     </PreferenceCategory>
 
     <PreferenceCategory

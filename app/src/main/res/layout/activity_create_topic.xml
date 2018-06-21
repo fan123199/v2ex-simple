@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:background="@color/white"
             android:paddingLeft="@dimen/md_left_margin"
             android:paddingRight="@dimen/md_left_margin"
             android:paddingTop="@dimen/md_top_margin">
@@ -30,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/hint"
                 android:textSize="@dimen/text_size_large"
-                android:hint="请输入主题"
+                android:hint="主题标题"
                 android:drawablePadding="2dp"
                 android:maxLines="1" />
 

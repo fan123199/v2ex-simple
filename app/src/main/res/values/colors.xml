@@ -7,7 +7,6 @@
     <!--red 600-->
     <color name="accent">#E53935</color>
 
-    <color name="primary_dark">#0097A7</color>
     <color name="chrome_tab">#00a1b2</color>
 
     <color name="primary_light">#ff4dd0e1</color>
@@ -19,15 +18,19 @@
     <color name="black54">#89000000</color>
 
 
+    <color name="base_night">#555555</color>
     <!--在night中变化的值-->
     <color name="primary">#00bcd4</color>
+    <color name="primary_dark">#0097A7</color>
     <color name="mode">#00bcd4</color>
     <color name="content_font_color">#2d2d2d</color>
     <color name="title_text">@color/black87</color>
-    <color name="toolbar_text">@color/white</color>
+    <color name="toolbar_text">@color/black87</color>
+    <color name="toolbar_text_light">@color/white</color>
     <color name="item_background">@color/white</color>
     <color name="username">@color/hint</color>
     <color name="nav_background">@color/white</color>
+    <color name="toolbar_background">@color/white</color>
     <color name="nav_icon">@color/black54</color>
     <color name="light_background">#FFF2F2F2</color>
     <color name="divider_color">#d5d5d5</color>

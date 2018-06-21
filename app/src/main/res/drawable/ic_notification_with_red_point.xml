@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/ic_notifications_white_24dp">
+    <item android:drawable="@drawable/ic_notifications_primary_24dp">
     </item>
     <item
         android:gravity="top|right"

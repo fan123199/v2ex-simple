@@ -2,6 +2,7 @@ package im.fdx.v2ex.utils
 
 import android.content.res.Resources
 
+
 /**
  * Created by fdx on 2017/4/29.
  *

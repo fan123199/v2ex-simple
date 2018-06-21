@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Theme.V2ex" parent="Theme.AppCompat.DayNight.NoActionBar">
 
@@ -6,19 +6,21 @@
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorLink">@color/primary</item>
-        <item name="android:statusBarColor">@color/primary</item>
         <item name="android:listDivider">@drawable/divider</item>
+        <item name="android:statusBarColor">@color/toolbar_background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+
+
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+
         <item name="text_medium">@dimen/text_size_medium</item>
         <item name="text_small">@dimen/text_size_small</item>
         <item name="text_large">@dimen/text_size_large</item>
+    </style>
 
-        <!--<item name="android:windowContentTransitions">true</item>-->
-        <!--<item name="android:windowEnterTransition">@transition/explode</item>-->
-        <!--<item name="android:windowExitTransition">@transition/explode</item>-->
-        <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>-->
-        <!--<item name="android:windowAllowReturnTransitionOverlap">true</item>-->
-        <!--<item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>-->
-        <!--<item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>-->
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/primary</item>
     </style>
 
     <style name="Theme.V2ex.zhong">
@@ -71,12 +73,16 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textAllCaps">false</item>
+        <item name="colorControlNormal">@color/primary</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="VTabLayout" parent="Widget.Design.TabLayout">
-        <item name="tabIndicatorColor">@color/white</item>
+        <item name="tabTextAppearance">@style/VText</item>
+        <item name="tabSelectedTextColor">@color/primary</item>
+        <item name="tabIndicatorColor">@color/primary</item>
+        <item name="tabBackground">@color/item_background</item>
         <item name="tabMinWidth">64dp</item>
         <item name="android:textSize">14sp</item>
         <item name="tabMaxWidth">64dp</item>
@@ -101,7 +107,7 @@
 
     <style name="ExpendedCollapseTitle">
         <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/toolbar_text</item>
+        <item name="android:textColor">@color/toolbar_text_light</item>
     </style>
 
     <!--<style name="CollapseTitle">-->
@@ -123,6 +129,12 @@
 
     <style name="VText.ToolbarStyle">
         <item name="android:textColor">@color/toolbar_text</item>
+        <item name="android:textSize">?text_large</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="VText.ToolbarStyle.Light">
+        <item name="android:textColor">@color/toolbar_text_light</item>
         <item name="android:textSize">?text_large</item>
         <item name="android:textStyle">bold</item>
     </style>

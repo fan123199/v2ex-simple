@@ -15,6 +15,7 @@ import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
+import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
@@ -290,7 +291,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         if (isGetNotification) {
-            menu.findItem(R.id.menu_notification).icon = resources.getDrawable(R.drawable.ic_notification_with_red_point, theme)
+            menu.findItem(R.id.menu_notification).icon =
+                    ContextCompat.getDrawable(this, R.drawable.ic_notification_with_red_point)
         }
         return true
     }
@@ -299,7 +301,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.menu_login -> startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), LOG_IN)
             R.id.menu_notification -> {
-                item.icon = resources.getDrawable(R.drawable.ic_notifications_white_24dp, theme)
+                item.icon = ContextCompat.getDrawable(this, R.drawable.ic_notifications_primary_24dp)
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                 manager.cancel(Keys.notifyID)
                 val intent = Intent(this, NotificationActivity::class.java)
@@ -352,7 +354,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
                 if (body.contains("每日登录奖励已领取")) {
                     logi("已领取")
-                    runOnUiThread { toast("每日登录奖励已领取") }
+                    runOnUiThread { toast("已领取, 明日再来") }
                     return
                 }
 
@@ -371,12 +373,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         vCall("$HTTPS_V2EX_BASE/mission/daily/redeem?once=$once")
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
-                        Log.e("MainActivity", "daily mission failed")
+                        loge("daily mission failed")
                     }
 
                     @Throws(IOException::class)
                     override fun onResponse(call: Call, response: Response) {
-                        Log.w("MainActivity", "daily check ok")
+                        logw("daily check ok")
                         runOnUiThread { toast("每日登录奖励领取成功") }
                     }
                 })

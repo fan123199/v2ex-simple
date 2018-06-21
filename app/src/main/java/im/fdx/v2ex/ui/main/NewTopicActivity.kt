@@ -104,7 +104,7 @@ class NewTopicActivity : AppCompatActivity() {
             val images = ImagePicker.getImages(data)
 
             images.forEach { image ->
-                Api.uploadImage(image.path, image.name, { s, i ->
+                Api.uploadImage(image.path, image.name) { s, i ->
                     runOnUiThread {
                         when (i) {
                             0 -> {
@@ -115,7 +115,7 @@ class NewTopicActivity : AppCompatActivity() {
                             2 -> toast(s?.msg ?: "上传失败")
                         }
                     }
-                })
+                }
             }
 
         }
@@ -153,7 +153,7 @@ class NewTopicActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menu.add(0, 123, 1, "send")
-                .setIcon(R.drawable.ic_send_white_24dp)
+                .setIcon(R.drawable.ic_send_primary_24dp)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         menu.add(0, 124, 0, "upload")
                 .setIcon(R.drawable.ic_image)

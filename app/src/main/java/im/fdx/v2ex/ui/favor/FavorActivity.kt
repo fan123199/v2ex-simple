@@ -13,7 +13,7 @@ class FavorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_follow_activity)
 
-        setUpToolbar("我的收藏")
+        setUpToolbar(getString(R.string.my_follow))
 
         val tabLayout: TabLayout = findViewById(R.id.tl_favor)
         val viewPager: ViewPager = findViewById(R.id.viewpager_follow)

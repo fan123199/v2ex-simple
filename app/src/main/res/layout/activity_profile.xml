@@ -137,7 +137,7 @@
                     android:textSize="@dimen/text_size_small"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
-                    app:layout_constraintLeft_toLeftOf="@+id/tv_username_profile"
+                    app:layout_constraintLeft_toLeftOf="@+id/ll_info"
                     app:layout_constraintStart_toEndOf="@+id/iv_avatar_profile"
                     tools:text="加入于111111111111，1111111111113132"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_profile"
@@ -161,7 +161,6 @@
             app:tabMode="fixed"
             app:tabMaxWidth="400dp"
             app:tabTextColor="@color/light_hint"
-            app:tabSelectedTextColor="@color/white"
             style="@style/VTabLayout"
             />
     </android.support.design.widget.AppBarLayout>

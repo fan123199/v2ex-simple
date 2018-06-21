@@ -1,12 +1,18 @@
 package im.fdx.v2ex.utils.extensions
 
 import android.app.Activity
+import android.graphics.Color
+import android.os.Build
+import android.support.annotation.ColorInt
+import android.support.annotation.ColorRes
+import android.support.annotation.IntRange
 import android.support.v4.content.ContextCompat
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -69,15 +75,59 @@ fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
     return toolbar
 }
 
+fun Activity.setStatusColor(@ColorRes colorRes: Int, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
+    val color = ContextCompat.getColor(this, colorRes)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            var flags = this.window.decorView.systemUiVisibility
+            flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            this.window.decorView.systemUiVisibility = flags
+        }
+        this.window.statusBarColor = calculateStatusColor(color, statusBarAlpha)
+    }
+}
+
+
+fun Activity.setStatusBarLight() {
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        var flags = window.decorView.systemUiVisibility
+        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        window.decorView.systemUiVisibility = flags
+        this.window.statusBarColor = Color.WHITE
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        this.window.statusBarColor = Color.BLACK
+    }
+
+}
+
+fun Activity.clearLightStatusBar() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        var flags = this.window.decorView.systemUiVisibility
+        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        this.window.decorView.systemUiVisibility = flags
+    }
+}
+
+
+private fun calculateStatusColor(@ColorInt color: Int, alpha: Int): Int {
+    if (alpha == 0) {
+        return color
+    }
+    val a = 1 - alpha / 255f
+    var red = color shr 16 and 0xff
+    var green = color shr 8 and 0xff
+    var blue = color and 0xff
+    red = (red * a + 0.5).toInt()
+    green = (green * a + 0.5).toInt()
+    blue = (blue * a + 0.5).toInt()
+    return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
+}
+
 fun SwipeRefreshLayout.initTheme() {
     setColorSchemeResources(R.color.accent_orange)
     setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
 }
-
-/**
- * Created by fdx on 2017/7/3.
- * fdx will maintain it
- */
 
 fun ImageView.load(url: Any?) {
     GlideApp.with(context)

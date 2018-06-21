@@ -8,8 +8,6 @@ import android.os.Handler
 import android.os.Parcelable
 import android.support.v4.content.ContextCompat
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
@@ -19,12 +17,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.elvishew.xlog.XLog
-import com.esafirm.imagepicker.features.ImagePicker
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.BaseModel
@@ -33,11 +28,14 @@ import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import kotlinx.android.synthetic.main.activity_details_content.*
+import kotlinx.android.synthetic.main.footer_reply.*
 import okhttp3.*
 import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
@@ -46,16 +44,12 @@ import org.jsoup.nodes.Element
 import java.io.IOException
 import java.util.regex.Pattern
 
-class DetailsActivity : AppCompatActivity() {
+class DetailsActivity : BaseActivity() {
 
     private lateinit var mAdapter: DetailsAdapter
     //    private val mAllContent = mutableListOf<BaseModel>()
     private var mMenu: Menu? = null
 
-    private lateinit var ivSend: ImageView
-    private lateinit var mSwipe: SwipeRefreshLayout
-    private lateinit var rvDetail: RecyclerView
-    private lateinit var etSendReply: EditText
     private lateinit var tvToolbar: TextView
 
     private lateinit var pb: ProgressBar
@@ -72,7 +66,7 @@ class DetailsActivity : AppCompatActivity() {
                 1 -> {
                 }
                 2 -> getMoreRepliesByOrder(totalPage = 1, scrollToBottom = false)
-                -1 -> rvDetail.smoothScrollToPosition(position)
+                -1 -> detail_recycler_view.smoothScrollToPosition(position)
             }
         }
     }
@@ -93,7 +87,7 @@ class DetailsActivity : AppCompatActivity() {
                 val rm = intent.getParcelableArrayListExtra<ReplyModel>("replies")
                 mAdapter.addItems(rm)
                 if (intent.getBooleanExtra("bottom", false)) {
-                    rvDetail.scrollToPosition(mAdapter.itemCount - 1)
+                    detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
                 }
             }
         }
@@ -101,13 +95,13 @@ class DetailsActivity : AppCompatActivity() {
     }
     private val handler = Handler(Handler.Callback { msg ->
         when (msg.what) {
-            MSG_OK_GET_TOPIC -> mSwipe.isRefreshing = false
+            MSG_OK_GET_TOPIC -> swipe_details.isRefreshing = false
             MSG_ERROR_AUTH -> {
                 toast("需要登录后查看该主题")
                 this@DetailsActivity.finish()
             }
             MSG_ERROR_IO -> {
-                mSwipe.isRefreshing = false
+                swipe_details.isRefreshing = false
                 toast("无法打开该主题")
             }
         }
@@ -126,18 +120,13 @@ class DetailsActivity : AppCompatActivity() {
 
         setUpToolbar()
         tvToolbar = findViewById(R.id.tv_toolbar)
-        ivSend = findViewById(R.id.iv_send)
-        mSwipe = findViewById(R.id.swipe_details)
 
         pb = findViewById(R.id.pb_send)
-
-        rvDetail = findViewById(R.id.detail_recycler_view)
-        //// 这个Scroll 到顶部的bug，卡了我一个星期，用了SO上的方法，自定义了一个LinearLayoutManager
-//        原来不单单是这个原因， 而是focus的原因，focus会让系统自动滚动
+        //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
         val mLayoutManager = LinearLayoutManager(this)
-        rvDetail.layoutManager = mLayoutManager
-        rvDetail.smoothScrollToPosition(POSITION_START)
-        rvDetail.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        detail_recycler_view.layoutManager = mLayoutManager
+        detail_recycler_view.smoothScrollToPosition(POSITION_START)
+        detail_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             private var currentPosition = 0
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {}
 
@@ -158,13 +147,12 @@ class DetailsActivity : AppCompatActivity() {
         })
 
         mAdapter = DetailsAdapter(this@DetailsActivity, callback)
-        rvDetail.adapter = mAdapter
+        detail_recycler_view.adapter = mAdapter
 
-        mSwipe.initTheme()
-        mSwipe.setOnRefreshListener { getRepliesPageOne(mTopicId, false) }
+        swipe_details.initTheme()
+        swipe_details.setOnRefreshListener { getRepliesPageOne(mTopicId, false) }
 
-        etSendReply = findViewById(R.id.et_post_reply)
-        etSendReply.setOnFocusChangeListener { v, hasFocus ->
+        et_post_reply.setOnFocusChangeListener { v, hasFocus ->
 
             if (!hasFocus) {
                 val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -172,20 +160,20 @@ class DetailsActivity : AppCompatActivity() {
             }
         }
 
-        ivSend.setOnClickListener {
+        iv_send.setOnClickListener {
             postReply()
         }
 
-        etSendReply.addTextChangedListener(object : TextWatcher {
+        et_post_reply.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable) = if (s.isNullOrEmpty()) {
-                ivSend.isClickable = false
-                ivSend.imageTintList = null
+                iv_send.isClickable = false
+                iv_send.imageTintList = null
             } else {
-                ivSend.isClickable = true
-                ivSend.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this@DetailsActivity, R.color.primary))
+                iv_send.isClickable = true
+                iv_send.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(this@DetailsActivity, R.color.primary))
             }
         })
         parseIntent(intent)
@@ -222,7 +210,7 @@ class DetailsActivity : AppCompatActivity() {
             else -> ""
         }
 
-        mSwipe.isRefreshing = true
+        swipe_details.isRefreshing = true
         getRepliesPageOne(mTopicId, false)
         XLog.tag("DetailsActivity").d("TopicUrl: ${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId")
     }
@@ -296,10 +284,10 @@ class DetailsActivity : AppCompatActivity() {
 
                 currentPage = NetManager.getPageValue(body)[0]
                 runOnUiThread {
-                    mSwipe.isRefreshing = false
+                    swipe_details.isRefreshing = false
                     mAdapter.updateItems(mAllContent)
                     if (totalPage == 1 && scrollToBottom) {
-                        rvDetail.scrollToPosition(mAdapter.itemCount - 1)
+                        detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
                     }
                 }
 
@@ -360,12 +348,12 @@ class DetailsActivity : AppCompatActivity() {
 
             R.id.menu_favor -> favorOrNot(mTopicId, token!!, isFavored)
             R.id.menu_reply -> {
-                etSendReply.requestFocus()
+                et_post_reply.requestFocus()
                 val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
             }
             R.id.menu_refresh -> {
-                mSwipe.isRefreshing = true
+                swipe_details.isRefreshing = true
                 getRepliesPageOne(mTopicId, false)
             }
             R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.mAllList[0] as Topic).title} \n" +
@@ -396,7 +384,7 @@ class DetailsActivity : AppCompatActivity() {
                 .get().build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
-                dealError(this@DetailsActivity, swipe = mSwipe)
+                dealError(this@DetailsActivity, swipe = swipe_details)
             }
 
             @Throws(IOException::class)
@@ -404,7 +392,7 @@ class DetailsActivity : AppCompatActivity() {
                 if (response.code() == 302) {
                     runOnUiThread {
                         toast("${if (doFavor) "取消" else ""}收藏成功")
-                        mSwipe.isRefreshing = true
+                        swipe_details.isRefreshing = true
                         getRepliesPageOne(mTopicId, false)
                     }
                 }
@@ -414,16 +402,16 @@ class DetailsActivity : AppCompatActivity() {
 
 
     fun postReply() {
-        etSendReply.clearFocus()
+        et_post_reply.clearFocus()
         logd("I clicked")
-        val content = etSendReply.text.toString()
+        val content = et_post_reply.text.toString()
         val requestBody = FormBody.Builder()
                 .add("content", content)
                 .add("once", once!!)
                 .build()
 
         pb.visibility = View.VISIBLE
-        ivSend.visibility = View.INVISIBLE
+        iv_send.visibility = View.INVISIBLE
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .header("Origin", NetManager.HTTPS_V2EX_BASE)
@@ -436,21 +424,21 @@ class DetailsActivity : AppCompatActivity() {
             override fun onFailure(call: Call, e: IOException) {
                 runOnUiThread {
                     pb.visibility = View.GONE
-                    ivSend.visibility = View.VISIBLE
+                    iv_send.visibility = View.VISIBLE
                 }
-                dealError(this@DetailsActivity, swipe = mSwipe)
+                dealError(this@DetailsActivity, swipe = swipe_details)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
                 runOnUiThread {
                     pb.visibility = View.GONE
-                    ivSend.visibility = View.VISIBLE
+                    iv_send.visibility = View.VISIBLE
                     if (response.code() == 302) {
                         logd("成功发布")
                         toast("发表评论成功")
-                        etSendReply.setText("")
-                        mSwipe.isRefreshing = true
+                        et_post_reply.setText("")
+                        swipe_details.isRefreshing = true
                         getRepliesPageOne(mTopicId, true)
                     } else {
                         toast("发表评论失败")
@@ -458,11 +446,6 @@ class DetailsActivity : AppCompatActivity() {
                 }
             }
         })
-    }
-
-
-    fun uploadImage() {
-        ImagePicker.create(this).start();
     }
 
     override fun onDestroy() {

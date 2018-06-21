@@ -31,6 +31,7 @@ import im.fdx.v2ex.network.NetManager.API_USER
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
@@ -159,10 +160,8 @@ class MemberActivity : AppCompatActivity() {
         if (username == PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, "")) {
             return
         }
-        val webUrl = "https://www.v2ex.com/member/" + username
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(webUrl)
-                .get().build()).enqueue(object : Callback {
+        val webUrl = "https://www.v2ex.com/member/$username"
+        vCall(webUrl).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(this@MemberActivity)

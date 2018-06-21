@@ -23,6 +23,7 @@ import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.setStatusColor
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -70,6 +71,8 @@ class NodeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        setStatusColor(R.color.primary)
         setContentView(R.layout.activity_node)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

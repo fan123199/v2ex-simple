@@ -15,6 +15,7 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.showNoContent
+import kotlinx.android.synthetic.main.app_toolbar.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -51,7 +52,7 @@ class NotificationActivity : AppCompatActivity() {
     private fun parseIntent(intent: Intent) {
         val numUnread = intent.getIntExtra(Keys.KEY_UNREAD_COUNT, -1)
         adapter.number = numUnread
-        supportActionBar?.title = "${getString(R.string.notification)} " +
+        toolbar.title = "${getString(R.string.notification)} " +
                 if (numUnread != -1) "($numUnread 条未读)" else ""
         mSwipe.isRefreshing = true
         fetchNotification()
