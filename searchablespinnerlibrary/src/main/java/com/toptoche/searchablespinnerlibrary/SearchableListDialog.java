@@ -105,8 +105,7 @@ public class SearchableListDialog extends DialogFragment implements
         alertDialog.setTitle(strTitle);
 
         final AlertDialog dialog = alertDialog.create();
-        dialog.getWindow().setSoftInputMode(
-                SOFT_INPUT_STATE_HIDDEN);
+        dialog.getWindow().setSoftInputMode(SOFT_INPUT_STATE_HIDDEN);
         return dialog;
     }
 

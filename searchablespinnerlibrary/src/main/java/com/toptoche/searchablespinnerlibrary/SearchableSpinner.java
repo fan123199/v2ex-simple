@@ -77,6 +77,10 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+
+        if (_searchableListDialog.isAdded()) {
+            return true;
+        }
         if (event.getAction() == MotionEvent.ACTION_UP) {
 
             if (null != _arrayAdapter) {
@@ -120,7 +124,7 @@ public class SearchableSpinner extends Spinner implements View.OnTouchListener,
         setSelection(_items.indexOf(item));
     }
 
-    //fixed by fdx
+    //fixed by fdx, set default item by code
     @Override
     public void setSelection(int position) {
         if (!_isDirty) {

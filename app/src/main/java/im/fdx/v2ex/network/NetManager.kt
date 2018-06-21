@@ -69,11 +69,11 @@ object NetManager {
     //     topic_id: 主题ID
     // fdx_comment: 坑爹，官网没找到。怪不得没法子
     @Deprecated("不是实时的")
-    const val API_REPLIES = HTTPS_V2EX_BASE + "/api/replies/show.json"
+    const val API_REPLIES = "$HTTPS_V2EX_BASE/api/replies/show.json"
 
-    const val URL_ALL_NODE = HTTPS_V2EX_BASE + "/api/nodes/all.json"
+    const val URL_ALL_NODE = "$HTTPS_V2EX_BASE/api/nodes/all.json"
 
-    const val URL_ALL_NODE_WEB = HTTPS_V2EX_BASE + "/planes"
+    const val URL_ALL_NODE_WEB = "$HTTPS_V2EX_BASE/planes"
 
     const val URL_FOLLOWING = "$HTTPS_V2EX_BASE/my/following"
 
