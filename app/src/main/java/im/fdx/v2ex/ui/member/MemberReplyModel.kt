@@ -13,7 +13,6 @@ data class MemberReplyModel(var id: String? = "",
                             var topic: Topic = Topic(),
                             var content: String? = null,
                             var create: Long = 0L) : BaseModel(), Parcelable {
-    override fun parse(): BaseModel? = null
 
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<MemberReplyModel> = object : Parcelable.Creator<MemberReplyModel> {

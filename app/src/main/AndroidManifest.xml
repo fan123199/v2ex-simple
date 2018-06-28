@@ -17,7 +17,6 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".ui.main.MainActivity"
-            android:theme="@style/Theme.V2ex.FixStatus"
             android:label="@string/app_simple_name"
             android:launchMode="singleTop">
             <intent-filter>
@@ -124,11 +123,6 @@
                     android:scheme="https" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name=".UpdateService"
-            android:enabled="true"
-            android:exported="false" />
 
         <activity
             android:name=".ui.member.MemberActivity"

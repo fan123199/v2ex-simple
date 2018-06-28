@@ -199,7 +199,7 @@ class TopicsFragment : Fragment() {
                 logi("time cost in parseTopicLists4:" + (System.currentTimeMillis() - time).toString())
                 logd(topicList)
 
-                DbHelper.db.topicDao().insertUsers(*topicList.toTypedArray())
+                DbHelper.db.topicDao().insertTopic(*topicList.toTypedArray())
 
                 activity?.runOnUiThread {
                     logi("time cost in parseTopicLists5:" + (System.currentTimeMillis() - time).toString())

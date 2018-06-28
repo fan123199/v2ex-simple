@@ -3,11 +3,11 @@ package im.fdx.v2ex.ui.favor
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 
-class FavorActivity : AppCompatActivity() {
+class FavorActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -17,5 +17,4 @@ class NotificationModel(var time: String? = "",
                         var member: Member? = Member(),
                         var content: String? = "",
                         var id: String? = "") : BaseModel(), Parcelable {
-    override fun parse() = null
 }

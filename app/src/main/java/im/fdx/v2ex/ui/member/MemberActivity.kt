@@ -11,7 +11,6 @@ import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.TabLayout
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -32,6 +31,7 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
@@ -53,7 +53,7 @@ import java.util.*
 /**
  * 获取user的主题，依然使用api的方式
  */
-class MemberActivity : AppCompatActivity() {
+class MemberActivity : BaseActivity() {
 
     private lateinit var mIvAvatar: ImageView
     private lateinit var mTvUserCreatedPrefix: TextView

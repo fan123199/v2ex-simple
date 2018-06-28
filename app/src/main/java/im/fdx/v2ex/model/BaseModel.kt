@@ -7,5 +7,4 @@ import android.os.Parcelable
  */
 abstract class BaseModel : Parcelable {
 
-    abstract fun parse(): BaseModel?
 }

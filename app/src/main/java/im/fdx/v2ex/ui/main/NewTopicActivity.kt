@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -27,6 +26,7 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.getErrorMsg
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.Keys
@@ -40,7 +40,7 @@ import java.util.*
 import java.util.regex.Pattern
 
 
-class NewTopicActivity : AppCompatActivity() {
+class NewTopicActivity : BaseActivity() {
 
     private lateinit var adapter: ArrayAdapter<Node>
     private var mNodename: String = ""

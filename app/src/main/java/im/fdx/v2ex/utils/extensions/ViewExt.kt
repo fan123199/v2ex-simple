@@ -75,7 +75,10 @@ fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
     return toolbar
 }
 
-fun Activity.setStatusColor(@ColorRes colorRes: Int, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
+/**
+ * Alpha : 0，solid, 255->transparent
+ */
+fun Activity.setStatusBarColor(@ColorRes colorRes: Int, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
     val color = ContextCompat.getColor(this, colorRes)
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

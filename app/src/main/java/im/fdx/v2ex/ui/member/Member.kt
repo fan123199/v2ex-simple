@@ -52,8 +52,6 @@ data class Member(
         var website: String = ""
 ) : BaseModel(), Parcelable {
 
-    override fun parse() = null
-
     val avatarNormalUrl: String
         get() = "http:" + avatar_normal
 

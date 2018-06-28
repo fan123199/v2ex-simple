@@ -7,7 +7,6 @@ import android.os.Message
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.FloatingActionButton
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
@@ -19,11 +18,12 @@ import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.setStatusColor
+import im.fdx.v2ex.utils.extensions.setStatusBarColor
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -35,7 +35,7 @@ import org.jsoup.Jsoup
 import java.io.IOException
 
 
-class NodeActivity : AppCompatActivity() {
+class NodeActivity : BaseActivity() {
     private lateinit var rlNodeHeader: View
     private lateinit var ivNodeIcon: ImageView
     private lateinit var tvNodeHeader: TextView
@@ -72,7 +72,7 @@ class NodeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setStatusColor(R.color.primary)
+        setStatusBarColor(R.color.primary)
         setContentView(R.layout.activity_node)
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

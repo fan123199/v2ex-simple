@@ -3,7 +3,6 @@ package im.fdx.v2ex.ui
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.FrameLayout
@@ -23,7 +22,7 @@ import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
 
-class NotificationActivity : AppCompatActivity() {
+class NotificationActivity : BaseActivity() {
 
     private var notifications: MutableList<NotificationModel> = mutableListOf()
     private lateinit var adapter: NotificationAdapter

@@ -77,5 +77,4 @@ data class Node(
 
     override fun toString() = "$title / $name"
 
-    override fun parse() = null
 }

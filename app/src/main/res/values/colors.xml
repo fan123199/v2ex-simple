@@ -16,7 +16,7 @@
     <color name="black87">#de000000</color>
     <color name="black">#000000</color>
     <color name="black54">#89000000</color>
-
+    <color name="statusbar_white">#f5f5f5</color>
 
     <color name="base_night">#555555</color>
     <!--在night中变化的值-->

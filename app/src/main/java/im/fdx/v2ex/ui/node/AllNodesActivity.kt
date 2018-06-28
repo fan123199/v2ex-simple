@@ -20,6 +20,7 @@ import okhttp3.Callback
 import okhttp3.Request
 import java.io.IOException
 
+
 class AllNodesActivity : BaseActivity() {
     private lateinit var mAdapter: AllNodesAdapterNew
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +87,6 @@ class AllNodesActivity : BaseActivity() {
         val menuItemCompat = menu.findItem(R.id.search_node)
         val searchView = menuItemCompat.actionView as SearchView
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String) = false

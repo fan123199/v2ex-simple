@@ -7,7 +7,7 @@
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorLink">@color/primary</item>
         <item name="android:listDivider">@drawable/divider</item>
-        <item name="android:statusBarColor">@color/toolbar_background</item>
+        <item name="android:statusBarColor">@color/statusbar_white</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
 
 
@@ -23,19 +23,21 @@
         <item name="color">@color/primary</item>
     </style>
 
-    <style name="Theme.V2ex.zhong">
+    <style name="Theme.V2ex.bigger">
         <item name="text_small">@dimen/text_size_small_2</item>
         <item name="text_medium">@dimen/text_size_medium_2</item>
         <item name="text_large">@dimen/text_size_large_2</item>
     </style>
 
-    <style name="Theme.V2ex.FixStatus">
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="Theme.V2ex.biggest">
+        <item name="text_small">@dimen/text_size_small_3</item>
+        <item name="text_medium">@dimen/text_size_medium_3</item>
+        <item name="text_large">@dimen/text_size_large_3</item>
     </style>
 
     <style name="Theme.V2ex.FixCursor">
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:editTextColor">@color/toolbar_text</item>
     </style>
 
     <style name="Theme.V2ex.Settings">
@@ -110,14 +112,9 @@
         <item name="android:textColor">@color/toolbar_text_light</item>
     </style>
 
-    <!--<style name="CollapseTitle">-->
-    <!--<item name="android:textColor">@color/toolbar_text</item>-->
-    <!--<item name="android:textSize">20sp</item>-->
-    <!--</style>-->
-
     <style name="Theme.V2ex.TitleTextStyle">
         <item name="android:textColor">@color/title_text</item>
-        <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textSize">?text_large</item>
         <item name="android:lineSpacingMultiplier">1.2</item>
     </style>
 
@@ -152,7 +149,7 @@
 
     <style name="VText.LightHint">
         <item name="android:textColor">@color/light_hint</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">?text_small</item>
     </style>
 
 </resources>

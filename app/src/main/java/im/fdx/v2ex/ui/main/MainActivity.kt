@@ -21,7 +21,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.app.AppCompatDelegate
 import android.support.v7.widget.Toolbar
 import android.util.Log
@@ -37,10 +36,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.ui.LoginActivity
-import im.fdx.v2ex.ui.NotificationActivity
-import im.fdx.v2ex.ui.SettingsActivity
-import im.fdx.v2ex.ui.WebViewActivity
+import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
@@ -58,7 +54,7 @@ import org.jsoup.Jsoup
 import java.io.IOException
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var mDrawer: DrawerLayout
     private lateinit var navigationView: NavigationView
@@ -117,6 +113,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setStatusBarColor(0, 255)
         setContentView(R.layout.activity_main_nav_drawer)
         logd("onCreate")
 
@@ -138,6 +135,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val mDrawToggle = ActionBarDrawerToggle(this, mDrawer,
                 mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawer.addDrawerListener(mDrawToggle)
+        mDrawer.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.statusbar_white))
         mDrawToggle.syncState()
 
         mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {

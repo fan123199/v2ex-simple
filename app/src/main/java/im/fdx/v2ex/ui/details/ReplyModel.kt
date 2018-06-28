@@ -41,8 +41,6 @@ data class ReplyModel(var id: String = "",
 
     override fun toString() = "ReplyModel{content='$content_rendered}"
 
-    override fun parse(): BaseModel? = null
-
     constructor(source: Parcel) : this(
             source.readString(),
             source.readString(),

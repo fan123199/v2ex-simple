@@ -81,6 +81,5 @@ class Topic(
 
     override fun hashCode() = id.hashCode()
 
-    override fun parse(): Nothing? = null
 }
 
