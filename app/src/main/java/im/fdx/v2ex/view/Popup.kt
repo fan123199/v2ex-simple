@@ -14,6 +14,7 @@ import im.fdx.v2ex.ui.details.DetailsAdapter
 import im.fdx.v2ex.ui.details.ReplyModel
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
+import kotlinx.android.synthetic.main.item_reply_view.*
 
 /**
  * Created by fdx on 2017/7/14.
@@ -28,7 +29,7 @@ class Popup(mActivity: Context) {
         popupWindow = PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         popupWindow.isOutsideTouchable = true
         popupWindow.elevation = 16f
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.BLUE))
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
 
@@ -37,17 +38,17 @@ class Popup(mActivity: Context) {
 
         popupWindow.width = v.width
         val hd = DetailsAdapter.ItemViewHolder(contentView)
-        hd.tvContent.movementMethod = ScrollingMovementMethod.getInstance();
-        hd.tvContent.maxLines = 4
-        hd.tvContent.isVerticalScrollBarEnabled = true
-        hd.tvContent.setGoodText(data.content_rendered)
-        hd.tvLouzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
-        hd.tvRow.text = "#$position"
-        hd.tvReplier.text = data.member?.username
-        hd.ivThank.visibility = View.INVISIBLE
-        hd.tvReply.visibility = View.INVISIBLE
-        hd.ivUserAvatar.load(data.member?.avatarLargeUrl)
-        hd.tvReplyTime.text = TimeUtil.getRelativeTime(data.created)
+        hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance();
+        hd.tv_reply_content.maxLines = 4
+        hd.tv_reply_content.isVerticalScrollBarEnabled = true
+        hd.tv_reply_content.setGoodText(data.content_rendered)
+        hd.tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
+        hd.tv_reply_row.text = "#$position"
+        hd.tv_replier.text = data.member?.username
+        hd.iv_thanks.visibility = View.INVISIBLE
+        hd.iv_reply.visibility = View.INVISIBLE
+        hd.iv_reply_avatar.load(data.member?.avatarLargeUrl)
+        hd.tv_reply_time.text = TimeUtil.getRelativeTime(data.created)
         contentView.setOnClickListener(clickListener)
 
         popupWindow.showAsDropDown(v, 0, -v.height)

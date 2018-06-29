@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/white"
+            android:background="@color/item_background"
             android:paddingLeft="@dimen/md_left_margin"
             android:paddingRight="@dimen/md_left_margin"
             android:paddingTop="@dimen/md_top_margin">
@@ -30,7 +30,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/hint"
-                android:textSize="@dimen/text_size_large"
+                android:textSize="?text_large"
                 android:hint="主题标题"
                 android:drawablePadding="2dp"
                 android:maxLines="1" />
@@ -59,8 +59,7 @@
                 android:overScrollMode="always"
                 android:scrollbarStyle="insideInset"
                 android:scrollbars="vertical"
-                android:textSize="@dimen/text_size_medium"
-                android:backgroundTint="@color/transparent"
+                android:textSize="?text_medium"
                 android:inputType="textMultiLine"
                 />
         </LinearLayout>

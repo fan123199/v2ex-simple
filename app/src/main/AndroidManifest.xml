@@ -170,7 +170,6 @@
         </activity>
         <activity
             android:name=".ui.main.NewTopicActivity"
-            android:theme="@style/Theme.V2ex.ForEdit"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

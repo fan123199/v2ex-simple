@@ -72,11 +72,10 @@ class SettingsActivity : BaseActivity() {
                     }
 
                     listPreference = findPreference("pref_msg_period") as ListPreference
-                    if (listPreference.entry != null) {
-                        listPreference.entry?.let {
-                            listPreference.summary = it//初始化时设置summary
-                        }
+                    listPreference.entry?.let {
+                        listPreference.summary = it//初始化时设置summary
                     }
+
 
                     if (!sharedPreferences.getBoolean("pref_msg", false)) {
                         findPreference("pref_msg_period").isEnabled = false

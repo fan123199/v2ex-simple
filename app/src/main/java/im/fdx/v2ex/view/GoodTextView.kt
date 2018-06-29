@@ -54,7 +54,7 @@ class GoodTextView @JvmOverloads constructor(
         if (text.isNullOrEmpty()) {
             return
         }
-        setLinkTextColor(ContextCompat.getColor(context, R.color.primary))
+        setLinkTextColor(ContextCompat.getColor(context, R.color.mode))
 
         val imageGetter = MyImageGetter()
         val spannedText = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {

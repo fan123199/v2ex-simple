@@ -20,7 +20,7 @@
 
     <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
         <item name="spinBars">true</item>
-        <item name="color">@color/primary</item>
+        <item name="color">@color/icon</item>
     </style>
 
     <style name="Theme.V2ex.bigger">
@@ -75,16 +75,16 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textAllCaps">false</item>
-        <item name="colorControlNormal">@color/primary</item>
+        <item name="colorControlNormal">@color/icon</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="VTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabTextAppearance">@style/VText</item>
-        <item name="tabSelectedTextColor">@color/primary</item>
-        <item name="tabIndicatorColor">@color/primary</item>
-        <item name="tabBackground">@color/item_background</item>
+        <item name="tabSelectedTextColor">@color/tab_select</item>
+        <item name="tabIndicatorColor">@color/tab_select</item>
+        <item name="tabBackground">@color/toolbar_background</item>
         <item name="tabMinWidth">64dp</item>
         <item name="android:textSize">14sp</item>
         <item name="tabMaxWidth">64dp</item>
@@ -139,7 +139,7 @@
     <style name="VText.ContentStyle">
         <item name="android:lineSpacingMultiplier">1.2</item>
         <item name="android:textColor">@color/content_font_color</item>
-        <item name="android:textSize">?attr/text_medium</item>
+        <item name="android:textSize">?text_medium</item>
     </style>
 
     <style name="VText.Hint">

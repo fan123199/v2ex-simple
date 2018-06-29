@@ -36,6 +36,7 @@
 
     <TextView
         android:id="@+id/tv_replier"
+        style="@style/VText.Hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/iv_reply_avatar"
@@ -43,8 +44,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_toEndOf="@+id/iv_reply_avatar"
-        android:textColor="@color/hint"
-        android:textSize="@dimen/text_size_small"
         app:layout_constraintBottom_toBottomOf="@+id/iv_reply_avatar"
         app:layout_constraintLeft_toRightOf="@+id/iv_reply_avatar"
         app:layout_constraintTop_toTopOf="@+id/iv_reply_avatar"
@@ -82,10 +81,9 @@
 
     <ImageView
         android:id="@+id/iv_thanks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="?text_small"
+        android:layout_height="?text_small"
         android:contentDescription="thank the reply"
-        android:padding="4dp"
         android:src="@drawable/ic_thank"
         app:layout_constraintBottom_toBottomOf="@+id/tv_thanks"
         app:layout_constraintEnd_toStartOf="@+id/tv_thanks"
@@ -94,6 +92,7 @@
 
     <TextView
         android:id="@+id/tv_thanks"
+        style="@style/VText.Hint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tv_reply_time"
@@ -103,28 +102,25 @@
         android:ems="2"
         android:maxLines="1"
         android:paddingStart="4dp"
-        android:textAppearance="@style/VText.Hint"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
-        app:layout_constraintEnd_toStartOf="@+id/tv_reply"
-        app:layout_constraintRight_toLeftOf="@+id/tv_reply"
+        app:layout_constraintEnd_toStartOf="@+id/iv_reply"
         app:layout_constraintTop_toTopOf="@+id/tv_replier"
         app:layout_constraintVertical_bias="1.0"
         tools:text="123" />
 
-    <TextView
-        android:id="@+id/tv_reply"
-        style="@style/VText.Hint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:drawableStart="@drawable/ic_message_black_24dp"
-        android:padding="4dp"
+
+    <ImageView
+        android:id="@+id/iv_reply"
+        android:layout_width="?text_small"
+        android:layout_height="?text_small"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="thank the reply"
+        android:src="@drawable/ic_message_black_24dp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_thanks"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_thanks"
-        app:layout_constraintVertical_bias="0.38"
-        tools:ignore="HardcodedText"
-        tools:text="" />
+        tools:ignore="HardcodedText" />
+
 
     <View
         android:id="@+id/divider"
@@ -146,7 +142,7 @@
         android:layout_marginStart="4dp"
         android:background="@drawable/radio_kongxin"
         android:text="楼主"
-        android:textSize="10sp"
+        android:textSize="?text_small"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
         app:layout_constraintStart_toEndOf="@+id/tv_replier"
         app:layout_constraintTop_toTopOf="@+id/tv_replier" />

@@ -21,6 +21,7 @@
     <color name="base_night">#555555</color>
     <!--在night中变化的值-->
     <color name="primary">#00bcd4</color>
+    <color name="tab_select">@color/primary</color>
     <color name="primary_dark">#0097A7</color>
     <color name="mode">#00bcd4</color>
     <color name="content_font_color">#2d2d2d</color>
@@ -40,6 +41,9 @@
     <color name="accent_orange">#ffffd600</color>
     <color name="bg_refresh">#FFFAFAFA</color>
     <color name="fab">@color/accent_orange</color>
+
+    <color name="icon">@color/primary</color>
+
     <!--end night-->
 
     <color name="white">#FFFFFFFF</color>

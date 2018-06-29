@@ -18,11 +18,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.elvishew.xlog.XLog
-import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.BaseModel
@@ -38,6 +36,8 @@ import im.fdx.v2ex.utils.extensions.getPair
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_reply_view.*
 import okhttp3.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
@@ -137,36 +137,36 @@ class DetailsAdapter(private val mContext: Context,
                         menu.findItem(R.id.menu_thank).setOnMenuItemClickListener(menuListener)
                         menu.findItem(R.id.menu_copy).setOnMenuItemClickListener(menuListener)
                     }
-                    itemVH.ivThank.setOnClickListener { thank(replyItem, itemVH) }
-                    itemVH.tvThanks.setOnClickListener { thank(replyItem, itemVH) }
-                    itemVH.tvReply.setOnClickListener { reply(replyItem, position) }
+                    itemVH.iv_thanks.setOnClickListener { thank(replyItem, itemVH) }
+                    itemVH.tv_thanks.setOnClickListener { thank(replyItem, itemVH) }
+                    itemVH.iv_reply.setOnClickListener { reply(replyItem, position) }
                 }
 
                 XLog.i(replyItem.content_rendered)
-                itemVH.tvReplyTime.text = TimeUtil.getRelativeTime(replyItem.created)
-                itemVH.tvReplier.text = replyItem.member?.username
-                itemVH.tvThanks.text = replyItem.thanks.toString()
-                itemVH.tvContent.setGoodText(replyItem.content_rendered)
-                itemVH.tvRow.text = "#$position"
-                itemVH.ivUserAvatar.load(replyItem.member?.avatarLargeUrl)
-                itemVH.ivUserAvatar.setOnClickListener {
+                itemVH.tv_reply_time.text = TimeUtil.getRelativeTime(replyItem.created)
+                itemVH.tv_replier.text = replyItem.member?.username
+                itemVH.tv_thanks.text = replyItem.thanks.toString()
+                itemVH.tv_reply_content.setGoodText(replyItem.content_rendered)
+                itemVH.tv_reply_row.text = "#$position"
+                itemVH.iv_reply_avatar.load(replyItem.member?.avatarLargeUrl)
+                itemVH.iv_reply_avatar.setOnClickListener {
                     mContext.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
                 }
                 if (replyItem.member?.username == (mAllList[0] as Topic).member?.username) {
-                    itemVH.tvLouzu.visibility = View.VISIBLE
+                    itemVH.tv_louzu.visibility = View.VISIBLE
                 } else {
-                    itemVH.tvLouzu.visibility = View.GONE
+                    itemVH.tv_louzu.visibility = View.GONE
                 }
 
                 if (replyItem.isThanked) {
-                    itemVH.ivThank.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
-                    itemVH.ivThank.isClickable = false
-                    itemVH.tvThanks.isClickable = false
+                    itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
+                    itemVH.iv_thanks.isClickable = false
+                    itemVH.tv_thanks.isClickable = false
                 } else {
-                    itemVH.ivThank.imageTintList = null
+                    itemVH.iv_thanks.imageTintList = null
                 }
 
-                itemVH.tvContent.popupListener = object : Popup.PopupListener {
+                itemVH.tv_reply_content.popupListener = object : Popup.PopupListener {
                     override fun onClick(v: View, url: String) {
                         val username = url.split("/").last()
                         var index = replyItem.content.getPair(username)
@@ -218,10 +218,10 @@ class DetailsAdapter(private val mContext: Context,
                     (mContext as Activity).runOnUiThread {
                         mContext.toast("感谢成功")
                         replyItem.thanks = replyItem.thanks + 1
-                        itemVH.tvThanks.text = (replyItem.thanks).toString()
-                        itemVH.ivThank.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
-                        itemVH.ivThank.isClickable = false
-                        itemVH.tvThanks.isClickable = false
+                        itemVH.tv_thanks.text = (replyItem.thanks).toString()
+                        itemVH.tv_thanks.isClickable = false
+                        itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
+                        itemVH.iv_thanks.isClickable = false
                         replyItem.isThanked = true
                     }
                 } else {
@@ -277,17 +277,8 @@ class DetailsAdapter(private val mContext: Context,
 
     //我重用了MainAdapter中的MainViewHolder
 
-    class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        internal var tvReplier: TextView = itemView.findViewById(R.id.tv_replier)
-        internal var tvReplyTime: TextView = itemView.findViewById(R.id.tv_reply_time)
-        internal var tvContent: GoodTextView = itemView.findViewById(R.id.tv_reply_content)
-        internal var tvRow: TextView = itemView.findViewById(R.id.tv_reply_row)
-        internal var tvThanks: TextView = itemView.findViewById(R.id.tv_thanks)
-        internal var tvReply: TextView = itemView.findViewById(R.id.tv_reply)
-        internal var ivThank: ImageView = itemView.findViewById(R.id.iv_thanks)
-        internal var ivUserAvatar: CircleImageView = itemView.findViewById(R.id.iv_reply_avatar)
-        internal var divider: View = itemView.findViewById(R.id.divider)
-        internal var tvLouzu: TextView = itemView.findViewById(R.id.tv_louzu)
+    class ItemViewHolder(override val containerView: View?) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+
     }
 
     class TopicWithCommentsViewHolder(itemView: View) : TopicsRVAdapter.MainViewHolder(itemView) {
@@ -311,8 +302,8 @@ class DetailsAdapter(private val mContext: Context,
 
     companion object {
         private val TAG = DetailsAdapter::class.java.simpleName
-        private val TYPE_HEADER = 0
-        private val TYPE_ITEM = 1
-        private val TYPE_FOOTER = 2
+        private const val TYPE_HEADER = 0
+        private const val TYPE_ITEM = 1
+        private const val TYPE_FOOTER = 2
     }
 }

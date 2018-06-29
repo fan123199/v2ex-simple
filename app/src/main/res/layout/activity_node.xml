@@ -12,6 +12,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="4dp"
+        android:background="@color/toolbar_background"
+        android:theme="@style/AppTheme.AppBarOverlay"
         >
 
         <android.support.design.widget.CollapsingToolbarLayout

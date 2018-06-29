@@ -78,14 +78,14 @@ fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
 /**
  * Alpha : 0，solid, 255->transparent
  */
-fun Activity.setStatusBarColor(@ColorRes colorRes: Int, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
-    val color = ContextCompat.getColor(this, colorRes)
+fun Activity.setStatusBarColor(@ColorRes colorRes: Int?, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             var flags = this.window.decorView.systemUiVisibility
             flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
             this.window.decorView.systemUiVisibility = flags
         }
+        val color = colorRes?.let { ContextCompat.getColor(this, it) } ?: 0
         this.window.statusBarColor = calculateStatusColor(color, statusBarAlpha)
     }
 }

@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:elevation="3dp"
-            android:textSize="16sp"
+            android:textSize="?text_large"
             android:background="@android:color/transparent"
             android:minLines="1"
             android:maxLines="5"
@@ -34,7 +34,7 @@
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:textAllCaps="false"
-            />
+            android:inputType="text" />
 
         <FrameLayout
             android:layout_marginTop="8dp"

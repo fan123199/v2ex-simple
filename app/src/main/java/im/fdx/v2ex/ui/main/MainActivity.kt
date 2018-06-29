@@ -8,6 +8,7 @@ import android.app.job.JobScheduler
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
+import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
@@ -46,10 +47,7 @@ import im.fdx.v2ex.utils.extensions.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.email
-import org.jetbrains.anko.share
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import org.jsoup.Jsoup
 import java.io.IOException
 
@@ -111,9 +109,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStatusBarColor(0, 255)
+        this.window.statusBarColor = Color.TRANSPARENT
         setContentView(R.layout.activity_main_nav_drawer)
         logd("onCreate")
 
@@ -405,6 +404,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onRestart() {
         super.onRestart()
         logd("onRestart")
+        val textSizeMode = defaultSharedPreferences.getString("pref_text_size", "0").toInt()
+        if (MyApp.get().curTextSize != textSizeMode) {
+            this.finish()
+            startActivity<MainActivity>()
+        }
+
     }
 
     override fun onStop() {

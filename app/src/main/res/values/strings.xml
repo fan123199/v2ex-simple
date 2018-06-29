@@ -97,6 +97,20 @@
         <item>3600</item>
     </string-array>
 
+    <string-array name="text_size">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
+
+    <string-array name="text_size_string">
+        <item>小</item>
+        <item>中</item>
+        <item>大</item>
+    </string-array>
+
+
     <string name="title_activity_node">Node</string>
     <string name="node_image" translatable="false">node image</string>
     <string name="search_hint">Search …</string>

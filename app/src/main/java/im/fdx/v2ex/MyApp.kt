@@ -28,6 +28,8 @@ class MyApp : Application() {
     lateinit var mPrefs: SharedPreferences
     internal var isLogin = false
 
+    internal var curTextSize = 0
+
 
     private fun isNightModeOn(): Boolean {
         return mPrefs.getBoolean("NIGHT_MODE", false)
