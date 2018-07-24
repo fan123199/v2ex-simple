@@ -45,7 +45,7 @@ class TopicsFragment : Fragment() {
 
     private lateinit var mRequestURL: String
 
-    lateinit var smoothLayoutManager: LinearLayoutManager
+    lateinit var layoutManager: LinearLayoutManager
     lateinit var mScrollListener: EndlessOnScrollListener
     var currentMode = NetManager.Source.FROM_HOME
     var totalPage = 0
@@ -95,10 +95,10 @@ class TopicsFragment : Fragment() {
 
         //找出recyclerview,并赋予变量 //fdx最早的水平
         mRecyclerView = layout.findViewById(R.id.rv_container)
-        smoothLayoutManager = LinearLayoutManager(activity)
-        mRecyclerView?.layoutManager = smoothLayoutManager
+        layoutManager = LinearLayoutManager(activity)
+        mRecyclerView?.layoutManager = layoutManager
 
-        mScrollListener = object : EndlessOnScrollListener(smoothLayoutManager, mRecyclerView!!) {
+        mScrollListener = object : EndlessOnScrollListener(layoutManager, mRecyclerView!!) {
             override fun onCompleted() {
                 activity?.toast(getString(R.string.no_more_data))
             }
@@ -119,9 +119,9 @@ class TopicsFragment : Fragment() {
         if (fab != null)
             mRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
-                internal var isFabShowing = true
+                var isFabShowing = true
 
-                override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int)
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int)
                         = if (dy > 0) hideFab() else showFab()
 
                 private fun hideFab() {
@@ -143,7 +143,6 @@ class TopicsFragment : Fragment() {
 
 
         mAdapter = TopicsRVAdapter(activity!!)
-        mAdapter.isNodeClickable = false
         mRecyclerView?.adapter = mAdapter //大工告成
         //大工告成
 

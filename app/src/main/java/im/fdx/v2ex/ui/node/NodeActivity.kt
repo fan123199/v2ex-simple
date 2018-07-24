@@ -4,10 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.FloatingActionButton
-import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,12 +15,14 @@ import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.setStatusBarColor
+import im.fdx.v2ex.utils.extensions.setUpToolbar
+import kotlinx.android.synthetic.main.activity_node.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -40,17 +39,14 @@ class NodeActivity : BaseActivity() {
     private lateinit var ivNodeIcon: ImageView
     private lateinit var tvNodeHeader: TextView
     private lateinit var tvNodeNum: TextView
-//    private lateinit var mSwipeRefreshLayout: SwipeRefreshLayout
-
-//    private lateinit var mAdapter: TopicsRVAdapter
 
     @SuppressLint("HandlerLeak")
     internal var handler: Handler = object : Handler() {
         override fun handleMessage(msg: Message) {
 
             XLog.i("get handler msg " + msg.what)
-            when {
-                msg.what == MSG_GET_NODE_INFO -> {
+            when (msg.what) {
+                MSG_GET_NODE_INFO -> {
 
                     ivNodeIcon.load(mNode?.avatarLargeUrl)
                     XLog.d(mNode?.title)
@@ -71,16 +67,9 @@ class NodeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setStatusBarColor(R.color.primary)
         setContentView(R.layout.activity_node)
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        setUpToolbar()
         supportActionBar?.setDisplayShowTitleEnabled(false) //很关键，不会一闪而过一个东西
-        toolbar.setNavigationOnClickListener { onBackPressed() }
-
-        val appBarLayout: AppBarLayout = findViewById(R.id.appbar_node)
 
         collapsingToolbarLayout = findViewById(R.id.ctl_node)
         rlNodeHeader = findViewById(R.id.rl_node_header)
@@ -88,27 +77,23 @@ class NodeActivity : BaseActivity() {
         tvNodeHeader = findViewById(R.id.tv_node_details)
         tvNodeNum = findViewById(R.id.tv_topic_num)
 
-        appBarLayout.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        appbar_node.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toDouble() / maxScroll.toDouble()
             handleAlphaOnTitle(percentage.toFloat())
         }
 
+        fab_node.setOnClickListener { startActivity<NewTopicActivity>(Keys.KEY_NODE_NAME to nodeName) }
 
-        val fabNode: FloatingActionButton = findViewById(R.id.fab_node)
+        if (!MyApp.get().isLogin()) fab_node.hide()
 
-
-        fabNode.setOnClickListener { startActivity<NewTopicActivity>(Keys.KEY_NODE_NAME to nodeName) }
-
-        if (!MyApp.get().isLogin()) fabNode.hide()
-
-        when {
-            intent.data != null -> {
-                val params = intent.data.pathSegments
-                nodeName = params[1]
-            }
+        nodeName = when {
+            intent.data != null ->
+                intent.data.pathSegments[1]
             intent.getStringExtra(Keys.KEY_NODE_NAME) != null ->
-                nodeName = intent.getStringExtra(Keys.KEY_NODE_NAME)
+                intent.getStringExtra(Keys.KEY_NODE_NAME)
+            else ->
+                ""
         }
         val fragmentTransaction = supportFragmentManager.beginTransaction();
         val fragment: TopicsFragment = TopicsFragment().apply {
@@ -117,7 +102,6 @@ class NodeActivity : BaseActivity() {
         fragmentTransaction.add(R.id.fragment_container, fragment, "MyActivity");
         fragmentTransaction.commit()
         getNodeInfo()
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -160,16 +144,21 @@ class NodeActivity : BaseActivity() {
     private fun handleAlphaOnTitle(percentage: Float) {
         XLog.tag("collapse").d(percentage)
         when (percentage) {
-            in 0..1 -> rlNodeHeader.alpha = 1 - percentage
+            in 0..1 -> {
+                rlNodeHeader.alpha = 1 - percentage
+            }
+        }
+        if (percentage == 1f) {
+            divider.alpha = 0f
+        } else {
+            divider.alpha = 1f
         }
     }
 
     private fun getNodeInfo() {
         val requestURL = "${NetManager.HTTPS_V2EX_BASE}/go/$nodeName"
         XLog.tag(TAG).d("url:$requestURL")
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(requestURL).build())
-                .enqueue(object : Callback {
+        vCall(requestURL).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(this@NodeActivity)
             }

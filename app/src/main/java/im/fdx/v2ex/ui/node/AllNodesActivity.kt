@@ -8,8 +8,9 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.start
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.utils.extensions.dealError
 import im.fdx.v2ex.utils.extensions.initTheme
@@ -17,7 +18,6 @@ import im.fdx.v2ex.utils.extensions.setUpToolbar
 import kotlinx.android.synthetic.main.activity_all_nodes.*
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.Request
 import java.io.IOException
 
 
@@ -28,35 +28,31 @@ class AllNodesActivity : BaseActivity() {
         setContentView(R.layout.activity_all_nodes)
 
         setUpToolbar(getString(R.string.all_nodes))
-
-        rv_node.apply {
-            //这里是后续不卡的关键，但是第一次滑动还是卡
-            setHasFixedSize(true) //要做filter，不能用
-            setItemViewCacheSize(20);
-        }
-
+        //这里是后续不卡的关键，但是第一次滑动还是卡
         val linearLayoutManager = object : LinearLayoutManager(this) {
             override fun getExtraLayoutSpace(state: RecyclerView.State?): Int {
                 return 300
             }
         }
-        rv_node.layoutManager = linearLayoutManager
+        rv_node.apply {
+            setHasFixedSize(true) //要做filter，不能用
+            setItemViewCacheSize(20)
+            layoutManager = linearLayoutManager
+        }
 
         swipe_container.initTheme()
         swipe_container.setOnRefreshListener { getAllNodes() }
 
 
         mAdapter = AllNodesAdapterNew(context = this)
-
-        mAdapter.setHasStableIds(true)
         swipe_container.isRefreshing = true
         getAllNodes()
     }
 
     private fun getAllNodes() {
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder().url(NetManager.URL_ALL_NODE_WEB).build())
-                .enqueue(object : Callback {
+        vCall(NetManager.URL_ALL_NODE_WEB)
+                .start(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         dealError(-1, swipe_container)
                     }

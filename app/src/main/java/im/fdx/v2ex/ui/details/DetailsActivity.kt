@@ -127,10 +127,12 @@ class DetailsActivity : BaseActivity() {
         detail_recycler_view.layoutManager = mLayoutManager
         detail_recycler_view.smoothScrollToPosition(POSITION_START)
         detail_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            private var currentPosition = 0
-            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {}
 
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+            private var currentPosition = 0
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {}
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
                     if (currentPosition != 0) {
                         startAlphaAnimation(tvToolbar, 500, false)

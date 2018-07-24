@@ -72,7 +72,7 @@ class ReplyFragment : Fragment() {
             }
         }
 
-        rvReply.addOnScrollListener(mScrollListener)
+        rvReply.addOnScrollListener(mScrollListener!!)
         adapter = ReplyAdapter(activity!!)
         rvReply.adapter = adapter
         swipeRefreshLayout.isRefreshing = true

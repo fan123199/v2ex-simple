@@ -28,7 +28,6 @@ class TopicsRVAdapter(private val mContext: Context)
 
     private val mInflater = LayoutInflater.from(mContext)
     private var mTopicList: MutableList<Topic> = mutableListOf()
-    var isNodeClickable = true
 
     fun updateItems(newItems: List<Topic>) {
         val callback = MyCallback()
@@ -76,10 +75,7 @@ class TopicsRVAdapter(private val mContext: Context)
         holder.tvNode.text = currentTopic.node?.title
         holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)
         holder.ivAvatar.load(currentTopic.member?.avatarNormalUrl)
-
-        if (isNodeClickable) {
-            holder.tvNode.setOnClickListener(listener)
-        }
+        holder.tvNode.setOnClickListener(listener)
         holder.ivAvatar.setOnClickListener(listener)
 
     }

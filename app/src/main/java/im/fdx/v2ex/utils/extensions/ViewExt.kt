@@ -139,14 +139,14 @@ fun ImageView.load(url: Any?) {
 }
 
 
-fun Activity.openImagePicker() {
+fun openImagePicker(activity: Activity) {
 
     if (pref.getBoolean(Keys.KEY_NEED_WARN, true)) {
-        AlertDialog.Builder(this, R.style.AppTheme_Simple)
+        AlertDialog.Builder(activity, R.style.AppTheme_Simple)
                 .setTitle("您开启了两步验证")
                 .setPositiveButton("知道了") { _, _ ->
                     pref.edit().putBoolean(Keys.KEY_NEED_WARN, false).apply()
-                    ImagePicker.create(this)
+                    ImagePicker.create(activity)
                             .theme(R.style.Theme_V2ex)
                             .multi()
                             .limit(10)
@@ -160,7 +160,7 @@ fun Activity.openImagePicker() {
                     4. 每次最多选择10张图片
                 """.trimIndent()).show()
     } else {
-        ImagePicker.create(this)
+        ImagePicker.create(activity)
                 .theme(R.style.Theme_V2ex)
                 .multi()
                 .limit(10)

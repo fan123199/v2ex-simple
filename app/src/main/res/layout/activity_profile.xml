@@ -11,13 +11,20 @@
         android:id="@+id/al_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        android:background="@color/toolbar_background"
         android:elevation="4dp">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/ctl_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleEnabled="false"
+            app:titleEnabled="true"
+            app:expandedTitleMarginStart="128dp"
+            app:expandedTitleMarginTop="24dp"
+            app:expandedTitleGravity="top"
+            app:collapsedTitleTextAppearance="@style/VText.ToolbarStyle"
+            app:expandedTitleTextAppearance="@style/VText.ToolbarStyle"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
             <android.support.constraint.ConstraintLayout
@@ -62,8 +69,8 @@
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
                         android:src="@drawable/ic_location"
-                        app:civ_border_color="@color/white"
-                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/primary"
+                        app:civ_border_width="1dp"
                         app:civ_fill_color="@color/white"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -72,8 +79,8 @@
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
                         android:src="@drawable/ic_twitter"
-                        app:civ_border_color="@color/white"
-                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/primary"
+                        app:civ_border_width="1dp"
                         app:civ_fill_color="@color/white"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -82,8 +89,8 @@
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
                         android:src="@drawable/ic_github"
-                        app:civ_border_color="@color/white"
-                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/primary"
+                        app:civ_border_width="1dp"
                         app:civ_fill_color="@color/white"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -92,8 +99,8 @@
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
                         android:src="@drawable/ic_bitcoin"
-                        app:civ_border_color="@color/white"
-                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/primary"
+                        app:civ_border_width="1dp"
                         app:civ_fill_color="@color/white"/>
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -102,8 +109,8 @@
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
                         android:src="@drawable/ic_website"
-                        app:civ_border_color="@color/white"
-                        app:civ_border_width="4dp"
+                        app:civ_border_color="@color/primary"
+                        app:civ_border_width="1dp"
                         app:civ_fill_color="@color/white"/>
                 </LinearLayout>
 
@@ -118,7 +125,7 @@
                     android:layout_marginLeft="0dp"
                     android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/toolbar_text"
                     android:textSize="@dimen/text_size_small"
                     app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                     app:layout_constraintRight_toRightOf="parent"
@@ -133,7 +140,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/white"
+                    android:textColor="@color/toolbar_text"
                     android:textSize="@dimen/text_size_small"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -150,7 +157,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                app:titleMarginStart="72dp"
+                app:titleTextAppearance="@style/VText.ToolbarStyle"
                 android:theme="@style/AppTheme.AppBarOverlay"
                 app:layout_collapseMode="pin"/>
 
@@ -158,15 +165,12 @@
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tl_member"
-            app:tabMode="fixed"
+            app:tabMode="scrollable"
             app:tabMaxWidth="400dp"
-            app:tabTextColor="@color/light_hint"
             style="@style/VTabLayout"
             />
     </android.support.design.widget.AppBarLayout>
 
-
-    <!--if not contain layout_behavior,it shows buggy-->
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"

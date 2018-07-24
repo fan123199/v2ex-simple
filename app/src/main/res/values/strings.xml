@@ -120,7 +120,7 @@
     <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
     <string name="share_app">Share this Apps</string>
     <string name="share_to">Share to</string>
-    <string name="feedback_hint">Please input your idea or recommendation below</string>
+    <string name="feedback_hint">Please input your idea or recommendation below\n</string>
     <string name="send_email">Send feedback mail…</string>
     <string name="feedback_subject" translatable="false">Feedback for v2ex-simple</string>
     <string name="email">Email</string>

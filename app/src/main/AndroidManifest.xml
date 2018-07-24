@@ -157,8 +157,6 @@
         </activity>
         <activity
             android:name=".ui.node.AllNodesActivity"
-            android:exported="true"
-            android:theme="@style/Theme.V2ex.FixCursor"
             android:parentActivityName=".ui.main.MainActivity">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />

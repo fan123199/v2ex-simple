@@ -19,20 +19,20 @@ import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isGone
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.API_TOPIC
 import im.fdx.v2ex.network.NetManager.API_USER
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
+import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
-import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -42,12 +42,10 @@ import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
 import okhttp3.Callback
-import okhttp3.Request
 import okhttp3.Response
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.toast
 import java.io.IOException
-import java.util.*
 
 
 /**
@@ -70,7 +68,6 @@ class MemberActivity : BaseActivity() {
     private lateinit var mMenu: Menu
 
     private lateinit var member: Member
-    private val mTopics = ArrayList<Topic>()
 
     private var username: String? = null
     private var urlTopic: String? = null
@@ -116,11 +113,10 @@ class MemberActivity : BaseActivity() {
             mTvTwitter.setOnClickListener(listener)
             mTvWebsite.setOnClickListener(listener)
         }
+        username = getName(intent)
 
-        val upToolbar = setUpToolbar()
+        setUpToolbar()
 
-        username = getName()
-        upToolbar.title = username
         val tabLayout: TabLayout = findViewById(R.id.tl_member)
         val viewpager: ViewPager = findViewById(R.id.viewpager)
         memberViewpagerAdapter.username = username ?: ""
@@ -128,7 +124,6 @@ class MemberActivity : BaseActivity() {
         tabLayout.setupWithViewPager(viewpager)
 
         val appBarLayout: AppBarLayout = findViewById(R.id.al_profile)
-
         appBarLayout.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
@@ -140,7 +135,7 @@ class MemberActivity : BaseActivity() {
         getData()
     }
 
-    private fun getName(): String? = when {
+    private fun getName(intent: Intent): String? = when {
         intent.data != null -> intent.data.pathSegments[1]
         intent.extras != null -> intent.extras.getString(Keys.KEY_USERNAME)
         BuildConfig.DEBUG -> "Livid"
@@ -148,7 +143,7 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun getData() {
-        val urlUserInfo = API_USER + "?username=" + username  //Livid's profile
+        val urlUserInfo = "$API_USER?username=$username"  //Livid's profile
         collapsingToolbarLayout.title = username
         urlTopic = "$API_TOPIC?username=$username"
         Log.i(TAG, "$urlUserInfo: \t$urlTopic")
@@ -161,7 +156,7 @@ class MemberActivity : BaseActivity() {
             return
         }
         val webUrl = "https://www.v2ex.com/member/$username"
-        vCall(webUrl).enqueue(object : Callback {
+        vCall(webUrl).start(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(this@MemberActivity)
@@ -203,8 +198,7 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun getUserInfoAPI(urlUserInfo: String) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url(urlUserInfo).build()).enqueue(object : Callback {
+        vCall(urlUserInfo).start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dealError(this@MemberActivity)
             }
@@ -215,10 +209,8 @@ class MemberActivity : BaseActivity() {
                     dealError(this@MemberActivity)
                 } else {
                     val body = response.body()?.string()
-                    if (!this@MemberActivity.isFinishing) {
-                        runOnUiThread {
-                            body?.let { showUser(it) }
-                        }
+                    runOnUiThread {
+                        body?.let { showUser(it) }
                     }
                 }
             }
@@ -263,18 +255,15 @@ class MemberActivity : BaseActivity() {
         mTvIntro.text = member.bio
         mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
-        mTvBitCoin.visibility = if ((member.btc).isEmpty()) View.GONE else View.VISIBLE
-        mTvGithub.visibility = if ((member.github).isEmpty()) View.GONE else View.VISIBLE
-        mTvLocation.visibility = if ((member.location).isEmpty()) View.GONE else View.VISIBLE
-        mTvTwitter.visibility = if ((member.twitter).isEmpty()) View.GONE else View.VISIBLE
-        mTvWebsite.visibility = if ((member.website).isEmpty()) View.GONE else View.VISIBLE
+        mTvBitCoin.isGone = member.btc.isEmpty()
+        mTvGithub.isGone = member.github.isEmpty()
+        mTvLocation.isGone = member.location.isEmpty()
+        mTvTwitter.isGone = member.twitter.isEmpty()
+        mTvWebsite.isGone = member.website.isEmpty()
 
-        mTvIntro.visibility = if ((member.bio).isEmpty()) View.GONE else View.VISIBLE
+        mTvIntro.isGone = member.bio.isEmpty()
 
-        llInfo.visibility = when {
-            !(member.website + member.twitter + member.github + member.btc + member.location).isEmpty() -> View.VISIBLE
-            else -> View.GONE
-        }
+        llInfo.isGone = (member.website + member.twitter + member.github + member.btc + member.location).isEmpty()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -289,17 +278,16 @@ class MemberActivity : BaseActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_follow -> switchFollowAndRefresh(isFollowed)
-            R.id.menu_block -> switchBlockAndRefresh(isBlocked)
+            R.id.menu_follow -> followOrNot(isFollowed)
+            R.id.menu_block -> blockOrNot(isBlocked)
             else -> return super.onOptionsItemSelected(item)
         }
         return true
     }
 
-    private fun switchFollowAndRefresh(isFollowed: Boolean) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url("${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "un" else ""}$followOfOnce")
-                .build()).enqueue(object : Callback {
+    private fun followOrNot(isFollowed: Boolean) {
+        vCall("${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "un" else ""}$followOfOnce")
+                .start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 dealError(this@MemberActivity)
             }
@@ -316,10 +304,9 @@ class MemberActivity : BaseActivity() {
         })
     }
 
-    private fun switchBlockAndRefresh(isBlocked: Boolean) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url("$HTTPS_V2EX_BASE/${if (isBlocked) "un" else ""}$blockOfT").build())
-                .enqueue(object : Callback {
+    private fun blockOrNot(isBlocked: Boolean) {
+        vCall("$HTTPS_V2EX_BASE/${if (isBlocked) "un" else ""}$blockOfT")
+                .start(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
                         dealError(this@MemberActivity)
                     }
@@ -338,7 +325,7 @@ class MemberActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        username = getName()
+        username = getName(intent)
         getData()
     }
 
@@ -369,6 +356,7 @@ class MemberActivity : BaseActivity() {
     inner class MemberViewpagerAdapter(fm: android.support.v4.app.FragmentManager?) : FragmentPagerAdapter(fm) {
 
         lateinit var username: String
+        //目前不好做，先留着
         lateinit var avatar: String
         private val titles = arrayOf("主题", "评论")
 

@@ -17,7 +17,7 @@ abstract class EndlessOnScrollListener(private val mLinearLayoutManager: LinearL
     var totalPage = 0
     internal var pageAfterLoaded = pageToLoad
 
-    override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+    override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         XLog.d("onScrolled + $dy")
 
         if (dy < 0) {
@@ -33,7 +33,7 @@ abstract class EndlessOnScrollListener(private val mLinearLayoutManager: LinearL
         synchronized(this) {
             val totalItem = totalItemCount
 
-            Log.e(TAG, "$totalItem , $lastVisibleItem , $pageToLoad")
+            Log.d(TAG, "$totalItem , $lastVisibleItem , $pageToLoad")
             if (lastVisibleItem == totalItem - 1) {
                 rvReply.stopScroll()
                 if (pageAfterLoaded == totalPage) {

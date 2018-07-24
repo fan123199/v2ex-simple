@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,35 +10,30 @@
         android:id="@+id/appbar_node"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="4dp"
         android:background="@color/toolbar_background"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        >
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/ctl_node"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:collapsedTitleTextAppearance="@style/VText.ToolbarStyle.Light"
+            app:collapsedTitleTextAppearance="@style/VText.ToolbarStyle"
             app:expandedTitleGravity="top"
             app:expandedTitleMarginStart="128dp"
             app:expandedTitleMarginTop="30dp"
-            app:expandedTitleTextAppearance="@style/ExpendedCollapseTitle"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
-            app:titleEnabled="true">
+            app:expandedTitleTextAppearance="@style/VText.ExpendedCollapseTitle"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="?actionBarSize"
                 android:theme="@style/AppTheme.AppBarOverlay"
-                app:layout_collapseMode="pin"
-                app:titleMarginStart="0dp"
-                tools:title="woshizhongguo"
                 app:contentInsetStartWithNavigation="0dp"
-                app:popupTheme="@style/AppTheme.PopupOverlay"/>
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                tools:title="woshizhongguo" />
 
 
             <android.support.constraint.ConstraintLayout
@@ -62,65 +56,78 @@
                     app:civ_fill_color="@color/white"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@drawable/ic_profile"/>
+                    tools:src="@drawable/ic_profile" />
 
                 <TextView
                     android:id="@+id/tv_topic_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/tv_node_details"
-                    android:layout_marginBottom="8dp"
                     android:layout_marginStart="12dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
                     android:layout_toEndOf="@+id/iv_node_image"
-                    android:textColor="@color/white"
+                    android:textColor="@color/toolbar_text"
                     android:textSize="@dimen/text_size_small"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_node_image"
                     app:layout_constraintStart_toEndOf="@+id/iv_node_image"
                     app:layout_constraintTop_toTopOf="@+id/iv_node_image"
                     app:layout_constraintVertical_bias="1.0"
-                    tools:text="num"/>
+                    tools:text="num" />
 
                 <TextView
                     android:id="@+id/tv_node_details"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:layout_alignStart="@+id/iv_node_image"
-                    android:layout_marginEnd="16dp"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
                     android:lineSpacingMultiplier="1.2"
-                    android:textColor="@color/white"
+                    android:textColor="@color/toolbar_text"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/iv_node_image"
                     app:layout_constraintTop_toBottomOf="@+id/iv_node_image"
-                    tools:text="@string/content"/>
+                    tools:text="@string/content" />
             </android.support.constraint.ConstraintLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
-
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/fragment_container"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/divider"
+            android:background="@color/divider_color" />
+
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_node"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
         android:scaleType="fitXY"
         android:src="@drawable/ic_edit_white_24dp"
         app:backgroundTint="@color/fab"
-        app:fabSize="normal"/>
+        app:fabSize="normal" />
 
 </android.support.design.widget.CoordinatorLayout>

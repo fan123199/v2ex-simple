@@ -277,7 +277,7 @@ class DetailsAdapter(private val mContext: Context,
 
     //我重用了MainAdapter中的MainViewHolder
 
-    class ItemViewHolder(override val containerView: View?) : RecyclerView.ViewHolder(containerView), LayoutContainer {
+    class ItemViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
     }
 

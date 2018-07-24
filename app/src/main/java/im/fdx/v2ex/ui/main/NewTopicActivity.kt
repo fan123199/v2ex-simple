@@ -181,7 +181,7 @@ class NewTopicActivity : BaseActivity() {
             }
 
             124 -> {
-                openImagePicker()
+                openImagePicker(this)
             }
 
         }

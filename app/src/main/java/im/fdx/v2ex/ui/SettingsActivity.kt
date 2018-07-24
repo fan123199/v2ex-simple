@@ -10,7 +10,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.preference.*
 import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.app.AlertDialog
 import android.util.Log
 import androidx.core.net.toUri
 import com.elvishew.xlog.XLog
@@ -22,6 +21,7 @@ import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
 import im.fdx.v2ex.utils.Keys.PREF_VERSION
 import im.fdx.v2ex.utils.Keys.notifyID
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 
@@ -56,18 +56,21 @@ class SettingsActivity : BaseActivity() {
                     addPreferencesFromResource(R.xml.preference_login)
                     findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
                     findPreference(Keys.PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        AlertDialog.Builder(activity)
-                                .setTitle("确定要退出吗")
-                                .setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
-                                .setPositiveButton(R.string.ok) { dialog, _ ->
-                                    HttpHelper.myCookieJar.clear()
-                                    MyApp.get().setLogin(false)
-                                    LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
-                                    findPreference(Keys.PREF_LOGOUT).isEnabled = false
-                                    dialog.dismiss()
-                                    activity.finish()
-                                    activity.toast("已退出登录")
-                                }.show()
+                        alert("确定要退出吗") {
+                            positiveButton(R.string.ok) {
+                                HttpHelper.myCookieJar.clear()
+                                MyApp.get().setLogin(false)
+                                LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+                                findPreference(Keys.PREF_LOGOUT).isEnabled = false
+                                it.dismiss()
+                                activity.finish()
+                                activity.toast("已退出登录")
+                            }
+
+                            negativeButton(R.string.cancel) {
+
+                            }
+                        }
                         true
                     }
 

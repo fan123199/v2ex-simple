@@ -170,8 +170,6 @@ class LoginActivity : BaseActivity() {
                                         }
                                     }
                                 } else {
-
-
                                     val body = response.body()?.string()
                                     val html = Jsoup.parse(body)
                                     val myInfo = NetManager.parseMember(html)
@@ -217,17 +215,13 @@ class LoginActivity : BaseActivity() {
             input_password.requestFocus()
             return false
         }
-        if (et_input_code.text.isEmpty()) {
+        if (et_input_code.text.isNullOrEmpty()) {
             et_input_code.error = "验证码不能为空"
             et_input_code.requestFocus()
             return false
         }
 
         return true
-    }
-
-    companion object {
-        private val TAG = LoginActivity::class.java.canonicalName;
     }
 
 }
