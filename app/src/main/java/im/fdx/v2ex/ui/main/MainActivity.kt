@@ -68,17 +68,17 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var isGetNotification: Boolean = false
 
     private var count: Int = -1
-    val LOG_IN = 0
+    private val LOG_IN = 0
 
 
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
             val action = intent.action
-            logd("getAction: " + action)
+            logd("getAction: $action")
             when (action) {
                 Keys.ACTION_LOGIN -> {
-                    showIcon(true)
+                    showNavIcon(true)
                     val username = intent.getStringExtra(Keys.KEY_USERNAME)
                     val avatar = intent.getStringExtra(Keys.KEY_AVATAR)
                     setUserInfo(username, avatar)
@@ -90,7 +90,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     }
                 }
                 Keys.ACTION_LOGOUT -> {
-                    showIcon(false)
+                    showNavIcon(false)
                     setUserInfo(null, null)
                     fab.hide()
                     mAdapter?.initFragment()
@@ -164,7 +164,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
         if (MyApp.get().isLogin()) {
-            showIcon(true)
+            showNavIcon(true)
             val username = sharedPreferences.getString(Keys.KEY_USERNAME, "")
             val avatar = sharedPreferences.getString(Keys.KEY_AVATAR, "")
             logd("$username//// $avatar")
@@ -172,7 +172,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 setUserInfo(username, avatar)
             }
         } else {
-            showIcon(false)
+            showNavIcon(false)
             fab.hide()
         }
 
@@ -239,7 +239,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
-    private fun showIcon(visible: Boolean) {
+    private fun showNavIcon(visible: Boolean) {
         navigationView.menu.findItem(R.id.nav_daily).isVisible = visible
         navigationView.menu.findItem(R.id.nav_favor).isVisible = visible
         invalidateOptionsMenu()

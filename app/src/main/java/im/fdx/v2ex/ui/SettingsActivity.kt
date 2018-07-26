@@ -70,7 +70,7 @@ class SettingsActivity : BaseActivity() {
                             negativeButton(R.string.cancel) {
 
                             }
-                        }
+                        }.show()
                         true
                     }
 
