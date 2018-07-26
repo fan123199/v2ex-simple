@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
+import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.view.Menu
 import android.view.MenuItem
@@ -77,11 +78,12 @@ class NodeActivity : BaseActivity() {
         tvNodeHeader = findViewById(R.id.tv_node_details)
         tvNodeNum = findViewById(R.id.tv_topic_num)
 
-        appbar_node.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
+
+        appbar_node.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toDouble() / maxScroll.toDouble()
             handleAlphaOnTitle(percentage.toFloat())
-        }
+        })
 
         fab_node.setOnClickListener { startActivity<NewTopicActivity>(Keys.KEY_NODE_NAME to nodeName) }
 

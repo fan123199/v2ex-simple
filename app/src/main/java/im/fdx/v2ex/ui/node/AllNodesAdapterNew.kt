@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.elvishew.xlog.XLog
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import im.fdx.v2ex.R
+import im.fdx.v2ex.utils.extensions.logi
 
 class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
 
@@ -24,14 +24,14 @@ class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAd
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeVH {
-        return NodeVH(LayoutInflater.from(parent?.context).inflate(R.layout.item_node_with_category, null, false))
+        return NodeVH(LayoutInflater.from(parent.context).inflate(R.layout.item_node_with_category, parent, false))
     }
 
     override fun getItemCount() = filterMap.size
 
     override fun onBindViewHolder(holder: NodeVH, position: Int) {
 
-        XLog.tag("RV_OUTER").e("$position")
+        logi("$position")
         val key = filterMap.keys.elementAt(position)
         holder.tvCategory.text = key
         val simpleNodesTextAdapter = SimpleNodesTextAdapter(filterMap[key]!!)

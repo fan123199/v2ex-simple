@@ -20,7 +20,7 @@ class SimpleNodesTextAdapter(private var mNodes: MutableList<Node> = mutableList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-            SimpleVH(LayoutInflater.from(parent?.context).inflate(R.layout.item_node_simple, parent, false))
+            SimpleVH(LayoutInflater.from(parent.context).inflate(R.layout.item_node_simple, parent, false))
 
     override fun getItemCount() = mNodes.size
 

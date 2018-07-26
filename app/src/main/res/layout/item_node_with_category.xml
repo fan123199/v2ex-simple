@@ -14,6 +14,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:paddingStart="8dp"
+        android:textColor="@color/title_text"
         android:paddingEnd="8dp"
         android:layout_height="wrap_content"
         tools:text="混沌世界:"/>

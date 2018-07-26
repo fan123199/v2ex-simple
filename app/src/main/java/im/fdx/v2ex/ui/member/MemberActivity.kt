@@ -40,6 +40,7 @@ import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.CustomChrome
+import kotlinx.android.synthetic.main.activity_profile.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -123,15 +124,14 @@ class MemberActivity : BaseActivity() {
         viewpager.adapter = memberViewpagerAdapter
         tabLayout.setupWithViewPager(viewpager)
 
-        val appBarLayout: AppBarLayout = findViewById(R.id.al_profile)
-        appBarLayout.addOnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        al_profile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toFloat() / maxScroll.toFloat()
             when (percentage) {
                 in 0f..1f -> constraintLayout.alpha = 1 - percentage
             }
-        }
+        })
         getData()
     }
 

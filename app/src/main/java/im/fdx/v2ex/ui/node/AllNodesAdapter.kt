@@ -15,9 +15,8 @@ import java.util.*
 
 /**
  * Created by fdx on 2016/9/13.
- * 所有节点页面
+ * 简单节点adapter，用在个人favor
  */
-@Deprecated("不够细化，一页显示太少，被淘汰")
 class AllNodesAdapter(val isShowImg: Boolean = false) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
 
     private var mNodes: MutableList<Node> = ArrayList()

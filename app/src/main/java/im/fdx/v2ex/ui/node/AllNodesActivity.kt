@@ -24,7 +24,9 @@ import java.io.IOException
 
 
 class AllNodesActivity : BaseActivity() {
+
     private lateinit var mAdapter: AllNodesAdapterNew
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_all_nodes)
