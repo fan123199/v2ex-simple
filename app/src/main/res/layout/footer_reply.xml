@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--deprecated-->
-<merge
+<merge xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     >
 
@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/light_background"
+        android:elevation="3dp"
         android:id="@+id/foot_container">
 
         <EditText
@@ -22,7 +23,6 @@
             android:id="@+id/et_post_reply"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:elevation="3dp"
             android:textSize="?text_large"
             android:background="@android:color/transparent"
             android:minLines="1"
@@ -34,7 +34,8 @@
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:textAllCaps="false"
-            android:inputType="text" />
+            tools:ignore="Autofill"
+            android:inputType="textMultiLine" />
 
         <FrameLayout
             android:layout_marginTop="8dp"

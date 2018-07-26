@@ -403,7 +403,7 @@ class DetailsActivity : BaseActivity() {
     }
 
 
-    fun postReply() {
+    private fun postReply() {
         et_post_reply.clearFocus()
         logd("I clicked")
         val content = et_post_reply.text.toString()

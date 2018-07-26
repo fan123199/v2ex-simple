@@ -3,10 +3,12 @@ package im.fdx.v2ex.ui.node
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.view.Menu
+import android.widget.EditText
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.start
@@ -82,6 +84,8 @@ class AllNodesActivity : BaseActivity() {
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
         val menuItemCompat = menu.findItem(R.id.search_node)
         val searchView = menuItemCompat.actionView as SearchView
+        val et = searchView.findViewById<EditText>(R.id.search_src_text)
+        et.setTextColor(ContextCompat.getColor(this, R.color.toolbar_text))
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
