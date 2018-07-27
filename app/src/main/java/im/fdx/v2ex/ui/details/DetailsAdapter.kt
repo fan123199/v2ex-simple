@@ -11,7 +11,6 @@ import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -34,6 +33,7 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.getPair
 import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
 import kotlinx.android.extensions.LayoutContainer
@@ -74,7 +74,7 @@ class DetailsAdapter(private val mContext: Context,
                 mainHolder.tvTitle.maxLines = 4
                 mainHolder.tvContent.isSelected = true
                 mainHolder.tvContent.setGoodText(topic.content_rendered)
-                Log.i(TAG, topic.content_rendered)
+                logd(topic.content_rendered)
                 //            Log.i(TAG, topic.getContent());
                 //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 //                mainHolder.tvContent.setTransitionName("header");

@@ -36,6 +36,7 @@ import im.fdx.v2ex.MyJobSchedule
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
@@ -48,7 +49,6 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import org.jetbrains.anko.*
-import org.jsoup.Jsoup
 import java.io.IOException
 
 
@@ -355,7 +355,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     return
                 }
 
-                val once = parseDailyOnce(body)
+                val once = Parser(body).parseDailyOnce()
 
                 if (once == null) {
                     loge("null once")
@@ -381,15 +381,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 })
     }
 
-    private fun parseDailyOnce(string: String): String? {
-
-        val body = Jsoup.parse(string).body()
-        val onceElement = body.getElementsByAttributeValue("value", "领取 X 铜币").first()
-                ?: return null
-//        location.href = '/mission/daily/redeem?once=83270';
-        val onceOriginal = onceElement.attr("onClick")
-        return onceOriginal.getNum()
-    }
 
     override fun onResume() {
         super.onResume()
@@ -415,7 +406,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onStop() {
         super.onStop()
         logd("onStop")
-
     }
 
     override fun onDestroy() {

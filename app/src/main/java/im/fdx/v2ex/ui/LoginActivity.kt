@@ -8,21 +8,19 @@ import android.util.Log
 import android.view.View
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
+import androidx.core.content.edit
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
-import im.fdx.v2ex.network.NetManager.getErrorMsg
-import im.fdx.v2ex.network.start
-import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.item_verify_code.*
@@ -146,9 +144,9 @@ class LoginActivity : BaseActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val httpcode = response.code()
-                val errorMsg = getErrorMsg(response.body()?.string())
-                XLog.tag("LoginActivity").d("http code: ${response.code()}")
-                XLog.tag("LoginActivity").d("errorMsg: $errorMsg")
+                val errorMsg = Parser(response.body()!!.string()).getErrorMsg()
+                logd("http code: ${response.code()}")
+                logd("errorMsg: $errorMsg")
 
                 when (httpcode) {
                     302 -> {
@@ -171,11 +169,13 @@ class LoginActivity : BaseActivity() {
                                     }
                                 } else {
                                     val body = response.body()?.string()
-                                    val html = Jsoup.parse(body)
-                                    val myInfo = NetManager.parseMember(html)
+                                    val myInfo = Parser(body!!).getMember()
 
-                                    pref.edit().putString(Keys.KEY_USERNAME, myInfo.username).apply()
-                                    pref.edit().putString(Keys.KEY_AVATAR, myInfo.avatarNormalUrl).apply()
+                                    pref.edit {
+                                        putString(Keys.KEY_USERNAME, myInfo.username)
+                                        putString(Keys.KEY_AVATAR, myInfo.avatarNormalUrl)
+                                    }
+
                                     val intent = Intent(Keys.ACTION_LOGIN).apply {
                                         putExtra(Keys.KEY_USERNAME, myInfo.username)
                                         putExtra(Keys.KEY_AVATAR, myInfo.avatarNormalUrl)

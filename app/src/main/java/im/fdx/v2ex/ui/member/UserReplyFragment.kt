@@ -13,24 +13,24 @@ import android.widget.FrameLayout
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
 import org.jetbrains.anko.toast
-import org.jsoup.Jsoup
-import org.jsoup.nodes.Element
 import java.io.IOException
 
 /**
  * Created by fdx on 2017/7/15.
  * fdx will maintain it
+ *
+ * 用户页的回复信息， 非主体下的回复
  */
-class ReplyFragment : Fragment() {
+class UserReplyFragment : Fragment() {
 
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var adapter: ReplyAdapter //
@@ -93,14 +93,15 @@ class ReplyFragment : Fragment() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
                 val body = response.body()!!.string()
-                val replyModels = parseToRepliess(body)
+                val parser = Parser(body)
+                val replyModels = parser.getUserReplies()
 
                 if (totalPage == 0) {
-                    totalPage = getTotalPage(body)
+                    totalPage = parser.getTotalPage()
                     mScrollListener?.totalPage = totalPage
                 }
                 activity?.runOnUiThread {
-                    if ((replyModels == null || replyModels.isEmpty())) {
+                    if (replyModels.isEmpty()) {
                         if (page == 1) {
                             flcontainer.showNoContent()
                         }
@@ -121,33 +122,5 @@ class ReplyFragment : Fragment() {
     }
 
     private var totalPage = 0
-
-    private fun getTotalPage(body: String)
-            = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+").find(body)?.value?.toInt() ?: 0
-
-    private fun parseToRepliess(body: String?): List<MemberReplyModel>? {
-        val list = mutableListOf<MemberReplyModel>()
-        val html = Jsoup.parse(body)
-
-        val elements = html.getElementsByAttributeValue("id", "Main")?.first()?.getElementsByClass("box")?.first()
-        if (elements != null) {
-
-            for (e in elements.getElementsByClass("dock_area")) {
-                val model = MemberReplyModel()
-                val titleElement = e.getElementsByAttributeValueContaining("href", "/t/").first()
-                val title = titleElement.text()
-                val fakeId = titleElement.attr("href").removePrefix("/t/")
-                val create = e.getElementsByClass("fade").first().ownText()
-                model.topic.title = title
-                model.topic.id = fakeId.split("#")[0]
-                model.create = TimeUtil.toUtcTime(create)
-                val contentElement: Element? = e.nextElementSibling()
-                val content = contentElement?.getElementsByClass("reply_content")?.first()
-                model.content = content?.html()
-                list.add(model)
-            }
-        }
-        return list
-    }
 }
 

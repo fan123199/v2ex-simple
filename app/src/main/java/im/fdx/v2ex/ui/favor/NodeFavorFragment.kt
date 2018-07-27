@@ -15,6 +15,7 @@ import com.google.android.flexbox.JustifyContent
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.ui.node.AllNodesAdapter
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
@@ -75,7 +76,7 @@ class NodeFavorFragment : Fragment() {
                     NetManager.dealError(activity, response.code(), swipe)
                     return
                 }
-                val nodeModels = NetManager.parseToNode(response.body()!!.string())
+                val nodeModels = Parser(response.body()?.string()!!).parseToNode()
                 if (nodeModels.isEmpty()) {
                     activity?.runOnUiThread {
                         adapter.clear()

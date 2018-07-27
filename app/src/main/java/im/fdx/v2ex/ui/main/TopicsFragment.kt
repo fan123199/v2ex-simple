@@ -16,8 +16,9 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.database.DbHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
-import im.fdx.v2ex.network.NetManager.Source.*
 import im.fdx.v2ex.network.NetManager.dealError
+import im.fdx.v2ex.network.Parser
+import im.fdx.v2ex.network.Parser.Source.*
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.EndlessOnScrollListener
@@ -25,12 +26,10 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
 import org.jetbrains.anko.toast
-import org.jsoup.Jsoup
 import java.io.IOException
 import java.util.*
 
@@ -47,7 +46,7 @@ class TopicsFragment : Fragment() {
 
     lateinit var layoutManager: LinearLayoutManager
     lateinit var mScrollListener: EndlessOnScrollListener
-    var currentMode = NetManager.Source.FROM_HOME
+    var currentMode = Parser.Source.FROM_HOME
     var totalPage = 0
 
     internal var handler = Handler(Handler.Callback { msg ->
@@ -92,7 +91,6 @@ class TopicsFragment : Fragment() {
         mSwipeLayout.isRefreshing = true
 
 
-
         //找出recyclerview,并赋予变量 //fdx最早的水平
         mRecyclerView = layout.findViewById(R.id.rv_container)
         layoutManager = LinearLayoutManager(activity)
@@ -121,8 +119,7 @@ class TopicsFragment : Fragment() {
 
                 var isFabShowing = true
 
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int)
-                        = if (dy > 0) hideFab() else showFab()
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) = if (dy > 0) hideFab() else showFab()
 
                 private fun hideFab() {
                     if (isFabShowing) {
@@ -155,79 +152,64 @@ class TopicsFragment : Fragment() {
 
     private fun getTopics(requestURL: String, currentPage: Int = 1) {
 
-        vCall(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL).start(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                mScrollListener.loading = false
-                handler.sendEmptyMessage(MSG_FAILED)
-            }
+        vCall(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL)
+                .start(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        mScrollListener.loading = false
+                        handler.sendEmptyMessage(MSG_FAILED)
+                    }
 
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
-                activity?.runOnUiThread {
-                    mSwipeLayout.isRefreshing = false
-                    mScrollListener.loading = false
-                }
-                if (response.code() == 302) {
-                    if (Objects.equals("/2fa", response.header("Location"))) {
+                    @Throws(IOException::class)
+                    override fun onResponse(call: Call, response: okhttp3.Response) {
                         activity?.runOnUiThread {
-                            NetManager.showTwoStepDialog(activity!!)
-
+                            mSwipeLayout.isRefreshing = false
+                            mScrollListener.loading = false
                         }
-                    }
-                } else if (response.code() != 200) {
-                    dealError(activity, response.code(), mSwipeLayout)
-                    return
-                }
+                        if (response.code() == 302) {
+                            if (Objects.equals("/2fa", response.header("Location"))) {
+                                activity?.runOnUiThread {
+                                    NetManager.showTwoStepDialog(activity!!)
 
-                val time = System.currentTimeMillis()
-                val bodyStr = response.body()?.string()
-                val html = Jsoup.parse(bodyStr)
-                logi("time cost in parseTopicLists2:" + (System.currentTimeMillis() - time).toString())
-                val topicList = try {
-                    NetManager.parseTopicLists(html, currentMode)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    return
-                }
-                logi("time cost in parseTopicLists3:" + (System.currentTimeMillis() - time).toString())
-
-                if (totalPage == 0) {
-                    totalPage = getTotalPage(bodyStr!!)
-                    mScrollListener.totalPage = totalPage
-                }
-                logi("time cost in parseTopicLists4:" + (System.currentTimeMillis() - time).toString())
-                logd(topicList)
-
-                DbHelper.db.topicDao().insertTopic(*topicList.toTypedArray())
-
-                activity?.runOnUiThread {
-                    logi("time cost in parseTopicLists5:" + (System.currentTimeMillis() - time).toString())
-                    if (topicList.isEmpty()) {
-                        flContainer.showNoContent()
-                        mAdapter.clear()
-                    } else {
-                        flContainer.showNoContent(false)
-                        when (currentMode) {
-                            FROM_MEMBER, FROM_NODE ->
-                                if (mScrollListener.pageToLoad == 1) {
-                                    topicList.let { mAdapter.updateItems(it) }
-                                } else {
-                                    mScrollListener.pageAfterLoaded = currentPage
-                                    topicList.let { mAdapter.addAllItems(it) }
                                 }
-                            FROM_HOME -> topicList.let { mAdapter.updateItems(it) }
+                            }
+                        } else if (response.code() != 200) {
+                            dealError(activity, response.code(), mSwipeLayout)
+                            return
+                        }
+
+                        val str = response.body()?.string()!!
+                        val parser = Parser(str)
+                        val topicList = parser.parseTopicLists(currentMode)
+
+                        if (totalPage == 0) {
+                            totalPage = parser.getTotalPageForTopics()
+                            mScrollListener.totalPage = totalPage
+                        }
+                        logd(topicList)
+
+                        DbHelper.db.topicDao().insertTopic(*topicList.toTypedArray())
+
+                        activity?.runOnUiThread {
+                            if (topicList.isEmpty()) {
+                                flContainer.showNoContent()
+                                mAdapter.clear()
+                            } else {
+                                flContainer.showNoContent(false)
+                                when (currentMode) {
+                                    FROM_MEMBER, FROM_NODE ->
+                                        if (mScrollListener.pageToLoad == 1) {
+                                            topicList.let { mAdapter.updateItems(it) }
+                                        } else {
+                                            mScrollListener.pageAfterLoaded = currentPage
+                                            topicList.let { mAdapter.addAllItems(it) }
+                                        }
+                                    FROM_HOME -> topicList.let { mAdapter.updateItems(it) }
+                                }
+                            }
                         }
                     }
-                    logi("time cost in parseTopicLists6:" + (System.currentTimeMillis() - time).toString())
-                }
-            }
-        })
+                })
     }
-
-
-    //        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8"
-    private fun getTotalPage(bodyStr: String) = Regex("(?<=max=\")\\d{1,8}").find(bodyStr)?.value?.toInt()
-            ?: 0
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.menu_refresh) {
@@ -241,8 +223,6 @@ class TopicsFragment : Fragment() {
 
     @Suppress("unused")
     companion object {
-
-        private val TAG = TopicsFragment::class.java.simpleName
         private const val MSG_FAILED = 3
         private const val MSG_GET_DATA_BY_OK = 1
     }

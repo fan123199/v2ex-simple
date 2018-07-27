@@ -6,9 +6,10 @@ import android.support.v4.content.LocalBroadcastManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.Parser
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.extensions.logd
 import okhttp3.Request
-import org.jsoup.Jsoup
 import java.io.IOException
 
 /**
@@ -36,15 +37,12 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
 
         try {
             for (i in 2..totalPage) {
-                val response = HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                        .url(NetManager.HTTPS_V2EX_BASE + "/t/" + topicId + "?p=" + i)
-                        .build()).execute()
-                val body = Jsoup.parse(response.body()!!.string())
-                val replies = NetManager.parseResponseToReplay(body)
-                val token = NetManager.parseToVerifyCode(body)
+                val response = vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$i").execute()
+                val parser = Parser(response.body()!!.string())
+                val replies = parser.getReplies()
+                val token = parser.getVerifyCode()
 
                 if (replies.isEmpty()) return
-//                logd(replies[0].content)
                 val it = Intent()
                 it.action = "im.fdx.v2ex.reply"
                 it.putExtra("token", token)
@@ -78,9 +76,10 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
             val response = HttpHelper.OK_CLIENT.newCall(Request.Builder()
                     .url("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$currentPage")
                     .build()).execute()
-            val body = Jsoup.parse(response.body()!!.string())
-            val replies = NetManager.parseResponseToReplay(body)
-            val token = NetManager.parseToVerifyCode(body)
+            val parser = Parser(response.body()!!.string())
+
+            val replies = parser.getReplies()
+            val token = parser.getVerifyCode()
 
             XLog.tag("DetailsActivity").d(replies[0].content)
             val it = Intent()

@@ -21,11 +21,7 @@ import com.esafirm.imagepicker.features.ImagePicker
 import com.google.gson.reflect.TypeToken
 import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.Api
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.NetManager.getErrorMsg
-import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.details.DetailsActivity
 import im.fdx.v2ex.ui.node.Node
@@ -254,7 +250,7 @@ class NewTopicActivity : BaseActivity() {
                             finish()
                         } else {
                             resetIcon(item)
-                            val errorMsg = getErrorMsg(response.body()?.string())
+                            val errorMsg = Parser(response.body()!!.string()).getErrorMsg()
                             longToast(errorMsg)
                         }
                     }

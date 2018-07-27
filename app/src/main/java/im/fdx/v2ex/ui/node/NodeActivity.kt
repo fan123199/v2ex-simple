@@ -16,12 +16,14 @@ import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import kotlinx.android.synthetic.main.activity_node.*
 import okhttp3.Call
@@ -31,7 +33,6 @@ import okhttp3.Response
 import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
-import org.jsoup.Jsoup
 import java.io.IOException
 
 
@@ -41,23 +42,9 @@ class NodeActivity : BaseActivity() {
     private lateinit var tvNodeHeader: TextView
     private lateinit var tvNodeNum: TextView
 
-    @SuppressLint("HandlerLeak")
-    internal var handler: Handler = object : Handler() {
-        override fun handleMessage(msg: Message) {
+    val MSG_GET_NODE_INFO = 0
 
-            XLog.i("get handler msg " + msg.what)
-            when (msg.what) {
-                MSG_GET_NODE_INFO -> {
 
-                    ivNodeIcon.load(mNode?.avatarLargeUrl)
-                    XLog.d(mNode?.title)
-                    collapsingToolbarLayout?.title = mNode?.title
-                    tvNodeHeader.text = mNode?.header
-                    tvNodeNum.text = getString(R.string.topic_number, mNode?.topics)
-                }
-            }
-        }
-    }
     private var token: String? = null
     private var isFollowed = false
     private lateinit var nodeName: String
@@ -65,6 +52,23 @@ class NodeActivity : BaseActivity() {
     private lateinit var mMenu: Menu
 
     private var collapsingToolbarLayout: CollapsingToolbarLayout? = null
+
+    @SuppressLint("HandlerLeak")
+    private var handler: Handler = object : Handler() {
+        override fun handleMessage(msg: Message) {
+
+            XLog.i("get handler msg " + msg.what)
+            when (msg.what) {
+                MSG_GET_NODE_INFO -> {
+                    ivNodeIcon.load(mNode?.avatarLargeUrl)
+                    logd(mNode?.title)
+                    collapsingToolbarLayout?.title = mNode?.title
+                    tvNodeHeader.text = mNode?.header
+                    tvNodeNum.text = getString(R.string.topic_number, mNode?.topics)
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,19 +94,16 @@ class NodeActivity : BaseActivity() {
         if (!MyApp.get().isLogin()) fab_node.hide()
 
         nodeName = when {
-            intent.data != null ->
-                intent.data.pathSegments[1]
-            intent.getStringExtra(Keys.KEY_NODE_NAME) != null ->
-                intent.getStringExtra(Keys.KEY_NODE_NAME)
-            else ->
-                ""
+            intent.data != null -> intent.data.pathSegments[1]
+            intent.getStringExtra(Keys.KEY_NODE_NAME) != null -> intent.getStringExtra(Keys.KEY_NODE_NAME)
+            else -> ""
         }
-        val fragmentTransaction = supportFragmentManager.beginTransaction();
         val fragment: TopicsFragment = TopicsFragment().apply {
             arguments = bundleOf(Keys.KEY_NODE_NAME to nodeName)
         }
-        fragmentTransaction.add(R.id.fragment_container, fragment, "MyActivity");
-        fragmentTransaction.commit()
+        supportFragmentManager.beginTransaction()
+                .add(R.id.fragment_container, fragment, "MyActivity")
+                .commit()
         getNodeInfo()
     }
 
@@ -159,7 +160,7 @@ class NodeActivity : BaseActivity() {
 
     private fun getNodeInfo() {
         val requestURL = "${NetManager.HTTPS_V2EX_BASE}/go/$nodeName"
-        XLog.tag(TAG).d("url:$requestURL")
+        logd("url:$requestURL")
         vCall(requestURL).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(this@NodeActivity)
@@ -173,17 +174,17 @@ class NodeActivity : BaseActivity() {
                     NetManager.dealError(this@NodeActivity, code)
                     return
                 }
-                val body = response.body()?.string()
-                val html = Jsoup.parse(body)
+                val html = response.body()?.string()!!
+                val parser = Parser(html)
                 try {
-                    mNode = NetManager.parseToNode(html)
+                    mNode = parser.getOneNode()
                 } catch (e: Exception) {
                     toast(e.message ?: "unknown error")
                 }
                 Message.obtain(handler, MSG_GET_NODE_INFO).sendToTarget()
 
-                isFollowed = parseIsFollowed(body!!)
-                token = parseWithOnce(body)
+                isFollowed = parser.isNodeFollowed()
+                token = parser.getOnce()
 
                 runOnUiThread {
                     if (isFollowed) {
@@ -195,15 +196,4 @@ class NodeActivity : BaseActivity() {
             }
         })
     }
-
-    companion object {
-        private val TAG = NodeActivity::class.java.simpleName
-        private val MSG_GET_NODE_INFO = 0
-
-        private fun parseIsFollowed(html: String) = Regex("unfavorite/node/\\d{1,8}\\?once=").containsMatchIn(html)
-        //        /favorite/node/557?once=46345
-        private fun parseWithOnce(html: String?): String? = Regex("favorite/node/\\d{1,8}\\?once=\\d{1,10}").find(html!!)?.value
-
-    }
-
 }

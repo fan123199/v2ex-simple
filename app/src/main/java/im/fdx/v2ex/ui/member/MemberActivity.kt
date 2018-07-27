@@ -362,7 +362,7 @@ class MemberActivity : BaseActivity() {
 
         override fun getItem(position: Int) = when (position) {
             0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
-            else -> ReplyFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
+            else -> UserReplyFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
         }
 
         override fun getCount() = titles.size

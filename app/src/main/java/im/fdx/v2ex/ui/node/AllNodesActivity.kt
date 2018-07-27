@@ -11,6 +11,7 @@ import android.view.Menu
 import android.widget.EditText
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
@@ -69,7 +70,7 @@ class AllNodesActivity : BaseActivity() {
                             return
                         }
 
-                        val nodeModels = NetManager.getAllNode(response.body()?.string()!!)
+                        val nodeModels = Parser(response.body()?.string()!!).getAllNode()
                         mAdapter.setData(nodeModels)
                         runOnUiThread {
                             swipe_container.isRefreshing = false

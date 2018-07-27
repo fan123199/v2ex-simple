@@ -24,7 +24,7 @@ abstract class EndlessOnScrollListener(private val mLinearLayoutManager: LinearL
             return
         }
         // check for scroll down only
-        visibleItemCount = recyclerView!!.childCount
+        visibleItemCount = recyclerView.childCount
         totalItemCount = mLinearLayoutManager.itemCount
         firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition()
         lastVisibleItem = mLinearLayoutManager.findLastCompletelyVisibleItemPosition()

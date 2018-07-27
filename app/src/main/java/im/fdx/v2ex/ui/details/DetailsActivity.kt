@@ -23,11 +23,8 @@ import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.BaseModel
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.dealError
-import im.fdx.v2ex.network.start
-import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
@@ -39,7 +36,6 @@ import kotlinx.android.synthetic.main.footer_reply.*
 import okhttp3.*
 import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import java.io.IOException
 import java.util.regex.Pattern
@@ -243,13 +239,13 @@ class DetailsActivity : BaseActivity() {
                 }
 
                 val bodyStr = response.body()!!.string()
-                val body = Jsoup.parse(bodyStr)
 
-                topicHeader = NetManager.parseResponseToTopic(body, topicId)
-                val repliesOne = NetManager.parseResponseToReplay(body)
+                val parser = Parser(bodyStr)
+                topicHeader = parser.parseResponseToTopic(topicId)
+                val repliesFirstPage = parser.getReplies()
 
                 if (MyApp.get().isLogin()) {
-                    token = NetManager.parseToVerifyCode(body)
+                    token = parser.getVerifyCode()
 
                     if (token == null) {
                         MyApp.get().setLogin(false)
@@ -257,11 +253,11 @@ class DetailsActivity : BaseActivity() {
                         handler.sendEmptyMessage(MSG_ERROR_AUTH)
                         return
                     }
-                    XLog.tag("DetailsActivity").d("verifyCode is :" + token!!)
+                    logd("verifyCode is :" + token!!)
                     mAdapter.verifyCode = token!!
-                    isFavored = parseIsFavored(body)
+                    isFavored = parser.isTopicFavored()
 
-                    XLog.tag("DetailsActivity").d("is favored: " + isFavored.toString())
+                    logd("is favored: " + isFavored.toString())
                     runOnUiThread {
                         if (isFavored) {
                             mMenu?.findItem(R.id.menu_favor)?.setIcon(R.drawable.ic_favorite_white_24dp)
@@ -272,19 +268,19 @@ class DetailsActivity : BaseActivity() {
                         }
                     }
 
-                    once = NetManager.parseOnce(body)
+                    once = parser.getOnceNum()
                 }
 
                 val mAllContent = mutableListOf<BaseModel>()
                 mAllContent.clear()
                 mAllContent.add(0, topicHeader!!)
-                mAllContent.addAll(repliesOne)
+                mAllContent.addAll(repliesFirstPage)
 
                 XLog.tag("DetailsActivity").d("got page 1 , next is more page")
 
-                val totalPage = NetManager.getPageValue(body)[1]  // [2,3]
+                val totalPage = parser.getPageValue()[1]  // [2,3]
 
-                currentPage = NetManager.getPageValue(body)[0]
+                currentPage = parser.getPageValue()[0]
                 runOnUiThread {
                     swipe_details.isRefreshing = false
                     mAdapter.updateItems(mAllContent)

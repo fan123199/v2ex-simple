@@ -1,10 +1,9 @@
 package im.fdx.v2ex.ui.details
 
-import android.os.Parcel
 import android.os.Parcelable
-
 import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.ui.member.Member
+import kotlinx.android.parcel.Parcelize
 
 /**
  * Created by a708 on 15-9-8.
@@ -29,6 +28,7 @@ import im.fdx.v2ex.ui.member.Member
 //        "last_modified" : 1453030169
 //        }
 
+@Parcelize
 data class ReplyModel(var id: String = "",
                       var content: String = "",
                       var content_rendered: String = "",
@@ -40,36 +40,4 @@ data class ReplyModel(var id: String = "",
 ) : BaseModel(), Parcelable {
 
     override fun toString() = "ReplyModel{content='$content_rendered}"
-
-    constructor(source: Parcel) : this(
-            source.readString(),
-            source.readString(),
-            source.readString(),
-            source.readInt(),
-            source.readLong(),
-            1 == source.readInt(),
-            source.readParcelable<Member>(Member::class.java.classLoader),
-            1 == source.readInt()
-    )
-
-    override fun describeContents() = 0
-
-    override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
-        writeString(id)
-        writeString(content)
-        writeString(content_rendered)
-        writeInt(thanks)
-        writeLong(created)
-        writeInt((if (isThanked) 1 else 0))
-        writeParcelable(member, 0)
-        writeInt((if (isLouzu) 1 else 0))
-    }
-
-    companion object {
-        @JvmField
-        val CREATOR: Parcelable.Creator<ReplyModel> = object : Parcelable.Creator<ReplyModel> {
-            override fun createFromParcel(source: Parcel): ReplyModel = ReplyModel(source)
-            override fun newArray(size: Int): Array<ReplyModel?> = arrayOfNulls(size)
-        }
-    }
 }

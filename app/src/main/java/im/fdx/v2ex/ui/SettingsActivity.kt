@@ -8,8 +8,9 @@ import android.content.SharedPreferences
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.preference.*
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v7.app.AlertDialog
+import android.support.v7.preference.*
 import android.util.Log
 import androidx.core.net.toUri
 import com.elvishew.xlog.XLog
@@ -21,7 +22,6 @@ import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
 import im.fdx.v2ex.utils.Keys.PREF_VERSION
 import im.fdx.v2ex.utils.Keys.notifyID
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import org.jetbrains.anko.alert
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 
@@ -31,46 +31,48 @@ class SettingsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         setUpToolbar("设置")
-        fragmentManager.beginTransaction()
+        supportFragmentManager.beginTransaction()
                 .add(R.id.container, SettingsFragment())
                 .commit()
 
     }
 
 
-    class SettingsFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
+    class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+
         private lateinit var sharedPreferences: SharedPreferences
         private lateinit var listPreference: ListPreference
         private lateinit var jobSchedule: JobScheduler
 
         private var count: Int = 0
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
+        override fun onCreatePreferences(savedInstanceState: Bundle?, what: String?) {
             addPreferencesFromResource(R.xml.preference)
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-            jobSchedule = activity.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+            jobSchedule = activity?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             when {
                 MyApp.get().isLogin() -> {
 
                     addPreferencesFromResource(R.xml.preference_login)
                     findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
                     findPreference(Keys.PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
-                        alert("确定要退出吗") {
-                            positiveButton(R.string.ok) {
-                                HttpHelper.myCookieJar.clear()
-                                MyApp.get().setLogin(false)
-                                LocalBroadcastManager.getInstance(activity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
-                                findPreference(Keys.PREF_LOGOUT).isEnabled = false
-                                it.dismiss()
-                                activity.finish()
-                                activity.toast("已退出登录")
-                            }
 
-                            negativeButton(R.string.cancel) {
+                        AlertDialog.Builder(activity!!)
+                                .setTitle("提示")
+                                .setMessage("确定要退出吗")
+                                .setPositiveButton(R.string.ok) { d, _ ->
+                                    HttpHelper.myCookieJar.clear()
+                                    MyApp.get().setLogin(false)
+                                    LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+                                    findPreference(Keys.PREF_LOGOUT).isEnabled = false
+                                    d.dismiss()
+                                    activity!!.finish()
+                                    activity!!.toast("已退出登录")
+                                }
+                                .setNegativeButton(R.string.cancel) { dialogInterface, i ->
 
-                            }
-                        }.show()
+                                }
+                                .show()
                         true
                     }
 
@@ -94,10 +96,10 @@ class SettingsActivity : BaseActivity() {
 
 
         private fun prefVersion() {
-            val manager = activity.packageManager
 
             try {
-                val info: PackageInfo = manager.getPackageInfo(activity.packageName, 0)
+                val manager = activity!!.packageManager
+                val info: PackageInfo = manager.getPackageInfo(activity!!.packageName, 0)
                 findPreference(PREF_VERSION).summary = info.versionName
             } catch (e: PackageManager.NameNotFoundException) {
                 e.printStackTrace()
@@ -108,7 +110,7 @@ class SettingsActivity : BaseActivity() {
             findPreference(PREF_VERSION).onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 if (count < 0) {
                     count = 5
-                    activity.longToast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
+                    activity?.longToast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
                 }
                 count--
                 true
@@ -123,7 +125,7 @@ class SettingsActivity : BaseActivity() {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                 } catch (e: Exception) {
-                    activity.toast("没有可用的应用商店，请安装后重试")
+                    activity?.toast("没有可用的应用商店，请安装后重试")
                 }
                 true
             }
@@ -168,7 +170,7 @@ class SettingsActivity : BaseActivity() {
                         findPreference("pref_msg_period").isEnabled = true
                         findPreference("pref_background_msg").isEnabled = true
                     } else {
-                        val notificationManager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
                         notificationManager.cancel(notifyID)
                         jobSchedule.cancel(JOB_ID_GET_NOTIFICATION)
                         findPreference("pref_msg_period").isEnabled = false

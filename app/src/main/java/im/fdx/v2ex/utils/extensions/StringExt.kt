@@ -19,7 +19,7 @@ fun String.fullUrl() = this.replace("href=\"/member/", "href=\"https://www.v2ex.
 fun String.getNum(): String {
     var str2 = ""
     if (isNotBlank()) {
-        (0..length - 1)
+        (0 until length)
                 .filter { this[it].toInt() in 48..57 }
                 .forEach { str2 += this[it] }
     }

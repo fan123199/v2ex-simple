@@ -21,6 +21,7 @@
       <w>paddings</w>
       <w>persistor</w>
       <w>referer</w>
+      <w>rightbar</w>
       <w>sharedpreference</w>
       <w>snackbar</w>
       <w>statusbar</w>

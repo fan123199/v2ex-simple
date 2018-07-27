@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
@@ -19,7 +20,6 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import org.jetbrains.anko.toast
-import org.jsoup.Jsoup
 import java.io.IOException
 
 class NotificationActivity : BaseActivity() {
@@ -72,8 +72,7 @@ class NotificationActivity : BaseActivity() {
                         toast("您未登录或登录信息已过时，请重新登录")
                     }
                     200 -> {
-                        val html = Jsoup.parse(response.body()?.string())
-                        val c = NetManager.parseToNotifications(html)
+                        val c = Parser(response.body()!!.string()).parseToNotifications()
                         if (c.isEmpty()) {
                             runOnUiThread {
                                 mSwipe.isRefreshing = false
