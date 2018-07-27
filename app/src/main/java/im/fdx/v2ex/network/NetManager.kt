@@ -26,8 +26,6 @@ import java.io.IOException
 
 object NetManager {
 
-    private val TAG = NetManager::class.java.simpleName
-
     const val HTTPS_V2EX_BASE = "https://www.v2ex.com"
 
     /**

@@ -158,9 +158,9 @@ class LoginActivity : BaseActivity() {
                             }
 
                             @Throws(IOException::class)
-                            override fun onResponse(call: Call, response: okhttp3.Response) {
-                                if (response.code() == 302) {
-                                    if (("/2fa" == response.header("Location"))) {
+                            override fun onResponse(call: Call, response2: okhttp3.Response) {
+                                if (response2.code() == 302) {
+                                    if (("/2fa" == response2.header("Location"))) {
                                         runOnUiThread {
                                             progressBar.visibility = View.GONE
                                             btn_login.visibility = VISIBLE
@@ -168,8 +168,8 @@ class LoginActivity : BaseActivity() {
                                         }
                                     }
                                 } else {
-                                    val body = response.body()?.string()
-                                    val myInfo = Parser(body!!).getMember()
+                                    val body = response2.body()?.string()!!
+                                    val myInfo = Parser(body).getMember()
 
                                     pref.edit {
                                         putString(Keys.KEY_USERNAME, myInfo.username)

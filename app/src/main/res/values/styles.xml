@@ -37,6 +37,7 @@
 
     <style name="Theme.V2ex.Settings">
         <item name="colorAccent">@color/primary</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="Theme.V2ex.ForEdit">

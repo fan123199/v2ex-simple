@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.preference.*
 import android.util.Log
 import androidx.core.net.toUri
@@ -25,7 +26,7 @@ import im.fdx.v2ex.utils.extensions.setUpToolbar
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 
-class SettingsActivity : BaseActivity() {
+class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
