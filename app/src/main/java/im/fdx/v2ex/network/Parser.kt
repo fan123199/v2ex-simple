@@ -1,7 +1,7 @@
 package im.fdx.v2ex.network
 
 import im.fdx.v2ex.model.NotificationModel
-import im.fdx.v2ex.ui.details.ReplyModel
+import im.fdx.v2ex.ui.details.Reply
 import im.fdx.v2ex.ui.main.Comment
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.member.Member
@@ -256,9 +256,9 @@ class Parser(private val htmlStr: String) {
         return nodeModels
     }
 
-    fun getReplies(): ArrayList<ReplyModel> {
+    fun getReplies(): ArrayList<Reply> {
 
-        val replyModels = ArrayList<ReplyModel>()
+        val replyModels = ArrayList<Reply>()
 
         val items = doc.getElementsByAttributeValueStarting("id", "r_")
         for (item in items) {
@@ -266,7 +266,7 @@ class Parser(private val htmlStr: String) {
             //            <div id="r_4157549" class="cell">
             val id = item.id().substring(2)
 
-            val replyModel = ReplyModel()
+            val replyModel = Reply()
             val memberModel = Member()
             val avatar = item.getElementsByClass("avatar").attr("src")
             val username = item.getElementsByTag("strong").first().getElementsByAttributeValueStarting("href", "/member/").first().text()

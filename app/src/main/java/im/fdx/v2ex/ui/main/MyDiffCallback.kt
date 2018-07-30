@@ -2,7 +2,7 @@ package im.fdx.v2ex.ui.main
 
 import android.support.v7.util.DiffUtil
 import im.fdx.v2ex.model.BaseModel
-import im.fdx.v2ex.ui.details.ReplyModel
+import im.fdx.v2ex.ui.details.Reply
 
 /**
  * Created by fdx on 2017/7/11.
@@ -14,8 +14,8 @@ class MyDiffCallback(private val oldList: List<BaseModel>, private val newList: 
 
         if (oldList[oldItemPosition] is Topic && newList[newItemPosition] is Topic) {
             return (oldList[oldItemPosition] as Topic).id == (newList[newItemPosition] as Topic).id
-        } else if (oldList[oldItemPosition] is ReplyModel && newList[newItemPosition] is ReplyModel)
-            return (oldList[oldItemPosition] as ReplyModel).id == (newList[newItemPosition] as ReplyModel).id
+        } else if (oldList[oldItemPosition] is Reply && newList[newItemPosition] is Reply)
+            return (oldList[oldItemPosition] as Reply).id == (newList[newItemPosition] as Reply).id
         else return false
     }
 
@@ -30,9 +30,9 @@ class MyDiffCallback(private val oldList: List<BaseModel>, private val newList: 
         if (oldList[oldItemPosition] is Topic && newList[newItemPosition] is Topic) {
             return (oldList[oldItemPosition] as Topic).replies == (newList[newItemPosition] as Topic).replies &&
                     (oldList[oldItemPosition] as Topic).content_rendered == (newList[newItemPosition] as Topic).content_rendered
-        } else if (oldList[oldItemPosition] is ReplyModel && newList[newItemPosition] is ReplyModel)
-            return (oldList[oldItemPosition] as ReplyModel).thanks == (newList[newItemPosition] as ReplyModel).thanks &&
-                    (oldList[oldItemPosition] as ReplyModel).isThanked == (newList[newItemPosition] as ReplyModel).isThanked
+        } else if (oldList[oldItemPosition] is Reply && newList[newItemPosition] is Reply)
+            return (oldList[oldItemPosition] as Reply).thanks == (newList[newItemPosition] as Reply).thanks &&
+                    (oldList[oldItemPosition] as Reply).isThanked == (newList[newItemPosition] as Reply).isThanked
         else return false
     }
 

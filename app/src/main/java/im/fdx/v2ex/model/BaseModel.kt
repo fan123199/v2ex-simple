@@ -5,6 +5,5 @@ import android.os.Parcelable
 /**
  * Created by fdx on 2017/3/18.
  */
-abstract class BaseModel : Parcelable {
-
-}
+@Deprecated("没有用处")
+abstract class BaseModel : Parcelable

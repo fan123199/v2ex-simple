@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.NavigationView
 import android.support.design.widget.TabLayout
@@ -38,6 +37,7 @@ import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -56,7 +56,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private lateinit var mDrawer: DrawerLayout
     private lateinit var navigationView: NavigationView
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var mViewPager: ViewPager
     private lateinit var fab: FloatingActionButton
 
@@ -86,7 +85,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     mAdapter?.initFragment()
                     mAdapter?.notifyDataSetChanged()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-                        shortcutManager?.addDynamicShortcuts(listOfNotNull<ShortcutInfo>(createTopicInfo))
+                        shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
                     }
                 }
                 Keys.ACTION_LOGOUT -> {
@@ -150,23 +149,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         fab.setOnClickListener { startActivity(Intent(this@MainActivity, NewTopicActivity::class.java)) }
         val ivMode = navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         ivMode.setOnClickListener {
-            if (sharedPreferences.getBoolean("NIGHT_MODE", false)) {
+            if (pref.getBoolean("NIGHT_MODE", false)) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                sharedPreferences.edit().putBoolean("NIGHT_MODE", false).apply()
+                pref.edit().putBoolean("NIGHT_MODE", false).apply()
                 recreate()
             } else {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                sharedPreferences.edit().putBoolean("NIGHT_MODE", true).apply()
+                pref.edit().putBoolean("NIGHT_MODE", true).apply()
                 recreate()
             }
         }
 
-        if (MyApp.get().isLogin()) {
+        if (MyApp.get().isLogin) {
             showNavIcon(true)
-            val username = sharedPreferences.getString(Keys.KEY_USERNAME, "")
-            val avatar = sharedPreferences.getString(Keys.KEY_AVATAR, "")
+            val username = pref.getString(Keys.KEY_USERNAME, "")
+            val avatar = pref.getString(Keys.KEY_AVATAR, "")
             logd("$username//// $avatar")
             if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
                 setUserInfo(username, avatar)
@@ -214,26 +212,26 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
                     .build()
             when {
-                MyApp.get().isLogin() -> shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
+                MyApp.get().isLogin -> shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
                 else -> shortcutManager?.removeDynamicShortcuts(shortcutIds)
             }
         }
     }
 
     private fun startGetNotification() {
-        if (MyApp.get().isLogin() && isOpenMessage) {
+        if (MyApp.get().isLogin && isOpenMessage) {
             val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
 
             val builder = JobInfo.Builder(JOB_ID_GET_NOTIFICATION,
                     ComponentName(MyApp.get().packageName, MyJobSchedule::class.java.name))
-            val timeSec = sharedPreferences.getString("pref_msg_period", "30").toInt()
+            val timeSec = pref.getString("pref_msg_period", "30").toInt()
             builder.setPeriodic((timeSec * 1000).toLong())
             mJobScheduler.schedule(builder.build())
         }
     }
 
     private fun stopGetNotification() {
-        if (MyApp.get().isLogin() && isOpenMessage && !isBackground) {
+        if (MyApp.get().isLogin && isOpenMessage && !isBackground) {
             val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             mJobScheduler.cancel(JOB_ID_GET_NOTIFICATION)
         }
@@ -279,7 +277,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
 
-        if (MyApp.get().isLogin()) {
+        if (MyApp.get().isLogin) {
             menu.findItem(R.id.menu_login).isVisible = false
             menu.findItem(R.id.menu_notification).isVisible = true
         } else {
@@ -417,9 +415,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private val isBackground: Boolean
-        get() = sharedPreferences.getBoolean("pref_background_msg", false)
+        get() = pref.getBoolean("pref_background_msg", false)
 
     private val isOpenMessage: Boolean
-        get() = sharedPreferences.getBoolean("pref_msg", true)
+        get() = pref.getBoolean("pref_msg", true)
 }
 

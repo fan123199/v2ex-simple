@@ -8,12 +8,10 @@
     android:layout_marginBottom="@dimen/margin_between_log_in_item"
     android:layout_marginTop="@dimen/margin_between_log_in_item">
 
-    <android.support.design.widget.TextInputLayout
+    <android.support.design.widget.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/textInputLayout"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:textColorHint="@color/light_hint"
         app:hintTextAppearance="@style/VText.LightHint"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -29,7 +27,7 @@
             android:layout_weight="1"
             android:hint="@string/verify_code"
             android:inputType="text"
-            android:textColor="@color/white"/>
+            android:textColor="@color/white" />
     </android.support.design.widget.TextInputLayout>
 
     <ImageView
@@ -37,16 +35,17 @@
         android:id="@+id/iv_code"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@color/white"
         android:contentDescription="验证码"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="4:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="parent"
-        tools:background="@color/black54"/>
+        tools:background="@color/black54" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"

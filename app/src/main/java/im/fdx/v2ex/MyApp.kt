@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate.*
+import androidx.core.content.edit
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.Keys
@@ -25,34 +26,31 @@ class MyApp : Application() {
         }
     }
 
-    lateinit var mPrefs: SharedPreferences
+    internal lateinit var mPrefs: SharedPreferences
     internal var isLogin = false
 
     internal var curTextSize = 0
 
 
-    private fun isNightModeOn(): Boolean {
-        return mPrefs.getBoolean("NIGHT_MODE", false)
-    }
-
-
     fun setLogin(login: Boolean) {
         isLogin = login
         if (login) {
-            mPrefs.edit().putBoolean(Keys.PREF_KEY_IS_LOGIN, true).apply()
+            mPrefs.edit {
+                putBoolean(Keys.PREF_KEY_IS_LOGIN, true)
+            }
         } else {
-            mPrefs.edit().remove(Keys.PREF_KEY_IS_LOGIN).apply()
+            mPrefs.edit {
+                remove(Keys.PREF_KEY_IS_LOGIN)
+            }
         }
     }
-
-    fun isLogin(): Boolean = isLogin
 
     override fun onCreate() {
         super.onCreate()
         INSTANCE = this
         mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
         PreferenceManager.setDefaultValues(this, R.xml.preference, false)
-        setDefaultNightMode(if (isNightModeOn()) MODE_NIGHT_YES else MODE_NIGHT_NO)
+        setDefaultNightMode(if (mPrefs.getBoolean("NIGHT_MODE", false)) MODE_NIGHT_YES else MODE_NIGHT_NO)
         XLog.init(when {
             BuildConfig.DEBUG -> LogLevel.ALL
             else -> LogLevel.NONE

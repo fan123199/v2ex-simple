@@ -91,7 +91,7 @@ class NodeActivity : BaseActivity() {
 
         fab_node.setOnClickListener { startActivity<NewTopicActivity>(Keys.KEY_NODE_NAME to nodeName) }
 
-        if (!MyApp.get().isLogin()) fab_node.hide()
+        if (!MyApp.get().isLogin) fab_node.hide()
 
         nodeName = when {
             intent.data != null -> intent.data.pathSegments[1]
@@ -110,7 +110,7 @@ class NodeActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_node, menu)
         mMenu = menu!!
-        if (!MyApp.get().isLogin()) {
+        if (!MyApp.get().isLogin) {
             menu.findItem(R.id.menu_follow)?.isVisible = false
         }
         return true

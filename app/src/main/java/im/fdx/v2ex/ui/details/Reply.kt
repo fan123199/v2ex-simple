@@ -29,15 +29,15 @@ import kotlinx.android.parcel.Parcelize
 //        }
 
 @Parcelize
-data class ReplyModel(var id: String = "",
-                      var content: String = "",
-                      var content_rendered: String = "",
-                      var thanks: Int = 0,
-                      var created: Long = 0,
-                      var isThanked: Boolean = false,
-                      var member: Member? = null,
-                      var isLouzu: Boolean = false
+data class Reply(var id: String = "",
+                 var content: String = "",
+                 var content_rendered: String = "",
+                 var thanks: Int = 0,
+                 var created: Long = 0,
+                 var isThanked: Boolean = false,
+                 var member: Member? = null,
+                 var isLouzu: Boolean = false
 ) : BaseModel(), Parcelable {
 
-    override fun toString() = "ReplyModel{content='$content_rendered}"
+    override fun toString() = "Reply{content='$content_rendered}"
 }

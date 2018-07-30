@@ -52,7 +52,7 @@ class SettingsActivity : AppCompatActivity() {
             sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
             jobSchedule = activity?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             when {
-                MyApp.get().isLogin() -> {
+                MyApp.get().isLogin -> {
 
                     addPreferencesFromResource(R.xml.preference_login)
                     findPreference("group_user").title = sharedPreferences.getString("username", getString(R.string.user))
@@ -70,7 +70,7 @@ class SettingsActivity : AppCompatActivity() {
                                     activity!!.finish()
                                     activity!!.toast("已退出登录")
                                 }
-                                .setNegativeButton(R.string.cancel) { dialogInterface, i ->
+                                .setNegativeButton(R.string.cancel) { _, _ ->
 
                                 }
                                 .show()

@@ -2,9 +2,13 @@ package im.fdx.v2ex.utils.extensions
 
 import android.app.Activity
 import android.content.Context
+import android.support.design.widget.Snackbar
 import android.support.v4.widget.SwipeRefreshLayout
+import android.view.View
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.LoginActivity
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 /**
@@ -45,4 +49,11 @@ fun Any.logw(msg: Any?) {
 
 fun Any.loge(msg: Any?) {
     XLog.tag("v+" + this::class.java.simpleName).e(msg)
+}
+
+
+fun Activity.showLoginHint(view: View) {
+    Snackbar.make(view, "您还未登录，请登录后再试", Snackbar.LENGTH_LONG).setAction("登录") {
+        startActivity<LoginActivity>()
+    }.show()
 }

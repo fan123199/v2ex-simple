@@ -22,7 +22,6 @@ import android.widget.TextView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
-import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.BaseActivity
@@ -36,14 +35,11 @@ import kotlinx.android.synthetic.main.footer_reply.*
 import okhttp3.*
 import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
-import org.jsoup.nodes.Element
 import java.io.IOException
-import java.util.regex.Pattern
 
 class DetailsActivity : BaseActivity() {
 
     private lateinit var mAdapter: DetailsAdapter
-    //    private val mAllContent = mutableListOf<BaseModel>()
     private var mMenu: Menu? = null
 
     private lateinit var tvToolbar: TextView
@@ -80,7 +76,7 @@ class DetailsActivity : BaseActivity() {
             } else if (intent.action == "im.fdx.v2ex.reply") {
                 logd("MSG_GET  LocalBroadCast")
                 token = intent.getStringExtra("token")
-                val rm = intent.getParcelableArrayListExtra<ReplyModel>("replies")
+                val rm = intent.getParcelableArrayListExtra<Reply>("replies")
                 mAdapter.addItems(rm)
                 if (intent.getBooleanExtra("bottom", false)) {
                     detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
@@ -112,7 +108,7 @@ class DetailsActivity : BaseActivity() {
         filter.addAction(Keys.ACTION_LOGOUT)
         filter.addAction("im.fdx.v2ex.reply")
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
-        setFootView(MyApp.get().isLogin())
+        setFootView(MyApp.get().isLogin)
 
         setUpToolbar()
         tvToolbar = findViewById(R.id.tv_toolbar)
@@ -121,7 +117,6 @@ class DetailsActivity : BaseActivity() {
         //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
         val mLayoutManager = LinearLayoutManager(this)
         detail_recycler_view.layoutManager = mLayoutManager
-        detail_recycler_view.smoothScrollToPosition(POSITION_START)
         detail_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             private var currentPosition = 0
@@ -166,7 +161,7 @@ class DetailsActivity : BaseActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
-            override fun afterTextChanged(s: Editable) = if (s.isNullOrEmpty()) {
+            override fun afterTextChanged(s: Editable) = if (s.isEmpty()) {
                 iv_send.isClickable = false
                 iv_send.imageTintList = null
             } else {
@@ -200,7 +195,7 @@ class DetailsActivity : BaseActivity() {
             data != null -> data.pathSegments[1]
             intent.getParcelableExtra<Parcelable>("model") != null -> {
                 val topicModel = intent.getParcelableExtra<Topic>("model")
-                mAdapter.mAllList.add(0, topicModel)
+                mAdapter.topic[0] = topicModel
                 mAdapter.notifyDataSetChanged()
                 topicModel.id
             }
@@ -244,7 +239,7 @@ class DetailsActivity : BaseActivity() {
                 topicHeader = parser.parseResponseToTopic(topicId)
                 val repliesFirstPage = parser.getReplies()
 
-                if (MyApp.get().isLogin()) {
+                if (MyApp.get().isLogin) {
                     token = parser.getVerifyCode()
 
                     if (token == null) {
@@ -271,11 +266,6 @@ class DetailsActivity : BaseActivity() {
                     once = parser.getOnceNum()
                 }
 
-                val mAllContent = mutableListOf<BaseModel>()
-                mAllContent.clear()
-                mAllContent.add(0, topicHeader!!)
-                mAllContent.addAll(repliesFirstPage)
-
                 XLog.tag("DetailsActivity").d("got page 1 , next is more page")
 
                 val totalPage = parser.getPageValue()[1]  // [2,3]
@@ -283,7 +273,7 @@ class DetailsActivity : BaseActivity() {
                 currentPage = parser.getPageValue()[0]
                 runOnUiThread {
                     swipe_details.isRefreshing = false
-                    mAdapter.updateItems(mAllContent)
+                    mAdapter.updateItems(topicHeader!!, repliesFirstPage)
                     if (totalPage == 1 && scrollToBottom) {
                         detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
                     }
@@ -297,12 +287,6 @@ class DetailsActivity : BaseActivity() {
         })
     }
 
-    private fun parseIsFavored(body: Element): Boolean {
-        val p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?t=)")
-        val matcher = p.matcher(body.outerHtml())
-        return matcher.find()
-    }
-
     private fun getMoreRepliesByOrder(totalPage: Int, scrollToBottom: Boolean) {
         val intentGetMoreReply = Intent(this@DetailsActivity, MoreReplyService::class.java)
         intentGetMoreReply.action = "im.fdx.v2ex.get.other.more"
@@ -310,7 +294,7 @@ class DetailsActivity : BaseActivity() {
         intentGetMoreReply.putExtra("topic_id", mTopicId)
         intentGetMoreReply.putExtra("bottom", scrollToBottom)
         startService(intentGetMoreReply)
-        XLog.tag("DetailsActivity").d("yes I startIntentService")
+        logd("yes I startIntentService")
     }
 
 
@@ -328,7 +312,7 @@ class DetailsActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_details, menu)
-        if (MyApp.get().isLogin()) {
+        if (MyApp.get().isLogin) {
             menu.findItem(R.id.menu_favor).isVisible = true
             menu.findItem(R.id.menu_reply)?.isVisible = true
         } else {
@@ -354,11 +338,11 @@ class DetailsActivity : BaseActivity() {
                 swipe_details.isRefreshing = true
                 getRepliesPageOne(mTopicId, false)
             }
-            R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.mAllList[0] as Topic).title} \n" +
-                    " ${NetManager.HTTPS_V2EX_BASE}/t/${(mAdapter.mAllList[0] as Topic).id}")
+            R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.topic[0]).title} \n" +
+                    " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topic[0].id}")
             R.id.menu_item_open_in_browser -> {
 
-                val topicId = (mAdapter.mAllList[0] as Topic).id
+                val topicId = mAdapter.topic[0].id
                 val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
                 val uri = Uri.parse(url)
                 val intent = Intent(Intent.ACTION_VIEW, uri)

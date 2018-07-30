@@ -12,8 +12,8 @@ android {
         applicationId "im.fdx.v2ex"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 24
-        versionName "2.3.0"
+        versionCode 25
+        versionName "2.3.2"
     }
     lintOptions {
         checkReleaseBuilds false
@@ -23,7 +23,7 @@ android {
 
             googlePlay {
                 Properties prop = getSignConfig()
-                if (prop != null&&false) {
+                if (prop != null) {
                     keyAlias prop['keyAlias']
                     keyPassword prop['keyPassword']
                     storeFile file(prop['storeFile'])

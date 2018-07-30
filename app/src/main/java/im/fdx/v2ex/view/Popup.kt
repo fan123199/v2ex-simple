@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.details.DetailsAdapter
-import im.fdx.v2ex.ui.details.ReplyModel
+import im.fdx.v2ex.ui.details.Reply
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
 import kotlinx.android.synthetic.main.item_reply_view.*
@@ -34,7 +34,7 @@ class Popup(mActivity: Context) {
 
 
     @SuppressLint("SetTextI18n")
-    fun show(v: View, data: ReplyModel, position: Int, clickListener: View.OnClickListener) {
+    fun show(v: View, data: Reply, position: Int, clickListener: View.OnClickListener) {
 
         popupWindow.width = v.width
         val hd = DetailsAdapter.ItemViewHolder(contentView)

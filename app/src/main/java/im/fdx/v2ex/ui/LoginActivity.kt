@@ -21,6 +21,7 @@ import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.setStatusBarColor
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.item_verify_code.*
@@ -51,6 +52,7 @@ class LoginActivity : BaseActivity() {
         setContentView(R.layout.activity_login)
 
         setUpToolbar()
+        setStatusBarColor(R.color.primary)
         progressBar = findViewById(R.id.pb_login)
 
         val usernamePref = pref.getString("username", "")
