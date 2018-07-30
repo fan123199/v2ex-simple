@@ -211,8 +211,9 @@ class NewTopicActivity : BaseActivity() {
                     NetManager.dealError(this@NewTopicActivity, response.code())
                     return
                 }
-                once = getOnce(response)
+                once = Parser(response.body()!!.string()).getOnceNum2()
                 if (once == null) {
+                    toast("发布主题失败，请退出app重试")
                     return
                 }
 
@@ -257,16 +258,6 @@ class NewTopicActivity : BaseActivity() {
                 })
             }
         })
-    }
-
-    private fun getOnce(response: Response): String? {
-        val p = Pattern.compile("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)")
-        val matcher = p.matcher(response.body()!!.string())
-        if (!matcher.find()) {
-            runOnUiThread { toast("无法发布主题，请退出后重试") }
-            return null
-        }
-        return matcher.group()
     }
 
     private fun resetIcon(item: MenuItem) {

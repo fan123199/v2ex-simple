@@ -43,15 +43,17 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
                 val token = parser.getVerifyCode()
 
                 if (replies.isEmpty()) return
-                val it = Intent()
-                it.action = "im.fdx.v2ex.reply"
-                it.putExtra("token", token)
-                it.putParcelableArrayListExtra("replies", replies)
+                val replyIntent = Intent()
+                replyIntent.action = "im.fdx.v2ex.reply"
+                token?.let {
+                    replyIntent.putExtra("token", token)
+                }
+                replyIntent.putParcelableArrayListExtra("replies", replies)
 
                 if (i == totalPage && isToBottom) {
-                    it.putExtra("bottom", true)
+                    replyIntent.putExtra("bottom", true)
                 }
-                LocalBroadcastManager.getInstance(this).sendBroadcast(it)
+                LocalBroadcastManager.getInstance(this).sendBroadcast(replyIntent)
             }
 
         } catch (e: IOException) {

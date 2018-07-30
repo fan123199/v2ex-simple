@@ -44,12 +44,12 @@ data class Member(
         var avatar_normal: String = "",
         @ColumnInfo(name = "member_avatar_large")
         var avatar_large: String = "",
-        var github: String = "",
-        var btc: String = "",
-        var location: String = "",
         var bio: String = "",
-        var twitter: String = "",
-        var website: String = ""
+        var github: String? = "",
+        var btc: String? = "",
+        var location: String? = "",
+        var twitter: String? = "",
+        var website: String? = ""
 ) : BaseModel(), Parcelable {
 
     val avatarNormalUrl: String

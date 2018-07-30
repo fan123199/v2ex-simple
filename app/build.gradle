@@ -5,8 +5,6 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 
 
-Properties prop = getSignConfig()
-
 android {
 
     compileSdkVersion 28
@@ -22,11 +20,15 @@ android {
         abortOnError false
     }
     signingConfigs {
-        googlePlay {
-            keyAlias prop['keyAlias']
-            keyPassword prop['keyPassword']
-            storeFile file(prop['storeFile'])
-            storePassword prop['storePassword']
+
+            googlePlay {
+                Properties prop = getSignConfig()
+                if (prop != null&&false) {
+                    keyAlias prop['keyAlias']
+                    keyPassword prop['keyPassword']
+                    storeFile file(prop['storeFile'])
+                    storePassword prop['storePassword']
+                }
         }
     }
     buildTypes {
@@ -81,6 +83,7 @@ dependencies {
     implementation "com.android.support:support-v4:$support_version"
     implementation "com.android.support:customtabs:$support_version"
     implementation "com.android.support:preference-v7:$support_version"
+    implementation "com.android.support:design:$support_version"
 
     implementation 'com.android.support.constraint:constraint-layout:2.0.0-alpha1'
 
@@ -92,7 +95,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     //    implementation 'com.daimajia.swipelayout:library:1.2.0@aar'
-    implementation "com.android.support:design:$support_version"
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'org.jsoup:jsoup:1.11.3'
 //    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
@@ -115,7 +117,12 @@ dependencies {
 def getSignConfig() {
     def keystorePropertiesFile = rootProject.file("keystore.properties")
     def keystoreProperties = new Properties()
-    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    try {
+        def stream = new FileInputStream(keystorePropertiesFile)
+        keystoreProperties.load(stream)
+    }catch (FileNotFoundException e) {
+        return null
+    }
     return keystoreProperties
 }
 

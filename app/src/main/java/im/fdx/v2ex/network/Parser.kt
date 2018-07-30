@@ -203,6 +203,7 @@ class Parser(private val htmlStr: String) {
     fun getOnce(): String? = Regex("favorite/node/\\d{1,8}\\?once=\\d{1,10}").find(htmlStr)?.value
 
     fun getOnceNum() = doc.getElementsByAttributeValue("name", "once").first()?.attr("value")
+    fun getOnceNum2() = Regex("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)").find(htmlStr)?.value
 
 
     fun isTopicFavored(): Boolean {
@@ -300,14 +301,14 @@ class Parser(private val htmlStr: String) {
     fun getVerifyCode(): String? {
 
         // <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
-        val element: Element? = doc.getElementsByClass("topic_buttons").first().getElementsByTag("a").first()
+        val element: Element = doc.getElementsByClass("topic_buttons")?.first()?.getElementsByTag("a")?.first()
+                ?: return null
         val p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+")
-
-        val matcher = p.matcher(element!!.outerHtml())
-        if (matcher.find()) {
-            return matcher.group()
+        val matcher = p.matcher(element.outerHtml())
+        return if (matcher.find()) {
+            matcher.group()
         } else
-            return null
+            null
     }
 
     fun parseResponseToTopic(topicId: String): Topic {

@@ -46,7 +46,7 @@ import java.io.IOException
 /**
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
- *
+ * todo 把 allList 分离
  */
 class DetailsAdapter(private val mContext: Context,
                      private val callback: DetailsAdapter.AdapterCallback,

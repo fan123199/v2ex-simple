@@ -78,7 +78,7 @@ class DetailsActivity : BaseActivity() {
                 invalidateOptionsMenu()
                 setFootView(false)
             } else if (intent.action == "im.fdx.v2ex.reply") {
-                XLog.tag("HEHE").d("MSG_GET  LocalBroadCast")
+                logd("MSG_GET  LocalBroadCast")
                 token = intent.getStringExtra("token")
                 val rm = intent.getParcelableArrayListExtra<ReplyModel>("replies")
                 mAdapter.addItems(rm)
@@ -344,7 +344,7 @@ class DetailsActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
 
-            R.id.menu_favor -> favorOrNot(mTopicId, token!!, isFavored)
+            R.id.menu_favor -> favorOrNot(mTopicId, token, isFavored)
             R.id.menu_reply -> {
                 et_post_reply.requestFocus()
                 val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -376,10 +376,9 @@ class DetailsActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun favorOrNot(topicId: String, token: String, doFavor: Boolean) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url("${NetManager.HTTPS_V2EX_BASE}/${if (doFavor) "un" else ""}favorite/topic/$topicId?t=$token")
-                .get().build()).enqueue(object : Callback {
+    private fun favorOrNot(topicId: String, token: String?, doFavor: Boolean) {
+        vCall("${NetManager.HTTPS_V2EX_BASE}/${if (doFavor) "un" else ""}favorite/topic/$topicId?t=$token")
+                .start(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 dealError(this@DetailsActivity, swipe = swipe_details)

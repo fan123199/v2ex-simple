@@ -20,7 +20,6 @@ import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
-import com.elvishew.xlog.XLog
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -37,6 +36,7 @@ import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.CustomChrome
@@ -168,7 +168,7 @@ class MemberActivity : BaseActivity() {
                     val html = response.body()!!.string()
                     isBlocked = isBlock(html)
                     isFollowed = isFollowed(html)
-                    XLog.d("isBlocked: $isBlocked|isFollowed: $isFollowed")
+                    logd("isBlocked: $isBlocked|isFollowed: $isFollowed")
 
 
                     runOnUiThread {
@@ -221,9 +221,9 @@ class MemberActivity : BaseActivity() {
         when (it.id) {
             R.id.tv_location -> {
             }
-            R.id.tv_github -> if (!(member.github).isEmpty()) CustomChrome(this).load("https://www.github.com/" + member.github)
+            R.id.tv_github -> if (!(member.github).isNullOrEmpty()) CustomChrome(this).load("https://www.github.com/" + member.github)
             R.id.tv_twitter -> {
-                if (!(member.twitter).isEmpty()) {
+                if (!(member.twitter).isNullOrEmpty()) {
                     val intent: Intent
                     try {
                         packageManager.getPackageInfo("com.twitter.android", 0)
@@ -237,9 +237,9 @@ class MemberActivity : BaseActivity() {
                 }
             }
             R.id.tv_website -> when {
-                !(member.website).isEmpty() ->
-                    CustomChrome(this).load(if (!member.website.contains("http")) "http://"
-                            + member.website else member.website)
+                !(member.website).isNullOrEmpty() ->
+                    CustomChrome(this).load(if (!member.website!!.contains("http")) "http://"
+                            + member.website else member.website!!)
             }
         }
     }
@@ -255,15 +255,17 @@ class MemberActivity : BaseActivity() {
         mTvIntro.text = member.bio
         mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
-        mTvBitCoin.isGone = member.btc.isEmpty()
-        mTvGithub.isGone = member.github.isEmpty()
-        mTvLocation.isGone = member.location.isEmpty()
-        mTvTwitter.isGone = member.twitter.isEmpty()
-        mTvWebsite.isGone = member.website.isEmpty()
+        mTvBitCoin.isGone = member.btc.isNullOrEmpty()
+        mTvGithub.isGone = member.github.isNullOrEmpty()
+        mTvLocation.isGone = member.location.isNullOrEmpty()
+        mTvTwitter.isGone = member.twitter.isNullOrEmpty()
+        mTvWebsite.isGone = member.website.isNullOrEmpty()
 
-        mTvIntro.isGone = member.bio.isEmpty()
+        mTvIntro.isGone = member.bio.isNullOrEmpty()
 
-        llInfo.isGone = (member.website + member.twitter + member.github + member.btc + member.location).isEmpty()
+        llInfo.isGone = member.btc.isNullOrEmpty() && member.github.isNullOrEmpty() &&
+                member.location.isNullOrEmpty() &&
+                member.twitter.isNullOrEmpty() && member.website.isNullOrEmpty()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
