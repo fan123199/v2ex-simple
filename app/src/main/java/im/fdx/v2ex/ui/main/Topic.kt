@@ -2,7 +2,6 @@ package im.fdx.v2ex.ui.main
 
 import android.arch.persistence.room.*
 import android.os.Parcelable
-import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.ui.member.Member
 import im.fdx.v2ex.ui.node.Node
 import kotlinx.android.parcel.Parcelize
@@ -67,7 +66,7 @@ class Topic(
         var last_modified: Long = 0,
         var last_touched: Long = 0,
         @Ignore
-        var comments: MutableList<Comment> = mutableListOf()) : BaseModel(), Parcelable {
+        var comments: MutableList<Comment> = mutableListOf()) : Parcelable {
 
     override fun toString() = "标题：$title,\n内容：$content"
 

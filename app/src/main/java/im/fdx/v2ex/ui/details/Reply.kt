@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.details
 
 import android.os.Parcelable
-import im.fdx.v2ex.model.BaseModel
 import im.fdx.v2ex.ui.member.Member
 import kotlinx.android.parcel.Parcelize
 
@@ -37,7 +36,7 @@ data class Reply(var id: String = "",
                  var isThanked: Boolean = false,
                  var member: Member? = null,
                  var isLouzu: Boolean = false
-) : BaseModel(), Parcelable {
+) : Parcelable {
 
     override fun toString() = "Reply{content='$content_rendered}"
 }

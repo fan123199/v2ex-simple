@@ -2,7 +2,6 @@ package im.fdx.v2ex.ui.member
 
 import android.arch.persistence.room.ColumnInfo
 import android.os.Parcelable
-import im.fdx.v2ex.model.BaseModel
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -50,7 +49,7 @@ data class Member(
         var location: String? = "",
         var twitter: String? = "",
         var website: String? = ""
-) : BaseModel(), Parcelable {
+) : Parcelable {
 
     val avatarNormalUrl: String
         get() = "http:" + avatar_normal

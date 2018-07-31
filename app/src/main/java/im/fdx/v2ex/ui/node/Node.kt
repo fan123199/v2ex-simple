@@ -2,7 +2,6 @@ package im.fdx.v2ex.ui.node
 
 import android.arch.persistence.room.ColumnInfo
 import android.os.Parcelable
-import im.fdx.v2ex.model.BaseModel
 import kotlinx.android.parcel.Parcelize
 
 /**
@@ -61,7 +60,7 @@ data class Node(
         @ColumnInfo(name = "node_avatar_large")
 
         var avatar_large: String = "",
-        var header: String = "") : BaseModel(), Parcelable {
+        var header: String = "") : Parcelable {
 
     val avatarMiniUrl: String
         get() = "http:$avatar_mini"

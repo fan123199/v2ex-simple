@@ -16,5 +16,5 @@ class NotificationModel(var time: String? = "",
                         var topic: Topic? = Topic(),
                         var member: Member? = Member(),
                         var content: String? = "",
-                        var id: String? = "") : BaseModel(), Parcelable {
+                        var id: String? = "") : Parcelable {
 }

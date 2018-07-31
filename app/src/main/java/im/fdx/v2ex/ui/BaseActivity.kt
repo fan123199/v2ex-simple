@@ -15,7 +15,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var textSizeMode = defaultSharedPreferences.getString("pref_text_size", "0").toInt()
+        val textSizeMode = defaultSharedPreferences.getString("pref_text_size", "0").toInt()
         MyApp.get().curTextSize = textSizeMode
         when (textSizeMode) {
             MODE_SMALL -> {

@@ -8,6 +8,7 @@ import androidx.core.content.edit
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.logd
 
 val pref: SharedPreferences by lazy {
     MyApp.get().mPrefs
@@ -56,6 +57,6 @@ class MyApp : Application() {
             else -> LogLevel.NONE
         })
         isLogin = mPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
-        XLog.tag("MyApp").d("onCreate\nisLogin:$isLogin")
+        logd("onCreate\nisLogin:$isLogin")
     }
 }
