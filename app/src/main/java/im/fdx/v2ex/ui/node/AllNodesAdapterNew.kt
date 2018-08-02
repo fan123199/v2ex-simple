@@ -13,14 +13,15 @@ import com.google.android.flexbox.JustifyContent
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.extensions.logi
 
-class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
+class AllNodesAdapterNew(val context: Context, val action: (Node) -> Unit) : RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
 
     private var filterMap = mutableMapOf<String, MutableList<Node>>()
     private var map = mapOf<String, MutableList<Node>>()
 
-    fun setData(amap: MutableMap<String, MutableList<Node>>) {
-        filterMap = LinkedHashMap(amap)
-        map = LinkedHashMap(amap)
+    fun setData(amap: List<Node>) {
+        val listToMap = listToMap(amap)
+        filterMap = listToMap.toMutableMap()
+        map = listToMap.toMap()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NodeVH {
@@ -34,9 +35,7 @@ class AllNodesAdapterNew(val context: Context) : RecyclerView.Adapter<AllNodesAd
         logi("$position")
         val key = filterMap.keys.elementAt(position)
         holder.tvCategory.text = key
-        val simpleNodesTextAdapter = SimpleNodesTextAdapter(filterMap[key]!!)
-        holder.rv.setHasFixedSize(true)
-        simpleNodesTextAdapter.setHasStableIds(true)
+        val simpleNodesTextAdapter = SimpleNodesTextAdapter(filterMap[key]!!, action)
         holder.rv.adapter = simpleNodesTextAdapter
     }
 

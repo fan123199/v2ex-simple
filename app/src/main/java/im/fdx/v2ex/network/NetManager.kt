@@ -57,6 +57,7 @@ object NetManager {
     @Deprecated("不是实时的")
     const val API_REPLIES = "$HTTPS_V2EX_BASE/api/replies/show.json"
 
+    @Deprecated("不用API，用html解析。虽慢，但统一")
     const val URL_ALL_NODE = "$HTTPS_V2EX_BASE/api/nodes/all.json"
 
     const val URL_ALL_NODE_WEB = "$HTTPS_V2EX_BASE/planes"

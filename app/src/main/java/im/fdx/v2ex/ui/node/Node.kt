@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.node
 
 import android.arch.persistence.room.ColumnInfo
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
@@ -38,29 +40,33 @@ import kotlinx.android.parcel.Parcelize
 //        "avatar_large" : "//cdn.v2ex.co/navatar/8613/985e/90_large.png?m=1452823690"
 //        }
 
+@Entity
 @Parcelize
 data class Node(
-        @ColumnInfo(name = "node_id")
-        var id: String = "",
-        var name: String = "",
-        @ColumnInfo(name = "node_url")
+    @PrimaryKey
+    @ColumnInfo(name = "node_id")
+    var id: String = "",
+    @ColumnInfo(name = "node_name")
+    var name: String = "",
+    @ColumnInfo(name = "node_url")
         var url: String = "",
-        @ColumnInfo(name = "node_title")
+    @ColumnInfo(name = "node_title")
         var title: String = "",
-        var title_alternative: String = "",
-        var topics: Int = 0,
-        var stars: Int = 0,
-        @ColumnInfo(name = "node_created")
+    var title_alternative: String = "",
+    var topics: Int = 0,
+    var stars: Int = 0,
+    @ColumnInfo(name = "node_created")
         var created: Long = 0,
-        @ColumnInfo(name = "node_avatar_mini")
+    @ColumnInfo(name = "node_avatar_mini")
         var avatar_mini: String = "",
-        @ColumnInfo(name = "node_avatar_normal")
+    @ColumnInfo(name = "node_avatar_normal")
 
         var avatar_normal: String = "",
-        @ColumnInfo(name = "node_avatar_large")
+    @ColumnInfo(name = "node_avatar_large")
 
         var avatar_large: String = "",
-        var header: String = "") : Parcelable {
+    var header: String = "",
+    var category: String = "") : Parcelable {
 
     val avatarMiniUrl: String
         get() = "http:$avatar_mini"

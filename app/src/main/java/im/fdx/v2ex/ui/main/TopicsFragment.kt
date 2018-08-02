@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import im.fdx.v2ex.R
-import im.fdx.v2ex.database.DbHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
@@ -187,7 +186,7 @@ class TopicsFragment : Fragment() {
                         }
                         logd(topicList)
 
-                        DbHelper.db.topicDao().insertTopic(*topicList.toTypedArray())
+//                        DbHelper.db.topicDao().insertTopic(*topicList.toTypedArray())
 
                         activity?.runOnUiThread {
                             if (topicList.isEmpty()) {

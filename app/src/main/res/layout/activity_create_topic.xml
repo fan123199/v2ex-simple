@@ -1,8 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -41,14 +40,13 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <com.toptoche.searchablespinnerlibrary.SearchableSpinner
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/search_spinner_node"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:backgroundTint="@color/primary"
-                app:hintText="选择节点"
-                app:itemLayout="@layout/simple_list_item"
+                android:textColor="@color/primary"
+                android:text="@string/choose_node"
                 android:layout_marginLeft="@dimen/md_left_margin"/>
 
 

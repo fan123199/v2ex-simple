@@ -6,16 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import im.fdx.v2ex.R
-import im.fdx.v2ex.utils.Keys
-import org.jetbrains.anko.startActivity
 
-class SimpleNodesTextAdapter(private var mNodes: MutableList<Node> = mutableListOf<Node>())
+class SimpleNodesTextAdapter(private var mNodes: MutableList<Node>, private val action: (Node) -> Unit)
     : RecyclerView.Adapter<SimpleNodesTextAdapter.SimpleVH>() {
 
     override fun onBindViewHolder(holder: SimpleVH, position: Int) {
         holder.tvTitle.text = mNodes[position].title
         holder.tvTitle.setOnClickListener {
-            it.context.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to mNodes[position].name)
+            action(mNodes[position])
         }
     }
 

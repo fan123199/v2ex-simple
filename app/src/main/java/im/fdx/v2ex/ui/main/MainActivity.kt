@@ -146,7 +146,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         navigationView = findViewById(R.id.nav_view)
         navigationView.setNavigationItemSelectedListener(this)
         fab = findViewById(R.id.fab_main)
-        fab.setOnClickListener { startActivity(Intent(this@MainActivity, NewTopicActivity::class.java)) }
+        fab.setOnClickListener {
+            startActivity<NewTopicActivity>()
+        }
         val ivMode = navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
         ivMode.setOnClickListener {

@@ -126,26 +126,23 @@ class Parser(private val htmlStr: String) {
     }
 
 
-    fun getAllNode(): MutableMap<String, MutableList<Node>> {
-        val allNodes = mutableMapOf<String, MutableList<Node>>()
-
+    fun getAllNode(): MutableList<Node> {
+        val allNodes = mutableListOf<Node>()
         val body = doc.body()
         val main = body.getElementsByAttributeValue("id", "Main").getOrNull(0)
         val boxes: Elements? = main?.getElementsByClass("box")
 
         boxes?.filterIndexed { index, _ -> index > 0 }?.forEach {
             val title = it.getElementsByClass("header").first().ownText()
-            val nodes = mutableListOf<Node>()
             val nodeElements = it.getElementsByClass("inner").first().getElementsByClass("item_node")
             for (item in nodeElements) {
                 val node = Node()
                 val name = item.attr("href").replace("/go/", "")
                 node.name = name
                 node.title = item.text()
-                nodes.add(node)
+                node.category = title
+                allNodes.add(node)
             }
-
-            allNodes[title] = nodes
         }
         return allNodes
     }
@@ -329,9 +326,11 @@ class Parser(private val htmlStr: String) {
         topicModel.comments = comments.toMutableList()
 
 
-        val preElems = contentElementOrg.select("pre")
-        for (elem in preElems) {
-            elem.html(elem.html().replace("\n", "<br/>")/*.replace(" ", "&nbsp;")*/)
+        val preElems = contentElementOrg?.select("pre")
+        if (preElems != null) {
+            for (elem in preElems) {
+                elem.html(elem.html().replace("\n", "<br/>")/*.replace(" ", "&nbsp;")*/)
+            }
         }
 
         val content = contentElementOrg?.text() ?: ""

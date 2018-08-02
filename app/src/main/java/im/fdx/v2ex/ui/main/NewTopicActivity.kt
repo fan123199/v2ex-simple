@@ -2,6 +2,7 @@
 
 package im.fdx.v2ex.ui.main
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,45 +10,40 @@ import android.support.design.widget.TextInputEditText
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageView
-import com.elvishew.xlog.XLog
 import com.esafirm.imagepicker.features.ImagePicker
-import com.google.gson.reflect.TypeToken
-import com.toptoche.searchablespinnerlibrary.SearchableSpinner
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.details.DetailsActivity
+import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.Keys.KEY_TO_CHOOSE_NODE
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.openImagePicker
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import kotlinx.android.synthetic.main.activity_create_topic.*
 import okhttp3.*
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.IOException
-import java.util.*
 import java.util.regex.Pattern
 
 
 class NewTopicActivity : BaseActivity() {
 
-    private lateinit var adapter: ArrayAdapter<Node>
     private var mNodename: String = ""
     private lateinit var etTitle: TextInputEditText
     private lateinit var etContent: EditText
-    private lateinit var spinner: SearchableSpinner
 
     private var mTitle: String = ""
     private var mContent: String = ""
     private var once: String? = null
-    private val nodeModels = ArrayList<Node>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,37 +53,10 @@ class NewTopicActivity : BaseActivity() {
         etTitle = findViewById(R.id.et_title)
         etContent = findViewById(R.id.et_content)
 
-        spinner = findViewById(R.id.search_spinner_node)
-        spinner.setTitle(getString(R.string.choose_node))
-        spinner.setPositiveButton(getString(R.string.close))
-        adapter = ArrayAdapter(this, R.layout.simple_list_item, nodeModels)
-        spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                mNodename = (parent.getItemAtPosition(position) as Node).name
-                XLog.tag(TAG).d(mNodename)
-            }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {}
-        }
-        vCall(NetManager.URL_ALL_NODE)
-                .enqueue(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        NetManager.dealError(this@NewTopicActivity)
-                    }
-
-                    @Throws(IOException::class)
-                    override fun onResponse(call: Call, response: okhttp3.Response) {
-                        val type = object : TypeToken<ArrayList<Node>>() {}.type
-                        val nodes = NetManager.myGson.fromJson<ArrayList<Node>>(response.body()!!.string(), type)
-                        runOnUiThread {
-                            adapter.addAll(nodes)
-                            adapter.notifyDataSetChanged()
-                            setNode(intent)
-                        }
-
-                    }
-                })
+      search_spinner_node.setOnClickListener {
+        startActivityForResult<AllNodesActivity>(requestNode, KEY_TO_CHOOSE_NODE to true)
+      }
 
         parseIntent(intent)
 
@@ -114,6 +83,10 @@ class NewTopicActivity : BaseActivity() {
                 }
             }
 
+        } else if (requestCode == NewTopicActivity.requestNode && resultCode == Activity.RESULT_OK && data != null) {
+          val nodeInfo = data.getParcelableExtra<Node>("extra_node")
+          mNodename = nodeInfo.name
+          search_spinner_node.text = "${nodeInfo.name} | ${nodeInfo.title}"
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -125,24 +98,6 @@ class NewTopicActivity : BaseActivity() {
             if ("text/plain" == type) {
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
                 etContent.setText(sharedText)
-            }
-        }
-    }
-
-    private fun setNode(intent: Intent) {
-        if (intent.getStringExtra(Keys.KEY_NODE_NAME) != null) {
-            mNodename = intent.getStringExtra(Keys.KEY_NODE_NAME)
-            XLog.d(mNodename + "|" + spinner.count + "|" + adapter.count)
-            val nodeTitle: String?
-            for (i in 0 until adapter.count) {
-                if (mNodename == adapter.getItem(i)?.name) {
-                    XLog.d("yes, $i")
-                    nodeTitle = adapter.getItem(i)?.title
-                    XLog.d(nodeTitle)
-                    spinner.setSelection(i)
-                    XLog.d(spinner.selectedItemPosition)
-                    break
-                }
             }
         }
     }
@@ -171,7 +126,7 @@ class NewTopicActivity : BaseActivity() {
                     mContent.isEmpty() -> toast("标题和内容不能为空")
                     mTitle.length > 120 -> toast("标题字数超过限制")
                     mContent.length > 20000 -> toast("主题内容不能超过 20000 个字符")
-                    mNodename.isEmpty() -> toast(getString(R.string.choose_node))
+                  mNodename.isEmpty() -> toast(R.string.choose_node)
                     else -> postNew(item)
                 }
             }
@@ -195,9 +150,7 @@ class NewTopicActivity : BaseActivity() {
         iv.startAnimation(rotation)
         item.actionView = iv
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url("https://www.v2ex.com/new")
-                .build()).enqueue(object : Callback {
+      vCall("https://www.v2ex.com/new").start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 resetIcon(item)
                 NetManager.dealError(this@NewTopicActivity)
@@ -243,7 +196,7 @@ class NewTopicActivity : BaseActivity() {
                             val topic: String
                             if (matcher.find()) {
                                 topic = matcher.group()
-                                XLog.tag(TAG).d(topic)
+                              logd(topic)
                                 val intent = Intent(this@NewTopicActivity, DetailsActivity::class.java)
                                 intent.putExtra(Keys.KEY_TOPIC_ID, topic)
                                 startActivity(intent)
@@ -262,13 +215,11 @@ class NewTopicActivity : BaseActivity() {
 
     private fun resetIcon(item: MenuItem) {
         runOnUiThread {
-            item.setIcon(R.drawable.ic_send_white_24dp)
+          item.setIcon(R.drawable.ic_send_primary_24dp)
         }
     }
 
-
     companion object {
-
-        private val TAG = NewTopicActivity::class.java.simpleName
+      const val requestNode = 123
     }
 }

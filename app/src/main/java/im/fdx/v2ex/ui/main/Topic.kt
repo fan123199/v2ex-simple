@@ -50,22 +50,22 @@ import kotlinx.android.parcel.Parcelize
 @Entity
 @Parcelize
 class Topic(
-        @PrimaryKey
+    @PrimaryKey
         var id: String = "",
-        var title: String = "",
-        var url: String = "",
-        var content: String? = null,
-        var content_rendered: String? = null,
-        var replies: Int = 0,
-        @Embedded
+    var title: String = "",
+    var url: String = "",
+    var content: String? = null,
+    var content_rendered: String? = null,
+    var replies: Int = 0,
+    @Embedded
         var member: Member? = null,
-        @Embedded
+    @Ignore
         var node: Node? = null,
-        @ColumnInfo(name = "topic_created")
+    @ColumnInfo(name = "topic_created")
         var created: Long = 0,
-        var last_modified: Long = 0,
-        var last_touched: Long = 0,
-        @Ignore
+    var last_modified: Long = 0,
+    var last_touched: Long = 0,
+    @Ignore
         var comments: MutableList<Comment> = mutableListOf()) : Parcelable {
 
     override fun toString() = "标题：$title,\n内容：$content"

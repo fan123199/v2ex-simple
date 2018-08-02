@@ -13,7 +13,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 25
-        versionName "2.3.2"
+        versionName "2.3.3"
     }
     lintOptions {
         checkReleaseBuilds false
@@ -42,8 +42,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 }
 
@@ -63,7 +63,6 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
     //test end
     //local start
-    implementation project(':searchablespinnerlibrary')
 //    implementation fileTree(include: ['*.jar'], dir: 'libs')
     //local end
     //kotlin start

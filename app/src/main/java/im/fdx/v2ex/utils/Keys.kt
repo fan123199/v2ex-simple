@@ -39,5 +39,8 @@ object Keys {
     const val PREF_VERSION = "pref_version"
     const val KEY_NEED_WARN = "key_warn_image_upload"
 
+    const val KEY_TO_CHOOSE_NODE = "go_for_node"
+
     const val JOB_ID_GET_NOTIFICATION = 2
+    const val KEY_NODE = "extra_node"
 }

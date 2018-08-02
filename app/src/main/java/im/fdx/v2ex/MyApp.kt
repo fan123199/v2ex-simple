@@ -11,7 +11,7 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
 
 val pref: SharedPreferences by lazy {
-    MyApp.get().mPrefs
+  MyApp.get().mPrefs
 }
 
 /**
@@ -20,43 +20,43 @@ val pref: SharedPreferences by lazy {
  */
 class MyApp : Application() {
 
-    companion object {
-        private lateinit var INSTANCE: MyApp
-        fun get(): MyApp {
-            return INSTANCE
-        }
+  companion object {
+    private lateinit var INSTANCE: MyApp
+    fun get(): MyApp {
+      return INSTANCE
     }
+  }
 
-    internal lateinit var mPrefs: SharedPreferences
-    internal var isLogin = false
+  internal lateinit var mPrefs: SharedPreferences
+  internal var isLogin = false
 
-    internal var curTextSize = 0
+  internal var curTextSize = 0
 
 
-    fun setLogin(login: Boolean) {
-        isLogin = login
-        if (login) {
-            mPrefs.edit {
-                putBoolean(Keys.PREF_KEY_IS_LOGIN, true)
-            }
-        } else {
-            mPrefs.edit {
-                remove(Keys.PREF_KEY_IS_LOGIN)
-            }
-        }
+  fun setLogin(login: Boolean) {
+    isLogin = login
+    if (login) {
+      mPrefs.edit {
+        putBoolean(Keys.PREF_KEY_IS_LOGIN, true)
+      }
+    } else {
+      mPrefs.edit {
+        remove(Keys.PREF_KEY_IS_LOGIN)
+      }
     }
+  }
 
-    override fun onCreate() {
-        super.onCreate()
-        INSTANCE = this
-        mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-        PreferenceManager.setDefaultValues(this, R.xml.preference, false)
-        setDefaultNightMode(if (mPrefs.getBoolean("NIGHT_MODE", false)) MODE_NIGHT_YES else MODE_NIGHT_NO)
-        XLog.init(when {
-            BuildConfig.DEBUG -> LogLevel.ALL
-            else -> LogLevel.NONE
-        })
-        isLogin = mPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
-        logd("onCreate\nisLogin:$isLogin")
-    }
+  override fun onCreate() {
+    super.onCreate()
+    INSTANCE = this
+    mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+    PreferenceManager.setDefaultValues(this, R.xml.preference, false)
+    setDefaultNightMode(if (mPrefs.getBoolean("NIGHT_MODE", false)) MODE_NIGHT_YES else MODE_NIGHT_NO)
+    XLog.init(when {
+      BuildConfig.DEBUG -> LogLevel.ALL
+      else -> LogLevel.NONE
+    })
+    isLogin = mPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
+    logd("onCreate\nisLogin:$isLogin")
+  }
 }
