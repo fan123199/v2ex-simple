@@ -22,19 +22,19 @@ object TimeUtil {
      * @return
      */
     fun getRelativeTime(created: Long): String {
-        var _created = created
-        if (_created == -1L) {
+        var c = created
+        if (c == -1L) {
             return ""
         }
 
-        _created *= 1000
+        c *= 1000
         val now = System.currentTimeMillis()
-        val difference = now - _created
+        val difference = now - c
         val text = if (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS)
             MyApp.get().getString(R.string.just_now)
         else
             DateUtils.getRelativeTimeSpanString(
-                    _created,
+                c,
                     now,
                     DateUtils.MINUTE_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE)

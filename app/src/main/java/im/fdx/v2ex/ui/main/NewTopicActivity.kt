@@ -18,7 +18,7 @@ import com.esafirm.imagepicker.features.ImagePicker
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseActivity
-import im.fdx.v2ex.ui.details.DetailsActivity
+import im.fdx.v2ex.ui.details.TopicActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.Keys
@@ -197,7 +197,7 @@ class NewTopicActivity : BaseActivity() {
                             if (matcher.find()) {
                                 topic = matcher.group()
                               logd(topic)
-                                val intent = Intent(this@NewTopicActivity, DetailsActivity::class.java)
+                                val intent = Intent(this@NewTopicActivity, TopicActivity::class.java)
                                 intent.putExtra(Keys.KEY_TOPIC_ID, topic)
                                 startActivity(intent)
                             }

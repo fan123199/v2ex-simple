@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="im.fdx.v2ex.ui.details.DetailsActivity">
+    tools:context="im.fdx.v2ex.ui.details.TopicActivity">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_details"

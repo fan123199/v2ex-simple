@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import im.fdx.v2ex.R
-import im.fdx.v2ex.ui.details.DetailsActivity
+import im.fdx.v2ex.ui.details.TopicActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.view.GoodTextView
@@ -33,7 +33,7 @@ class ReplyAdapter(val activity: Activity,
         holder.tvTime.text = TimeUtil.getRelativeTime(reply.create)
 
         holder.itemView.setOnClickListener {
-            activity.startActivity<DetailsActivity>(Keys.KEY_TOPIC_ID to reply.topic.id)
+            activity.startActivity<TopicActivity>(Keys.KEY_TOPIC_ID to reply.topic.id)
         }
     }
 

@@ -10,8 +10,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import im.fdx.v2ex.R
-import im.fdx.v2ex.ui.details.DetailsAdapter
 import im.fdx.v2ex.ui.details.Reply
+import im.fdx.v2ex.ui.details.TopicDetailAdapter
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
 import kotlinx.android.synthetic.main.item_reply_view.*
@@ -37,7 +37,7 @@ class Popup(mActivity: Context) {
     fun show(v: View, data: Reply, position: Int, clickListener: View.OnClickListener) {
 
         popupWindow.width = v.width
-        val hd = DetailsAdapter.ItemViewHolder(contentView)
+        val hd = TopicDetailAdapter.ItemViewHolder(contentView)
         hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance();
         hd.tv_reply_content.maxLines = 4
         hd.tv_reply_content.isVerticalScrollBarEnabled = true

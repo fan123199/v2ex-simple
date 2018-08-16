@@ -10,7 +10,7 @@ import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.MyCallback
-import im.fdx.v2ex.ui.details.DetailsActivity
+import im.fdx.v2ex.ui.details.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
@@ -100,7 +100,7 @@ class TopicsRVAdapter(private val mContext: Context)
             when (v.id) {
                 R.id.iv_avatar_profile -> context.startActivity<MemberActivity>(Keys.KEY_USERNAME to topic.member?.username!!)
                 R.id.tv_node -> context.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to topic.node?.name!!)
-                R.id.main_text_view -> context.startActivity<DetailsActivity>("model" to topic)
+                R.id.main_text_view -> context.startActivity<TopicActivity>("model" to topic)
             }
         }
     }

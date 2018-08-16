@@ -2,8 +2,8 @@ package im.fdx.v2ex.utils
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import com.elvishew.xlog.XLog
+import im.fdx.v2ex.utils.extensions.logd
 
 abstract class EndlessOnScrollListener(private val mLinearLayoutManager: LinearLayoutManager, val rvReply: RecyclerView) : RecyclerView.OnScrollListener() {
 
@@ -33,7 +33,7 @@ abstract class EndlessOnScrollListener(private val mLinearLayoutManager: LinearL
         synchronized(this) {
             val totalItem = totalItemCount
 
-            Log.d(TAG, "$totalItem , $lastVisibleItem , $pageToLoad")
+            logd("$totalItem , $lastVisibleItem , $pageToLoad")
             if (lastVisibleItem == totalItem - 1) {
                 rvReply.stopScroll()
                 if (pageAfterLoaded == totalPage) {
@@ -53,9 +53,5 @@ abstract class EndlessOnScrollListener(private val mLinearLayoutManager: LinearL
     abstract fun onLoadMore(current_page: Int)
 
     abstract fun onCompleted()
-
-    companion object {
-        var TAG = EndlessOnScrollListener::class.java.simpleName
-    }
 
 }

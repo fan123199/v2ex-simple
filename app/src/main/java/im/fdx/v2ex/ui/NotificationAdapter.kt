@@ -14,7 +14,7 @@ import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
-import im.fdx.v2ex.ui.details.DetailsActivity
+import im.fdx.v2ex.ui.details.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
@@ -42,7 +42,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
         val model = mModels[position]
 
         notiHolder.itemView.setOnClickListener {
-            val intentDetail = Intent(mContext, DetailsActivity::class.java)
+            val intentDetail = Intent(mContext, TopicActivity::class.java)
             intentDetail.putExtra(Keys.KEY_TOPIC_ID, model.topic?.id)
             mContext.startActivity(intentDetail)
         }

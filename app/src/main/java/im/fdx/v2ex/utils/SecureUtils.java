@@ -7,7 +7,7 @@ import android.support.annotation.RequiresApi;
 import android.util.Base64;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -66,7 +66,7 @@ public class SecureUtils {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
             iv = cipher.getIV();
-            encryption = cipher.doFinal(text.getBytes("UTF-8"));
+            encryption = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
             encryptedKey = Base64.encodeToString(encryption, Base64.DEFAULT);
 
 
@@ -83,8 +83,6 @@ public class SecureUtils {
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 

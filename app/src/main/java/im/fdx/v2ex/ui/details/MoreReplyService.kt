@@ -3,7 +3,6 @@ package im.fdx.v2ex.ui.details
 import android.app.IntentService
 import android.content.Intent
 import android.support.v4.content.LocalBroadcastManager
-import com.elvishew.xlog.XLog
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
@@ -69,7 +68,7 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
         val topicId = intent.getLongExtra("topic_id", -1)
         val currentPage = intent.getIntExtra("currentPage", -1)
 
-        XLog.tag("DetailsActivity").d(totalPage.toString() + "<----totalPage | topicId :" + topicId + " |current :  " + currentPage)
+      logd(totalPage.toString() + "<----totalPage | topicId :" + topicId + " |current :  " + currentPage)
         if (totalPage == -1 || topicId == -1L || currentPage == -1) {
             return
         }
@@ -83,7 +82,7 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
             val replies = parser.getReplies()
             val token = parser.getVerifyCode()
 
-            XLog.tag("DetailsActivity").d(replies[0].content)
+          logd(replies[0].content)
             val it = Intent()
             it.action = "im.fdx.v2ex.reply"
             it.putExtra("token", token)

@@ -30,7 +30,7 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".ui.details.DetailsActivity"
+            android:name=".ui.details.TopicActivity"
             android:label="@string/title_activity_details"
             >
             <intent-filter>

@@ -45,8 +45,8 @@ import java.io.IOException
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
  */
-class DetailsAdapter(private val mContext: Context,
-                     private val callback: DetailsAdapter.AdapterCallback
+class TopicDetailAdapter(private val mContext: Context,
+                         private val callback: (Int, Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var verifyCode: String? = null
@@ -76,10 +76,6 @@ class DetailsAdapter(private val mContext: Context,
                 mainHolder.tvContent.isSelected = true
                 mainHolder.tvContent.setGoodText(topic.content_rendered)
                 logd(topic.content_rendered)
-                //            Log.i(TAG, topic.getContent());
-                //            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                //                mainHolder.tvContent.setTransitionName("header");
-                //            }
 
                 mainHolder.tvReplyNumber.text = topic.replies.toString()
                 mainHolder.tvAuthor.text = topic.member?.username
@@ -108,7 +104,7 @@ class DetailsAdapter(private val mContext: Context,
             TYPE_FOOTER -> {
                 val tvMore = (holder as FooterViewHolder).tvLoadMore
                 tvMore.text = "加载更多"
-                tvMore.setOnClickListener { callback.onMethodCallback(2, -1) }
+                tvMore.setOnClickListener { callback.invoke(2, -1) }
             }
             TYPE_ITEM -> {
                 val itemVH = holder as ItemViewHolder
@@ -183,7 +179,7 @@ class DetailsAdapter(private val mContext: Context,
                             return
                         }
                         Popup(mContext).show(v, replies[index], index, View.OnClickListener {
-                            callback.onMethodCallback(-1, index)
+                            callback.invoke(-1, index)
                         })
                     }
 
@@ -274,8 +270,8 @@ class DetailsAdapter(private val mContext: Context,
 
     fun updateItems(topics: Topic, replies: List<Reply>) {
         this.topic.clear()
-        this.replies.clear()
         this.topic.add(topics)
+        this.replies.clear()
         this.replies.addAll(replies)
         notifyDataSetChanged()
     }
@@ -285,11 +281,11 @@ class DetailsAdapter(private val mContext: Context,
         notifyDataSetChanged()
     }
 
-    //我重用了MainAdapter中的MainViewHolder
+    class ItemViewHolder(override val containerView: View)
+        : RecyclerView.ViewHolder(containerView), LayoutContainer
 
-    class ItemViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer
-
-    class TopicWithCommentsViewHolder(itemView: View) : TopicsRVAdapter.MainViewHolder(itemView) {
+    class TopicWithCommentsViewHolder(itemView: View)
+        : TopicsRVAdapter.MainViewHolder(itemView) {
         internal var ll: LinearLayout = itemView.findViewById(R.id.ll_comments)
     }
 
@@ -300,12 +296,8 @@ class DetailsAdapter(private val mContext: Context,
     }
 
 
-    private class FooterViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         internal val tvLoadMore: TextView = itemView.findViewById(R.id.tv_load_more)
-    }
-
-    interface AdapterCallback {
-        fun onMethodCallback(type: Int, position: Int)
     }
 
     companion object {
