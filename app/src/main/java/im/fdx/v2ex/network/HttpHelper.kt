@@ -15,7 +15,7 @@ import java.io.IOException
 
 object HttpHelper {
 
-    val myCookieJar: MyCookieJar = MyCookieJar(SharedPrefsPersistor(MyApp.get().applicationContext))
+    val myCookieJar: MyCookieJar = MyCookieJar(SharedPrefsPersistor(MyApp.get()))
 
     val OK_CLIENT: OkHttpClient = OkHttpClient().newBuilder()
 //                        .addInterceptor(HttpLoggingInterceptor())
@@ -23,7 +23,7 @@ object HttpHelper {
             //            .writeTimeout(10, TimeUnit.SECONDS)
             //            .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
-            .addInterceptor(ChuckInterceptor(MyApp.get().applicationContext))//好东西，查看Okhttp数据
+        .addInterceptor(ChuckInterceptor(MyApp.get()))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
                 var body = chain.request().body()
                 chain.proceed(chain.request())

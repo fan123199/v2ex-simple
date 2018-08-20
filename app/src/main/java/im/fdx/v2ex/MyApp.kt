@@ -1,17 +1,28 @@
 package im.fdx.v2ex
 
 import android.app.Application
+import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatDelegate.*
 import androidx.core.content.edit
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
+import org.jetbrains.anko.defaultSharedPreferences
 
 val pref: SharedPreferences by lazy {
-  MyApp.get().mPrefs
+  myApp.defaultSharedPreferences
+}
+
+@Deprecated("技术困难，下一期实现")
+val userPref: SharedPreferences by lazy {
+  val fileName = pref.getString(Keys.KEY_USERNAME, "user")
+  myApp.getSharedPreferences(fileName, Context.MODE_PRIVATE)
+}
+
+val myApp: MyApp by lazy {
+  MyApp.get()
 }
 
 /**
@@ -26,37 +37,24 @@ class MyApp : Application() {
       return INSTANCE
     }
   }
-
-  internal lateinit var mPrefs: SharedPreferences
   internal var isLogin = false
-
-  internal var curTextSize = 0
-
 
   fun setLogin(login: Boolean) {
     isLogin = login
-    if (login) {
-      mPrefs.edit {
-        putBoolean(Keys.PREF_KEY_IS_LOGIN, true)
-      }
-    } else {
-      mPrefs.edit {
-        remove(Keys.PREF_KEY_IS_LOGIN)
-      }
+    pref.edit {
+      putBoolean(Keys.PREF_KEY_IS_LOGIN, login)
     }
   }
 
   override fun onCreate() {
     super.onCreate()
     INSTANCE = this
-    mPrefs = PreferenceManager.getDefaultSharedPreferences(this)
-    PreferenceManager.setDefaultValues(this, R.xml.preference, false)
-    setDefaultNightMode(if (mPrefs.getBoolean("NIGHT_MODE", false)) MODE_NIGHT_YES else MODE_NIGHT_NO)
     XLog.init(when {
       BuildConfig.DEBUG -> LogLevel.ALL
       else -> LogLevel.NONE
     })
-    isLogin = mPrefs.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
+    isLogin = pref.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
     logd("onCreate\nisLogin:$isLogin")
+    setDefaultNightMode(if (pref.getBoolean("NIGHT_MODE", false)) MODE_NIGHT_YES else MODE_NIGHT_NO)
   }
 }

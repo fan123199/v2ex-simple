@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
@@ -31,6 +30,7 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
@@ -152,7 +152,7 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun getBlockAndFollowWeb() {
-        if (username == PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, "")) {
+        if (username == pref.getString(Keys.PREF_USERNAME, "")) {
             return
         }
         val webUrl = "https://www.v2ex.com/member/$username"
@@ -271,7 +271,7 @@ class MemberActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_member, menu)
         this.mMenu = menu
-        if (username == PreferenceManager.getDefaultSharedPreferences(this).getString(Keys.KEY_USERNAME, "")) {
+        if (username == pref.getString(Keys.KEY_USERNAME, "")) {
             menu.findItem(R.id.menu_block).isVisible = false
             menu.findItem(R.id.menu_follow).isVisible = false
         }

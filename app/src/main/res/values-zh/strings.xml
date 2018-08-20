@@ -77,4 +77,5 @@
     <string name="block">屏蔽</string>
     <string name="verify_code">验证码</string>
     <string name="no_more_data">没有更多的数据</string>
+    <string name="indicator">指示</string>
 </resources>

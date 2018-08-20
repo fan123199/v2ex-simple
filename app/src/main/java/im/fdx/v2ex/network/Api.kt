@@ -36,7 +36,7 @@ object Api {
         client.newCall(Request.Builder().url("https://sm.ms/api/upload?ssl=true").post(requestBody).build())
                 .enqueue(object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
-                        callback.invoke(null, 2)
+                      callback(null, 2)
                     }
 
                     override fun onResponse(call: Call?, response: Response?) {
@@ -45,9 +45,9 @@ object Api {
 
                         val res: Res = Gson().fromJson(str, Res::class.java)
                         if (res.code == "success") {
-                            res.data?.let { callback.invoke(it, 0) }
+                          res.data?.let { callback(it, 0) }
                         } else {
-                            callback.invoke(res.data, 1)
+                          callback(res.data, 1)
                         }
                     }
                 })
@@ -60,16 +60,16 @@ object Api {
     fun deleteImage(path: String, callback: (Data?, Int) -> Unit) {
         client.newCall(Request.Builder().url(path).build()).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
-                callback.invoke(null, 2)
+              callback(null, 2)
             }
 
             override fun onResponse(call: Call?, response: Response?) {
                 val str = response?.body()?.string() ?: "-"
                 val res: Res = Gson().fromJson(str, Res::class.java)
                 if (res.code == "success") {
-                    callback.invoke(null, 0)
+                  callback(null, 0)
                 } else {
-                    callback.invoke(null, 1)
+                  callback(null, 1)
                 }
             }
         })

@@ -22,7 +22,6 @@ import android.support.v4.view.ViewPager
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatDelegate
-import android.support.v7.widget.Toolbar
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -30,14 +29,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import de.hdodenhof.circleimageview.CircleImageView
-import im.fdx.v2ex.MyApp
-import im.fdx.v2ex.MyJobSchedule
-import im.fdx.v2ex.R
+import im.fdx.v2ex.*
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -45,21 +41,25 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
 import im.fdx.v2ex.utils.extensions.*
+import kotlinx.android.synthetic.main.activity_main_nav_drawer.*
+import kotlinx.android.synthetic.main.app_toolbar.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.*
+import org.jetbrains.anko.email
+import org.jetbrains.anko.share
+import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import java.io.IOException
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var mDrawer: DrawerLayout
-    private lateinit var navigationView: NavigationView
     private lateinit var mViewPager: ViewPager
     private lateinit var fab: FloatingActionButton
 
-    private var mAdapter: MyViewPagerAdapter? = null
+  private lateinit var mAdapter: MyViewPagerAdapter
     private val shortcutId = "create_topic"
     private var shortcutManager: ShortcutManager? = null
     private val shortcutIds = listOf("create_topic")
@@ -67,7 +67,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private var isGetNotification: Boolean = false
 
     private var count: Int = -1
-    private val LOG_IN = 0
 
 
     private val receiver = object : BroadcastReceiver() {
@@ -82,8 +81,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     val avatar = intent.getStringExtra(Keys.KEY_AVATAR)
                     setUserInfo(username, avatar)
                     fab.show()
-                    mAdapter?.initFragment()
-                    mAdapter?.notifyDataSetChanged()
+                  mAdapter.initFragment()
+                  mAdapter.notifyDataSetChanged()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
                     }
@@ -92,8 +91,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     showNavIcon(false)
                     setUserInfo(null, null)
                     fab.hide()
-                    mAdapter?.initFragment()
-                    mAdapter?.notifyDataSetChanged()
+                  mAdapter.initFragment()
+                  mAdapter.notifyDataSetChanged()
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         shortcutManager?.removeDynamicShortcuts(shortcutIds)
                     }
@@ -104,6 +103,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     isGetNotification = true
                     invalidateOptionsMenu()
                 }
+
+              Keys.ACTION_TAB_SETTING -> {
+                mAdapter.initFragment()
+                mAdapter.notifyDataSetChanged()
+              }
+              Keys.ACTION_TEXT_SIZE_CHANGE -> {
+                finish()
+                startActivity<MainActivity>()
+              }
             }
         }
     }
@@ -111,45 +119,45 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.window.statusBarColor = Color.TRANSPARENT
-        setContentView(R.layout.activity_main_nav_drawer)
         logd("onCreate")
+      window.statusBarColor = Color.TRANSPARENT
+      setContentView(R.layout.activity_main_nav_drawer)
 
         val intentFilter = IntentFilter().apply {
             addAction(Keys.ACTION_LOGIN)
             addAction(Keys.ACTION_LOGOUT)
             addAction(Keys.ACTION_GET_NOTIFICATION)
+          addAction(Keys.ACTION_TAB_SETTING)
+          addAction(Keys.ACTION_TEXT_SIZE_CHANGE)
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
 
-        val mToolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(mToolbar)
+      setSupportActionBar(toolbar)
 
         createShortCut()
 
 
         mDrawer = findViewById(R.id.drawer_layout)
         val mDrawToggle = ActionBarDrawerToggle(this, mDrawer,
-                mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+            toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         mDrawer.addDrawerListener(mDrawToggle)
         mDrawer.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.statusbar_white))
         mDrawToggle.syncState()
 
         mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
             override fun onDrawerClosed(drawerView: View) {
-                val menu = navigationView.menu
+              val menu = nav_view.menu
                 (0 until menu.size()).forEach { j -> menu.getItem(j).isChecked = false }
             }
         })
 
-        navigationView = findViewById(R.id.nav_view)
-        navigationView.setNavigationItemSelectedListener(this)
+      nav_view.setNavigationItemSelectedListener(this)
         fab = findViewById(R.id.fab_main)
         fab.setOnClickListener {
             startActivity<NewTopicActivity>()
         }
-        val ivMode = navigationView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
+      val ivMode = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
         ivMode.setOnClickListener {
             if (pref.getBoolean("NIGHT_MODE", false)) {
@@ -163,11 +171,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         }
 
-        if (MyApp.get().isLogin) {
+      if (myApp.isLogin) {
             showNavIcon(true)
-            val username = pref.getString(Keys.KEY_USERNAME, "")
-            val avatar = pref.getString(Keys.KEY_AVATAR, "")
-            logd("$username//// $avatar")
+        val username = pref.getString(Keys.PREF_USERNAME, "")
+        val avatar = pref.getString(Keys.PREF_AVATAR, "")
+        logd("$username // $avatar")
             if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
                 setUserInfo(username, avatar)
             }
@@ -194,7 +202,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-                mAdapter?.getItem(tab.position)?.scrollToTop()
+              mAdapter.getItem(tab.position).scrollToTop()
             }
         })
 
@@ -214,7 +222,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     .setIcon(Icon.createWithResource(this, R.drawable.ic_shortcut_create))
                     .build()
             when {
-                MyApp.get().isLogin -> shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
+              MyApp.get().isLogin -> shortcutManager?.addDynamicShortcuts(listOf(createTopicInfo))
                 else -> shortcutManager?.removeDynamicShortcuts(shortcutIds)
             }
         }
@@ -226,22 +234,24 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
             val builder = JobInfo.Builder(JOB_ID_GET_NOTIFICATION,
                     ComponentName(MyApp.get().packageName, MyJobSchedule::class.java.name))
-            val timeSec = pref.getString("pref_msg_period", "30").toInt()
+          val timeSec = pref.getString("pref_msg_period", "30")!!.toInt()
             builder.setPeriodic((timeSec * 1000).toLong())
             mJobScheduler.schedule(builder.build())
         }
     }
 
     private fun stopGetNotification() {
-        if (MyApp.get().isLogin && isOpenMessage && !isBackground) {
+      if (myApp.isLogin &&
+          isOpenMessage &&
+          !pref.getBoolean("pref_background_msg", false)) {
             val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
             mJobScheduler.cancel(JOB_ID_GET_NOTIFICATION)
         }
     }
 
     private fun showNavIcon(visible: Boolean) {
-        navigationView.menu.findItem(R.id.nav_daily).isVisible = visible
-        navigationView.menu.findItem(R.id.nav_favor).isVisible = visible
+      nav_view.menu.findItem(R.id.nav_daily).isVisible = visible
+      nav_view.menu.findItem(R.id.nav_favor).isVisible = visible
         invalidateOptionsMenu()
     }
 
@@ -253,12 +263,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
 
     private fun setUserInfo(username: String?, avatar: String?) {
-        val tvMyName: TextView = navigationView.getHeaderView(0).findViewById(R.id.tv_my_username)
-        val ivMyAvatar: CircleImageView = navigationView.getHeaderView(0).findViewById(R.id.iv_my_avatar)
+      val tvMyName: TextView = nav_view.getHeaderView(0).findViewById(R.id.tv_my_username)
+      val ivMyAvatar: CircleImageView = nav_view.getHeaderView(0).findViewById(R.id.iv_my_avatar)
         tvMyName.text = username
         ivMyAvatar.load(avatar)
-        ivMyAvatar.setOnClickListener {
-            username?.let { startActivity<MemberActivity>(Keys.KEY_USERNAME to it) }
+      ivMyAvatar.setOnClickListener { _ ->
+        username?.let { it2 -> startActivity<MemberActivity>(Keys.KEY_USERNAME to it2) }
         }
 
 
@@ -296,7 +306,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_login -> startActivityForResult(Intent(this@MainActivity, LoginActivity::class.java), LOG_IN)
+          R.id.menu_login -> startActivity<LoginActivity>()
             R.id.menu_notification -> {
                 item.icon = ContextCompat.getDrawable(this, R.drawable.ic_notifications_primary_24dp)
                 val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -395,12 +405,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onRestart() {
         super.onRestart()
         logd("onRestart")
-        val textSizeMode = defaultSharedPreferences.getString("pref_text_size", "0").toInt()
-        if (MyApp.get().curTextSize != textSizeMode) {
-            this.finish()
-            startActivity<MainActivity>()
-        }
-
     }
 
     override fun onStop() {
@@ -415,9 +419,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mViewPager.clearOnPageChangeListeners()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
-
-    private val isBackground: Boolean
-        get() = pref.getBoolean("pref_background_msg", false)
 
     private val isOpenMessage: Boolean
         get() = pref.getBoolean("pref_msg", true)

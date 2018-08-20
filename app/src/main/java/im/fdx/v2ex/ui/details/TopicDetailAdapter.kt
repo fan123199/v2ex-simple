@@ -104,7 +104,7 @@ class TopicDetailAdapter(private val mContext: Context,
             TYPE_FOOTER -> {
                 val tvMore = (holder as FooterViewHolder).tvLoadMore
                 tvMore.text = "加载更多"
-                tvMore.setOnClickListener { callback.invoke(2, -1) }
+                tvMore.setOnClickListener { callback(2, -1) }
             }
             TYPE_ITEM -> {
                 val itemVH = holder as ItemViewHolder
@@ -179,7 +179,7 @@ class TopicDetailAdapter(private val mContext: Context,
                             return
                         }
                         Popup(mContext).show(v, replies[index], index, View.OnClickListener {
-                            callback.invoke(-1, index)
+                            callback(-1, index)
                         })
                     }
 

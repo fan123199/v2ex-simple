@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:order="98"
-        android:key="group_general"
-        android:title="@string/general">
+    <!--<PreferenceCategory-->
+    <!--android:order="98"-->
+    <!--android:key="group_general"-->
+    <!--android:title="@string/general">-->
 
-        <!--<SwitchPreference-->
-        <!--android:defaultValue="false"-->
-        <!--android:key="pref_only_wifi"-->
-        <!--android:summaryOff="总是显示图片"-->
-        <!--android:summaryOn="不显示图片"-->
-        <!--android:title="是否在移动网络下显示图片"/>-->
-
-
-        <ListPreference
-            android:defaultValue="0"
-            android:key="pref_text_size"
-            android:entryValues="@array/text_size"
-            android:entries="@array/text_size_string"
-            android:title="字体大小" />
-
-    </PreferenceCategory>
+    <!--</PreferenceCategory>-->
 
 
     <PreferenceCategory

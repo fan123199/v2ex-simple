@@ -157,11 +157,15 @@
     <string name="block">Block</string>
     <string name="no_more_data">no more data</string>
     <string name="verify_code">code</string>
+    <string name="indicator">indicator</string>
 
     <string-array name="j" translatable="false">
         <item>一颗赛艇</item>
         <item>不要搞个大新闻</item>
         <item>无可奉告</item>
+        <item>把我批判一番</item>
+        <item>too young, too simple</item>
+        <item>sometimes naive</item>
     </string-array>
 
 </resources>

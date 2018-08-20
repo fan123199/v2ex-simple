@@ -203,6 +203,9 @@
         <activity
             android:name=".ui.TestActivity"
             android:exported="true" />
+        <activity
+            android:name=".ui.TabSettingActivity"
+            android:exported="true" />
     </application>
 
 </manifest>

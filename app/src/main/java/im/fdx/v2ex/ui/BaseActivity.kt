@@ -2,9 +2,9 @@ package im.fdx.v2ex.ui
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
-import org.jetbrains.anko.defaultSharedPreferences
+import im.fdx.v2ex.pref
+import im.fdx.v2ex.utils.Keys
 
 
 const val MODE_SMALL = 0
@@ -15,8 +15,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val textSizeMode = defaultSharedPreferences.getString("pref_text_size", "0").toInt()
-        MyApp.get().curTextSize = textSizeMode
+        val textSizeMode = pref.getString(Keys.PREF_TEXT_SIZE, "0")!!.toInt()
         when (textSizeMode) {
             MODE_SMALL -> {
                 setTheme(R.style.Theme_V2ex)

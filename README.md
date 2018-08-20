@@ -1,34 +1,35 @@
-# V2ex-simple
+# v2ex-simple
 An simple android client for exploring V2EX. Better UI, Better UX. 
 Project is first written by Java and now kotlin. 
 
-[![Build Status](https://travis-ci.org/fan123199/V2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/V2ex-simple)
+[![Build Status](https://travis-ci.org/fan123199/v2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/v2ex-simple)
 
 ## Google Play
 
-[![Download on Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=im.fdx.v2ex&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1)
+[![Download on Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=im.fdx.v2ex)
 
 ## Main function
 
 + 浏览V2ex的内容,包括节点、热门主题、最新主题、以及用户信息
-+ 登录，发表文章等账户相关功能
-+ UI遵循Material Design
-+ 主题以及详情浏览
++ 帖子列表以及详情浏览，发表文章评论
++ Material Design
 + 从web打开应用
++ 后台获取更新（jobScheduler）
++ 夜间模式
++ 文字大小配置
 
 ## Next feature
 
-+ 后台获取更新（jobScheduler）
 + 增加文章搜索
 + 多用户
 + 多主题样式（低优先）
 
 ## Libraries
 
++ Firebase
 + Glide4
 + OkHttp3
 + Flexbox
-+ MultiType
 + Gson
 + Anko
 + CircleImageView

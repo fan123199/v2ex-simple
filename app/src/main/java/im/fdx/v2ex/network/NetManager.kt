@@ -11,6 +11,7 @@ import android.widget.EditText
 import com.google.gson.Gson
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.ui.LoginActivity
 import im.fdx.v2ex.utils.Keys
 import okhttp3.*
@@ -129,6 +130,7 @@ object NetManager {
                             activity.runOnUiThread {
                                 if (response?.code() == 302) {
                                     activity.toast("登录成功")
+                                    myApp.setLogin(false)
                                     if (activity is LoginActivity) {
                                         activity.finish()
                                     }

@@ -23,7 +23,7 @@ object TimeUtil {
      */
     fun getRelativeTime(created: Long): String {
         var c = created
-        if (c == -1L) {
+        if (c <= 0) {
             return ""
         }
 
@@ -45,8 +45,6 @@ object TimeUtil {
 
     fun getAbsoluteTime(created: Long): String {
         val obj = 1000 * created
-
-        //        DateFormat format = SimpleDateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.MEDIUM, Locale.CHINA);
         val format1 = SimpleDateFormat("yyyy/MM/dd", Locale.US)
         format1.timeZone = TimeZone.getTimeZone("GMT+8:00")
         return format1.format(obj)
