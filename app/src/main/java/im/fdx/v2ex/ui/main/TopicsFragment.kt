@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.Parser
@@ -166,10 +165,7 @@ class TopicsFragment : Fragment() {
                         }
                         if (response.code() == 302) {
                             if (Objects.equals("/2fa", response.header("Location"))) {
-                                activity?.runOnUiThread {
-                                    NetManager.showTwoStepDialog(activity!!)
 
-                                }
                             }
                         } else if (response.code() != 200) {
                             dealError(activity, response.code(), mSwipeLayout)

@@ -21,6 +21,7 @@ import android.widget.TextView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.ui.BaseActivity
@@ -235,12 +236,11 @@ class TopicActivity : BaseActivity() {
         topicHeader = parser.parseResponseToTopic(topicId)
         val repliesFirstPage = parser.getReplies()
 
-        if (MyApp.get().isLogin) {
+        if (myApp.isLogin) {
           token = parser.getVerifyCode()
 
           if (token == null) {
-            MyApp.get().setLogin(false)
-            LocalBroadcastManager.getInstance(this@TopicActivity).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+            myApp.setLogin(false)
             handler.sendEmptyMessage(MSG_ERROR_AUTH)
             return
           }

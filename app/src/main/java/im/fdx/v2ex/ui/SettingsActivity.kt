@@ -14,14 +14,18 @@ import android.support.v7.preference.ListPreference
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.util.Log
+import androidx.core.content.edit
 import androidx.core.net.toUri
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
+import im.fdx.v2ex.utils.Keys.PREF_TAB
+import im.fdx.v2ex.utils.Keys.PREF_TEXT_SIZE
 import im.fdx.v2ex.utils.Keys.PREF_VERSION
 import im.fdx.v2ex.utils.Keys.notifyID
 import im.fdx.v2ex.utils.extensions.setUpToolbar
@@ -102,11 +106,14 @@ class SettingsActivity : BaseActivity() {
             .setMessage("确定要退出吗")
             .setPositiveButton(R.string.ok) { _, _ ->
               HttpHelper.myCookieJar.clear()
-              MyApp.get().setLogin(false)
-              LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+              myApp.setLogin(false)
               findPreference(Keys.PREF_LOGOUT).isEnabled = false
-              activity!!.finish()
-              activity!!.toast("已退出登录")
+              pref.edit {
+                remove(PREF_TEXT_SIZE)
+                remove(PREF_TAB)
+              }
+              activity?.finish()
+              activity?.toast("已退出登录")
             }
             .setNegativeButton(R.string.cancel) { _, _ ->
             }

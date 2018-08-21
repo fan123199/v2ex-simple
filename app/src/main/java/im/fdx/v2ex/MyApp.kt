@@ -2,7 +2,9 @@ package im.fdx.v2ex
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AppCompatDelegate.*
 import androidx.core.content.edit
 import com.elvishew.xlog.LogLevel
@@ -43,6 +45,9 @@ class MyApp : Application() {
     isLogin = login
     pref.edit {
       putBoolean(Keys.PREF_KEY_IS_LOGIN, login)
+    }
+    if (!login) {
+      LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
     }
   }
 

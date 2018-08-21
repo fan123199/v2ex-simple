@@ -20,8 +20,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
 import im.fdx.v2ex.BuildConfig
-import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.API_TOPIC
 import im.fdx.v2ex.network.NetManager.API_USER
@@ -186,12 +186,12 @@ class MemberActivity : BaseActivity() {
 
                     }
 
-                    blockOfT = geOnceInBlock(html)
-
-                    if (blockOfT == null) {
-                        MyApp.get().setLogin(false)
-                    }
+                    blockOfT = getOnceInBlock(html)
                     followOfOnce = getOnceInFollow(html)
+
+                    if (blockOfT == null || followOfOnce == null) {
+                        myApp.setLogin(false)
+                    }
                 }
             }
         })
@@ -340,7 +340,7 @@ class MemberActivity : BaseActivity() {
 
         private fun isBlock(html: String) = Regex("un(?=block/\\d{1,8}\\?t=)").containsMatchIn(html)
 
-        private fun geOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
+        private fun getOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
 
         // 设置渐变的动画
         fun startAlphaAnimation(v: View, duration: Long, visibility: Int) {

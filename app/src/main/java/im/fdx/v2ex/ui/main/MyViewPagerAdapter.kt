@@ -7,8 +7,8 @@ import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.Tab
 import im.fdx.v2ex.utils.Keys
@@ -26,13 +26,13 @@ import java.util.*
 internal class MyViewPagerAdapter(fm: FragmentManager, private val mContext: Context) : FragmentStatePagerAdapter(fm) {
 
     private val mFragments = ArrayList<TopicsFragment>()
-    private val list = mutableListOf<Tab>()
+    private val tabList = mutableListOf<Tab>()
     init {
         initFragment()
     }
 
     fun initFragment() {
-        list.clear()
+        tabList.clear()
         mFragments.clear()
 
         var str = pref.getString(PREF_TAB, null)
@@ -61,16 +61,16 @@ internal class MyViewPagerAdapter(fm: FragmentManager, private val mContext: Con
         val list = Gson().fromJson<List<Tab>>(str, turnsType)
 
         for (it in list) {
-            if (!MyApp.get().isLogin && it.path == "recent") {
+            if (!myApp.isLogin && it.path == "recent") {
                 continue
             }
             mFragments.add(TopicsFragment().apply { arguments = bundleOf(Keys.KEY_TAB to it.path) })
-            this.list.add(it)
+            tabList.add(it)
         }
     }
 
     override fun getItem(position: Int) = mFragments[position]
-    override fun getCount() = list.size
-    override fun getPageTitle(position: Int) = list[position].title
+    override fun getCount() = tabList.size
+    override fun getPageTitle(position: Int) = tabList[position].title
 
 }
