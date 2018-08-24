@@ -8,6 +8,7 @@ import android.support.constraint.ConstraintLayout
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.CollapsingToolbarLayout
 import android.support.design.widget.TabLayout
+import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.util.Log
@@ -15,7 +16,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AlphaAnimation
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
@@ -208,10 +208,10 @@ class MemberActivity : BaseActivity() {
                 if (response.code() != 200) {
                     dealError(this@MemberActivity)
                 } else {
-                    val body = response.body()?.string()
-                    runOnUiThread {
-                        body?.let { showUser(it) }
-                    }
+                    val body = response.body()!!.string()
+                    logi(response)
+                    member = myGson.fromJson(body, Member::class.java)
+                    runOnUiThread { showUser() }
                 }
             }
         })
@@ -245,13 +245,8 @@ class MemberActivity : BaseActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showUser(response: String) {
-        logi(response)
-        member = myGson.fromJson(response, Member::class.java)
-
+    private fun showUser() {
         mIvAvatar.load(member.avatarLargeUrl)
-
-
         mTvIntro.text = member.bio
         mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
@@ -261,7 +256,7 @@ class MemberActivity : BaseActivity() {
         mTvTwitter.isGone = member.twitter.isNullOrEmpty()
         mTvWebsite.isGone = member.website.isNullOrEmpty()
 
-        mTvIntro.isGone = member.bio.isNullOrEmpty()
+        mTvIntro.isGone = member.bio.isEmpty()
 
         llInfo.isGone = member.btc.isNullOrEmpty() && member.github.isNullOrEmpty() &&
                 member.location.isNullOrEmpty() &&
@@ -341,21 +336,9 @@ class MemberActivity : BaseActivity() {
         private fun isBlock(html: String) = Regex("un(?=block/\\d{1,8}\\?t=)").containsMatchIn(html)
 
         private fun getOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
-
-        // 设置渐变的动画
-        fun startAlphaAnimation(v: View, duration: Long, visibility: Int) {
-            val alphaAnimation = if (visibility == View.VISIBLE)
-                AlphaAnimation(0f, 1f)
-            else
-                AlphaAnimation(1f, 0f)
-
-            alphaAnimation.duration = duration
-            alphaAnimation.fillAfter = true
-            v.startAnimation(alphaAnimation)
-        }
     }
 
-    inner class MemberViewpagerAdapter(fm: android.support.v4.app.FragmentManager?) : FragmentPagerAdapter(fm) {
+    inner class MemberViewpagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
         lateinit var username: String
         //目前不好做，先留着
