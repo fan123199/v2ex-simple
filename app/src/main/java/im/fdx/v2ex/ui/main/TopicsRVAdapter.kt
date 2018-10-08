@@ -1,12 +1,11 @@
 package im.fdx.v2ex.ui.main
 
 import android.content.Context
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.MyCallback
@@ -24,7 +23,7 @@ import org.jetbrains.anko.startActivity
  * 主页的Adapter，就一个普通的RecyclerView
  */
 class TopicsRVAdapter(private val mContext: Context)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+  : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     private val mInflater = LayoutInflater.from(mContext)
     private var mTopicList: MutableList<Topic> = mutableListOf()
@@ -58,7 +57,7 @@ class TopicsRVAdapter(private val mContext: Context)
     }
 
     //Done 对TextView进行赋值, 也就是操作
-    override fun onBindViewHolder(holder2: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder2: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         val currentTopic = mTopicList[position]
         val listener = MyOnClickListener(mContext, currentTopic)
         val holder = holder2 as MainViewHolder
@@ -84,7 +83,7 @@ class TopicsRVAdapter(private val mContext: Context)
 
     // 这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来,。
     // 用static就是为了复用
-    open class MainViewHolder(container: View) : RecyclerView.ViewHolder(container) {
+    open class MainViewHolder(container: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(container) {
         var tvTitle: TextView = container.findViewById(R.id.tv_title)
         var tvContent: GoodTextView = container.findViewById(R.id.tv_content)
         var tvReplyNumber: TextView = container.findViewById(R.id.tv_reply_number)

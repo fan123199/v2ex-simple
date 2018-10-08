@@ -3,7 +3,6 @@ package im.fdx.v2ex.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.View
 import android.view.View.VISIBLE
@@ -183,7 +182,7 @@ class LoginActivity : BaseActivity() {
                     putExtra(Keys.KEY_USERNAME, myInfo.username)
                     putExtra(Keys.KEY_AVATAR, myInfo.avatarNormalUrl)
                   }
-                  LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
+                  androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
                   runOnUiThread {
                     toast("登录成功")
                     finish()

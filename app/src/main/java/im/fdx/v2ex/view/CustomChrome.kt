@@ -3,8 +3,8 @@ package im.fdx.v2ex.view
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
-import android.support.customtabs.CustomTabsIntent
-import android.support.v4.content.ContextCompat
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
 import org.jetbrains.anko.browse
 

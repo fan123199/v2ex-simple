@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui.node
 
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,7 @@ import java.util.*
  * Created by fdx on 2016/9/13.
  * 简单节点adapter，用在个人favor
  */
-class AllNodesAdapter(val isShowImg: Boolean = false) : RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
+class AllNodesAdapter(val isShowImg: Boolean = false) : androidx.recyclerview.widget.RecyclerView.Adapter<AllNodesAdapter.AllNodeViewHolder>() {
 
     private var mNodes: MutableList<Node> = ArrayList()
     private var realAllNodes: MutableList<Node> = ArrayList()
@@ -67,7 +66,7 @@ class AllNodesAdapter(val isShowImg: Boolean = false) : RecyclerView.Adapter<All
         notifyDataSetChanged()
     }
 
-    class AllNodeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  class AllNodeViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         var tvNodeName: TextView = itemView.findViewById(R.id.tv_node_name)
         var ivNodeIcon: ImageView = itemView.findViewById(R.id.iv_node_image)
     }

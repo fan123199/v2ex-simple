@@ -7,9 +7,8 @@ import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.support.v4.app.NotificationCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
@@ -65,7 +64,7 @@ class MyJobSchedule : JobService() {
                     if (num != 0) {
                         val intent = Intent(Keys.ACTION_GET_NOTIFICATION)
                         intent.putExtra(Keys.KEY_UNREAD_COUNT, num)
-                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                      androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
                         putNotification(context, num, params)
                     }
                 } else {

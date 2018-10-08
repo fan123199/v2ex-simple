@@ -3,7 +3,6 @@ package im.fdx.v2ex.utils;
 import android.os.Build;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
-import android.support.annotation.RequiresApi;
 import android.util.Base64;
 
 import java.io.IOException;
@@ -27,6 +26,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+
+import androidx.annotation.RequiresApi;
 
 
 /**

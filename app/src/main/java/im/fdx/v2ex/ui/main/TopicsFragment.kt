@@ -2,11 +2,6 @@ package im.fdx.v2ex.ui.main
 
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.FloatingActionButton
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -32,17 +27,17 @@ import java.io.IOException
 import java.util.*
 
 
-class TopicsFragment : Fragment() {
+class TopicsFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var mAdapter: TopicsRVAdapter
-    private lateinit var mSwipeLayout: SwipeRefreshLayout
-    private var mRecyclerView: RecyclerView? = null
-    private var fab: FloatingActionButton? = null //有可能为空
+  private lateinit var mSwipeLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+  private var mRecyclerView: androidx.recyclerview.widget.RecyclerView? = null
+  private var fab: com.google.android.material.floatingactionbutton.FloatingActionButton? = null //有可能为空
     private lateinit var flContainer: FrameLayout
 
     private lateinit var mRequestURL: String
 
-    lateinit var layoutManager: LinearLayoutManager
+  lateinit var layoutManager: androidx.recyclerview.widget.LinearLayoutManager
     lateinit var mScrollListener: EndlessOnScrollListener
     var currentMode = Parser.Source.FROM_HOME
     var totalPage = 0
@@ -91,7 +86,7 @@ class TopicsFragment : Fragment() {
 
         //找出recyclerview,并赋予变量 //fdx最早的水平
         mRecyclerView = layout.findViewById(R.id.rv_container)
-        layoutManager = LinearLayoutManager(activity)
+      layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity)
         mRecyclerView?.layoutManager = layoutManager
 
         mScrollListener = object : EndlessOnScrollListener(layoutManager, mRecyclerView!!) {
@@ -113,11 +108,11 @@ class TopicsFragment : Fragment() {
 
 
         if (fab != null)
-            mRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+          mRecyclerView?.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
 
                 var isFabShowing = true
 
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) = if (dy > 0) hideFab() else showFab()
+            override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) = if (dy > 0) hideFab() else showFab()
 
                 private fun hideFab() {
                     if (isFabShowing) {

@@ -1,11 +1,6 @@
 package im.fdx.v2ex.ui.member
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,9 +25,9 @@ import java.io.IOException
  *
  * 用户页的回复信息， 非主体下的回复
  */
-class UserReplyFragment : Fragment() {
+class UserReplyFragment : androidx.fragment.app.Fragment() {
 
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     private lateinit var adapter: ReplyAdapter //
     private lateinit var flcontainer: FrameLayout
 
@@ -51,12 +46,12 @@ class UserReplyFragment : Fragment() {
             getRepliesByWeb(1)/* 刷新则重头开始 */
         }
 
-        val rvReply: RecyclerView = view.findViewById(R.id.rv_container)
-        val layoutManager = LinearLayoutManager(activity!!)
+        val rvReply: androidx.recyclerview.widget.RecyclerView = view.findViewById(R.id.rv_container)
+        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity!!)
 
 
         rvReply.layoutManager = layoutManager
-        rvReply.addItemDecoration(DividerItemDecoration(activity, DividerItemDecoration.VERTICAL))
+        rvReply.addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(activity, androidx.recyclerview.widget.DividerItemDecoration.VERTICAL))
 
         // enable pull up for endless loading
         mScrollListener = object : EndlessOnScrollListener(layoutManager, rvReply) {

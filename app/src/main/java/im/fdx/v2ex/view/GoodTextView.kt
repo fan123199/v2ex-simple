@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.support.v4.content.ContextCompat
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -16,6 +15,7 @@ import android.text.style.URLSpan
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
@@ -32,7 +32,7 @@ import org.jetbrains.anko.startActivity
  */
 class GoodTextView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : android.support.v7.widget.AppCompatTextView(context, attrs, defStyleAttr) {
+) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
 
     var bestWidth = 0
 

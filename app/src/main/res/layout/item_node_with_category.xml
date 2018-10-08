@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         tools:text="混沌世界:"/>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"

@@ -1,6 +1,6 @@
 package im.fdx.v2ex.ui.main
 
-import android.arch.persistence.room.*
+import androidx.room.*
 
 
 @Dao

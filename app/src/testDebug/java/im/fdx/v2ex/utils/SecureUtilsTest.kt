@@ -1,7 +1,7 @@
 package im.fdx.v2ex.utils
 
 import android.os.Build
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import org.junit.Test
 
 /**

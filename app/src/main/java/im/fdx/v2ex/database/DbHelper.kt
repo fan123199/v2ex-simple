@@ -1,6 +1,6 @@
 package im.fdx.v2ex.database
 
-import android.arch.persistence.room.Room
+import androidx.room.Room
 import im.fdx.v2ex.MyApp
 
 

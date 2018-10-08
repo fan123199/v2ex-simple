@@ -6,10 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Parcelable
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -18,6 +14,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -105,22 +102,22 @@ class TopicActivity : BaseActivity() {
     val filter = IntentFilter(Keys.ACTION_LOGIN)
     filter.addAction(Keys.ACTION_LOGOUT)
     filter.addAction("im.fdx.v2ex.reply")
-    LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
+    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
     setFootView(MyApp.get().isLogin)
 
     setUpToolbar()
     tvToolbar = findViewById(R.id.tv_toolbar)
 
     //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
-    val mLayoutManager = LinearLayoutManager(this)
+    val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
     detail_recycler_view.layoutManager = mLayoutManager
-    detail_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+    detail_recycler_view.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
 
       private var currentPosition = 0
 
-      override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {}
+      override fun onScrollStateChanged(recyclerView: androidx.recyclerview.widget.RecyclerView, newState: Int) {}
 
-      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+      override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
         if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
           if (currentPosition != 0) {
             startAlphaAnimation(tvToolbar, 500, false)
@@ -427,7 +424,7 @@ class TopicActivity : BaseActivity() {
   override fun onDestroy() {
     super.onDestroy()
     XLog.tag("TopicActivity").d("onDestroy")
-    LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
   }
 
   companion object {

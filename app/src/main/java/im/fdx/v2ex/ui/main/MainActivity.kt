@@ -12,22 +12,16 @@ import android.graphics.Color
 import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.NavigationView
-import android.support.design.widget.TabLayout
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v4.view.GravityCompat
-import android.support.v4.view.ViewPager
-import android.support.v4.widget.DrawerLayout
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatDelegate
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
@@ -43,7 +37,6 @@ import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
 import im.fdx.v2ex.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import kotlinx.android.synthetic.main.activity_main_nav_drawer.*
-import kotlinx.android.synthetic.main.app_toolbar.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -54,11 +47,11 @@ import org.jetbrains.anko.toast
 import java.io.IOException
 
 
-class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener {
 
-  private lateinit var mDrawer: DrawerLayout
-  private lateinit var mViewPager: ViewPager
-  private lateinit var fab: FloatingActionButton
+  private lateinit var mDrawer: androidx.drawerlayout.widget.DrawerLayout
+  private lateinit var mViewPager: androidx.viewpager.widget.ViewPager
+  private lateinit var fab: com.google.android.material.floatingactionbutton.FloatingActionButton
 
   private lateinit var mAdapter: MyViewPagerAdapter
   private val shortcutId = "create_topic"
@@ -135,7 +128,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       addAction(Keys.ACTION_TEXT_SIZE_CHANGE)
     }
 
-    LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
+    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
 
     setSupportActionBar(toolbar)
 
@@ -149,7 +142,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     mDrawer.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.statusbar_white))
     mDrawToggle.syncState()
 
-    mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+    mDrawer.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.SimpleDrawerListener() {
       override fun onDrawerClosed(drawerView: View) {
         val menu = nav_view.menu
         (0 until menu.size()).forEach { j -> menu.getItem(j).isChecked = false }
@@ -196,11 +189,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     //内部实现就是加入一堆的listener给viewpager，不用自己实现
     sliding_tabs.setupWithViewPager(mViewPager)
 
-    sliding_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-      override fun onTabSelected(tab: TabLayout.Tab) {}
-      override fun onTabUnselected(tab: TabLayout.Tab) {}
+    sliding_tabs.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
+      override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
+      override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
 
-      override fun onTabReselected(tab: TabLayout.Tab) {
+      override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab) {
         mAdapter.getItem(tab.position).scrollToTop()
       }
     })
@@ -416,7 +409,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     logd("onDestroy")
     stopGetNotification()
     mViewPager.clearOnPageChangeListeners()
-    LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
   }
 
   private val isOpenMessage: Boolean

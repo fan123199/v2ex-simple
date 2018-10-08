@@ -3,20 +3,19 @@ package im.fdx.v2ex.utils.extensions
 import android.app.Activity
 import android.graphics.Color
 import android.os.Build
-import android.support.annotation.ColorInt
-import android.support.annotation.ColorRes
-import android.support.annotation.IntRange
-import android.support.v4.content.ContextCompat
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.Toolbar
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
+import androidx.annotation.IntRange
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.esafirm.imagepicker.features.ImagePicker
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
@@ -127,7 +126,7 @@ private fun calculateStatusColor(@ColorInt color: Int, alpha: Int): Int {
     return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
 }
 
-fun SwipeRefreshLayout.initTheme() {
+fun androidx.swiperefreshlayout.widget.SwipeRefreshLayout.initTheme() {
     setColorSchemeResources(R.color.accent_orange)
     setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
 }

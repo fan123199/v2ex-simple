@@ -2,13 +2,9 @@ package im.fdx.v2ex.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.LocalBroadcastManager
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.*
 import androidx.core.content.edit
-import androidx.core.widget.toast
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
@@ -20,6 +16,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.activity_tab_setting.*
 import kotlinx.android.synthetic.main.item_text_switch.*
 import org.jetbrains.anko.collections.forEachWithIndex
+import org.jetbrains.anko.toast
 import java.util.*
 
 
@@ -44,28 +41,28 @@ class TabSettingActivity : BaseActivity() {
       curlist.addAll(initTab())
     }
 
-    val manager = GridLayoutManager(this, 4)
+    val manager = androidx.recyclerview.widget.GridLayoutManager(this, 4)
     recyclerView.layoutManager = manager
     adapter = DefaultAdapter(curlist)
     recyclerView.adapter = adapter
 
     val helper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
 
-      override fun getMovementFlags(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+      override fun getMovementFlags(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Int {
         //首先回调的方法 返回int表示是否监听该方向
         val dragFlags = ItemTouchHelper.UP or ItemTouchHelper.DOWN or
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT//侧滑删除
         return makeMovementFlags(dragFlags, 0)
       }
 
-      override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+      override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, target: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
         //滑动事件
         Collections.swap(curlist, viewHolder.adapterPosition, target.adapterPosition)
         adapter.notifyItemMoved(viewHolder.adapterPosition, target.adapterPosition)
         return false
       }
 
-      override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+      override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
         //侧滑事件
       }
     })
@@ -124,7 +121,7 @@ class TabSettingActivity : BaseActivity() {
       putString(PREF_TAB, savedList)
     }
 
-    LocalBroadcastManager.getInstance(this).sendBroadcast(Intent("im.fdx.v2ex.main_page_setting_change"))
+    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(Intent("im.fdx.v2ex.main_page_setting_change"))
 
     finish()
 
@@ -135,7 +132,7 @@ class TabSettingActivity : BaseActivity() {
 
 data class Tab(var title: String, var path: String)
 
-class DefaultAdapter(val list: MutableList<Tab>) : RecyclerView.Adapter<DefaultAdapter.VH>() {
+class DefaultAdapter(val list: MutableList<Tab>) : androidx.recyclerview.widget.RecyclerView.Adapter<DefaultAdapter.VH>() {
 
   override fun onCreateViewHolder(parent: ViewGroup, p1: Int): VH {
     return VH(LayoutInflater.from(parent.context).inflate(R.layout.item_text_switch, parent, false))
@@ -154,6 +151,6 @@ class DefaultAdapter(val list: MutableList<Tab>) : RecyclerView.Adapter<DefaultA
     }
   }
 
-  class VH(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer
+  class VH(override val containerView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer
 
 }

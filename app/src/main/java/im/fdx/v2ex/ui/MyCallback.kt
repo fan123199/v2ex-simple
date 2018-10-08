@@ -1,6 +1,6 @@
 package im.fdx.v2ex.ui
 
-import android.support.v7.util.ListUpdateCallback
+import androidx.recyclerview.widget.ListUpdateCallback
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 
 

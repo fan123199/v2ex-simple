@@ -2,13 +2,11 @@ package im.fdx.v2ex.ui
 
 import android.os.Bundle
 import android.os.Parcelable
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
@@ -37,7 +35,7 @@ class PhotoActivity : AppCompatActivity() {
         val adapter = MyViewPagerAdapter(thelist)
         viewPager.adapter = adapter
         viewPager.currentItem = position
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+      viewPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -51,7 +49,7 @@ class PhotoActivity : AppCompatActivity() {
     }
 
 
-    inner class MyViewPagerAdapter(val list: MutableList<AirPhoto>) : PagerAdapter() {
+  inner class MyViewPagerAdapter(val list: MutableList<AirPhoto>) : androidx.viewpager.widget.PagerAdapter() {
         override fun isViewFromObject(view: View, `object`: Any): Boolean {
             return view == `object` as ViewGroup
         }

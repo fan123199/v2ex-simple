@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
@@ -38,7 +37,7 @@ import java.util.regex.Pattern
 class NewTopicActivity : BaseActivity() {
 
     private var mNodename: String = ""
-    private lateinit var etTitle: TextInputEditText
+  private lateinit var etTitle: com.google.android.material.textfield.TextInputEditText
     private lateinit var etContent: EditText
 
     private var mTitle: String = ""

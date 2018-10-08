@@ -2,8 +2,6 @@ package im.fdx.v2ex.utils.extensions
 
 import android.app.Activity
 import android.content.Context
-import android.support.design.widget.Snackbar
-import android.support.v4.widget.SwipeRefreshLayout
 import android.view.View
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
@@ -16,7 +14,7 @@ import org.jetbrains.anko.toast
  * fdx will maintain it
  */
 
-fun Context.dealError(errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
+fun Context.dealError(errorCode: Int = -1, swipe: androidx.swiperefreshlayout.widget.SwipeRefreshLayout? = null) {
 
     when {
         this is Activity -> runOnUiThread {
@@ -53,7 +51,7 @@ fun Any.loge(msg: Any?) {
 
 
 fun Activity.showLoginHint(view: View) {
-    Snackbar.make(view, "您还未登录，请登录后再试", Snackbar.LENGTH_LONG).setAction("登录") {
+  com.google.android.material.snackbar.Snackbar.make(view, "您还未登录，请登录后再试", com.google.android.material.snackbar.Snackbar.LENGTH_LONG).setAction("登录") {
         startActivity<LoginActivity>()
     }.show()
 }

@@ -4,13 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
-import android.support.design.widget.TabLayout
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v4.view.ViewPager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -19,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isGone
+import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
@@ -63,8 +57,8 @@ class MemberActivity : BaseActivity() {
     private lateinit var mTvTwitter: ImageView
     private lateinit var mTvWebsite: ImageView
     private lateinit var llInfo: ViewGroup
-    private lateinit var constraintLayout: ConstraintLayout
-    private lateinit var collapsingToolbarLayout: CollapsingToolbarLayout
+    private lateinit var constraintLayout: androidx.constraintlayout.widget.ConstraintLayout
+    private lateinit var collapsingToolbarLayout: com.google.android.material.appbar.CollapsingToolbarLayout
 
     private lateinit var mMenu: Menu
 
@@ -118,13 +112,13 @@ class MemberActivity : BaseActivity() {
 
         setUpToolbar()
 
-        val tabLayout: TabLayout = findViewById(R.id.tl_member)
-        val viewpager: ViewPager = findViewById(R.id.viewpager)
+        val tabLayout: com.google.android.material.tabs.TabLayout = findViewById(R.id.tl_member)
+        val viewpager: androidx.viewpager.widget.ViewPager = findViewById(R.id.viewpager)
         memberViewpagerAdapter.username = username ?: ""
         viewpager.adapter = memberViewpagerAdapter
         tabLayout.setupWithViewPager(viewpager)
 
-        al_profile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        al_profile.addOnOffsetChangedListener(com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toFloat() / maxScroll.toFloat()
@@ -256,7 +250,7 @@ class MemberActivity : BaseActivity() {
         mTvTwitter.isGone = member.twitter.isNullOrEmpty()
         mTvWebsite.isGone = member.website.isNullOrEmpty()
 
-        mTvIntro.isGone = member.bio.isEmpty()
+        mTvIntro.isGone = member.bio.isNullOrEmpty()
 
         llInfo.isGone = member.btc.isNullOrEmpty() && member.github.isNullOrEmpty() &&
                 member.location.isNullOrEmpty() &&
@@ -338,7 +332,7 @@ class MemberActivity : BaseActivity() {
         private fun getOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
     }
 
-    inner class MemberViewpagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    inner class MemberViewpagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
         lateinit var username: String
         //目前不好做，先留着

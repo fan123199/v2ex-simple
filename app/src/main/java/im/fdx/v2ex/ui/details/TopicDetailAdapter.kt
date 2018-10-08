@@ -5,8 +5,6 @@ import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -17,6 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -47,7 +46,7 @@ import java.io.IOException
  */
 class TopicDetailAdapter(private val mContext: Context,
                          private val callback: (Int, Int) -> Unit
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     var verifyCode: String? = null
 
@@ -55,7 +54,7 @@ class TopicDetailAdapter(private val mContext: Context,
     val replies: MutableList<Reply> = mutableListOf()
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder =
             when (viewType) {
                 TYPE_HEADER -> TopicWithCommentsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_topic_with_comments, parent, false))
                 TYPE_ITEM -> ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false))
@@ -64,7 +63,7 @@ class TopicDetailAdapter(private val mContext: Context,
             }
 
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
 
         when (getItemViewType(position)) {
             TYPE_HEADER -> {
@@ -282,7 +281,7 @@ class TopicDetailAdapter(private val mContext: Context,
     }
 
     class ItemViewHolder(override val containerView: View)
-        : RecyclerView.ViewHolder(containerView), LayoutContainer
+        : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer
 
     class TopicWithCommentsViewHolder(itemView: View)
         : TopicsRVAdapter.MainViewHolder(itemView) {
@@ -296,7 +295,7 @@ class TopicDetailAdapter(private val mContext: Context,
     }
 
 
-    class FooterViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class FooterViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         internal val tvLoadMore: TextView = itemView.findViewById(R.id.tv_load_more)
     }
 

@@ -1,7 +1,7 @@
 package im.fdx.v2ex.database
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.RoomDatabase
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicDao
 import im.fdx.v2ex.ui.node.Node

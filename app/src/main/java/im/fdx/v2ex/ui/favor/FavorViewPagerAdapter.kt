@@ -1,15 +1,13 @@
 package im.fdx.v2ex.ui.favor
 
 import android.os.Bundle
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 
 /**
  * Created by fdx on 2017/4/13.
  */
-internal class FavorViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+internal class FavorViewPagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int) = when (position) {
         0 -> NodeFavorFragment()

@@ -5,12 +5,10 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.widget.EditText
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
 import im.fdx.v2ex.database.DbHelper
 import im.fdx.v2ex.network.NetManager
@@ -40,8 +38,8 @@ class AllNodesActivity : BaseActivity() {
 
     setUpToolbar(getString(R.string.all_nodes))
     //这里是后续不卡的关键，但是第一次滑动还是卡
-    val linearLayoutManager = object : LinearLayoutManager(this) {
-      override fun getExtraLayoutSpace(state: RecyclerView.State?): Int {
+    val linearLayoutManager = object : androidx.recyclerview.widget.LinearLayoutManager(this) {
+      override fun getExtraLayoutSpace(state: androidx.recyclerview.widget.RecyclerView.State?): Int {
         return 300
       }
     }

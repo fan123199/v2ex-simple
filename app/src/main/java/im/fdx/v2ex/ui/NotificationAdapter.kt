@@ -5,12 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.PorterDuff
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
@@ -23,7 +22,7 @@ import im.fdx.v2ex.utils.extensions.load
  * Created by fdx on 2017/3/24.
  */
 
-class NotificationAdapter(var mContext: Context, var mModels: List<NotificationModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NotificationAdapter(var mContext: Context, var mModels: List<NotificationModel>) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     var number = -1
 
@@ -31,7 +30,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
             = NotificationViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_notification, parent, false))
 
     @SuppressLint("NewApi")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         val notiHolder = holder as NotificationViewHolder
 
         if (position <= number - 1) {
@@ -65,7 +64,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
 
     override fun getItemCount() = mModels.size
 
-    class NotificationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  class NotificationViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         var tvTopicTitle: TextView = itemView.findViewById(R.id.tv_topic_title)
         var tvUsername: TextView = itemView.findViewById(R.id.tv_username)
         var tvTime: TextView = itemView.findViewById(R.id.tv_comment_time)

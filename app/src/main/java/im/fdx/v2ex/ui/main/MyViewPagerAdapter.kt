@@ -1,8 +1,6 @@
 package im.fdx.v2ex.ui.main
 
 import android.content.Context
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentStatePagerAdapter
 import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import com.google.gson.Gson
@@ -23,7 +21,7 @@ import java.util.*
  * 从MainActivity分离出来. 用了FragmentStatePagerAdapter 替代FragmentPagerAdapter，才可以动态切换Fragment
  * 弃用了Volley 和 模拟web + okhttp
  */
-internal class MyViewPagerAdapter(fm: FragmentManager, private val mContext: Context) : FragmentStatePagerAdapter(fm) {
+internal class MyViewPagerAdapter(fm: androidx.fragment.app.FragmentManager, private val mContext: Context) : androidx.fragment.app.FragmentStatePagerAdapter(fm) {
 
     private val mFragments = ArrayList<TopicsFragment>()
     private val tabList = mutableListOf<Tab>()

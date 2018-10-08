@@ -2,7 +2,7 @@
 
 buildscript {
   extra["kotlin_version"] = "1.2.61"
-  extra["support_version"] = "28.0.0-rc01"
+  extra["support_version"] = "28.0.0"
   extra["anko_version"] = "0.10.5"
 
   repositories {
@@ -14,7 +14,7 @@ buildscript {
   }
   dependencies {
     classpath("com.google.gms:google-services:3.2.0")
-    classpath("com.android.tools.build:gradle:3.3.0-alpha07")
+    classpath("com.android.tools.build:gradle:3.3.0-alpha13")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${extra["kotlin_version"]}")
     classpath("io.fabric.tools:gradle:1.25.4")
   }

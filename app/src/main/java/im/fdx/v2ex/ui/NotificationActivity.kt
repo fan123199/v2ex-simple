@@ -2,9 +2,6 @@ package im.fdx.v2ex.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.widget.FrameLayout
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
@@ -26,8 +23,8 @@ class NotificationActivity : BaseActivity() {
 
     private var notifications: MutableList<NotificationModel> = mutableListOf()
     private lateinit var adapter: NotificationAdapter
-    private lateinit var mSwipe: SwipeRefreshLayout
-    private lateinit var rvNotification: RecyclerView
+  private lateinit var mSwipe: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+  private lateinit var rvNotification: androidx.recyclerview.widget.RecyclerView
     private lateinit var flContainer: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +39,7 @@ class NotificationActivity : BaseActivity() {
         mSwipe.setOnRefreshListener { fetchNotification() }
 
         rvNotification = findViewById(R.id.rv_container)
-        rvNotification.layoutManager = LinearLayoutManager(this)
+      rvNotification.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         adapter = NotificationAdapter(this, notifications)
         rvNotification.adapter = adapter
         parseIntent(intent)

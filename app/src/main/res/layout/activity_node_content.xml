@@ -60,7 +60,7 @@
             android:layout_alignStart="@+id/iv_node_image" />
     </RelativeLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_of_node"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -70,9 +70,9 @@
         android:layout_marginEnd="@dimen/md_left_margin"
         android:layout_marginStart="@dimen/md_left_margin">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_topics_of_node"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </RelativeLayout>

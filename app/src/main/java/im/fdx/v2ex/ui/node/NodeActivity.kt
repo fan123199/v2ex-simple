@@ -4,14 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import android.os.Message
-import android.support.design.widget.AppBarLayout
-import android.support.design.widget.CollapsingToolbarLayout
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import com.elvishew.xlog.XLog
+import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
@@ -51,7 +50,7 @@ class NodeActivity : BaseActivity() {
     private var mNode: Node? = null
     private lateinit var mMenu: Menu
 
-    private var collapsingToolbarLayout: CollapsingToolbarLayout? = null
+  private var collapsingToolbarLayout: com.google.android.material.appbar.CollapsingToolbarLayout? = null
 
     @SuppressLint("HandlerLeak")
     private var handler: Handler = object : Handler() {
@@ -83,7 +82,7 @@ class NodeActivity : BaseActivity() {
         tvNodeNum = findViewById(R.id.tv_topic_num)
 
 
-        appbar_node.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
+      appbar_node.addOnOffsetChangedListener(com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toDouble() / maxScroll.toDouble()
             handleAlphaOnTitle(percentage.toFloat())

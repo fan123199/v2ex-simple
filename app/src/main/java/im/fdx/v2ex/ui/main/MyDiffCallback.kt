@@ -1,6 +1,6 @@
 package im.fdx.v2ex.ui.main
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 
 /**
  * Created by fdx on 2017/7/11.

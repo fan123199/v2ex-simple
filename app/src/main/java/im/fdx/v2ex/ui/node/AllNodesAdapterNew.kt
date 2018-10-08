@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.node
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,7 @@ import com.google.android.flexbox.JustifyContent
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.extensions.logi
 
-class AllNodesAdapterNew(val context: Context, val action: (Node) -> Unit) : RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
+class AllNodesAdapterNew(val context: Context, val action: (Node) -> Unit) : androidx.recyclerview.widget.RecyclerView.Adapter<AllNodesAdapterNew.NodeVH>() {
 
     private var filterMap = mutableMapOf<String, MutableList<Node>>()
     private var map = mapOf<String, MutableList<Node>>()
@@ -40,13 +39,13 @@ class AllNodesAdapterNew(val context: Context, val action: (Node) -> Unit) : Rec
     }
 
 
-    inner class NodeVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  inner class NodeVH(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
 
         internal val tvCategory = itemView.findViewById<TextView>(R.id.tv_node_category).apply {
             isFocusable = true
             setTextIsSelectable(true)
         }
-        internal val rv = itemView.findViewById<RecyclerView>(R.id.rv)!!
+    internal val rv = itemView.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.rv)!!
 
         init {
             rv.layoutManager = FlexboxLayoutManager(itemView.context, FlexDirection.ROW).apply {

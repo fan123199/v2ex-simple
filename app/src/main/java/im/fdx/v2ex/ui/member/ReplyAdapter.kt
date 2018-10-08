@@ -1,12 +1,11 @@
 package im.fdx.v2ex.ui.member
 
 import android.app.Activity
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.details.TopicActivity
 import im.fdx.v2ex.utils.Keys
@@ -20,7 +19,7 @@ import org.jetbrains.anko.startActivity
  */
 class ReplyAdapter(val activity: Activity,
                    var list: MutableList<MemberReplyModel> = mutableListOf())
-    : RecyclerView.Adapter<ReplyAdapter.ReplyViewHolder>() {
+  : androidx.recyclerview.widget.RecyclerView.Adapter<ReplyAdapter.ReplyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
             ReplyViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_reply_member, parent, false))
@@ -56,7 +55,7 @@ class ReplyAdapter(val activity: Activity,
 
     override fun getItemCount() = list.size
 
-    inner class ReplyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  inner class ReplyViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         val tvTitle: TextView = itemView.findViewById(R.id.tv_title)
         val tvContent: GoodTextView = itemView.findViewById(R.id.tv_content_reply)
         val tvTime: TextView = itemView.findViewById(R.id.tv_create)

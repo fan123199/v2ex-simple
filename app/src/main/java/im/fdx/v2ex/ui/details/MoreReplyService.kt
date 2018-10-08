@@ -2,7 +2,6 @@ package im.fdx.v2ex.ui.details
 
 import android.app.IntentService
 import android.content.Intent
-import android.support.v4.content.LocalBroadcastManager
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
@@ -52,7 +51,7 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
                 if (i == totalPage && isToBottom) {
                     replyIntent.putExtra("bottom", true)
                 }
-                LocalBroadcastManager.getInstance(this).sendBroadcast(replyIntent)
+              androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(replyIntent)
             }
 
         } catch (e: IOException) {
@@ -91,7 +90,7 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
             if (currentPage == totalPage) {
                 it.putExtra("bottom", true)
             }
-            LocalBroadcastManager.getInstance(this).sendBroadcast(it)
+          androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(it)
 
         } catch (e: IOException) {
             e.printStackTrace()

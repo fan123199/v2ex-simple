@@ -6,13 +6,13 @@
     android:layout_height="match_parent"
     tools:context="im.fdx.v2ex.ui.NotificationActivity">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:elevation="4dp"
         android:layout_height="wrap_content">
 
         <include layout="@layout/app_toolbar" />
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/fragment_tab_article" />
 

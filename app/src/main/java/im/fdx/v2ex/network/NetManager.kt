@@ -2,10 +2,9 @@ package im.fdx.v2ex.network
 
 import android.app.Activity
 import android.content.Context
-import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import com.google.gson.Gson
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
@@ -63,7 +62,7 @@ object NetManager {
     var myGson = Gson()
 
     @JvmOverloads
-    fun dealError(context: Context?, errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
+    fun dealError(context: Context?, errorCode: Int = -1, swipe: androidx.swiperefreshlayout.widget.SwipeRefreshLayout? = null) {
 
         if (context is Activity && !context.isFinishing) {
             context.runOnUiThread {
