@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
@@ -69,7 +70,12 @@ class TopicsRVAdapter(private val mContext: Context)
         //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         //            holder.tvContent.setTransitionName("header");
         //        }
+      if (currentTopic.replies == null) {
+        holder.tvReplyNumber.isGone = true
+      } else {
+        holder.tvReplyNumber.isGone = false
         holder.tvReplyNumber.text = currentTopic.replies.toString()
+      }
         holder.tvAuthor.text = currentTopic.member?.username
         holder.tvNode.text = currentTopic.node?.title
         holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)

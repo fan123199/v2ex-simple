@@ -32,32 +32,32 @@ import org.jetbrains.anko.forEachChild
 /**
  * 在中间位置显示"没有内容"信息
  */
-fun FrameLayout.showNoContent(boolean: Boolean = true) {
-    if (!boolean) {
-        this.forEachChild { view ->
-            when {
-                view.tag == "no" -> removeView(view)
-            }
-        }
-    } else {
-        var b = false
-        this.forEachChild { view ->
-            when {
-                view.tag == "no" -> b = true
-            }
-        }
-        if (!b) {
-            val child = TextView(this.context)
-            child.tag = "no"
-            child.text = "没有内容"
-            child.setTextColor(ContextCompat.getColor(context, R.color.hint))
-            val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            params.gravity = Gravity.CENTER_HORIZONTAL
-            params.topMargin = 120.dp2px()
-            this.addView(child, -1, params)
-        }
-
+fun FrameLayout.showNoContent(showNo: Boolean, content: String = "没有内容") {
+  val tagName = "no"
+  if (!showNo) {
+    this.forEachChild { view ->
+      when (tagName) {
+        view.tag -> removeView(view)
+      }
     }
+  } else {
+    var b = false
+    this.forEachChild { view ->
+      when (tagName) {
+        view.tag -> b = true
+      }
+    }
+    if (!b) {
+      val child = TextView(this.context)
+      child.tag = tagName
+      child.text = content
+      child.setTextColor(ContextCompat.getColor(context, R.color.hint))
+      val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+      params.gravity = Gravity.CENTER_HORIZONTAL
+      params.topMargin = 120.dp2px()
+      this.addView(child, -1, params)
+    }
+  }
 }
 
 
@@ -66,121 +66,103 @@ fun FrameLayout.showNoContent(boolean: Boolean = true) {
  */
 fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
 
-    val toolbar: Toolbar = findViewById(R.id.toolbar)
-    toolbar.title = title
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    toolbar.setNavigationOnClickListener { onBackPressed() }
-    return toolbar
+  val toolbar: Toolbar = findViewById(R.id.toolbar)
+  toolbar.title = title
+  setSupportActionBar(toolbar)
+  supportActionBar?.setDisplayHomeAsUpEnabled(true)
+  toolbar.setNavigationOnClickListener { onBackPressed() }
+  return toolbar
 }
 
 /**
  * Alpha : 0，solid, 255->transparent
  */
 fun Activity.setStatusBarColor(@ColorRes colorRes: Int?, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            var flags = this.window.decorView.systemUiVisibility
-            flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-            this.window.decorView.systemUiVisibility = flags
-        }
-        val color = colorRes?.let { ContextCompat.getColor(this, it) } ?: 0
-        this.window.statusBarColor = calculateStatusColor(color, statusBarAlpha)
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      var flags = this.window.decorView.systemUiVisibility
+      flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+      this.window.decorView.systemUiVisibility = flags
     }
+    val color = colorRes?.let { ContextCompat.getColor(this, it) } ?: 0
+    this.window.statusBarColor = calculateStatusColor(color, statusBarAlpha)
+  }
 }
 
 
 fun Activity.setStatusBarLight() {
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = window.decorView.systemUiVisibility
-        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        window.decorView.systemUiVisibility = flags
-        this.window.statusBarColor = Color.WHITE
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-        this.window.statusBarColor = Color.BLACK
-    }
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    var flags = window.decorView.systemUiVisibility
+    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    window.decorView.systemUiVisibility = flags
+    this.window.statusBarColor = Color.WHITE
+  } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+    this.window.statusBarColor = Color.BLACK
+  }
 
 }
 
 fun Activity.clearLightStatusBar() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = this.window.decorView.systemUiVisibility
-        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        this.window.decorView.systemUiVisibility = flags
-    }
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    var flags = this.window.decorView.systemUiVisibility
+    flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+    this.window.decorView.systemUiVisibility = flags
+  }
 }
 
 
 private fun calculateStatusColor(@ColorInt color: Int, alpha: Int): Int {
-    if (alpha == 0) {
-        return color
-    }
-    val a = 1 - alpha / 255f
-    var red = color shr 16 and 0xff
-    var green = color shr 8 and 0xff
-    var blue = color and 0xff
-    red = (red * a + 0.5).toInt()
-    green = (green * a + 0.5).toInt()
-    blue = (blue * a + 0.5).toInt()
-    return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
+  if (alpha == 0) {
+    return color
+  }
+  val a = 1 - alpha / 255f
+  var red = color shr 16 and 0xff
+  var green = color shr 8 and 0xff
+  var blue = color and 0xff
+  red = (red * a + 0.5).toInt()
+  green = (green * a + 0.5).toInt()
+  blue = (blue * a + 0.5).toInt()
+  return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
 }
 
 fun androidx.swiperefreshlayout.widget.SwipeRefreshLayout.initTheme() {
-    setColorSchemeResources(R.color.accent_orange)
-    setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
+  setColorSchemeResources(R.color.accent_orange)
+  setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
 }
 
 fun ImageView.load(url: Any?) {
-    GlideApp.with(context)
-            .load(url)
-            .into(this)
+  GlideApp.with(context)
+      .load(url)
+      .into(this)
 }
 
 
 fun openImagePicker(activity: Activity) {
 
-    if (pref.getBoolean(Keys.KEY_NEED_WARN, true)) {
-        AlertDialog.Builder(activity, R.style.AppTheme_Simple)
-                .setTitle("您开启了两步验证")
-                .setPositiveButton("知道了") { _, _ ->
-                    pref.edit().putBoolean(Keys.KEY_NEED_WARN, false).apply()
-                    ImagePicker.create(activity)
-                            .theme(R.style.Theme_V2ex)
-                            .multi()
-                            .limit(10)
-                            .start()
-                }
-                .setTitle("使用须知")
-                .setMessage("""
+  if (pref.getBoolean(Keys.KEY_WARN_IMAGE_UPLOAD, true)) {
+    AlertDialog.Builder(activity, R.style.AppTheme_Simple)
+        .setPositiveButton("知道了") { _, _ ->
+          pref.edit().putBoolean(Keys.KEY_WARN_IMAGE_UPLOAD, false).apply()
+          ImagePicker.create(activity)
+              .theme(R.style.Theme_V2ex)
+              .multi()
+              .limit(10)
+              .start()
+        }
+        .setTitle("使用须知")
+        .setMessage("""
                     1. 本app使用图床来自https://sm.ms。
                     2. 上传的图片为公开图片，且暂无删除功能，请谨慎使用。
                     3. 图片内容需遵守当地法律法规。
                     4. 每次最多选择10张图片
                 """.trimIndent()).show()
-    } else {
-        ImagePicker.create(activity)
-                .theme(R.style.Theme_V2ex)
-                .multi()
-                .limit(10)
-                .start()
-    }
+  } else {
+    ImagePicker.create(activity)
+        .theme(R.style.Theme_V2ex)
+        .multi()
+        .limit(10)
+        .start()
+  }
 
 }
-//
-//ImagePicker.create(this)
-//.returnMode(ReturnMode.ALL) // set whether pick and / or camera action should return immediate result or not.
-//.folderMode(true) // folder mode (false by default)
-//.toolbarFolderTitle("Folder") // folder selection title
-//.toolbarImageTitle("Tap to select") // image selection title
-//.toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
-//.single() // single mode
-//.multi() // multi mode (default mode)
-//.limit(10) // max images can be selected (99 by default)
-//.showCamera(true) // show camera or not (true by default)
-//.imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
-//.origin(images) // original selected images, used in multi mode
-//.exclude(images) // exclude anything that in image.getPath()
-//.theme(R.style.CustomImagePickerTheme) // must inherit ef_BaseTheme. please refer to sample
-//.imageLoader(new GrayscaleImageLoder()) // custom image loader, must be serializeable
-//.start(); // start image picker activity with request code

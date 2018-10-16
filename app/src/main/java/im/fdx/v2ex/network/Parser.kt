@@ -199,7 +199,7 @@ class Parser(private val htmlStr: String) {
     //        /favorite/node/557?once=46345
     fun getOnce(): String? = Regex("favorite/node/\\d{1,8}\\?once=\\d{1,10}").find(htmlStr)?.value
 
-    fun getOnceNum() = doc.getElementsByAttributeValue("name", "once").first()?.attr("value")
+    fun getOnceNum() = doc.getElementsByAttributeValue("name", "once").first()?.attr("value") ?: "0"
     fun getOnceNum2() = Regex("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)").find(htmlStr)?.value
 
 

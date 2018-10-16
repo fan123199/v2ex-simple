@@ -79,7 +79,7 @@ class NodeFavorFragment : androidx.fragment.app.Fragment() {
                     activity?.runOnUiThread {
                         adapter.clear()
                         adapter.notifyDataSetChanged()
-                        flContainer.showNoContent()
+                      flContainer.showNoContent(true)
                         swipe.isRefreshing = false
                     }
                     return

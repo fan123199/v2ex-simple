@@ -310,6 +310,7 @@ class MainActivity : BaseActivity(), com.google.android.material.navigation.Navi
         startActivity(intent)
         count = -1
       }
+      R.id.menu_search -> startActivity<SearchResultActivity>()
     }
     return super.onOptionsItemSelected(item)
   }

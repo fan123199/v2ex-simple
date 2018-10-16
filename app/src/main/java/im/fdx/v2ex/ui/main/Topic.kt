@@ -51,34 +51,34 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 class Topic(
     @PrimaryKey
-        var id: String = "",
+    var id: String = "",
     var title: String = "",
     var url: String = "",
     var content: String? = null,
     var content_rendered: String? = null,
-    var replies: Int = 0,
+    var replies: Int? = 0,
     @Embedded
-        var member: Member? = null,
+    var member: Member? = null,
     @Ignore
-        var node: Node? = null,
+    var node: Node? = null,
     @ColumnInfo(name = "topic_created")
-        var created: Long = 0,
+    var created: Long = 0,
     var last_modified: Long = 0,
     var last_touched: Long = 0,
     @Ignore
-        var comments: MutableList<Comment> = mutableListOf()) : Parcelable {
+    var comments: MutableList<Comment> = mutableListOf()) : Parcelable {
 
-    override fun toString() = "标题：$title,\n内容：$content"
+  override fun toString() = "标题：$title,\n内容：$content"
 
-    override fun equals(other: Any?): Boolean {
-        return when {
-            this === other -> true
-            other == null || other !is Topic -> false
-            else -> id == other.id
-        }
+  override fun equals(other: Any?): Boolean {
+    return when {
+      this === other -> true
+      other == null || other !is Topic -> false
+      else -> id == other.id
     }
+  }
 
-    override fun hashCode() = id.hashCode()
+  override fun hashCode() = id.hashCode()
 
 }
 

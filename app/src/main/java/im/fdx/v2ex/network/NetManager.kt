@@ -59,6 +59,11 @@ object NetManager {
 
     const val URL_FOLLOWING = "$HTTPS_V2EX_BASE/my/following"
 
+    /**
+     * 第三方提供的好用的搜索api, 在app中默认使用最近帖子 todo 以后增加多filter功能
+     */
+    const val API_SEARCH = "https://www.sov2ex.com/api/search"
+
     var myGson = Gson()
 
     @JvmOverloads

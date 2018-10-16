@@ -208,6 +208,18 @@
         <activity
             android:name=".ui.TabSettingActivity"
             android:exported="true" />
+        <activity
+            android:name=".ui.main.SearchResultActivity"
+            android:launchMode="singleTop">
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+        </activity>
     </application>
 
 </manifest>

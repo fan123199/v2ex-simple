@@ -17,10 +17,12 @@ object Keys {
     const val KEY_NODE_TITLE = "node_title"
 
     const val KEY_PHOTO = "extra_photo"
-    const val KEY_NEED_WARN = "key_warn_image_upload"
+    const val KEY_WARN_IMAGE_UPLOAD = "key_warn_image_upload"
+    const val KEY_WARN_SEARCH_API = "key_warn_search_api"
     const val KEY_POSITION = "extra_position"
     const val KEY_USERNAME = "username"
 
+    const val KEY_TOPIC_LIST = "extra_topic_list"
 
     //    -------------------------------------------------
     const val ACTION_GET_NOTIFICATION = "im.fdx.v2ex.get.notification"

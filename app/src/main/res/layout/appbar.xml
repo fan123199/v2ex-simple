@@ -3,6 +3,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="4dp">
-
     <include layout="@layout/app_toolbar" />
 </com.google.android.material.appbar.AppBarLayout>

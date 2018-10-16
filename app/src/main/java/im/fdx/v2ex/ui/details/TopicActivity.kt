@@ -45,7 +45,7 @@ class TopicActivity : BaseActivity() {
   private var topicHeader: Topic? = null
   private var token: String? = null
   private var isFavored: Boolean = false
-  private var once: String? = null
+  private var once: String = ""
   private var currentPage: Int = 0
 
   private val callback = { type: Int, position: Int ->
@@ -137,7 +137,7 @@ class TopicActivity : BaseActivity() {
     detail_recycler_view.adapter = mAdapter
 
     swipe_details.initTheme()
-    swipe_details.setOnRefreshListener { getRepliesPageOne(mTopicId, false) }
+    swipe_details.setOnRefreshListener { getRepliesPageOne(false) }
 
     et_post_reply.setOnFocusChangeListener { v, hasFocus ->
 
@@ -198,7 +198,7 @@ class TopicActivity : BaseActivity() {
     }
 
     swipe_details.isRefreshing = true
-    getRepliesPageOne(mTopicId, false)
+    getRepliesPageOne(false)
     logd("TopicUrl: ${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId")
   }
 
@@ -207,8 +207,8 @@ class TopicActivity : BaseActivity() {
     parseIntent(intent)
   }
 
-  private fun getRepliesPageOne(topicId: String, scrollToBottom: Boolean) {
-    vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=1").start(object : Callback {
+  private fun getRepliesPageOne(scrollToBottom: Boolean) {
+    vCall("${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId?p=1").start(object : Callback {
 
       override fun onFailure(call: Call, e: IOException) {
         handler.sendEmptyMessage(MSG_ERROR_IO)
@@ -230,7 +230,7 @@ class TopicActivity : BaseActivity() {
         val bodyStr = response.body()!!.string()
 
         val parser = Parser(bodyStr)
-        topicHeader = parser.parseResponseToTopic(topicId)
+        topicHeader = parser.parseResponseToTopic(mTopicId)
         val repliesFirstPage = parser.getReplies()
 
         if (myApp.isLogin) {
@@ -244,6 +244,7 @@ class TopicActivity : BaseActivity() {
           logd("verifyCode is :" + token!!)
           mAdapter.verifyCode = token!!
           isFavored = parser.isTopicFavored()
+          once = parser.getOnceNum()
 
           logd("is favored: " + isFavored.toString())
           runOnUiThread {
@@ -256,7 +257,6 @@ class TopicActivity : BaseActivity() {
             }
           }
 
-          once = parser.getOnceNum()
         }
 
         XLog.tag("TopicActivity").d("got page 1 , next is more page")
@@ -328,7 +328,7 @@ class TopicActivity : BaseActivity() {
       }
       R.id.menu_refresh -> {
         swipe_details.isRefreshing = true
-        getRepliesPageOne(mTopicId, false)
+        getRepliesPageOne(false)
       }
       R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.topic[0]).title} \n" +
           " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topic[0].id}")
@@ -366,7 +366,7 @@ class TopicActivity : BaseActivity() {
               runOnUiThread {
                 toast("${if (doFavor) "取消" else ""}收藏成功")
                 swipe_details.isRefreshing = true
-                getRepliesPageOne(mTopicId, false)
+                getRepliesPageOne(false)
               }
             }
           }
@@ -380,7 +380,7 @@ class TopicActivity : BaseActivity() {
     val content = et_post_reply.text.toString()
     val requestBody = FormBody.Builder()
         .add("content", content)
-        .add("once", once!!)
+        .add("once", once)
         .build()
 
     pb_send.visibility = View.VISIBLE
@@ -412,9 +412,11 @@ class TopicActivity : BaseActivity() {
             toast("发表评论成功")
             et_post_reply.setText("")
             swipe_details.isRefreshing = true
-            getRepliesPageOne(mTopicId, true)
+            getRepliesPageOne(true)
           } else {
             toast("发表评论失败")
+            swipe_details.isRefreshing = true
+            getRepliesPageOne(true)
           }
         }
       }

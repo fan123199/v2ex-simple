@@ -73,4 +73,18 @@ fun Call.start(callback: Callback) {
     })
 }
 
+//
+//fun Call.start(onResp: (Call?, Response?) -> Unit, onFailure: (Call?, IOException?)-> Unit){
+//    start(object: Callback {
+//        override fun onFailure(call: Call, e: IOException) {
+//            onFailure(call , e)
+//        }
+//
+//        override fun onResponse(call: Call, response: Response) {
+//            onResp(call, response)
+//        }
+//    })
+//}
+
+
 

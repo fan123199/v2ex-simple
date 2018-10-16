@@ -98,7 +98,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                 activity?.runOnUiThread {
                     if (replyModels.isEmpty()) {
                         if (page == 1) {
-                            flcontainer.showNoContent()
+                          flcontainer.showNoContent(true)
                         }
                     } else {
                         if (page == 1) {

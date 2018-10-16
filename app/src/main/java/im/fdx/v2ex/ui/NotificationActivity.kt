@@ -73,7 +73,7 @@ class NotificationActivity : BaseActivity() {
                         if (c.isEmpty()) {
                             runOnUiThread {
                                 mSwipe.isRefreshing = false
-                                flContainer.showNoContent()
+                              flContainer.showNoContent(true)
                             }
                             return
                         }
