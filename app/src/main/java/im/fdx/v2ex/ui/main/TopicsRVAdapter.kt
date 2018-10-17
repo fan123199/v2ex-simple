@@ -38,7 +38,7 @@ class TopicsRVAdapter(private val mContext: Context)
         mTopicList.addAll(newItems)
     }
 
-    fun clear() {
+  fun clearAndNotify() {
         mTopicList.clear()
         notifyDataSetChanged()
     }

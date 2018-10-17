@@ -1,6 +1,7 @@
 package im.fdx.v2ex.network
 
 import im.fdx.v2ex.model.NotificationModel
+import im.fdx.v2ex.network.Parser.Source.*
 import im.fdx.v2ex.ui.details.Reply
 import im.fdx.v2ex.ui.main.Comment
 import im.fdx.v2ex.ui.main.Topic
@@ -32,8 +33,9 @@ class Parser(private val htmlStr: String) {
         val body = doc.body()
 
         val items = when (source) {
-            Source.FROM_HOME, Source.FROM_MEMBER -> body.getElementsByClass("cell item")
-            Source.FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
+          FROM_HOME, FROM_MEMBER -> body.getElementsByClass("cell item")
+          FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
+          FROM_SEARCH -> null
         }
         for (item in items!!) {
             val topicModel = Topic()
@@ -48,7 +50,7 @@ class Parser(private val htmlStr: String) {
 
             val nodeModel = Node()
             when (source) {
-                Source.FROM_HOME, Source.FROM_MEMBER -> {
+              FROM_HOME, FROM_MEMBER -> {
                     //  <a class="node" href="/go/career">职场话题</a>
                     val nodeTitle = item.getElementsByClass("node").text()
                     val nodeName = item.getElementsByClass("node").attr("href").substring(4)
@@ -58,7 +60,7 @@ class Parser(private val htmlStr: String) {
                 }
             //            <a href="/member/wineway">
             // <img src="//v2" class="avatar" ></a>
-                Source.FROM_NODE -> {
+              FROM_NODE -> {
                     val header = body.getElementsByClass("node_header").first()
                     val strHeader = header.text()
                     var nodeTitle = ""
@@ -91,7 +93,7 @@ class Parser(private val htmlStr: String) {
 
 
             val created = when (source) {
-                Source.FROM_HOME, Source.FROM_MEMBER -> {
+              FROM_HOME, FROM_MEMBER -> {
                     val smallItem = item.getElementsByClass("topic_info").first().ownText()
 
                     when {
@@ -101,7 +103,7 @@ class Parser(private val htmlStr: String) {
                         }
                     }
                 }
-                Source.FROM_NODE -> {
+              FROM_NODE -> {
                     val smallItem = item.getElementsByClass("small fade").first().ownText()
 
                     when {
@@ -111,6 +113,7 @@ class Parser(private val htmlStr: String) {
                         }
                     }
                 }
+              FROM_SEARCH -> 0L
             }
             topicModel.node = nodeModel
             topicModel.replies = replies
@@ -511,7 +514,7 @@ class Parser(private val htmlStr: String) {
 
 
     enum class Source {
-        FROM_HOME, FROM_NODE, FROM_MEMBER
+      FROM_HOME, FROM_NODE, FROM_MEMBER, FROM_SEARCH
     }
 
 }

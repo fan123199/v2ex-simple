@@ -10,7 +10,6 @@ import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
-import im.fdx.v2ex.database.DbHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.start
@@ -99,8 +98,6 @@ class AllNodesActivity : BaseActivity() {
             }
 
             val nodeModels = Parser(response.body()!!.string()).getAllNode()
-
-            DbHelper.db.nodeDao().insertNode(*nodeModels.toTypedArray())
 
             mAdapter.setData(nodeModels)
             runOnUiThread {

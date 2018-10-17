@@ -3,18 +3,6 @@
 
     <style name="Theme.V2ex" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/primary</item>
-        <item name="android:textColorLink">@color/primary</item>
-        <item name="android:listDivider">@drawable/divider</item>
-        <item name="android:statusBarColor">@color/statusbar_white</item>
-
-        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-
-        <item name="text_medium">@dimen/text_size_medium</item>
-        <item name="text_small">@dimen/text_size_small</item>
-        <item name="text_large">@dimen/text_size_large</item>
     </style>
 
 </resources>

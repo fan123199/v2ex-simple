@@ -142,6 +142,8 @@
         android:layout_marginStart="4dp"
         android:background="@drawable/radio_kongxin"
         android:text="楼主"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:textSize="?text_small"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
         app:layout_constraintStart_toEndOf="@+id/tv_replier"

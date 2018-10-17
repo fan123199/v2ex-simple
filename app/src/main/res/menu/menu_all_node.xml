@@ -1,12 +1,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-      xmlns:app="http://schemas.android.com/apk/res-auto"
-      xmlns:tools="http://schemas.android.com/tools"
-      tools:context="im.fdx.v2ex.ui.node.NodeActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="im.fdx.v2ex.ui.node.NodeActivity">
     <item
         android:id="@+id/search_node"
-        android:title="@string/search_hint"
         android:icon="@drawable/ic_search_primary_24dp"
-        app:showAsAction="ifRoom|collapseActionView"
+        android:title="@string/search_hint"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        />
+        app:showAsAction="ifRoom|collapseActionView" />
 </menu>

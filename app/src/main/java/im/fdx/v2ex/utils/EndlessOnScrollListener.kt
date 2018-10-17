@@ -3,7 +3,9 @@ package im.fdx.v2ex.utils
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.extensions.logd
 
-abstract class EndlessOnScrollListener(private val mLinearLayoutManager: androidx.recyclerview.widget.LinearLayoutManager, val rvReply: androidx.recyclerview.widget.RecyclerView) : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+abstract class EndlessOnScrollListener(val rvReply: androidx.recyclerview.widget.RecyclerView) : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+
+  private val mLinearLayoutManager = rvReply.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
 
     var loading = false // True if we are still waiting for the last set of data to load.
     private val visibleThreshold = 2 // The minimum amount of items to have below your current scroll position before loading more.

@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.node
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,10 +61,9 @@ class AllNodesAdapterNew(val context: Context, val action: (Node) -> Unit) : and
             return
         }
 
-
         for (entry in map) {
             val value = entry.value
-            val filterNodeModel = value.filter {
+            val filterNodeModel = value.asSequence().filter {
                 it.name.contains(newText) || it.title.contains(newText) || it.title_alternative.contains(newText)
             }.toMutableList()
 
@@ -75,8 +73,6 @@ class AllNodesAdapterNew(val context: Context, val action: (Node) -> Unit) : and
                 filterMap.remove(entry.key)
             }
         }
-
-        Log.e("fffff", filterMap.toString())
 
         notifyDataSetChanged()
     }

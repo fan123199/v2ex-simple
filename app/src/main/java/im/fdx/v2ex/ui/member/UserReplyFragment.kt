@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.NetManager
@@ -47,14 +48,14 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
         }
 
         val rvReply: androidx.recyclerview.widget.RecyclerView = view.findViewById(R.id.rv_container)
-        val layoutManager = androidx.recyclerview.widget.LinearLayoutManager(activity!!)
+        val layoutManager = LinearLayoutManager(activity!!)
 
 
         rvReply.layoutManager = layoutManager
         rvReply.addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(activity, androidx.recyclerview.widget.DividerItemDecoration.VERTICAL))
 
         // enable pull up for endless loading
-        mScrollListener = object : EndlessOnScrollListener(layoutManager, rvReply) {
+        mScrollListener = object : EndlessOnScrollListener(rvReply) {
             override fun onCompleted() {
                 activity?.toast(getString(R.string.no_more_data))
             }
