@@ -170,7 +170,7 @@ class TopicDetailAdapter(private val mContext: Context,
                         if (index <= 0 || index > position) { //5
                             replies.forEachIndexed { i, r ->
                                 if (i in 0 until position && r.member?.username == username) {
-                                    index = i + 1
+                                    index = i
                                 }
                             }
                         }
