@@ -174,8 +174,8 @@ class LoginActivity : BaseActivity() {
                   val myInfo = Parser(body).getMember()
 
                   pref.edit {
-                    putString(Keys.KEY_USERNAME, myInfo.username)
-                    putString(Keys.KEY_AVATAR, myInfo.avatarNormalUrl)
+                    putString(Keys.PREF_USERNAME, myInfo.username)
+                    putString(Keys.PREF_AVATAR, myInfo.avatarNormalUrl)
                   }
 
                   val intent = Intent(Keys.ACTION_LOGIN).apply {

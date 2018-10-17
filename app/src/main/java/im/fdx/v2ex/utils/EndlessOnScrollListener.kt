@@ -50,7 +50,7 @@ abstract class EndlessOnScrollListener(val rvReply: androidx.recyclerview.widget
         }
     }
 
-    abstract fun onLoadMore(current_page: Int)
+  abstract fun onLoadMore(currentPage: Int)
 
     abstract fun onCompleted()
 

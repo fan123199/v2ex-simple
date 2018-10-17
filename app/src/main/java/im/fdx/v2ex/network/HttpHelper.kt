@@ -25,7 +25,6 @@ object HttpHelper {
             .followRedirects(false)  //禁止重定向
         .addInterceptor(ChuckInterceptor(MyApp.get()))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
-                var body = chain.request().body()
                 chain.proceed(chain.request())
             }
             .addInterceptor { chain ->

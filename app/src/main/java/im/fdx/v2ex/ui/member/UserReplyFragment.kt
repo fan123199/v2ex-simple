@@ -60,11 +60,11 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                 activity?.toast(getString(R.string.no_more_data))
             }
 
-            override fun onLoadMore(current_page: Int) {
-                XLog.e("currentPage: $current_page, totalPage: $totalPage")
+            override fun onLoadMore(currentPage: Int) {
+                XLog.e("currentPage: $currentPage, totalPage: $totalPage")
                 swipeRefreshLayout.isRefreshing = true
                 mScrollListener?.loading = true
-                getRepliesByWeb(current_page)
+                getRepliesByWeb(currentPage)
             }
         }
 

@@ -76,6 +76,8 @@ class Parser(private val htmlStr: String) {
                     nodeModel.title = nodeTitle
                     nodeModel.name = nodeName
                 }
+              else -> {
+              }
             }
 
 
@@ -214,9 +216,9 @@ class Parser(private val htmlStr: String) {
 
     fun getPageValue(): IntArray {
 
-        var currentPage = 0
-        var totalPage = 0
-        val pageInput = doc.getElementsByClass("page_input").first() ?: return intArrayOf(-1, -1)
+      val currentPage: Int
+      val totalPage: Int
+      val pageInput = doc.getElementsByClass("page_input").first() ?: return intArrayOf(-1, -1)
         try {
             currentPage = Integer.parseInt(pageInput.attr("value"))
             totalPage = Integer.parseInt(pageInput.attr("max"))

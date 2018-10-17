@@ -21,12 +21,15 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
+import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.Parser
+import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
@@ -172,9 +175,10 @@ class MainActivity : BaseActivity(), com.google.android.material.navigation.Navi
       showNavIcon(true)
       val username = pref.getString(Keys.PREF_USERNAME, "")
       val avatar = pref.getString(Keys.PREF_AVATAR, "")
-      logd("$username // $avatar")
       if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
         setUserInfo(username, avatar)
+      } else {
+        updateUserInBackground()
       }
     } else {
       showNavIcon(false)
@@ -199,6 +203,27 @@ class MainActivity : BaseActivity(), com.google.android.material.navigation.Navi
     })
 
     startGetNotification()
+  }
+
+  private fun updateUserInBackground() {
+    vCall(NetManager.HTTPS_V2EX_BASE).start(object : Callback {
+      override fun onFailure(call: Call, e: IOException) {
+
+      }
+
+      override fun onResponse(call: Call, response: Response) {
+        val body = response.body()?.string()!!
+        val myInfo = Parser(body).getMember()
+
+        pref.edit {
+          putString(Keys.PREF_USERNAME, myInfo.username)
+          putString(Keys.PREF_AVATAR, myInfo.avatarNormalUrl)
+        }
+        runOnUiThread {
+          setUserInfo(myInfo.username, myInfo.avatarNormalUrl)
+        }
+      }
+    })
   }
 
   private fun createShortCut() {
@@ -247,7 +272,6 @@ class MainActivity : BaseActivity(), com.google.android.material.navigation.Navi
     invalidateOptionsMenu()
   }
 
-  @Deprecated("好像很费cpu")
   private fun shrinkFab() {
     fab.animate().rotation(360f)
         .setDuration(1000).start()

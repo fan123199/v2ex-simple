@@ -113,7 +113,7 @@ object NetManager {
             override fun onResponse(call: Call?, response: Response?) {
                 if (response?.code() == 200) {
                     val bodyStr = response.body()?.string()!!
-                    val once = Parser(bodyStr).getOnceNum() ?: "0"
+                    val once = Parser(bodyStr).getOnceNum()
                     val body: RequestBody = FormBody.Builder()
                             .add("code", code)
                             .add("once", once).build()

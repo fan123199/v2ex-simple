@@ -87,7 +87,7 @@ class TopicsFragment : Fragment() {
 
     mSwipeLayout = layout.findViewById(R.id.swipe_container)
     mSwipeLayout.initTheme()
-    mSwipeLayout.setOnRefreshListener { refresh() }
+    mSwipeLayout.setOnRefreshListener { loadTopic() }
 
     //找出recyclerview,并赋予变量 //fdx最早的水平
     mRecyclerView = layout.findViewById(R.id.rv_container)
@@ -99,10 +99,10 @@ class TopicsFragment : Fragment() {
         activity?.toast(getString(R.string.no_more_data))
       }
 
-      override fun onLoadMore(current_page: Int) {
+      override fun onLoadMore(currentPage: Int) {
         mScrollListener.loading = true
         mSwipeLayout.isRefreshing = true
-        refresh(current_page)
+        loadTopic(currentPage)
       }
     }
     when (currentMode) {
@@ -159,7 +159,7 @@ class TopicsFragment : Fragment() {
 
   fun startQuery() {
     query = arguments?.getString("key") ?: ""
-    makeQuery(query, 0)
+    makeQuery(query)
   }
 
   var query: String = ""
@@ -170,11 +170,11 @@ class TopicsFragment : Fragment() {
 
   }
 
-  fun refresh(current_page: Int = 0) {
+  fun loadTopic(currentPage: Int = 1) {
     if (currentMode == FROM_SEARCH) {
-      makeQuery(query, (current_page - 1) * NUMBER_PER_PAGE)
+      makeQuery(query, (currentPage - 1) * NUMBER_PER_PAGE)
     } else {
-      getTopics(mRequestURL, current_page)
+      getTopics(mRequestURL, currentPage)
     }
   }
 
@@ -228,6 +228,8 @@ class TopicsFragment : Fragment() {
                       topicList.let { mAdapter.addAllItems(it) }
                     }
                   FROM_HOME -> topicList.let { mAdapter.updateItems(it) }
+                  Parser.Source.FROM_SEARCH -> {
+                  }
                 }
               }
             }

@@ -100,7 +100,7 @@
 
     <style name="AppTheme.Simple" parent="Theme.AppCompat.Light.Dialog">
         <item name="android:colorAccent">@color/primary</item>
-        <item name="android:textColor">#f3f3f3</item>
+        <item name="android:textColor">@color/title_text</item>
         <item name="android:textColorPrimary">@color/primary</item>
     </style>
 
