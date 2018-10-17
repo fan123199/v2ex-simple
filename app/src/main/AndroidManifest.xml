@@ -209,7 +209,7 @@
             android:name=".ui.TabSettingActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.main.SearchResultActivity"
+            android:name=".ui.main.SearchActivity"
             android:launchMode="singleTop">
 
             <meta-data

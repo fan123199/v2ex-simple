@@ -24,7 +24,6 @@ object Api {
                         .build()
                 chain.proceed(request)
             }
-
             .build()
 
     fun uploadImage(path: String, fileName: String, callback: (Data?, Int) -> Unit) {

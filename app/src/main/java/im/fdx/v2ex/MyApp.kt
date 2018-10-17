@@ -55,7 +55,7 @@ class MyApp : Application() {
     INSTANCE = this
     XLog.init(when {
       BuildConfig.DEBUG -> LogLevel.ALL
-      else -> LogLevel.NONE
+      else -> LogLevel.ALL
     })
     isLogin = pref.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
     logd("onCreate\nisLogin:$isLogin")

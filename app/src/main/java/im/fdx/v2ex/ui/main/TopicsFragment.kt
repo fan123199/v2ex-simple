@@ -157,16 +157,18 @@ class TopicsFragment : Fragment() {
     }
   }
 
-  fun startQuery() {
-    query = arguments?.getString("key") ?: ""
+  fun startQuery(q:String) {
+    query = q
     makeQuery(query)
   }
 
   var query: String = ""
 
   fun showRefresh(show: Boolean) {
-    mSwipeLayout.isRefreshing = show
-    mScrollListener.loading = show
+    activity?.runOnUiThread {
+      mSwipeLayout.isRefreshing = show
+      mScrollListener.loading = show
+    }
 
   }
 
@@ -247,7 +249,6 @@ class TopicsFragment : Fragment() {
    */
   private fun makeQuery(query: String, nextIndex: Int = 0) {
 
-
     val url: HttpUrl = HttpUrl.Builder()
         .scheme("https")
         .host("www.sov2ex.com")
@@ -260,7 +261,7 @@ class TopicsFragment : Fragment() {
         .build()
 
     showRefresh(true)
-    HttpHelper.OK_CLIENT.newCall(Request.Builder()
+    OkHttpClient().newCall(Request.Builder()
         .addHeader("accept", "application/json")
         .url(url)
         .build())

@@ -17,10 +17,11 @@ import im.fdx.v2ex.utils.extensions.setUpToolbar
 import org.jetbrains.anko.bundleOf
 
 
-class SearchResultActivity : BaseActivity() {
+class SearchActivity : BaseActivity() {
 
 
   lateinit var fra: TopicsFragment
+  lateinit var query: String
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -48,16 +49,13 @@ class SearchResultActivity : BaseActivity() {
         .commit()
   }
 
-  lateinit var query: String
   override fun onNewIntent(intent: Intent?) {
     super.onNewIntent(intent)
     if (Intent.ACTION_SEARCH == intent?.action) {
-      query = intent.getStringExtra(SearchManager.QUERY)
-      fra.arguments = bundleOf("key" to query)
-      fra.startQuery()
+      query = intent.getStringExtra(SearchManager.QUERY)?:""
+      fra.startQuery(query)
     }
   }
-
 
   override fun onCreateOptionsMenu(menu: Menu?): Boolean {
     menuInflater.inflate(R.menu.menu_search, menu)

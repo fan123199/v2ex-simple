@@ -82,7 +82,8 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
 
         vCall(url).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                NetManager.dealError(activity, -1, swipeRefreshLayout)
+                NetManager.dealError(activity, -1)
+                swipeRefreshLayout.isRefreshing = false
                 mScrollListener?.loading = false
             }
 

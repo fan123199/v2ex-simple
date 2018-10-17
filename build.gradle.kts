@@ -12,7 +12,7 @@ buildscript {
     maven { url = uri("https://maven.fabric.io/public") }
   }
   dependencies {
-    classpath("com.google.gms:google-services:3.2.0")
+    classpath("com.google.gms:google-services:4.1.0")
     classpath("com.android.tools.build:gradle:3.3.0-alpha13")
     classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${extra["kotlin_version"]}")
     classpath("io.fabric.tools:gradle:1.25.4")
