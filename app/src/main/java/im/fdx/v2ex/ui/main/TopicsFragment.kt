@@ -87,7 +87,7 @@ class TopicsFragment : Fragment() {
 
     mSwipeLayout = layout.findViewById(R.id.swipe_container)
     mSwipeLayout.initTheme()
-    mSwipeLayout.setOnRefreshListener { loadTopic() }
+    mSwipeLayout.setOnRefreshListener { refresh() }
 
     //找出recyclerview,并赋予变量 //fdx最早的水平
     mRecyclerView = layout.findViewById(R.id.rv_container)
@@ -112,7 +112,7 @@ class TopicsFragment : Fragment() {
     }
 
 
-    setUpFabAnimation()
+//    setUpFabAnimation()
 
 
     mAdapter = TopicsRVAdapter(activity!!)
@@ -131,6 +131,7 @@ class TopicsFragment : Fragment() {
     return layout
   }
 
+  //禁用隐藏fab
   private fun setUpFabAnimation() {
     fab?.let { fab ->
       mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -172,11 +173,21 @@ class TopicsFragment : Fragment() {
 
   }
 
-  fun loadTopic(currentPage: Int = 1) {
+  fun loadTopic(currentPage: Int) {
+
     if (currentMode == FROM_SEARCH) {
-      makeQuery(query, (currentPage - 1) * NUMBER_PER_PAGE)
+      makeQuery(query, currentPage)
     } else {
       getTopics(mRequestURL, currentPage)
+    }
+  }
+
+  fun refresh() {
+    mScrollListener.pageToLoad = 1
+    if (currentMode == FROM_SEARCH) {
+      makeQuery(query)
+    } else {
+      getTopics(mRequestURL)
     }
   }
 
@@ -247,21 +258,24 @@ class TopicsFragment : Fragment() {
   /**
    * nextIndex, not page index, is the item offset
    */
-  private fun makeQuery(query: String, nextIndex: Int = 0) {
+  private fun makeQuery(query: String, currentPage: Int = 1) {
+
+
+    val nextIndex = (currentPage - 1) * NUMBER_PER_PAGE
 
     val url: HttpUrl = HttpUrl.Builder()
         .scheme("https")
         .host("www.sov2ex.com")
-        .addEncodedPathSegments("/api/search")
+        .addEncodedPathSegments("api/search")
         .addEncodedQueryParameter("q", query)
         .addEncodedQueryParameter("sort", "created")
-        .addEncodedQueryParameter("from", nextIndex.toString()) // 偏移量
+        .addEncodedQueryParameter("from", nextIndex.toString()) // 偏移量, 默认0
         .addEncodedQueryParameter("size", NUMBER_PER_PAGE.toString()) //数量，默认10
 //          .addEncodedQueryParameter("node") //节点名称
         .build()
 
     showRefresh(true)
-    OkHttpClient().newCall(Request.Builder()
+    HttpHelper.OK_CLIENT.newCall(Request.Builder()
         .addHeader("accept", "application/json")
         .url(url)
         .build())
@@ -272,7 +286,6 @@ class TopicsFragment : Fragment() {
           }
 
           override fun onResponse(call: Call?, response: Response?) {
-            showRefresh(false)
             val body = response?.body()!!.string()
             loge(body)
             val result: SearchResult = Gson().fromJson(body, SearchResult::class.java)
@@ -294,6 +307,8 @@ class TopicsFragment : Fragment() {
             } ?: return
 
             activity?.runOnUiThread {
+              mSwipeLayout.isRefreshing = false
+              mScrollListener.loading = false
               if (topics.isEmpty()) {
                 flContainer.showNoContent(true)
                 mAdapter.clearAndNotify()
@@ -302,7 +317,7 @@ class TopicsFragment : Fragment() {
                 if (mScrollListener.pageToLoad == 1) {
                   topics.let { mAdapter.updateItems(it) }
                 } else {
-                  mScrollListener.pageAfterLoaded = nextIndex
+                  mScrollListener.pageAfterLoaded = currentPage
                   topics.let { mAdapter.addAllItems(it) }
                 }
               }

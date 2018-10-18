@@ -28,6 +28,8 @@
   *;
 }
 
+-keep class * implements im.fdx.v2ex.model.VModel
+
 #Glide
 -keep class com.bumptech.glide.**
 

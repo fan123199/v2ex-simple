@@ -37,6 +37,7 @@ android {
         }
         release {
             minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.googlePlay
         }
     }
@@ -61,9 +62,9 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "androidx.legacy:legacy-support-v13:1.0.0"
-    implementation ("androidx.appcompat:appcompat:1.0.0") {
+    implementation ("androidx.appcompat:appcompat:1.0.0")/* {
         exclude group: 'androidx.browser', module: 'browser'
-    }
+    }*/
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.browser:browser:1.0.0" //已经被appcompat包含
     implementation "androidx.preference:preference:1.0.0"

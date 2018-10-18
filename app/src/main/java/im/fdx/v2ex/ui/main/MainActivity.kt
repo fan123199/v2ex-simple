@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
+import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
 import im.fdx.v2ex.network.NetManager
@@ -50,7 +51,7 @@ import org.jetbrains.anko.toast
 import java.io.IOException
 
 
-class MainActivity : BaseActivity(), com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
   private lateinit var mDrawer: androidx.drawerlayout.widget.DrawerLayout
   private lateinit var mViewPager: androidx.viewpager.widget.ViewPager
