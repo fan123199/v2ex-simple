@@ -12,6 +12,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -188,7 +189,8 @@ class SettingsActivity : BaseActivity() {
         "pref_background_msg" -> {
         }
         "pref_msg_period" -> {
-          (sharedPreferences as ListPreference).summary = sharedPreferences.entry
+          val listPreference: ListPreference = findPreference("pref_msg_period") as ListPreference
+          listPreference.summary = listPreference.entry
           XLog.d("pref_msg_period changed")
         }
 
@@ -196,7 +198,7 @@ class SettingsActivity : BaseActivity() {
         }
 
         Keys.PREF_TEXT_SIZE -> {
-          androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
+          LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
         }
       }
     }
