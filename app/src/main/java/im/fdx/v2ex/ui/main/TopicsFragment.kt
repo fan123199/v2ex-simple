@@ -42,7 +42,7 @@ class TopicsFragment : Fragment() {
 
   private lateinit var mAdapter: TopicsRVAdapter
   private lateinit var mSwipeLayout: SwipeRefreshLayout
-  private lateinit var mRecyclerView: RecyclerView
+  private var mRecyclerView: RecyclerView? = null
   private var fab: FloatingActionButton? = null //有可能为空
   private lateinit var flContainer: FrameLayout
 
@@ -92,9 +92,9 @@ class TopicsFragment : Fragment() {
     //找出recyclerview,并赋予变量 //fdx最早的水平
     mRecyclerView = layout.findViewById(R.id.rv_container)
     val layoutManager = LinearLayoutManager(activity)
-    mRecyclerView.layoutManager = layoutManager
+    mRecyclerView?.layoutManager = layoutManager
 
-    mScrollListener = object : EndlessOnScrollListener(mRecyclerView) {
+    mScrollListener = object : EndlessOnScrollListener(mRecyclerView!!) {
       override fun onCompleted() {
         activity?.toast(getString(R.string.no_more_data))
       }
@@ -106,7 +106,7 @@ class TopicsFragment : Fragment() {
       }
     }
     when (currentMode) {
-      FROM_MEMBER, FROM_NODE, FROM_SEARCH -> mRecyclerView.addOnScrollListener(mScrollListener)
+      FROM_MEMBER, FROM_NODE, FROM_SEARCH -> mRecyclerView?.addOnScrollListener(mScrollListener)
       else -> {
       }
     }
@@ -116,7 +116,7 @@ class TopicsFragment : Fragment() {
 
 
     mAdapter = TopicsRVAdapter(activity!!)
-    mRecyclerView.adapter = mAdapter //大工告成
+    mRecyclerView?.adapter = mAdapter //大工告成
 
     flContainer = layout.findViewById(R.id.fl_container)
 
@@ -134,7 +134,7 @@ class TopicsFragment : Fragment() {
   //禁用隐藏fab
   private fun setUpFabAnimation() {
     fab?.let { fab ->
-      mRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+      mRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
         var isFabShowing = true
 
@@ -250,7 +250,7 @@ class TopicsFragment : Fragment() {
         })
   }
 
-  fun scrollToTop() = mRecyclerView.smoothScrollToPosition(0)
+  fun scrollToTop() = mRecyclerView?.smoothScrollToPosition(0)
 
   val NUMBER_PER_PAGE = 20
 

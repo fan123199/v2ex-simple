@@ -113,7 +113,7 @@ open class Span {
     }, init: Span.() -> Unit): Span = span(span, init)
 
     fun url(url: String, onClick: (URLSpan) -> Boolean, span: URLSpan = object : URLSpan(url) {
-        override fun onClick(widget: View?) {
+        override fun onClick(widget: View) {
             if (onClick(this)) {
                 super.onClick(widget)
             }
