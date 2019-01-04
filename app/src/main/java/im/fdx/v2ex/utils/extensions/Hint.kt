@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.view.View
 import com.elvishew.xlog.XLog
+import com.google.android.material.snackbar.Snackbar
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.LoginActivity
 import org.jetbrains.anko.startActivity
@@ -51,7 +52,8 @@ fun Any.loge(msg: Any?) {
 
 
 fun Activity.showLoginHint(view: View) {
-  com.google.android.material.snackbar.Snackbar.make(view, "您还未登录，请登录后再试", com.google.android.material.snackbar.Snackbar.LENGTH_LONG).setAction("登录") {
-        startActivity<LoginActivity>()
-    }.show()
+    Snackbar.make(view, "您还未登录，请登录后再试", Snackbar.LENGTH_LONG)
+            .setAction("登录") {
+                startActivity<LoginActivity>()
+            }.show()
 }

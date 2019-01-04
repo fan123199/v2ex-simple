@@ -101,6 +101,7 @@
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
 
@@ -108,6 +109,7 @@
         <item>小</item>
         <item>中</item>
         <item>大</item>
+        <item>特大</item>
     </string-array>
 
 
@@ -158,6 +160,7 @@
     <string name="no_more_data">no more data</string>
     <string name="verify_code">code</string>
     <string name="indicator">indicator</string>
+    <string name="show_user_all_reply">显示该用户全部评论</string>
 
     <string-array name="j" translatable="false">
         <item>一颗赛艇</item>

@@ -26,5 +26,8 @@
     <dimen name="text_size_medium_3">18sp</dimen>
     <dimen name="text_size_small_3">16sp</dimen>
 
+    <dimen name="text_size_large_4">22sp</dimen>
+    <dimen name="text_size_medium_4">20sp</dimen>
+    <dimen name="text_size_small_4">18sp</dimen>
 
 </resources>

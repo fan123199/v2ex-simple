@@ -78,4 +78,5 @@
     <string name="verify_code">验证码</string>
     <string name="no_more_data">没有更多的数据</string>
     <string name="indicator">指示</string>
+    <string name="show_user_all_reply">显示该用户全部评论</string>
 </resources>

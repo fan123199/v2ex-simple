@@ -23,16 +23,22 @@
         <item name="color">@color/icon</item>
     </style>
 
-    <style name="Theme.V2ex.bigger">
+    <style name="Theme.V2ex.big2">
         <item name="text_small">@dimen/text_size_small_2</item>
         <item name="text_medium">@dimen/text_size_medium_2</item>
         <item name="text_large">@dimen/text_size_large_2</item>
     </style>
 
-    <style name="Theme.V2ex.biggest">
+    <style name="Theme.V2ex.big3">
         <item name="text_small">@dimen/text_size_small_3</item>
         <item name="text_medium">@dimen/text_size_medium_3</item>
         <item name="text_large">@dimen/text_size_large_3</item>
+    </style>
+
+    <style name="Theme.V2ex.big4">
+        <item name="text_small">@dimen/text_size_small_4</item>
+        <item name="text_medium">@dimen/text_size_medium_4</item>
+        <item name="text_large">@dimen/text_size_large_4</item>
     </style>
 
     <style name="Theme.V2ex.Settings">
