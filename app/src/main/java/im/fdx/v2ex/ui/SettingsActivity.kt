@@ -199,6 +199,7 @@ class SettingsActivity : BaseActivity() {
 
         Keys.PREF_TEXT_SIZE -> {
           LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
+          activity?.finish()
         }
       }
     }
