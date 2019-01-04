@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.details
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -15,7 +14,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -40,34 +41,38 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
 
+
+
+private const val TYPE_HEADER = 0
+private const val TYPE_ITEM = 1
+
 /**
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
  */
-class TopicDetailAdapter(private val mContext: Context,
-                         private val callback: (Int, Int) -> Unit
-) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class TopicDetailAdapter(private val act: AppCompatActivity,
+                         private val clickMore: (Int, Int) -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var verifyCode: String? = null
 
-    val topic: MutableList<Topic> = MutableList(1) { Topic() }
+    val topics: MutableList<Topic> = MutableList(1) { Topic() }
     val replies: MutableList<Reply> = mutableListOf()
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
             when (viewType) {
-                TYPE_HEADER -> TopicWithCommentsViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_topic_with_comments, parent, false))
-                TYPE_ITEM -> ItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_reply_view, parent, false))
-                TYPE_FOOTER -> FooterViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_load_more, parent, false))
+                TYPE_HEADER -> TopicWithCommentsViewHolder(LayoutInflater.from(act).inflate(R.layout.item_topic_with_comments, parent, false))
+                TYPE_ITEM -> ItemViewHolder(LayoutInflater.from(act).inflate(R.layout.item_reply_view, parent, false))
                 else -> throw RuntimeException(" No type that matches $viewType + Make sure using types correctly")
             }
 
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         when (getItemViewType(position)) {
             TYPE_HEADER -> {
-                val topic = this.topic[0]
+                val topic = topics[0]
 
                 val mainHolder = holder as TopicWithCommentsViewHolder
                 mainHolder.tvTitle.text = topic.title
@@ -85,7 +90,7 @@ class TopicDetailAdapter(private val mContext: Context,
                 if (topic.comments.isNotEmpty()) {
                     mainHolder.ll.removeAllViews()
                     topic.comments.forEach {
-                        val view = LayoutInflater.from(mContext).inflate(R.layout.item_comments, mainHolder.ll, false)
+                        val view = LayoutInflater.from(act).inflate(R.layout.item_comments, mainHolder.ll, false)
                         val th = CommentsViewHolder(view)
                         th.tvCTitle.text = it.title
                         th.tvCTime.text = TimeUtil.getRelativeTime(it.created)
@@ -95,29 +100,25 @@ class TopicDetailAdapter(private val mContext: Context,
                 }
 
 
-                val l = TopicsRVAdapter.MyOnClickListener(mContext, topic)
+                val l = TopicsRVAdapter.MyOnClickListener(act, topic)
                 mainHolder.tvNode.setOnClickListener(l)
                 mainHolder.ivAvatar.setOnClickListener(l)
 
             }
-            TYPE_FOOTER -> {
-                val tvMore = (holder as FooterViewHolder).tvLoadMore
-                tvMore.text = "加载更多"
-                tvMore.setOnClickListener { callback(2, -1) }
-            }
             TYPE_ITEM -> {
                 val itemVH = holder as ItemViewHolder
-                val replyItem = replies[position - topic.size]
-                replyItem.isLouzu = replyItem.member?.username == (topic[0]).member?.username
+                val replyItem = replies[position - 1]
                 if (position == itemCount - 1) {
-                    itemVH.divider.visibility = View.GONE
+                    itemVH.divider.visibility = View.INVISIBLE
+                } else {
+                    itemVH.divider.visibility = View.VISIBLE
                 }
 
 
-                (mContext as Activity).registerForContextMenu(itemVH.itemView)
+                act.registerForContextMenu(itemVH.itemView)
 
                 itemVH.itemView.setOnCreateContextMenuListener { menu, _, _ ->
-                    val menuInflater = mContext.menuInflater
+                    val menuInflater = act.menuInflater
                     menuInflater.inflate(R.menu.menu_reply, menu)
 
                     menu.findItem(R.id.menu_reply).setOnMenuItemClickListener {
@@ -132,6 +133,11 @@ class TopicDetailAdapter(private val mContext: Context,
                         copyText(replyItem.content)
                         true
                     }
+                    menu.findItem(R.id.menu_show_user_all_reply).setOnMenuItemClickListener {
+                        showUserAllReply(replyItem)
+                        true
+                    }
+
                 }
 
                 itemVH.iv_thanks.setOnClickListener { thank(replyItem, itemVH) }
@@ -140,23 +146,15 @@ class TopicDetailAdapter(private val mContext: Context,
 
 
                 XLog.i(replyItem.content_rendered)
-                itemVH.tv_reply_time.text = TimeUtil.getRelativeTime(replyItem.created)
-                itemVH.tv_replier.text = replyItem.member?.username
+
+                itemVH.bind(replyItem)
                 itemVH.tv_thanks.text = replyItem.thanks.toString()
-                itemVH.tv_reply_content.setGoodText(replyItem.content_rendered)
-                itemVH.tv_reply_row.text = "#$position"
-                itemVH.iv_reply_avatar.load(replyItem.member?.avatarLargeUrl)
                 itemVH.iv_reply_avatar.setOnClickListener {
-                    mContext.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
-                }
-                if (replyItem.member?.username == topic[0].member?.username) {
-                    itemVH.tv_louzu.visibility = View.VISIBLE
-                } else {
-                    itemVH.tv_louzu.visibility = View.GONE
+                    act.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
                 }
 
                 if (replyItem.isThanked) {
-                    itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
+                    itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
                     itemVH.iv_thanks.isClickable = false
                     itemVH.tv_thanks.isClickable = false
                 } else {
@@ -166,20 +164,34 @@ class TopicDetailAdapter(private val mContext: Context,
                 itemVH.tv_reply_content.popupListener = object : Popup.PopupListener {
                     override fun onClick(v: View, url: String) {
                         val username = url.split("/").last()
+
+                        //问题，index可能用户输入不准确，导致了我的这个点击会出现错误。 也有可能是黑名单能影响，导致了
+                        //了这个错误，所以，我需要进行大数据排错。
                         var index = replyItem.content.getPair(username)
-                        if (index <= 0 || index > position) { //5
+                        val originIndex = index
+                        //找不错，或大于，明显不可能，取最接近一个评论
+                        if (index == -1 || index > position) {
                             replies.forEachIndexed { i, r ->
                                 if (i in 0 until position && r.member?.username == username) {
                                     index = i
                                 }
                             }
                         }
-                        if (index <= 0 || index > position) {
+                        if (index == -1 || index > position) {
                             return
                         }
-                        Popup(mContext).show(v, replies[index], index, View.OnClickListener {
-                            callback(-1, index)
-                        })
+
+                        //自我优化的失败案例
+                        if (replies[index].member!!.username != username) {
+                            for(i in (index -2)..(index + 2)) {
+                                if (replies[i].member!!.username == username ){
+                                    index = i
+                                    break
+                                }
+                            }
+                        }
+
+                        Popup(act).show(v, replies[index], index, clickMore)
                     }
 
                 }
@@ -187,19 +199,29 @@ class TopicDetailAdapter(private val mContext: Context,
         }
     }
 
+    private fun showUserAllReply(replyItem: Reply) {
+
+        val theUserReplyList = replies.filter {
+            it.member!=null && it.member?.username == replyItem.member?.username
+        }
+
+        val bs = BottomListSheet.newInstance(theUserReplyList)
+        bs.show(act.supportFragmentManager , "list_of_user_all_reply")
+    }
+
     private fun copyText(content: String) {
         logd("I click menu copy")
-        val manager = mContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val manager = act.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         manager.primaryClip = ClipData.newPlainText("item", content)
-        mContext.toast("评论已复制")
+        act.toast("评论已复制")
     }
 
     private fun thank(replyItem: Reply, itemVH: ItemViewHolder): Boolean {
         logd("token: $verifyCode")
 
-        val editText: EditText = (mContext as Activity).findViewById(R.id.et_post_reply)
+        val editText: EditText = act.findViewById(R.id.et_post_reply)
         if (!MyApp.get().isLogin) {
-            mContext.showLoginHint(editText)
+            act.showLoginHint(editText)
             return false
         }
 
@@ -213,24 +235,24 @@ class TopicDetailAdapter(private val mContext: Context,
                 .post(body)
                 .build()).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                NetManager.dealError(mContext)
+                NetManager.dealError(act)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
 
                 if (response.code() == 200) {
-                    mContext.runOnUiThread {
-                        mContext.toast("感谢成功")
+                    act.runOnUiThread {
+                        act.toast("感谢成功")
                         replyItem.thanks = replyItem.thanks + 1
                         itemVH.tv_thanks.text = (replyItem.thanks).toString()
                         itemVH.tv_thanks.isClickable = false
-                        itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(mContext, R.color.primary)
+                        itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
                         itemVH.iv_thanks.isClickable = false
                         replyItem.isThanked = true
                     }
                 } else {
-                    NetManager.dealError(mContext, response.code())
+                    NetManager.dealError(act, response.code())
                 }
             }
         })
@@ -239,9 +261,9 @@ class TopicDetailAdapter(private val mContext: Context,
 
     private fun reply(replyItem: Reply, position: Int) {
 
-        val editText: EditText = (mContext as Activity).findViewById(R.id.et_post_reply)
+        val editText: EditText = act.findViewById(R.id.et_post_reply)
         if (!MyApp.get().isLogin) {
-            mContext.showLoginHint(editText)
+            act.showLoginHint(editText)
             return
         }
 
@@ -249,39 +271,59 @@ class TopicDetailAdapter(private val mContext: Context,
                 if (pref.getBoolean("pref_add_row", false)) "#$position " else ""
         if (!editText.text.toString().contains(text)) {
             val spanString = SpannableString(text)
-            val span = ForegroundColorSpan(ContextCompat.getColor(mContext, R.color.primary))
+            val span = ForegroundColorSpan(ContextCompat.getColor(act, R.color.primary))
             spanString.setSpan(span, 0, text.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             editText.append(spanString)
         }
         editText.setSelection(editText.length())
         editText.requestFocus()
-        val imm = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = act.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    override fun getItemCount() = topic.size + replies.size + 1
+    override fun getItemCount() = 1 + replies.size
 
     override fun getItemViewType(position: Int) = when {
-        position == 0 && itemCount > 1 -> TYPE_HEADER
-        position == itemCount - 1 -> TYPE_FOOTER
+        position == 0 -> TYPE_HEADER
         else -> TYPE_ITEM
     }
 
-    fun updateItems(topics: Topic, replies: List<Reply>) {
-        this.topic.clear()
-        this.topic.add(topics)
+    fun updateItems(t: Topic, replies: List<Reply>) {
+        this.topics.clear()
+        this.topics.add(t)
         this.replies.clear()
         this.replies.addAll(replies)
+        replies.forEach {
+            it.isLouzu = it.member?.username == topics[0].member?.username
+        }
         notifyDataSetChanged()
     }
 
     fun addItems(replies: List<Reply>) {
+        replies.forEach {
+            it.isLouzu = it.member?.username == topics[0].member?.username
+        }
         this.replies.addAll(replies)
         notifyDataSetChanged()
     }
 
     class ItemViewHolder(override val containerView: View)
-        : androidx.recyclerview.widget.RecyclerView.ViewHolder(containerView), LayoutContainer
+        : RecyclerView.ViewHolder(containerView), LayoutContainer {
+
+        @SuppressLint("SetTextI18n")
+        fun bind(data:Reply) {
+
+            tv_reply_content.setGoodText(data.content_rendered)
+            tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
+            tv_reply_row.text = "#$adapterPosition"
+            tv_replier.text = data.member?.username
+            tv_thanks.text = data.thanks.toString()
+            iv_reply_avatar.load(data.member?.avatarLargeUrl)
+            tv_reply_time.text = TimeUtil.getRelativeTime(data.created)
+
+        }
+
+    }
 
     class TopicWithCommentsViewHolder(itemView: View)
         : TopicsRVAdapter.MainViewHolder(itemView) {
@@ -294,14 +336,4 @@ class TopicDetailAdapter(private val mContext: Context,
         internal var tvCContent: GoodTextView = itemView.findViewById(R.id.tv_comment_content)
     }
 
-
-    class FooterViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
-        internal val tvLoadMore: TextView = itemView.findViewById(R.id.tv_load_more)
-    }
-
-    companion object {
-        private const val TYPE_HEADER = 0
-        private const val TYPE_ITEM = 1
-        private const val TYPE_FOOTER = 2
-    }
 }

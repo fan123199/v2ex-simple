@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1px"
-    android:foreground="?selectableItemBackground"
+    android:foreground="?selectableItemBackground"  tools:targetApi="m"
     android:background="@color/item_background">
 
     <TextView
@@ -61,21 +61,25 @@
 
     <TextView
         android:id="@+id/tv_reply_number"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/tv_title"
         android:layout_alignTop="@+id/tv_author"
-        android:layout_marginEnd="16dp"
+        android:layout_alignEnd="@+id/tv_title"
         android:layout_marginRight="16dp"
-        android:drawablePadding="4dp"
+        android:maxLines="1"
+        android:autoSizeMaxTextSize="?text_small"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeTextType="uniform"
         android:drawableStart="@drawable/ic_message_black_24dp"
+        android:drawablePadding="4dp"
         android:textColor="@color/hint"
         android:textSize="?text_small"
         app:layout_constraintBottom_toBottomOf="@+id/tv_title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_title"
         app:layout_constraintVertical_bias="0.14999998"
-        tools:text="@string/reply" />
+        tools:text="@string/reply"
+        tools:targetApi="o"/>
 
     <TextView
         android:id="@+id/tv_node"

@@ -16,6 +16,7 @@ import org.jetbrains.anko.startActivity
 /**
  * Created by fdx on 2017/7/15.
  * fdx will maintain it
+ * 在用户信息的回复页面
  */
 class ReplyAdapter(val activity: Activity,
                    var list: MutableList<MemberReplyModel> = mutableListOf())

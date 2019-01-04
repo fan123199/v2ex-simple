@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.details.Reply
 import im.fdx.v2ex.ui.details.TopicDetailAdapter
@@ -29,27 +30,26 @@ class Popup(mActivity: Context) {
         popupWindow = PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         popupWindow.isOutsideTouchable = true
         popupWindow.elevation = 16f
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val colorBackground = ContextCompat.getColor(mActivity, R.color.item_background)
+        popupWindow.setBackgroundDrawable(ColorDrawable(colorBackground))
     }
 
 
     @SuppressLint("SetTextI18n")
-    fun show(v: View, data: Reply, position: Int, clickListener: View.OnClickListener) {
+    fun show(v: View, data: Reply, position: Int, clickListener: (Int, Int) -> Unit) {
 
         popupWindow.width = v.width
         val hd = TopicDetailAdapter.ItemViewHolder(contentView)
+        hd.bind(data)
         hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance();
         hd.tv_reply_content.maxLines = 4
         hd.tv_reply_content.isVerticalScrollBarEnabled = true
-        hd.tv_reply_content.setGoodText(data.content_rendered)
-        hd.tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
         hd.tv_reply_row.text = "#$position"
-        hd.tv_replier.text = data.member?.username
         hd.iv_thanks.visibility = View.INVISIBLE
         hd.iv_reply.visibility = View.INVISIBLE
-        hd.iv_reply_avatar.load(data.member?.avatarLargeUrl)
-        hd.tv_reply_time.text = TimeUtil.getRelativeTime(data.created)
-        contentView.setOnClickListener(clickListener)
+        contentView.setOnClickListener {
+            clickListener(-1, position)
+        }
 
         popupWindow.showAsDropDown(v, 0, -v.height)
     }

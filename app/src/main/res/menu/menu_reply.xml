@@ -10,4 +10,6 @@
     <item
         android:id="@+id/menu_copy"
         android:title="@string/copy_content" />
+    <item android:id="@+id/menu_show_user_all_reply"
+        android:title="@string/show_user_all_reply"/>
 </menu>

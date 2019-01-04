@@ -27,6 +27,10 @@ fun String.getNum(): String {
 }
 
 
+/**
+ * 获取 @abcd #rownum
+ * return rownum
+ */
 fun String.getPair(name: String): Int {
 
     val findAll = Regex("(?<=$name\\s{1,4}#)\\d+").findAll(this)

@@ -189,7 +189,7 @@ class TopicActivity : BaseActivity() {
       data != null -> data.pathSegments[1]
       intent.getParcelableExtra<Parcelable>("model") != null -> {
         val topicModel = intent.getParcelableExtra<Topic>("model")
-        mAdapter.topic[0] = topicModel
+        mAdapter.topics[0] = topicModel
         mAdapter.notifyDataSetChanged()
         topicModel.id
       }
@@ -330,11 +330,11 @@ class TopicActivity : BaseActivity() {
         swipe_details.isRefreshing = true
         getRepliesPageOne(false)
       }
-      R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.topic[0]).title} \n" +
-          " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topic[0].id}")
+      R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
+          " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}")
       R.id.menu_item_open_in_browser -> {
 
-        val topicId = mAdapter.topic[0].id
+        val topicId = mAdapter.topics[0].id
         val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
         val uri = Uri.parse(url)
         val intent = Intent(Intent.ACTION_VIEW, uri)
