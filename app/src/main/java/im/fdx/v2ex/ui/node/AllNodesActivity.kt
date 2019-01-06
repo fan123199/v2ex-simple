@@ -50,7 +50,7 @@ class AllNodesActivity : BaseActivity() {
 
     swipe_container.initTheme()
     swipe_container.setOnRefreshListener {
-      thread() {
+      thread {
         getAllNodes()
       }
     }
@@ -67,7 +67,7 @@ class AllNodesActivity : BaseActivity() {
     }
     rv_node.adapter = mAdapter
     swipe_container.isRefreshing = true
-    thread() {
+    thread {
       getAllNodes()
     }
   }

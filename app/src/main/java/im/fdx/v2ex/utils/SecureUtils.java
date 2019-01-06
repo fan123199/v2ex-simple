@@ -108,7 +108,7 @@ public class SecureUtils {
             cipher.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
 
             final byte[] result = cipher.doFinal(Base64.decode(encryptedText, Base64.DEFAULT));
-            unencryptedKey = new String(result, "UTF-8");
+            unencryptedKey = new String(result, StandardCharsets.UTF_8);
 
         } catch (KeyStoreException e) {
             e.printStackTrace();

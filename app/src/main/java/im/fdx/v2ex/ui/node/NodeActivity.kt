@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import com.elvishew.xlog.XLog
 import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.MyApp
@@ -29,7 +30,6 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
-import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException

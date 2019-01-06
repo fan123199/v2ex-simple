@@ -87,7 +87,7 @@ class NewTopicActivity : BaseActivity() {
           mNodename = nodeInfo.name
           search_spinner_node.text = "${nodeInfo.name} | ${nodeInfo.title}"
         }
-        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun parseIntent(intent: Intent) {

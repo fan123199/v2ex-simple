@@ -51,18 +51,6 @@ class TopicsFragment : Fragment() {
   var currentMode = Parser.Source.FROM_HOME
   var totalPage = 0
 
-  internal var handler = Handler(Handler.Callback { msg ->
-    when (msg.what) {
-      MSG_GET_DATA_BY_OK -> {
-        mSwipeLayout.isRefreshing = false
-        mAdapter.notifyDataSetChanged()
-      }
-      MSG_FAILED -> mSwipeLayout.isRefreshing = false
-    }
-    false
-  })
-
-
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
     val layout = inflater.inflate(R.layout.fragment_tab_article, container, false)
@@ -107,13 +95,8 @@ class TopicsFragment : Fragment() {
     }
     when (currentMode) {
       FROM_MEMBER, FROM_NODE, FROM_SEARCH -> mRecyclerView?.addOnScrollListener(mScrollListener)
-      else -> {
-      }
+      FROM_HOME -> {}
     }
-
-
-//    setUpFabAnimation()
-
 
     mAdapter = TopicsRVAdapter(activity!!)
     mRecyclerView?.adapter = mAdapter //大工告成
@@ -131,7 +114,8 @@ class TopicsFragment : Fragment() {
     return layout
   }
 
-  //禁用隐藏fab
+  // 禁用隐藏fab
+  @Deprecated("花里胡哨")
   private fun setUpFabAnimation() {
     fab?.let { fab ->
       mRecyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -196,8 +180,10 @@ class TopicsFragment : Fragment() {
     vCall(if (currentPage != 1) "$requestURL?p=$currentPage" else requestURL)
         .start(object : Callback {
           override fun onFailure(call: Call, e: IOException) {
-            mScrollListener.loading = false
-            handler.sendEmptyMessage(MSG_FAILED)
+            activity?.runOnUiThread {
+              mSwipeLayout.isRefreshing = false
+              mScrollListener.loading = false
+            }
           }
 
           @Throws(IOException::class)
@@ -326,12 +312,4 @@ class TopicsFragment : Fragment() {
           }
         })
   }
-
-  companion object {
-    private const val MSG_FAILED = 3
-    private const val MSG_GET_DATA_BY_OK = 1
-
-    fun newInstance() = TopicsFragment()
-  }
-
 }

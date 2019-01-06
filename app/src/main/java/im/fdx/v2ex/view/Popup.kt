@@ -41,7 +41,7 @@ class Popup(mActivity: Context) {
         popupWindow.width = v.width
         val hd = TopicDetailAdapter.ItemViewHolder(contentView)
         hd.bind(data)
-        hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance();
+        hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance()
         hd.tv_reply_content.maxLines = 4
         hd.tv_reply_content.isVerticalScrollBarEnabled = true
         hd.tv_reply_row.text = "#$position"

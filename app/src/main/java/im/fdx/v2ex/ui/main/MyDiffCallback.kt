@@ -23,7 +23,4 @@ class MyDiffCallback(private val oldList: List<Topic>, private val newList: List
                 oldList[oldItemPosition].content_rendered == newList[newItemPosition].content_rendered
     }
 
-    override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
-        return super.getChangePayload(oldItemPosition, newItemPosition)
-    }
 }

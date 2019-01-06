@@ -32,9 +32,9 @@ class WebViewActivity : AppCompatActivity() {
 
         myWebView = findViewById(R.id.webview)
         val chromeClient = myChromeClient()
-        myWebView!!.setWebChromeClient(chromeClient)
+        myWebView!!.webChromeClient = chromeClient
         val webViewClient = myWebViewClient()
-        myWebView!!.setWebViewClient(webViewClient)
+        myWebView!!.webViewClient = webViewClient
         val webSettings = myWebView!!.settings
 
         if (url != null) {

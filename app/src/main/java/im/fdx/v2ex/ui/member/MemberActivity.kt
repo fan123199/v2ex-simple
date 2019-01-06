@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.BuildConfig
@@ -38,7 +39,6 @@ import kotlinx.android.synthetic.main.activity_profile.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.bundleOf
 import org.jetbrains.anko.toast
 import java.io.IOException
 
@@ -340,9 +340,9 @@ class MemberActivity : BaseActivity() {
         private val titles = arrayOf("主题", "评论")
 
         override fun getItem(position: Int) = when (position) {
-            0 -> TopicsFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
-            else -> UserReplyFragment().apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
-        }
+            0 -> TopicsFragment()
+            else -> UserReplyFragment()
+        }.apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
 
         override fun getCount() = titles.size
         override fun getPageTitle(position: Int) = titles[position]

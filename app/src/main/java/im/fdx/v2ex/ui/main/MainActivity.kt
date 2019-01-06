@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
@@ -435,7 +436,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     logd("onDestroy")
     stopGetNotification()
     mViewPager.clearOnPageChangeListeners()
-    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
   }
 
   private val isOpenMessage: Boolean

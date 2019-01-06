@@ -16,12 +16,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.esafirm.imagepicker.features.ImagePicker
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
-import org.jetbrains.anko.forEachChild
 
 /**
  * Created by fdx on 2017/6/14.
@@ -35,14 +36,14 @@ import org.jetbrains.anko.forEachChild
 fun FrameLayout.showNoContent(showNo: Boolean, content: String = "没有内容") {
   val tagName = "no"
   if (!showNo) {
-    this.forEachChild { view ->
+    this.forEach { view ->
       when (tagName) {
         view.tag -> removeView(view)
       }
     }
   } else {
     var b = false
-    this.forEachChild { view ->
+    this.forEach { view ->
       when (tagName) {
         view.tag -> b = true
       }
@@ -126,7 +127,7 @@ private fun calculateStatusColor(@ColorInt color: Int, alpha: Int): Int {
   return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
 }
 
-fun androidx.swiperefreshlayout.widget.SwipeRefreshLayout.initTheme() {
+fun SwipeRefreshLayout.initTheme() {
   setColorSchemeResources(R.color.accent_orange)
   setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
 }

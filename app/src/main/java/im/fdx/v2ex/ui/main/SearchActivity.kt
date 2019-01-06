@@ -9,12 +9,12 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import im.fdx.v2ex.R
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import org.jetbrains.anko.bundleOf
 
 
 class SearchActivity : BaseActivity() {
@@ -42,7 +42,7 @@ class SearchActivity : BaseActivity() {
                     3. 后续版本提供条件筛选功能
                 """.trimIndent()).show()
     }
-    fra = TopicsFragment.newInstance()
+    fra = TopicsFragment()
     fra.arguments = bundleOf("search" to true)
     supportFragmentManager.beginTransaction()
         .replace(R.id.container, fra)
