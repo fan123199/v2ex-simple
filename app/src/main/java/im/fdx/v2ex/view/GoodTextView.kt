@@ -31,14 +31,16 @@ import org.jetbrains.anko.startActivity
  * fdx will maintain it
  */
 class GoodTextView @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
 ) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
 
     var bestWidth = 0
 
     var popupListener: Popup.PopupListener? = null
 
-    //防止 Picasso，将target gc了， 导致图片无法显示
+    //防止 Glide，将target gc了， 导致图片无法显示
     var targetList: MutableList<SimpleTarget<Drawable>> = mutableListOf()
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -176,13 +178,7 @@ class GoodTextView @JvmOverloads constructor(
                 }
             }
             targetList.add(target)
-            GlideApp.with(context)
-                    .apply {
-                        if (source.endsWith(".gif")) {
-                            asGif()
-                        }
-                    }
-                    .load(source).into(target)
+            GlideApp.with(context).load(source).into(target)
             return bitmapHolder
         }
     }

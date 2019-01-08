@@ -48,16 +48,6 @@ class TopicActivity : BaseActivity() {
   private var once: String = ""
   private var currentPage: Int = 0
 
-  private val callback = { type: Int, position: Int ->
-
-    when (type) {
-      1 -> {
-      }
-      2 -> getMoreRepliesByOrder(totalPage = 1, scrollToBottom = false)
-      -1 -> detail_recycler_view.smoothScrollToPosition(position)
-    }
-  }
-
 
   private var receiver: BroadcastReceiver = object : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -133,7 +123,9 @@ class TopicActivity : BaseActivity() {
       }
     })
 
-    mAdapter = TopicDetailAdapter(this@TopicActivity, callback)
+    mAdapter = TopicDetailAdapter(this@TopicActivity) { position: Int ->
+      detail_recycler_view.smoothScrollToPosition(position)
+    }
     detail_recycler_view.adapter = mAdapter
 
     swipe_details.initTheme()

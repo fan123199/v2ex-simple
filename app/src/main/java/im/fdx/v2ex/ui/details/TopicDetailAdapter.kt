@@ -46,12 +46,14 @@ import java.io.IOException
 private const val TYPE_HEADER = 0
 private const val TYPE_ITEM = 1
 
+const val TYPE_GO_TO_ROW = -1
+
 /**
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
  */
 class TopicDetailAdapter(private val act: AppCompatActivity,
-                         private val clickMore: (Int, Int) -> Unit
+                         private val clickMore: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var verifyCode: String? = null

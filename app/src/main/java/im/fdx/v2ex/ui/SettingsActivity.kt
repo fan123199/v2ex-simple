@@ -43,18 +43,6 @@ class SettingsActivity : BaseActivity() {
         .commit()
   }
 
-//  class UserSettingsFragment:  PreferenceFragmentCompat() {
-//    override fun onCreatePreferences(p0: Bundle?, p1: String?) {
-//      addPreferencesFromResource(R.xml.preference_login)
-//      findPreference("group_user").title = pref.getString(Keys.PREF_USERNAME, "user")
-//      prefUser()
-//      prefMessage()
-//      prefTab()
-//    }
-//
-//  }
-
-
   class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     private var count: Int = 0

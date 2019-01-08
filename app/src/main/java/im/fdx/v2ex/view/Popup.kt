@@ -2,20 +2,23 @@ package im.fdx.v2ex.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.details.Reply
 import im.fdx.v2ex.ui.details.TopicDetailAdapter
-import im.fdx.v2ex.utils.TimeUtil
-import im.fdx.v2ex.utils.extensions.load
 import kotlinx.android.synthetic.main.item_reply_view.*
+
+
+
+
 
 /**
  * Created by fdx on 2017/7/14.
@@ -30,15 +33,16 @@ class Popup(mActivity: Context) {
         popupWindow = PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         popupWindow.isOutsideTouchable = true
         popupWindow.elevation = 16f
+        popupWindow.isFocusable = true
         val colorBackground = ContextCompat.getColor(mActivity, R.color.item_background)
         popupWindow.setBackgroundDrawable(ColorDrawable(colorBackground))
     }
 
 
     @SuppressLint("SetTextI18n")
-    fun show(v: View, data: Reply, position: Int, clickListener: (Int, Int) -> Unit) {
+    fun show(v: View, data: Reply, index: Int, clickListener: (Int) -> Unit) {
 
-        popupWindow.width = v.width
+        val position  = index + 1 //这是对应关系
         val hd = TopicDetailAdapter.ItemViewHolder(contentView)
         hd.bind(data)
         hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance()
@@ -47,10 +51,12 @@ class Popup(mActivity: Context) {
         hd.tv_reply_row.text = "#$position"
         hd.iv_thanks.visibility = View.INVISIBLE
         hd.iv_reply.visibility = View.INVISIBLE
+        hd.divider.visibility = View.INVISIBLE
         contentView.setOnClickListener {
-            clickListener(-1, position)
+            clickListener(position)
         }
 
+        popupWindow.width = v.width
         popupWindow.showAsDropDown(v, 0, -v.height)
     }
 

@@ -12,13 +12,6 @@
             android:summaryOn="当前格式: @user #n "
             android:summaryOff="当前格式: @user " />
 
-        <ListPreference
-            android:defaultValue="0"
-            android:key="pref_text_size"
-            android:entryValues="@array/text_size"
-            android:entries="@array/text_size_string"
-            android:title="字体大小" />
-
         <Preference
             android:key="pref_tab_bar"
             android:title="分类栏自定义" />
