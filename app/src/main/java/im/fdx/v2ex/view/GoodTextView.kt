@@ -29,6 +29,10 @@ import org.jetbrains.anko.startActivity
 /**
  * Created by fdx on 2016/9/11.
  * fdx will maintain it
+ *
+ *  这里非常难实现显示textView， 因为tagHandler的使用，是要对<code> <pre>等标签进行处理，但是后续没有好用的背景绘制方法。
+ *  总的来说就是，在textView搞这些超纲的多样式，是不科学的。 所以请放弃念想。优化下图片显示还是可以考虑的
+ *
  */
 class GoodTextView @JvmOverloads constructor(
         context: Context,
