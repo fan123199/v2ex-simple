@@ -14,7 +14,7 @@ Project is first written by Java and now kotlin.
 + 帖子列表以及详情浏览，发表文章评论
 + Material Design
 + 从web打开应用
-+ 后台获取更新（jobScheduler）
++ 后台获取更新（workmanager）
 + 夜间模式
 + 文字大小配置
 

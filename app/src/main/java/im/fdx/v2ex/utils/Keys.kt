@@ -9,20 +9,16 @@ object Keys {
     const val AUTHOR_EMAIL = "fan123199@gmail.com"
     const val KEY_MEMBER_ID = "member_id"
     const val KEY_TAB = "tab"
-    const val KEY_COLUMN_ID = "column_id"
     const val KEY_TOPIC_ID = "topic_id"
     const val KEY_NODE_ID = "node_id"
     const val KEY_NODE_NAME = "name"
     const val KEY_AVATAR = "avatar"
-    const val KEY_NODE_TITLE = "node_title"
 
     const val KEY_PHOTO = "extra_photo"
     const val KEY_WARN_IMAGE_UPLOAD = "key_warn_image_upload"
     const val KEY_WARN_SEARCH_API = "key_warn_search_api"
     const val KEY_POSITION = "extra_position"
     const val KEY_USERNAME = "username"
-
-    const val KEY_TOPIC_LIST = "extra_topic_list"
 
     //    -------------------------------------------------
     const val ACTION_GET_NOTIFICATION = "im.fdx.v2ex.get.notification"
@@ -54,6 +50,6 @@ object Keys {
 
     const val KEY_TO_CHOOSE_NODE = "go_for_node"
 
-    const val JOB_ID_GET_NOTIFICATION = 2
+    const val TAG_WORKER = "tag_worker"
     const val KEY_NODE = "extra_node"
 }

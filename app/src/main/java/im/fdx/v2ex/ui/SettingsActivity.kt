@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui
 
 import android.app.NotificationManager
-import android.app.job.JobScheduler
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -16,6 +15,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.work.WorkManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -23,10 +23,10 @@ import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
 import im.fdx.v2ex.utils.Keys.PREF_TAB
 import im.fdx.v2ex.utils.Keys.PREF_TEXT_SIZE
 import im.fdx.v2ex.utils.Keys.PREF_VERSION
+import im.fdx.v2ex.utils.Keys.TAG_WORKER
 import im.fdx.v2ex.utils.Keys.notifyID
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import org.jetbrains.anko.longToast
@@ -73,8 +73,8 @@ class SettingsActivity : BaseActivity() {
       }
 
       if (!pref.getBoolean("pref_msg", false)) {
-        findPreference("pref_msg_period").isEnabled = false
         findPreference("pref_background_msg").isEnabled = false
+        findPreference("pref_msg_period").isEnabled = false
       }
     }
 
@@ -168,8 +168,7 @@ class SettingsActivity : BaseActivity() {
           } else {
             val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(notifyID)
-            val jobSchedule = activity?.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-            jobSchedule.cancel(JOB_ID_GET_NOTIFICATION)
+            WorkManager.getInstance().cancelAllWorkByTag(TAG_WORKER)
             findPreference("pref_msg_period").isEnabled = false
             findPreference("pref_background_msg").isEnabled = false
 

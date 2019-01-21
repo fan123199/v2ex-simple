@@ -3,8 +3,6 @@
 package im.fdx.v2ex.ui.main
 
 import android.app.NotificationManager
-import android.app.job.JobInfo
-import android.app.job.JobScheduler
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -24,21 +22,21 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
-import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.start
-import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.Keys.JOB_ID_GET_NOTIFICATION
+import im.fdx.v2ex.utils.Keys.TAG_WORKER
 import im.fdx.v2ex.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 import kotlinx.android.synthetic.main.activity_main_nav_drawer.*
@@ -50,6 +48,8 @@ import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -249,22 +249,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
   private fun startGetNotification() {
     if (MyApp.get().isLogin && isOpenMessage) {
-      val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
+      val timeSec = pref.getString("pref_msg_period", "900")!!.toLong()
+      val compressionWork = PeriodicWorkRequestBuilder<GetMsgWorker>(timeSec, TimeUnit.SECONDS)
+              .addTag(TAG_WORKER)
+              .build()
+      WorkManager.getInstance().enqueue(compressionWork)
 
-      val builder = JobInfo.Builder(JOB_ID_GET_NOTIFICATION,
-          ComponentName(MyApp.get().packageName, MyJobSchedule::class.java.name))
-      val timeSec = pref.getString("pref_msg_period", "30")!!.toInt()
-      builder.setPeriodic((timeSec * 1000).toLong())
-      mJobScheduler.schedule(builder.build())
     }
   }
 
   private fun stopGetNotification() {
-    if (myApp.isLogin &&
-        isOpenMessage &&
-        !pref.getBoolean("pref_background_msg", false)) {
-      val mJobScheduler = getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
-      mJobScheduler.cancel(JOB_ID_GET_NOTIFICATION)
+    if (myApp.isLogin
+            && isOpenMessage
+            && !pref.getBoolean("pref_background_msg", false)) {
+      WorkManager.getInstance().cancelAllWorkByTag(TAG_WORKER)
     }
   }
 

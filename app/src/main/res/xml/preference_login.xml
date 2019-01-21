@@ -3,6 +3,7 @@
 
 
     <PreferenceCategory
+        android:order="10"
         android:title="个性化"
         android:key="group_custom">
         <SwitchPreference
@@ -19,6 +20,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:order="20"
         android:title="消息"
         android:key="group_msg">
         <SwitchPreference
@@ -34,7 +36,7 @@
             android:summaryOff="不获取"
             android:defaultValue="false" />
         <ListPreference
-            android:defaultValue="60"
+            android:defaultValue="900"
             android:entries="@array/period_string"
             android:entryValues="@array/period_int"
             android:key="pref_msg_period"
@@ -42,6 +44,7 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:order="30"
         android:title="@string/user"
         android:key="group_user">
         <Preference

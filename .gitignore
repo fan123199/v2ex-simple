@@ -8,9 +8,10 @@
 /.idea/gradle.xml
 *.iml
 /build
-/app/app.iml
 .DS_Store
 /captures
 /app/app-release.apk
 /.idea/codeStyles
 keystore.properties
+*.apk
+output.json

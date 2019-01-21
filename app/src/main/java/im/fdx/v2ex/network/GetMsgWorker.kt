@@ -1,51 +1,38 @@
-package im.fdx.v2ex
+package im.fdx.v2ex.network
 
 import android.app.*
-import android.app.NotificationManager.IMPORTANCE_DEFAULT
-import android.app.job.JobParameters
-import android.app.job.JobService
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.Worker
+import androidx.work.WorkerParameters
 import com.elvishew.xlog.XLog
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
-import im.fdx.v2ex.network.start
-import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.NotificationActivity
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.logi
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 import java.util.regex.Pattern
 
+class GetMsgWorker(val context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
+    override fun doWork(): Result {
 
-@Deprecated("用work manager替代")
-class MyJobSchedule : JobService() {
+        getUnread(context)
 
-    override fun onStartJob(params: JobParameters?): Boolean {
-        logi("jobStart")
-        getNotification(this, params)
+        return Result.success()
 
-
-        return true
     }
 
-    override fun onStopJob(params: JobParameters?): Boolean {
-        logi("jobStop")
-        return false
-    }
+    private fun getUnread(context: Context) {
 
-    private fun getNotification(context: Context, params: JobParameters?) {
-
-        vCall(URL_FOLLOWING).start(object : Callback {
+        vCall(NetManager.URL_FOLLOWING).start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(context, -1)
-                jobFinished(params, true)
             }
 
             @Throws(IOException::class)
@@ -53,7 +40,6 @@ class MyJobSchedule : JobService() {
                 val code = response.code()
                 if (code != 200) {
                     NetManager.dealError(context, code)
-                    jobFinished(params, false)
                     return
                 }
 
@@ -67,8 +53,8 @@ class MyJobSchedule : JobService() {
                     if (num != 0) {
                         val intent = Intent(Keys.ACTION_GET_NOTIFICATION)
                         intent.putExtra(Keys.KEY_UNREAD_COUNT, num)
-                      androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
-                        putNotification(context, num, params)
+                        LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+                        putNotification(context, num)
                     }
                 } else {
                     XLog.e("not find num of unread message")
@@ -77,7 +63,7 @@ class MyJobSchedule : JobService() {
         })
     }
 
-    private fun putNotification(context: Context, number: Int, params: JobParameters?) {
+    private fun putNotification(context: Context, number: Int) {
         val resultIntent = Intent(context, NotificationActivity::class.java)
         resultIntent.putExtra(Keys.KEY_UNREAD_COUNT, number)
         val stackBuilder = TaskStackBuilder.create(context)
@@ -90,9 +76,9 @@ class MyJobSchedule : JobService() {
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel("channel_id", "未读消息", IMPORTANCE_DEFAULT)
+            val channel = NotificationChannel("channel_id", "未读消息", NotificationManager.IMPORTANCE_DEFAULT)
 
-            val notificationManager = getSystemService(
+            val notificationManager = context.getSystemService(
                     Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
@@ -115,7 +101,5 @@ class MyJobSchedule : JobService() {
         val mNotificationCompat = mBuilder.build()
         val mNotificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(Keys.notifyID, mNotificationCompat)
-        jobFinished(params, false)
     }
-
 }
