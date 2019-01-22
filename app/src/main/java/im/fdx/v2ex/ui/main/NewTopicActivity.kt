@@ -2,6 +2,7 @@
 
 package im.fdx.v2ex.ui.main
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -14,6 +15,7 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import com.esafirm.imagepicker.features.ImagePicker
+import com.google.android.material.textfield.TextInputEditText
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseActivity
@@ -37,7 +39,7 @@ import java.util.regex.Pattern
 class NewTopicActivity : BaseActivity() {
 
     private var mNodename: String = ""
-  private lateinit var etTitle: com.google.android.material.textfield.TextInputEditText
+    private lateinit var etTitle: TextInputEditText
     private lateinit var etContent: EditText
 
     private var mTitle: String = ""
@@ -53,15 +55,14 @@ class NewTopicActivity : BaseActivity() {
         etContent = findViewById(R.id.et_content)
 
 
-      search_spinner_node.setOnClickListener {
-        startActivityForResult<AllNodesActivity>(requestNode, KEY_TO_CHOOSE_NODE to true)
-      }
-
+        search_spinner_node.setOnClickListener {
+            startActivityForResult<AllNodesActivity>(REQUEST_NODE, KEY_TO_CHOOSE_NODE to true)
+        }
         parseIntent(intent)
-
     }
 
 
+    @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
             // Get a list of picked images
@@ -82,10 +83,10 @@ class NewTopicActivity : BaseActivity() {
                 }
             }
 
-        } else if (requestCode == NewTopicActivity.requestNode && resultCode == Activity.RESULT_OK && data != null) {
-          val nodeInfo = data.getParcelableExtra<Node>("extra_node")
-          mNodename = nodeInfo.name
-          search_spinner_node.text = "${nodeInfo.name} | ${nodeInfo.title}"
+        } else if (requestCode == NewTopicActivity.REQUEST_NODE && resultCode == Activity.RESULT_OK && data != null) {
+            val nodeInfo = data.getParcelableExtra<Node>("extra_node")
+            mNodename = nodeInfo.name
+            search_spinner_node.text = "${nodeInfo.name} | ${nodeInfo.title}"
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -101,11 +102,12 @@ class NewTopicActivity : BaseActivity() {
         }
     }
 
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menu.add(0, 123, 1, "send")
+        menu.add(0, MENU_ID_SEND, 1, "send")
                 .setIcon(R.drawable.ic_send_primary_24dp)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        menu.add(0, 124, 0, "upload")
+        menu.add(0, MENU_ID_UPLOAD, 0, "upload")
                 .setIcon(R.drawable.ic_image)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
@@ -115,7 +117,7 @@ class NewTopicActivity : BaseActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         when (item.itemId) {
-            123 -> {
+            MENU_ID_SEND -> {
 
                 mTitle = etTitle.text.toString()
                 mContent = etContent.text.toString()
@@ -125,12 +127,12 @@ class NewTopicActivity : BaseActivity() {
                     mContent.isEmpty() -> toast("标题和内容不能为空")
                     mTitle.length > 120 -> toast("标题字数超过限制")
                     mContent.length > 20000 -> toast("主题内容不能超过 20000 个字符")
-                  mNodename.isEmpty() -> toast(R.string.choose_node)
+                    mNodename.isEmpty() -> toast(R.string.choose_node)
                     else -> postNew(item)
                 }
             }
 
-            124 -> {
+            MENU_ID_UPLOAD -> {
                 openImagePicker(this)
             }
 
@@ -140,6 +142,7 @@ class NewTopicActivity : BaseActivity() {
     }
 
 
+    @SuppressLint("InflateParams")
     private fun postNew(item: MenuItem) {
 
         val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -149,7 +152,7 @@ class NewTopicActivity : BaseActivity() {
         iv.startAnimation(rotation)
         item.actionView = iv
 
-      vCall("https://www.v2ex.com/new").start(object : Callback {
+        vCall("https://www.v2ex.com/new").start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 resetIcon(item)
                 NetManager.dealError(this@NewTopicActivity)
@@ -195,7 +198,7 @@ class NewTopicActivity : BaseActivity() {
                             val topic: String
                             if (matcher.find()) {
                                 topic = matcher.group()
-                              logd(topic)
+                                logd(topic)
                                 val intent = Intent(this@NewTopicActivity, TopicActivity::class.java)
                                 intent.putExtra(Keys.KEY_TOPIC_ID, topic)
                                 startActivity(intent)
@@ -214,11 +217,14 @@ class NewTopicActivity : BaseActivity() {
 
     private fun resetIcon(item: MenuItem) {
         runOnUiThread {
-          item.setIcon(R.drawable.ic_send_primary_24dp)
+            item.setIcon(R.drawable.ic_send_primary_24dp)
         }
     }
 
     companion object {
-      const val requestNode = 123
+        const val REQUEST_NODE = 123
+        const val MENU_ID_SEND = 123
+        const val MENU_ID_UPLOAD =124
+
     }
 }

@@ -3,7 +3,10 @@
 package im.fdx.v2ex.ui.main
 
 import android.app.NotificationManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.Color
@@ -21,16 +24,22 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager.widget.ViewPager
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.WorkRequest
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.tabs.TabLayout
 import de.hdodenhof.circleimageview.CircleImageView
-import im.fdx.v2ex.*
+import im.fdx.v2ex.MyApp
+import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -48,15 +57,14 @@ import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-  private lateinit var mDrawer: androidx.drawerlayout.widget.DrawerLayout
-  private lateinit var mViewPager: androidx.viewpager.widget.ViewPager
-  private lateinit var fab: com.google.android.material.floatingactionbutton.FloatingActionButton
+  private lateinit var mDrawer: DrawerLayout
+  private lateinit var mViewPager: ViewPager
+  private lateinit var fab: FloatingActionButton
 
   private lateinit var mAdapter: MyViewPagerAdapter
   private val shortcutId = "create_topic"
@@ -75,20 +83,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       logd("getAction: $action")
       when (action) {
         Keys.ACTION_LOGIN -> {
-          showNavIcon(true)
           val username = intent.getStringExtra(Keys.KEY_USERNAME)
           val avatar = intent.getStringExtra(Keys.KEY_AVATAR)
           setUserInfo(username, avatar)
-          fab.show()
           reloadTab()
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
           }
         }
         Keys.ACTION_LOGOUT -> {
-          showNavIcon(false)
           setUserInfo(null, null)
-          fab.hide()
           reloadTab()
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             shortcutManager?.removeDynamicShortcuts(shortcutIds)
@@ -104,8 +108,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
           reloadTab()
         }
         Keys.ACTION_TEXT_SIZE_CHANGE -> {
-          finish()
-          startActivity<MainActivity>()
+          recreate()
         }
       }
     }
@@ -124,6 +127,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     logd("onCreate")
     window.statusBarColor = Color.TRANSPARENT
     setContentView(R.layout.activity_main_nav_drawer)
+    setSupportActionBar(toolbar)
 
     val intentFilter = IntentFilter().apply {
       addAction(Keys.ACTION_LOGIN)
@@ -133,12 +137,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       addAction(Keys.ACTION_TEXT_SIZE_CHANGE)
     }
 
-    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
-
-    setSupportActionBar(toolbar)
-
+    LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     createShortCut()
-
+    dailyCheck(true)
 
     mDrawer = findViewById(R.id.drawer_layout)
     val mDrawToggle = ActionBarDrawerToggle(this, mDrawer,
@@ -147,7 +148,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     mDrawer.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.statusbar_white))
     mDrawToggle.syncState()
 
-    mDrawer.addDrawerListener(object : androidx.drawerlayout.widget.DrawerLayout.SimpleDrawerListener() {
+    mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
       override fun onDrawerClosed(drawerView: View) {
         val menu = nav_view.menu
         (0 until menu.size()).forEach { j -> menu.getItem(j).isChecked = false }
@@ -157,7 +158,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     nav_view.setNavigationItemSelectedListener(this)
     fab = findViewById(R.id.fab_main)
     fab.setOnClickListener {
-      startActivity<NewTopicActivity>()
+      if(myApp.isLogin) {
+        startActivity<NewTopicActivity>()
+      } else {
+        showLoginHint(it)
+      }
     }
     val ivMode = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
@@ -174,7 +179,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     if (myApp.isLogin) {
-      showNavIcon(true)
       val username = pref.getString(Keys.PREF_USERNAME, "")
       val avatar = pref.getString(Keys.PREF_AVATAR, "")
       if (!username.isNullOrEmpty() && !avatar.isNullOrEmpty()) {
@@ -182,9 +186,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       } else {
         updateUserInBackground()
       }
-    } else {
-      showNavIcon(false)
-      fab.hide()
     }
 
     mViewPager = findViewById(R.id.viewpager_main)
@@ -195,11 +196,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     //内部实现就是加入一堆的listener给viewpager，不用自己实现
     sliding_tabs.setupWithViewPager(mViewPager)
 
-    sliding_tabs.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
-      override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
-      override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab) {}
+    sliding_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+      override fun onTabSelected(tab: TabLayout.Tab) {}
+      override fun onTabUnselected(tab: TabLayout.Tab) {}
 
-      override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab) {
+      override fun onTabReselected(tab: TabLayout.Tab) {
         mAdapter.getItem(tab.position).scrollToTop()
       }
     })
@@ -266,24 +267,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
   }
 
-  private fun showNavIcon(visible: Boolean) {
-    nav_view.menu.findItem(R.id.nav_daily).isVisible = visible
-    nav_view.menu.findItem(R.id.nav_favor).isVisible = visible
-    invalidateOptionsMenu()
-  }
-
-  private fun shrinkFab() {
-    fab.animate().rotation(360f)
-        .setDuration(1000).start()
-  }
-
-
   private fun setUserInfo(username: String?, avatar: String?) {
     val tvMyName: TextView = nav_view.getHeaderView(0).findViewById(R.id.tv_my_username)
     val ivMyAvatar: CircleImageView = nav_view.getHeaderView(0).findViewById(R.id.iv_my_avatar)
     tvMyName.text = username
     ivMyAvatar.load(avatar)
-    ivMyAvatar.setOnClickListener { _ ->
+    ivMyAvatar.setOnClickListener {
       username?.let { it2 -> startActivity<MemberActivity>(Keys.KEY_USERNAME to it2) }
     }
 
@@ -342,15 +331,22 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   override fun onNavigationItemSelected(item: MenuItem): Boolean {
     @Suppress("DEPRECATION")
     when (item.itemId) {
-      R.id.nav_daily -> dailyCheck()
-      R.id.nav_node -> startActivity<AllNodesActivity>()
-      R.id.nav_favor -> startActivity<FavorActivity>()
+      R.id.nav_daily ->
+        if(myApp.isLogin) {
+          dailyCheck(autoCheck = false)
+        } else {
+          showLoginHint(fab)
+        }
+      R.id.nav_node ->
+        startActivity<AllNodesActivity>()
+      R.id.nav_favor ->
+        if(myApp.isLogin) {
+          startActivity<FavorActivity>()
+        } else {
+          showLoginHint(fab)
+        }
       R.id.nav_change_daylight -> startActivity<WebViewActivity>()
-      R.id.nav_testNotify -> {
-        val photoPickerIntent = Intent(Intent.ACTION_PICK)
-        photoPickerIntent.type = "image/*"
-        startActivityForResult(photoPickerIntent, 110)
-      }
+      R.id.nav_testNotify -> {}
       R.id.nav_share -> share("https://play.google.com/store/apps/details?id=$packageName")
       R.id.nav_feedback -> email(Keys.AUTHOR_EMAIL, getString(R.string.feedback_subject), getString(R.string.feedback_hint))
       R.id.nav_setting -> startActivity<SettingsActivity>()
@@ -360,8 +356,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
 
-  private fun dailyCheck() {
-    vCall(DAILY_CHECK).enqueue(object : Callback {
+  private fun dailyCheck(autoCheck : Boolean ) {
+    vCall(DAILY_CHECK).start(object : Callback {
       override fun onFailure(call: Call, e: IOException) {
         Log.e("MainActivity", "daily mission failed")
       }
@@ -378,7 +374,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         if (body.contains("每日登录奖励已领取")) {
           logi("已领取")
-          runOnUiThread { toast("已领取, 明日再来") }
+          if(!autoCheck) {
+            runOnUiThread { toast("已领取, 明日再来") }
+          }
           return
         }
 

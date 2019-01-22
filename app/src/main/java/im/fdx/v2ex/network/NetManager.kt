@@ -16,24 +16,13 @@ import java.io.IOException
  * Created by a708 on 15-8-13.
  * 用于对API和网页处理的类
  *
- * 这是最苦力活的一个类，而且很有可能会继续改变
+ * 这是最苦力活的一个类，而且很有可能会继续改变.
+ * 由于v2ex提供的接口不够实时，采用解析网页方式 。
  */
 
 object NetManager {
 
     const val HTTPS_V2EX_BASE = "https://www.v2ex.com"
-
-    /**
-     * todo 还有用，和网页的最热不一样
-     */
-    const val API_HOT = "$HTTPS_V2EX_BASE/api/topics/hot.json"
-
-    @Deprecated("不实时")
-    const val API_LATEST = "$HTTPS_V2EX_BASE/api/topics/latest.json"
-
-    //以下,接受参数： name: 节点名
-    const val API_NODE = "$HTTPS_V2EX_BASE/api/nodes/show.json"
-
 
     const val API_TOPIC = "$HTTPS_V2EX_BASE/api/topics/show.json"
 

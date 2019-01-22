@@ -52,7 +52,6 @@ fun vCall(url: String): Call = HttpHelper.OK_CLIENT.newCall(Request.Builder().ur
 fun Call.start(callback: Callback) {
     enqueue(object : Callback {
         override fun onFailure(call: Call?, e: IOException?) {
-            Crashlytics.logException(e)
             try {
                 callback.onFailure(call!!, e!!)
             } catch (e2: Exception) {
@@ -72,18 +71,39 @@ fun Call.start(callback: Callback) {
     })
 }
 
-//
-//fun Call.start(onResp: (Call?, Response?) -> Unit, onFailure: (Call?, IOException?)-> Unit){
-//    start(object: Callback {
-//        override fun onFailure(call: Call, e: IOException) {
-//            onFailure(call , e)
-//        }
-//
-//        override fun onResponse(call: Call, response: Response) {
-//            onResp(call, response)
-//        }
-//    })
-//}
+
+@Deprecated("暂时还用不上，简化代码之用")
+fun Call.start(onResp: (Call, Response) -> Unit, onFail: (Call, IOException)-> Unit){
+    val callback = object: Callback {
+        override fun onResponse(call: Call, response: Response) {
+            onResp(call, response)
+        }
+
+        override fun onFailure(call: Call, e: IOException) {
+            onFail(call , e)
+        }
+    }
+    enqueue(object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+                Crashlytics.logException(e)
+                try {
+                    callback.onFailure(call!!, e!!)
+                } catch (e2: Exception) {
+                    Crashlytics.logException(e2)
+                    e2.printStackTrace()
+                }
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+                try {
+                    callback.onResponse(call!!, response!!)
+                } catch (e: Exception) {
+                    Crashlytics.logException(e)
+                    e.printStackTrace()
+                }
+            }
+        })
+}
 
 
 
