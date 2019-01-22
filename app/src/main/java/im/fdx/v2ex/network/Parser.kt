@@ -214,6 +214,12 @@ class Parser(private val htmlStr: String) {
         return matcher.find()
     }
 
+    fun isTopicThanked(): Boolean {
+        val p = Pattern.compile("thankTopic\\(\\d{1,10}")
+        val matcher = p.matcher(doc.outerHtml())
+        return !matcher.find()
+    }
+
     fun getPageValue(): IntArray {
 
       val currentPage: Int

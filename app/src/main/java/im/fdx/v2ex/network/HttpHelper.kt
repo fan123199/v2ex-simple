@@ -23,7 +23,7 @@ object HttpHelper {
             //            .writeTimeout(10, TimeUnit.SECONDS)
             //            .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
-        .addInterceptor(ChuckInterceptor(MyApp.get()))//好东西，查看Okhttp数据
+            .addInterceptor(ChuckInterceptor(MyApp.get()))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
                 chain.proceed(chain.request())
             }

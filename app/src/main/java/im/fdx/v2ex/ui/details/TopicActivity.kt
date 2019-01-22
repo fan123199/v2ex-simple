@@ -34,19 +34,19 @@ import org.jetbrains.anko.share
 import org.jetbrains.anko.toast
 import java.io.IOException
 
+
 class TopicActivity : BaseActivity() {
 
   private lateinit var mAdapter: TopicDetailAdapter
   private var mMenu: Menu? = null
 
-  private lateinit var tvToolbar: TextView
-
   private lateinit var mTopicId: String
-  private var topicHeader: Topic? = null
   private var token: String? = null
-  private var isFavored: Boolean = false
   private var once: String = ""
-  private var currentPage: Int = 0
+
+  private var topicHeader: Topic? = null
+  private var isFavored: Boolean = false
+  private var isThanked: Boolean = false
 
 
   private var receiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -96,7 +96,7 @@ class TopicActivity : BaseActivity() {
     setFootView(MyApp.get().isLogin)
 
     setUpToolbar()
-    tvToolbar = findViewById(R.id.tv_toolbar)
+    val tvToolbar = findViewById<TextView>(R.id.tv_toolbar)
 
     //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
     val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
@@ -236,6 +236,7 @@ class TopicActivity : BaseActivity() {
           logd("verifyCode is :" + token!!)
           mAdapter.verifyCode = token!!
           isFavored = parser.isTopicFavored()
+          isThanked = parser.isTopicThanked()
           once = parser.getOnceNum()
 
           logd("is favored: " + isFavored.toString())
@@ -247,15 +248,22 @@ class TopicActivity : BaseActivity() {
               mMenu?.findItem(R.id.menu_favor)?.setIcon(R.drawable.ic_favorite_border_white_24dp)
               mMenu?.findItem(R.id.menu_favor)?.setTitle(R.string.favor)
             }
+
+
+            if (isThanked) {
+              mMenu?.findItem(R.id.menu_thank_topic)?.setTitle(R.string.already_thank)
+            } else {
+              mMenu?.findItem(R.id.menu_thank_topic)?.setTitle(R.string.thanks)
+            }
+
+
           }
 
         }
 
-        XLog.tag("TopicActivity").d("got page 1 , next is more page")
+        logd("got page 1 , next is more page")
 
         val totalPage = parser.getPageValue()[1]  // [2,3]
-
-        currentPage = parser.getPageValue()[0]
         runOnUiThread {
           swipe_details.isRefreshing = false
           mAdapter.updateItems(topicHeader!!, repliesFirstPage)
@@ -300,10 +308,10 @@ class TopicActivity : BaseActivity() {
     menuInflater.inflate(R.menu.menu_details, menu)
     if (MyApp.get().isLogin) {
       menu.findItem(R.id.menu_favor).isVisible = true
-      menu.findItem(R.id.menu_reply)?.isVisible = true
+      menu.findItem(R.id.menu_thank_topic)?.isVisible = true
     } else {
       menu.findItem(R.id.menu_favor).isVisible = false
-      menu.findItem(R.id.menu_reply)?.isVisible = false
+      menu.findItem(R.id.menu_thank_topic)?.isVisible = false
     }
     mMenu = menu
     return true
@@ -312,20 +320,11 @@ class TopicActivity : BaseActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
 
-      R.id.menu_favor -> favorOrNot(mTopicId, token, isFavored)
-      R.id.menu_reply -> {
-        et_post_reply.requestFocus()
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS)
-      }
-      R.id.menu_refresh -> {
-        swipe_details.isRefreshing = true
-        getRepliesPageOne(false)
-      }
+      R.id.menu_favor -> token?.let { favorOrNot(mTopicId, it, isFavored) }
+      R.id.menu_thank_topic -> { token?.let { thankTopic(mTopicId, it, isThanked) } }
       R.id.menu_item_share -> share("来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
           " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}")
       R.id.menu_item_open_in_browser -> {
-
         val topicId = mAdapter.topics[0].id
         val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
         val uri = Uri.parse(url)
@@ -344,7 +343,7 @@ class TopicActivity : BaseActivity() {
     return super.onOptionsItemSelected(item)
   }
 
-  private fun favorOrNot(topicId: String, token: String?, doFavor: Boolean) {
+  private fun favorOrNot(topicId: String, token: String, doFavor: Boolean) {
     vCall("${NetManager.HTTPS_V2EX_BASE}/${if (doFavor) "un" else ""}favorite/topic/$topicId?t=$token")
         .start(object : Callback {
 
@@ -363,6 +362,32 @@ class TopicActivity : BaseActivity() {
             }
           }
         })
+  }
+
+//    https@ //www.v2ex.com/thank/topic/529363?t=emdnsipiydbckrgywnjvwjcgkhandjud
+  private fun thankTopic(topicId :String, token :String, isThanked :Boolean) {
+    if (isThanked) return
+    val body = FormBody.Builder().add("t", token).build()
+    HttpHelper.OK_CLIENT.newCall(Request.Builder()
+            .url("https://www.v2ex.com/thank/topic/$topicId")
+            .post(body)
+            .build())
+            .enqueue(object : Callback {
+      override fun onFailure(call: Call, e: IOException) {
+        NetManager.dealError(this@TopicActivity)
+      }
+
+      override fun onResponse(call: Call, response: Response) {
+        if (response.code() == 200) {
+          runOnUiThread {
+            toast("感谢成功")
+            mMenu?.findItem(R.id.menu_thank_topic)?.setTitle(R.string.already_thank)
+          }
+        } else {
+          NetManager.dealError(this@TopicActivity, response.code())
+        }
+      }
+    })
   }
 
 

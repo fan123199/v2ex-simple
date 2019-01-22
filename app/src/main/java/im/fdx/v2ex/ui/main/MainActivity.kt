@@ -139,7 +139,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     createShortCut()
-    dailyCheck(true)
 
     mDrawer = findViewById(R.id.drawer_layout)
     val mDrawToggle = ActionBarDrawerToggle(this, mDrawer,
@@ -186,6 +185,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       } else {
         updateUserInBackground()
       }
+      dailyCheck(true)
     }
 
     mViewPager = findViewById(R.id.viewpager_main)

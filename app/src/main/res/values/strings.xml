@@ -154,6 +154,7 @@
     <string name="verify_code">code</string>
     <string name="indicator">indicator</string>
     <string name="show_user_all_reply">显示该用户全部评论</string>
+    <string name="already_thank">thanked</string>
 
     <string-array name="j" translatable="false">
         <item>一颗赛艇</item>

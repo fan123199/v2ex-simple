@@ -80,4 +80,5 @@
     <string name="no_more_data">没有更多的数据</string>
     <string name="indicator">指示</string>
     <string name="show_user_all_reply">显示该用户全部评论</string>
+    <string name="already_thank">已感谢</string>
 </resources>
