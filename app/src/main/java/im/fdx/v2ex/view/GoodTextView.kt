@@ -85,7 +85,7 @@ class GoodTextView @JvmOverloads constructor(
         //分离 图片 span
         val imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length, ImageSpan::class.java)
 
-        val photos = ArrayList(imageSpans.map { PhotoActivity.AirPhoto(it.source ?: "") })
+        val photos = ArrayList(imageSpans.map { PhotoActivity.V2Photo(it.source ?: "") })
 
         imageSpans.forEachIndexed { index, imageSpan ->
             //            val imageUrl = imageSpan.source
