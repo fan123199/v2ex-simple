@@ -72,8 +72,8 @@ class NotificationActivity : BaseActivity() {
                         val c = Parser(response.body()!!.string()).parseToNotifications()
                         if (c.isEmpty()) {
                             runOnUiThread {
-                                mSwipe.isRefreshing = false
-                              flContainer.showNoContent(true)
+                              mSwipe.isRefreshing = false
+                              flContainer.showNoContent()
                             }
                             return
                         }

@@ -1,77 +1,77 @@
-package im.fdx.v2ex.ui.main
+package im.fdx.v2ex.ui.main.model
 
 import com.google.gson.annotations.SerializedName
 
 data class SearchResult(
 
-    @field:SerializedName("hits")
+        @SerializedName("hits")
     val hits: List<HitsItem>? = null,
 
-    @field:SerializedName("took")
+        @SerializedName("took")
     val took: Int? = null,
 
-    @field:SerializedName("total")
+        @SerializedName("total")
     val total: Int? = null,
 
-    @field:SerializedName("timed_out")
+        @SerializedName("timed_out")
     val timedOut: Boolean? = null
 )
 
 data class HitsItem(
 
-    @field:SerializedName("highlight")
+        @SerializedName("highlight")
     val highlight: Highlight? = null,
 
-    @field:SerializedName("_index")
+        @SerializedName("_index")
     val index: String? = null,
 
-    @field:SerializedName("_type")
+        @SerializedName("_type")
     val type: String? = null,
 
-    @field:SerializedName("_source")
+        @SerializedName("_source")
     val source: Source? = null,
 
-    @field:SerializedName("_id")
+        @SerializedName("_id")
     val id: String? = null,
 
-    @field:SerializedName("_score")
+        @SerializedName("_score")
     val score: Double? = null
 )
 
 data class Source(
 
-    @field:SerializedName("node")
+    @SerializedName("node")
     val node: Int? = null,
 
-    @field:SerializedName("replies")
+    @SerializedName("replies")
     val replies: Int? = null,
 
-    @field:SerializedName("created")
+    @SerializedName("created")
     val created: String? = null,
 
-    @field:SerializedName("member")
+    @SerializedName("member")
     val member: String? = null,
 
-    @field:SerializedName("id")
+    @SerializedName("id")
     val id: Int? = null,
 
-    @field:SerializedName("title")
+    @SerializedName("title")
     val title: String? = null,
 
-    @field:SerializedName("content")
+    @SerializedName("content")
     val content: String? = null
 )
 data class Highlight(
 
-    @field:SerializedName("reply_list.content")
+    @SerializedName("reply_list.content")
     val replyListContent: List<String?>? = null,
 
-    @field:SerializedName("title")
+    @SerializedName("title")
     val title: List<String?>? = null,
 
-    @field:SerializedName("postscript_list.content")
+    @SerializedName("postscript_list.content")
     val postscriptListContent: List<String?>? = null,
 
-    @field:SerializedName("content")
+    @SerializedName("content")
     val content: List<String?>? = null
 )

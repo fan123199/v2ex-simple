@@ -33,33 +33,35 @@ import im.fdx.v2ex.utils.Keys
 /**
  * 在中间位置显示"没有内容"信息
  */
-fun FrameLayout.showNoContent(showNo: Boolean, content: String = "没有内容") {
+fun FrameLayout.showNoContent(content: String = "没有内容") {
   val tagName = "no"
-  if (!showNo) {
-    this.forEach { view ->
-      when (tagName) {
-        view.tag -> removeView(view)
-      }
+  var alreadyHasNoContent = false
+  this.forEach { view ->
+    when (tagName) {
+      view.tag -> alreadyHasNoContent = true
     }
-  } else {
-    var b = false
-    this.forEach { view ->
-      when (tagName) {
-        view.tag -> b = true
-      }
-    }
-    if (!b) {
-      val child = TextView(this.context)
-      child.tag = tagName
-      child.text = content
-      child.setTextColor(ContextCompat.getColor(context, R.color.hint))
-      val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-      params.gravity = Gravity.CENTER_HORIZONTAL
-      params.topMargin = 120.dp2px()
-      this.addView(child, -1, params)
+  }
+  if (!alreadyHasNoContent) {
+    val child = TextView(this.context)
+    child.tag = tagName
+    child.text = content
+    child.setTextColor(ContextCompat.getColor(context, R.color.hint))
+    val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+    params.gravity = Gravity.CENTER_HORIZONTAL
+    params.topMargin = 120.dp2px()
+    this.addView(child, -1, params)
+  }
+}
+
+fun FrameLayout.hideNoContent() {
+  val tagName = "no"
+  this.forEach { view ->
+    when (tagName) {
+      view.tag -> removeView(view)
     }
   }
 }
+
 
 
 /**

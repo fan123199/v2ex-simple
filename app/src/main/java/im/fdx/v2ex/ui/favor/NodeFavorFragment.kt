@@ -15,6 +15,7 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.ui.node.AllNodesAdapter
+import im.fdx.v2ex.utils.extensions.hideNoContent
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
@@ -79,7 +80,7 @@ class NodeFavorFragment : androidx.fragment.app.Fragment() {
                     activity?.runOnUiThread {
                         adapter.clear()
                         adapter.notifyDataSetChanged()
-                      flContainer.showNoContent(true)
+                      flContainer.showNoContent()
                         swipe.isRefreshing = false
                     }
                     return
@@ -87,7 +88,7 @@ class NodeFavorFragment : androidx.fragment.app.Fragment() {
                 adapter.clear()
                 adapter.addAll(nodeModels)
                 activity?.runOnUiThread {
-                    flContainer.showNoContent(false)
+                    flContainer.hideNoContent()
                     adapter.notifyDataSetChanged()
                     swipe.isRefreshing = false
                 }

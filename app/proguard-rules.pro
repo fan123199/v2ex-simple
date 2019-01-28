@@ -10,6 +10,11 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 
 
+#gson and model
+
+-keep class im.fdx.v2ex.ui.main.model.**
+
+
 -dontwarn okio.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault

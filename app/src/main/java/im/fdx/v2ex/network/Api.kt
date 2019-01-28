@@ -33,7 +33,7 @@ object Api {
                 .build()
 
         client.newCall(Request.Builder().url("https://sm.ms/api/upload?ssl=true").post(requestBody).build())
-                .enqueue(object : Callback {
+                .start(object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                       callback(null, 2)
                     }

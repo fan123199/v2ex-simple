@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.main
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.main.model.SearchResult
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
@@ -25,10 +25,7 @@ import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.ViewUtil
-import im.fdx.v2ex.utils.extensions.initTheme
-import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.loge
-import im.fdx.v2ex.utils.extensions.showNoContent
+import im.fdx.v2ex.utils.extensions.*
 import okhttp3.*
 import org.jetbrains.anko.toast
 import java.io.IOException
@@ -104,9 +101,9 @@ class TopicsFragment : Fragment() {
     flContainer = layout.findViewById(R.id.fl_container)
 
     if (currentMode == FROM_SEARCH) {
-      flContainer.showNoContent(true, "请输入关键字进行搜索")
+      flContainer.showNoContent("请输入关键字进行搜索")
     } else {
-      flContainer.showNoContent(false)
+      flContainer.hideNoContent()
       mSwipeLayout.isRefreshing = true
       getTopics(mRequestURL)
     }
@@ -214,10 +211,10 @@ class TopicsFragment : Fragment() {
 
             activity?.runOnUiThread {
               if (topicList.isEmpty()) {
-                flContainer.showNoContent(true)
+                flContainer.showNoContent()
                 mAdapter.clearAndNotify()
               } else {
-                flContainer.showNoContent(false)
+                flContainer.hideNoContent()
                 when (currentMode) {
                   FROM_MEMBER, FROM_NODE ->
                     if (mScrollListener.pageToLoad == 1) {
@@ -261,7 +258,8 @@ class TopicsFragment : Fragment() {
         .build()
 
     showRefresh(true)
-    HttpHelper.OK_CLIENT.newCall(Request.Builder()
+    HttpHelper.OK_CLIENT
+            .newCall(Request.Builder()
         .addHeader("accept", "application/json")
         .url(url)
         .build())
@@ -290,16 +288,18 @@ class TopicsFragment : Fragment() {
               topic.member = Member().apply { username = it.source?.member.toString() }
               topic.replies = it.source?.replies
               topic
-            } ?: return
+            }
 
             activity?.runOnUiThread {
-              mSwipeLayout.isRefreshing = false
-              mScrollListener.loading = false
+              showRefresh(false)
+              if(topics == null) {
+                return@runOnUiThread
+              }
               if (topics.isEmpty()) {
-                flContainer.showNoContent(true)
+                flContainer.showNoContent()
                 mAdapter.clearAndNotify()
               } else {
-                flContainer.showNoContent(false)
+                flContainer.hideNoContent()
                 if (mScrollListener.pageToLoad == 1) {
                   topics.let { mAdapter.updateItems(it) }
                 } else {

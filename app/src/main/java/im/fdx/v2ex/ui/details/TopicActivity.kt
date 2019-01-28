@@ -15,6 +15,7 @@ import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -127,7 +128,6 @@ class TopicActivity : BaseActivity() {
       detail_recycler_view.smoothScrollToPosition(position)
     }
     detail_recycler_view.adapter = mAdapter
-
     swipe_details.initTheme()
     swipe_details.setOnRefreshListener { getRepliesPageOne(false) }
 
@@ -372,7 +372,7 @@ class TopicActivity : BaseActivity() {
             .url("https://www.v2ex.com/thank/topic/$topicId")
             .post(body)
             .build())
-            .enqueue(object : Callback {
+            .start(object : Callback {
       override fun onFailure(call: Call, e: IOException) {
         NetManager.dealError(this@TopicActivity)
       }
@@ -443,7 +443,7 @@ class TopicActivity : BaseActivity() {
   override fun onDestroy() {
     super.onDestroy()
     XLog.tag("TopicActivity").d("onDestroy")
-    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
   }
 
   companion object {
