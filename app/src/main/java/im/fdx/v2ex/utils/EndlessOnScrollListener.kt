@@ -8,33 +8,29 @@ abstract class EndlessOnScrollListener(val rvReply: RecyclerView) : RecyclerView
 
   private val mLinearLayoutManager = rvReply.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
 
-  var loading = false // True if we are still waiting for the last set of data to load.
-  private val visibleThreshold = 2 // The minimum amount of items to have below your current scroll position before loading more.
-  internal var firstVisibleItem: Int = 0
-  internal var visibleItemCount: Int = 0
-  internal var totalItemCount: Int = 0
-  internal var lastVisibleItem: Int = 0
-  internal var pageToLoad = 1
+  private val visibleThreshold = 2
+
+  private var pageToLoad = 1
+
+  var loading = false
   var totalPage = 0
-  internal var pageAfterLoaded = pageToLoad
+
+  private var pageAfterLoaded = pageToLoad
 
   override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
     XLog.d("onScrolled + $dy")
     if (dy < 0) {
       return
     }
-    // check for scroll down only
-    visibleItemCount = recyclerView.childCount
-    totalItemCount = mLinearLayoutManager.itemCount
-    firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition()
-    lastVisibleItem = mLinearLayoutManager.findLastCompletelyVisibleItemPosition()
+    val visibleItemCount = recyclerView.childCount
+    val totalItemCount = mLinearLayoutManager.itemCount
+    val firstVisibleItem = mLinearLayoutManager.findFirstVisibleItemPosition()
+    val lastVisibleItem = mLinearLayoutManager.findLastCompletelyVisibleItemPosition()
 
-    // to make sure only one onLoadMore is triggered
     synchronized(this) {
-      val totalItem = totalItemCount
 
-      logd("$totalItem , $lastVisibleItem , $pageToLoad")
-      if (lastVisibleItem == totalItem - 1) {
+      logd("$totalItemCount , $lastVisibleItem , $pageToLoad")
+      if (lastVisibleItem == totalItemCount - 1) {
         rvReply.stopScroll()
         if (pageAfterLoaded == totalPage) {
           onCompleted()
@@ -48,6 +44,18 @@ abstract class EndlessOnScrollListener(val rvReply: RecyclerView) : RecyclerView
         loading = true
       }
     }
+  }
+
+  fun restart() {
+    pageToLoad = 1
+  }
+
+  fun isRestart() :Boolean {
+    return pageToLoad == 1
+  }
+
+  fun success() {
+    pageAfterLoaded = pageToLoad
   }
 
   abstract fun onLoadMore(currentPage: Int)

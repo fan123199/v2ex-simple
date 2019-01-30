@@ -1,23 +1,24 @@
 package im.fdx.v2ex.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
+import android.widget.EditText
 import android.widget.ProgressBar
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.elvishew.xlog.XLog
-import im.fdx.v2ex.GlideApp
-import im.fdx.v2ex.MyApp
-import im.fdx.v2ex.R
+import im.fdx.v2ex.*
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
-import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.setStatusBarColor
@@ -166,7 +167,7 @@ class LoginActivity : BaseActivity() {
                     runOnUiThread {
                       progressBar.visibility = View.GONE
                       btn_login.visibility = VISIBLE
-                      NetManager.showTwoStepDialog(this@LoginActivity)
+                      showTwoStepDialog(this@LoginActivity)
                     }
                   }
                 } else {
@@ -224,6 +225,65 @@ class LoginActivity : BaseActivity() {
     }
 
     return true
+  }
+
+  /**
+   * 两步验证，对话框
+   */
+  fun showTwoStepDialog(activity: Activity) {
+    val dialogEt = LayoutInflater.from(activity).inflate(R.layout.dialog_et, null)
+    val etCode = dialogEt.findViewById<EditText>(R.id.et_two_step_code)
+    AlertDialog.Builder(activity, R.style.AppTheme_Simple)
+            .setTitle("您开启了两步验证")
+            .setPositiveButton("验证") { _, _ ->
+              finishLogin(etCode.text.toString(), activity)
+            }
+            .setNegativeButton("退出登录") { _, _ ->
+              HttpHelper.myCookieJar.clear()
+              myApp.setLogin(false)
+
+            }
+            .setView(dialogEt).show()
+  }
+
+  /**
+   * 两步验证，完成登录
+   */
+  private fun finishLogin(code: String, activity: Activity) {
+    val twoStepUrl = "https://www.v2ex.com/2fa"
+    vCall(twoStepUrl).enqueue(object : Callback {
+      override fun onFailure(call: Call?, e: IOException?) {
+        NetManager.dealError(activity)
+      }
+
+      override fun onResponse(call: Call?, response: Response?) {
+        if (response?.code() == 200) {
+          val bodyStr = response.body()?.string()!!
+          val once = Parser(bodyStr).getOnceNum()
+          val body: RequestBody = FormBody.Builder()
+                  .add("code", code)
+                  .add("once", once).build()
+          HttpHelper.OK_CLIENT.newCall(Request.Builder()
+                  .post(body)
+                  .url(twoStepUrl)
+                  .build())
+                  .enqueue(object : Callback {
+            override fun onFailure(call: Call?, e: IOException?) {
+              NetManager.dealError(activity)
+            }
+
+            override fun onResponse(call: Call?, response: Response?) {
+              activity.runOnUiThread {
+                if (response?.code() == 302) {
+                  activity.toast("登录成功")
+                  myApp.setLogin(true)
+                } else activity.toast("登录失败")
+              }
+            }
+          })
+        }
+      }
+    })
   }
 
 }

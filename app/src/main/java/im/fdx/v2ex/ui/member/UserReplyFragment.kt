@@ -43,7 +43,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
         swipeRefreshLayout = view.findViewById(R.id.swipe_container)
         swipeRefreshLayout.initTheme()
         swipeRefreshLayout.setOnRefreshListener {
-            mScrollListener?.pageToLoad = 1
+            mScrollListener?.restart()
             getRepliesByWeb(1)/* 刷新则重头开始 */
         }
 
@@ -104,9 +104,9 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                         }
                     } else {
                         if (page == 1) {
-                            adapter.firstLoadItems(replyModels)
+                            adapter.updateItem(replyModels)
                         } else {
-                            mScrollListener?.pageAfterLoaded = page
+                            mScrollListener?.success()
                             adapter.addItems(replyModels)
                         }
                         XLog.tag("__REPLY").i(replyModels[0].topic.title)

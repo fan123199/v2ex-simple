@@ -38,7 +38,7 @@ class ReplyAdapter(val activity: Activity,
     }
 
 
-    fun firstLoadItems(newItems: List<MemberReplyModel>) {
+    fun updateItem(newItems: List<MemberReplyModel>) {
 //        val diffResult = DiffUtil.calculateDiff(DiffReply(list, newItems))
         list.clear()
         list.addAll(newItems)
