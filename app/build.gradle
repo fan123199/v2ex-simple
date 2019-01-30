@@ -43,6 +43,14 @@ android {
     }
 }
 
+
+
+android.applicationVariants.all { variant ->
+    variant.outputs.all { output ->
+        outputFileName  = "v2ex-${variant.buildType}-${variant.versionName}.apk"
+    }
+}
+
 androidExtensions {
     experimental = true
 }
@@ -70,7 +78,7 @@ dependencies {
     implementation "androidx.preference:preference:1.0.0"
     implementation "com.google.android.material:material:1.0.0"
 
-    implementation "android.arch.work:work-runtime-ktx:1.0.0-beta02"
+    implementation "android.arch.work:work-runtime-ktx:1.0.0-beta03"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
 
 
