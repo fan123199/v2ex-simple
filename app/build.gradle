@@ -108,16 +108,15 @@ dependencies {
 }
 
 def getSignConfig() {
-    def keystorePropertiesFile = rootProject.file("keystore.properties")
-    def keystoreProperties = new Properties()
+    def file = rootProject.file("keystore.properties")
+    def prop = new Properties()
     try {
-        def stream = new FileInputStream(keystorePropertiesFile)
-        keystoreProperties.load(stream)
+        prop.load(new FileInputStream(file))
     }catch (FileNotFoundException e) {
         e.printStackTrace()
         return null
     }
-    return keystoreProperties
+    return prop
 }
 
 apply plugin: 'com.google.gms.google-services'
