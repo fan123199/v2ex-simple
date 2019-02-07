@@ -63,7 +63,7 @@ object ImageUtil {
             dir.mkdirs()
             val encodeToString = Base64.encodeToString(url.toByteArray(), Base64.DEFAULT)
 
-            val fileName = String.format("%d.jpg", encodeToString)
+            val fileName = String.format("%s.jpg", encodeToString)
             val outFile = File(dir, fileName)
 
 

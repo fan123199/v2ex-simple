@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.favor
 
 import android.os.Bundle
+import androidx.core.os.bundleOf
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 
@@ -10,13 +11,11 @@ import im.fdx.v2ex.utils.Keys
 internal class FavorViewPagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int) = when (position) {
-        0 -> NodeFavorFragment()
+        1 -> NodeFavorFragment()
         else -> {
-            val topicFavorFragment = TopicsFragment()
-            val bundle = Bundle()
-            bundle.putInt(Keys.FAVOR_FRAGMENT_TYPE, position)
-            topicFavorFragment.arguments = bundle
-            topicFavorFragment
+            TopicsFragment().apply {
+                arguments = bundleOf(Keys.FAVOR_FRAGMENT_TYPE to position)
+            }
         }
     }
 
@@ -24,6 +23,6 @@ internal class FavorViewPagerAdapter(fm: androidx.fragment.app.FragmentManager) 
     override fun getPageTitle(position: Int) = titles[position]
 
     companion object {
-        val titles = arrayOf("节点收藏", "主题收藏", "特别关注")
+        val titles = arrayOf( "主题收藏", "节点收藏","特别关注")
     }
 }

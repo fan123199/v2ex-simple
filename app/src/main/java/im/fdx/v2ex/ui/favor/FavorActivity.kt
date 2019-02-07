@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.favor
 
 import android.os.Bundle
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.utils.extensions.setUpToolbar
@@ -13,8 +15,8 @@ class FavorActivity : BaseActivity() {
 
         setUpToolbar(getString(R.string.my_follow))
 
-      val tabLayout: com.google.android.material.tabs.TabLayout = findViewById(R.id.tl_favor)
-      val viewPager: androidx.viewpager.widget.ViewPager = findViewById(R.id.viewpager_follow)
+      val tabLayout: TabLayout = findViewById(R.id.tl_favor)
+      val viewPager: ViewPager = findViewById(R.id.viewpager_follow)
         viewPager.offscreenPageLimit = FavorViewPagerAdapter.titles.size
         viewPager.adapter = FavorViewPagerAdapter(supportFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
