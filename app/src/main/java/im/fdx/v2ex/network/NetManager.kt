@@ -37,9 +37,6 @@ object NetManager {
     //    id: 用户在 V2EX 的数字 ID
     const val API_USER = "$HTTPS_V2EX_BASE/api/members/show.json"
 
-    @Deprecated("不用API，用html解析。虽慢，但统一")
-    const val URL_ALL_NODE = "$HTTPS_V2EX_BASE/api/nodes/all.json"
-
     const val URL_ALL_NODE_WEB = "$HTTPS_V2EX_BASE/planes"
 
     const val URL_FOLLOWING = "$HTTPS_V2EX_BASE/my/following"
@@ -52,11 +49,16 @@ object NetManager {
     var myGson = Gson()
 
     @JvmOverloads
-    fun dealError(context: Context?, errorCode: Int = -1, swipe: SwipeRefreshLayout? = null) {
+    fun dealError(context: Context?,  errorCode: Int = -1, swipe: SwipeRefreshLayout? = null, errorMsg:String ?= "") {
 
         if (context is Activity && !context.isFinishing) {
             context.runOnUiThread {
                 swipe?.isRefreshing = false
+                if(errorMsg != null) {
+                    context.toast(errorMsg)
+                    return@runOnUiThread
+                }
+
                 when (errorCode) {
                     -1 -> context.toast(context.getString(R.string.error_network))
                     302 -> context.toast(context.getString(R.string.error_auth_failure))

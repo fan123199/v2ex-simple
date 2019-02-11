@@ -18,11 +18,13 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.elvishew.xlog.XLog
 import com.esafirm.imagepicker.features.ImagePicker
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
+import kotlinx.android.synthetic.main.activity_node.*
 
 /**
  * Created by fdx on 2017/6/14.
@@ -135,9 +137,23 @@ fun SwipeRefreshLayout.initTheme() {
 }
 
 fun ImageView.load(url: Any?) {
+
+  if(context is Activity && (context as Activity).isDestroyed) return
   GlideApp.with(context)
       .load(url)
       .into(this)
+}
+
+
+fun handleAlphaOnTitle(view:View, divider:View ,percentage: Float) {
+  XLog.tag("collapse").d(percentage)
+  when (percentage) {
+    in 0.0..1.0 -> view.alpha = 1 - percentage
+  }
+  when (percentage) {
+    1f -> divider.alpha = 0f
+    else -> divider.alpha = 1f
+  }
 }
 
 
