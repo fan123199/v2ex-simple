@@ -2,10 +2,12 @@ package im.fdx.v2ex.ui.details
 
 import android.app.IntentService
 import android.content.Intent
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
 import okhttp3.Request
 import java.io.IOException
@@ -42,7 +44,8 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
 
                 if (replies.isEmpty()) return
                 val replyIntent = Intent()
-                replyIntent.action = "im.fdx.v2ex.reply"
+                replyIntent.action = Keys.ACTION_GET_MORE_REPLY
+                replyIntent.putExtra(Keys.KEY_TOPIC_ID, topicId)
                 token?.let {
                     replyIntent.putExtra("token", token)
                 }
@@ -51,46 +54,8 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
                 if (i == totalPage && isToBottom) {
                     replyIntent.putExtra("bottom", true)
                 }
-              androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(replyIntent)
+              LocalBroadcastManager.getInstance(this).sendBroadcast(replyIntent)
             }
-
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-    }
-
-
-    private fun getOneMore(intent: Intent) {
-
-        val totalPage = intent.getIntExtra("page", -1)
-        val topicId = intent.getLongExtra("topic_id", -1)
-        val currentPage = intent.getIntExtra("currentPage", -1)
-
-      logd(totalPage.toString() + "<----totalPage | topicId :" + topicId + " |current :  " + currentPage)
-        if (totalPage == -1 || topicId == -1L || currentPage == -1) {
-            return
-        }
-
-        try {
-            val response = HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                    .url("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$currentPage")
-                    .build()).execute()
-            val parser = Parser(response.body()!!.string())
-
-            val replies = parser.getReplies()
-            val token = parser.getVerifyCode()
-
-          logd(replies[0].content)
-            val it = Intent()
-            it.action = "im.fdx.v2ex.reply"
-            it.putExtra("token", token)
-            it.putParcelableArrayListExtra("replies", replies)
-
-            if (currentPage == totalPage) {
-                it.putExtra("bottom", true)
-            }
-          androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(it)
 
         } catch (e: IOException) {
             e.printStackTrace()

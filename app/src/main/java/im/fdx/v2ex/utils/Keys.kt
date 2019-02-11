@@ -29,6 +29,8 @@ object Keys {
     const val ACTION_TAB_SETTING = "im.fdx.v2ex.main_page_setting_change"
     const val ACTION_TEXT_SIZE_CHANGE = "im.fdx.v2ex.ACTION_TEXT_SIZE_CHANGE"
 
+    const val ACTION_GET_MORE_REPLY = "im.fdx.v2ex.reply"
+
     const val FAVOR_FRAGMENT_TYPE = "type"
 
     const val KEY_UNREAD_COUNT = "count"

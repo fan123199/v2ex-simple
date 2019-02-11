@@ -13,7 +13,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.elvishew.xlog.XLog
@@ -28,6 +27,7 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import kotlinx.android.synthetic.main.activity_details.*
 import kotlinx.android.synthetic.main.activity_details_content.*
 import kotlinx.android.synthetic.main.footer_reply.*
 import okhttp3.*
@@ -59,13 +59,15 @@ class TopicActivity : BaseActivity() {
       } else if (intent.action == Keys.ACTION_LOGOUT) {
         invalidateOptionsMenu()
         setFootView(false)
-      } else if (intent.action == "im.fdx.v2ex.reply") {
+      } else if (intent.action == Keys.ACTION_GET_MORE_REPLY) {
         logd("MSG_GET  LocalBroadCast")
-        token = intent.getStringExtra("token")
-        val rm = intent.getParcelableArrayListExtra<Reply>("replies")
-        mAdapter.addItems(rm)
-        if (intent.getBooleanExtra("bottom", false)) {
-          detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
+        if(intent.getStringExtra(Keys.KEY_TOPIC_ID) == mTopicId) {
+          token = intent.getStringExtra("token")
+          val rm = intent.getParcelableArrayListExtra<Reply>("replies")
+          mAdapter.addItems(rm)
+          if (intent.getBooleanExtra("bottom", false)) {
+            detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
+          }
         }
       }
     }
@@ -92,12 +94,11 @@ class TopicActivity : BaseActivity() {
 
     val filter = IntentFilter(Keys.ACTION_LOGIN)
     filter.addAction(Keys.ACTION_LOGOUT)
-    filter.addAction("im.fdx.v2ex.reply")
-    androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
+    filter.addAction(Keys.ACTION_GET_MORE_REPLY)
+    LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter)
     setFootView(MyApp.get().isLogin)
 
     setUpToolbar()
-    val tvToolbar = findViewById<TextView>(R.id.tv_toolbar)
 
     //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
     val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
@@ -111,13 +112,13 @@ class TopicActivity : BaseActivity() {
       override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
         if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
           if (currentPosition != 0) {
-            startAlphaAnimation(tvToolbar, 500, false)
+            startAlphaAnimation(tv_toolbar, 500, false)
             currentPosition = 0
           }
         } else {
           if (currentPosition == 0 && topicHeader != null) {
-            tvToolbar.text = topicHeader?.title
-            startAlphaAnimation(tvToolbar, 500, true)
+            tv_toolbar.text = topicHeader?.title
+            startAlphaAnimation(tv_toolbar, 500, true)
             currentPosition = -1
           }
         }
