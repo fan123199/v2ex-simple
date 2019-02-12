@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.*
+import im.fdx.v2ex.network.NetManager.API_HEATED
 import im.fdx.v2ex.ui.main.model.SearchResult
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
@@ -53,6 +55,9 @@ class TopicsFragment : Fragment() {
       args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 0 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
       args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = "$HTTPS_V2EX_BASE/my/following"
       args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
+      args?.getString(Keys.KEY_TAB) == "heated" -> {
+        mRequestURL = API_HEATED
+      }
       args?.getString(Keys.KEY_TAB) != null -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
       args?.getString(Keys.KEY_USERNAME) != null -> {
         currentMode = FROM_MEMBER
@@ -71,7 +76,6 @@ class TopicsFragment : Fragment() {
     mSwipeLayout.initTheme()
     mSwipeLayout.setOnRefreshListener { refresh() }
 
-    //找出recyclerview,并赋予变量 //fdx最早的水平
     mRecyclerView = layout.findViewById(R.id.rv_container)
     val layoutManager = LinearLayoutManager(activity)
     mRecyclerView?.layoutManager = layoutManager
@@ -93,7 +97,7 @@ class TopicsFragment : Fragment() {
     }
 
     mAdapter = TopicsRVAdapter(activity!!)
-    mRecyclerView?.adapter = mAdapter //大工告成
+    mRecyclerView?.adapter = mAdapter
 
     flContainer = layout.findViewById(R.id.fl_container)
 
@@ -171,6 +175,37 @@ class TopicsFragment : Fragment() {
 
   private fun getTopics(requestURL: String, currentPage: Int = 1) {
 
+    if (requestURL == API_HEATED) {
+      vCall(API_HEATED)
+              .start(object: Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                  showRefresh(false)
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                  showRefresh(false)
+
+                  val str = response.body()!!.string()
+
+                  val type = object : TypeToken<List<Topic>>(){}.type
+                  val topicList = Gson().fromJson<List<Topic>>(str, type)
+
+                  activity?.runOnUiThread {
+                    if (topicList.isEmpty()) {
+                      flContainer.showNoContent()
+                      mAdapter.clearAndNotify()
+                    } else {
+                      mAdapter.updateItems(topicList)
+                    }
+                  }
+
+
+                }
+              })
+
+      return
+    }
+
     vCall(if (currentPage == 1) requestURL else "$requestURL?p=$currentPage")
         .start(object : Callback {
           override fun onFailure(call: Call, e: IOException) {
@@ -198,31 +233,33 @@ class TopicsFragment : Fragment() {
               mScrollListener.totalPage = totalPage
             }
             logd(topicList)
-
-//                        DbHelper.db.topicDao().insertTopic(*topicList.toTypedArray())
-
-            activity?.runOnUiThread {
-              if (topicList.isEmpty()) {
-                flContainer.showNoContent()
-                mAdapter.clearAndNotify()
-              } else {
-                flContainer.hideNoContent()
-                when (currentMode) {
-                  FROM_MEMBER, FROM_NODE ->
-                    if (mScrollListener.isRestart()) {
-                      topicList.let { mAdapter.updateItems(it) }
-                    } else {
-                      mScrollListener.success()
-                      topicList.let { mAdapter.addAllItems(it) }
-                    }
-                  FROM_HOME -> topicList.let { mAdapter.updateItems(it) }
-                  Parser.Source.FROM_SEARCH -> {
-                  }
-                }
-              }
-            }
+            setUIData(topicList)
           }
         })
+  }
+
+
+  private fun setUIData(topicList: List<Topic>){
+    activity?.runOnUiThread {
+      if (topicList.isEmpty()) {
+        flContainer.showNoContent()
+        mAdapter.clearAndNotify()
+      } else {
+        flContainer.hideNoContent()
+        when (currentMode) {
+          FROM_MEMBER, FROM_NODE ->
+            if (mScrollListener.isRestart()) {
+              topicList.let { mAdapter.updateItems(it) }
+            } else {
+              mScrollListener.success()
+              topicList.let { mAdapter.addAllItems(it) }
+            }
+          FROM_HOME -> topicList.let { mAdapter.updateItems(it) }
+          FROM_SEARCH -> {
+          }
+        }
+      }
+    }
   }
 
   fun scrollToTop() = mRecyclerView?.smoothScrollToPosition(0)
@@ -264,7 +301,7 @@ class TopicsFragment : Fragment() {
             val result: SearchResult = Gson().fromJson(body, SearchResult::class.java)
             if (nextIndex == 0) {
               result.total?.let {
-                mScrollListener.totalPage = (it / Companion.NUMBER_PER_PAGE + 1)
+                mScrollListener.totalPage = (it / NUMBER_PER_PAGE + 1)
               }
             }
 

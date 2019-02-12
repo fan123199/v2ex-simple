@@ -17,11 +17,8 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.work.WorkManager
 import com.elvishew.xlog.XLog
-import im.fdx.v2ex.MyApp
-import im.fdx.v2ex.R
-import im.fdx.v2ex.myApp
+import im.fdx.v2ex.*
 import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.PREF_TAB
 import im.fdx.v2ex.utils.Keys.PREF_TEXT_SIZE
@@ -112,13 +109,7 @@ class SettingsActivity : BaseActivity() {
 
     private fun prefVersion() {
 
-      try {
-        val manager = activity!!.packageManager
-        val info: PackageInfo = manager.getPackageInfo(activity!!.packageName, 0)
-        findPreference(PREF_VERSION).summary = info.versionName
-      } catch (e: PackageManager.NameNotFoundException) {
-        e.printStackTrace()
-      }
+      findPreference(PREF_VERSION).summary = BuildConfig.VERSION_NAME
 
       val ha = resources.getStringArray(R.array.j)
       count = 7

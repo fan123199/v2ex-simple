@@ -35,7 +35,7 @@ class Parser(private val htmlStr: String) {
         val items = when (source) {
           FROM_HOME, FROM_MEMBER -> body.getElementsByClass("cell item")
           FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
-          FROM_SEARCH -> null
+          else -> null
         }
         for (item in items!!) {
             val topicModel = Topic()
@@ -115,7 +115,7 @@ class Parser(private val htmlStr: String) {
                         }
                     }
                 }
-              FROM_SEARCH -> 0L
+              else -> 0L
             }
             topicModel.node = nodeModel
             topicModel.replies = replies

@@ -37,6 +37,12 @@ object NetManager {
     //    id: 用户在 V2EX 的数字 ID
     const val API_USER = "$HTTPS_V2EX_BASE/api/members/show.json"
 
+    //相当于首页右侧的 10 大每天的内容。
+    const val API_HEATED = "$HTTPS_V2EX_BASE/api/topics/hot.json"
+
+    @Deprecated("不用API，用html解析。虽慢，但统一")
+    const val URL_ALL_NODE = "$HTTPS_V2EX_BASE/api/nodes/all.json"
+
     const val URL_ALL_NODE_WEB = "$HTTPS_V2EX_BASE/planes"
 
     const val URL_FOLLOWING = "$HTTPS_V2EX_BASE/my/following"

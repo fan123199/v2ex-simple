@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.main
 
 import android.content.Context
-import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
@@ -14,7 +13,6 @@ import im.fdx.v2ex.ui.Tab
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.PREF_TAB
 import org.jetbrains.anko.collections.forEachWithIndex
-import org.jetbrains.anko.defaultSharedPreferences
 import java.util.*
 
 
@@ -25,8 +23,7 @@ import java.util.*
  */
 internal class MyViewPagerAdapter(
         fm: FragmentManager,
-        private val mContext: Context
-) : FragmentStatePagerAdapter(fm) {
+        private val mContext: Context) : FragmentStatePagerAdapter(fm) {
 
     private val mFragments = ArrayList<TopicsFragment>()
     private val tabList = mutableListOf<Tab>()
@@ -38,30 +35,20 @@ internal class MyViewPagerAdapter(
         tabList.clear()
         mFragments.clear()
 
-        var str = pref.getString(PREF_TAB, null)
-        if (str == null) {
+        var jsonData = pref.getString(PREF_TAB, null)
+        if (jsonData == null) {
             val tabTitles = mContext.resources.getStringArray(R.array.v2ex_favorite_tab_titles)
             val tabPaths = mContext.resources.getStringArray(R.array.v2ex_favorite_tab_paths)
 
-            val list = mutableListOf<Tab>()
-            list.addAll(tabTitles.map {
-                Tab(it, "")
-            })
-
-            list.forEachWithIndex { a, b ->
-                b.path = tabPaths[a]
-            }
-            val savedList = Gson().toJson(list)
-
-            mContext.defaultSharedPreferences.edit {
-                putString(PREF_TAB, savedList)
+            val list = MutableList(tabTitles.size) { index: Int ->
+                Tab(tabTitles[index], tabPaths[index])
             }
 
-            str = savedList
+            jsonData = Gson().toJson(list)
         }
 
         val turnsType = object : TypeToken<List<Tab>>() {}.type
-        val list = Gson().fromJson<List<Tab>>(str, turnsType)
+        val list = Gson().fromJson<List<Tab>>(jsonData, turnsType)
 
         for (it in list) {
             if (!myApp.isLogin && it.path == "recent") {
