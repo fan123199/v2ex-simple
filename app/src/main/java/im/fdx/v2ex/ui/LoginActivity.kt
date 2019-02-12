@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -12,6 +13,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.elvishew.xlog.XLog
@@ -183,7 +185,7 @@ class LoginActivity : BaseActivity() {
                     putExtra(Keys.KEY_USERNAME, myInfo.username)
                     putExtra(Keys.KEY_AVATAR, myInfo.avatarNormalUrl)
                   }
-                  androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
+                  LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
                   runOnUiThread {
                     toast("登录成功")
                     finish()
@@ -230,6 +232,7 @@ class LoginActivity : BaseActivity() {
   /**
    * 两步验证，对话框
    */
+  @SuppressLint("InflateParams")
   fun showTwoStepDialog(activity: Activity) {
     val dialogEt = LayoutInflater.from(activity).inflate(R.layout.dialog_et, null)
     val etCode = dialogEt.findViewById<EditText>(R.id.et_two_step_code)

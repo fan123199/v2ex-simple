@@ -83,6 +83,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       logd("getAction: $action")
       when (action) {
         Keys.ACTION_LOGIN -> {
+          invalidateOptionsMenu()
           val username = intent.getStringExtra(Keys.KEY_USERNAME)
           val avatar = intent.getStringExtra(Keys.KEY_AVATAR)
           setUserInfo(username, avatar)
@@ -92,6 +93,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
           }
         }
         Keys.ACTION_LOGOUT -> {
+          invalidateOptionsMenu()
           setUserInfo(null, null)
           reloadTab()
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
