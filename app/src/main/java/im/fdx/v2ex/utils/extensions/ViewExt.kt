@@ -137,9 +137,7 @@ fun SwipeRefreshLayout.initTheme() {
 }
 
 fun ImageView.load(url: Any?) {
-
-  if(context is Activity && (context as Activity).isDestroyed) return
-  GlideApp.with(context)
+  GlideApp.with(this)
       .load(url)
       .into(this)
 }
