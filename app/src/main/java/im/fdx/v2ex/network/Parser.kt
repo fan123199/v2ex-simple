@@ -90,7 +90,6 @@ class Parser(private val htmlStr: String) {
 
             val avatarLarge = item.getElementsByClass("avatar").attr("src")
             memberModel.username = username
-            memberModel.avatar_large = avatarLarge
             memberModel.avatar_normal = avatarLarge.replace("large", "normal")
 
 
@@ -181,7 +180,6 @@ class Parser(private val htmlStr: String) {
 
         if (header.getElementsByTag("img").first() != null) {
             val avatarLarge = header.getElementsByTag("img").first().attr("src")
-            nodeModel.avatar_large = avatarLarge
             nodeModel.avatar_normal = avatarLarge.replace("large", "normal")
         }
 
@@ -257,7 +255,7 @@ class Parser(private val htmlStr: String) {
             nodeModel.topics = Integer.parseInt(num)
 
             val imageUrl = item.getElementsByTag("img").first().attr("src")
-            nodeModel.avatar_large = imageUrl
+            nodeModel.avatar_normal = imageUrl
             nodeModels.add(nodeModel)
         }
 

@@ -24,9 +24,10 @@ import kotlinx.android.parcel.Parcelize
 //        "location" : "",
 //        "tagline" : "",
 //        "bio" : "",
-//        "avatar_mini" : "//cdn.v2ex.co/avatar/4b75/1bc7/32044_mini.png?m=1369031007",
-//        "avatar_normal" : "//cdn.v2ex.co/avatar/4b75/1bc7/32044_normal.png?m=1369031007",
-//        "avatar_large" : "//cdn.v2ex.co/avatar/4b75/1bc7/32044_large.png?m=1369031007",
+//        "avatar_mini" : "//cdn.v2ex.com/gravatar/273313b23fdf59a7695f46c6ae175776?s=24&d=retro,
+//       部分新域名， 部分旧域名   cdn.v2ex.com/avatar/00a6/7ce3/279733_mini.png?m=1546517640
+//        "avatar_normal" : "//cdn.v2ex.com/gravatar/273313b23fdf59a7695f46c6ae175776?s=24&d=retro",
+//        "avatar_large" : "//cdn.v2ex.com/gravatar/273313b23fdf59a7695f46c6ae175776?s=24&d=retro",
 //        "created" : 1357733451
 //        }
 
@@ -41,7 +42,10 @@ data class Member(
         var created: String = "",
         @ColumnInfo(name = "member_avatar_normal")
         var avatar_normal: String = "",
-        @ColumnInfo(name = "member_avatar_large")
+        /**
+         * 有坑，现在都是返回小图。
+         */
+        @Deprecated("有坑")
         var avatar_large: String = "",
         var bio: String? = "",
         var github: String? = "",
@@ -52,12 +56,8 @@ data class Member(
 ) : Parcelable {
 
   val avatarNormalUrl: String
-    get() = "http:" + avatar_normal
+    get() = "https:" + Regex("\\?s=\\d{1,3}").replace(avatar_normal, "?s=64")
 
   val avatarLargeUrl: String
-    get() = "http:" + avatar_large
-
-  val avatarMiniUrl: String
-    get() = "http:" + avatar_mini
-
+    get() = "https:" + Regex("\\?s=\\d{1,3}").replace(avatar_normal, "?s=128").replace("normal","large").replace("mini","large")
 }

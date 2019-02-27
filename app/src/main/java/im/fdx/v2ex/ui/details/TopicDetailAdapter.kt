@@ -322,7 +322,7 @@ class TopicDetailAdapter(private val act: AppCompatActivity,
             tv_reply_row.text = "#$adapterPosition"
             tv_replier.text = data.member?.username
             tv_thanks.text = data.thanks.toString()
-            iv_reply_avatar.load(data.member?.avatarLargeUrl)
+            iv_reply_avatar.load(data.member?.avatarNormalUrl)
             tv_reply_time.text = TimeUtil.getRelativeTime(data.created)
 
         }

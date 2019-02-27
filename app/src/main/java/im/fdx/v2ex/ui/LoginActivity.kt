@@ -178,12 +178,12 @@ class LoginActivity : BaseActivity() {
 
                   pref.edit {
                     putString(Keys.PREF_USERNAME, myInfo.username)
-                    putString(Keys.PREF_AVATAR, myInfo.avatarNormalUrl)
+                    putString(Keys.PREF_AVATAR, myInfo.avatarLargeUrl)
                   }
 
                   val intent = Intent(Keys.ACTION_LOGIN).apply {
                     putExtra(Keys.KEY_USERNAME, myInfo.username)
-                    putExtra(Keys.KEY_AVATAR, myInfo.avatarNormalUrl)
+                    putExtra(Keys.KEY_AVATAR, myInfo.avatarLargeUrl)
                   }
                   LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
                   runOnUiThread {

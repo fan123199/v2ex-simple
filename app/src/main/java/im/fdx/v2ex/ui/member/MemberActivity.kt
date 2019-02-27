@@ -178,7 +178,7 @@ class MemberActivity : BaseActivity() {
                     dealError(this@MemberActivity)
                 } else {
                     val body = response.body()!!.string()
-                    logi(response)
+                    logi(body)
                     member = myGson.fromJson(body, Member::class.java)
                     runOnUiThread { showUser() }
                 }
@@ -223,6 +223,7 @@ class MemberActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showUser() {
+        if(this.isDestroyed) return
         iv_avatar_profile.load(member.avatarLargeUrl)
         tv_tagline.text = member.tagline
         tv_intro.text = member.bio

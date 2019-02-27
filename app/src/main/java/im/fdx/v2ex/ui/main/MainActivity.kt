@@ -222,10 +222,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         pref.edit {
           putString(Keys.PREF_USERNAME, myInfo.username)
-          putString(Keys.PREF_AVATAR, myInfo.avatarNormalUrl)
+          putString(Keys.PREF_AVATAR, myInfo.avatarLargeUrl)
         }
         runOnUiThread {
-          setUserInfo(myInfo.username, myInfo.avatarNormalUrl)
+          setUserInfo(myInfo.username, myInfo.avatarLargeUrl)
         }
       }
     })
