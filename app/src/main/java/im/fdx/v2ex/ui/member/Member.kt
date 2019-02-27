@@ -36,8 +36,8 @@ data class Member(
         @ColumnInfo(name = "member_id")
         var id: String = "",
         var username: String = "",
-        var tagline: String = "",
-        var avatar_mini: String = "",
+        var tagline: String? = "",
+        var avatar_mini: String? = "",
         @ColumnInfo(name = "member_created")
         var created: String = "",
         @ColumnInfo(name = "member_avatar_normal")
