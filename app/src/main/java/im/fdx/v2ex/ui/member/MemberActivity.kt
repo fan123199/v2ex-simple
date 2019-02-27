@@ -173,7 +173,7 @@ class MemberActivity : BaseActivity() {
                         }
 
                         if (isFollowed) {
-                            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp)
+                            mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_blue_24dp)
                         } else {
                             mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
                         }
