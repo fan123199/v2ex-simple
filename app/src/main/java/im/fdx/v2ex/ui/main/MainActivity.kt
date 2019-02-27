@@ -146,7 +146,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     val mDrawToggle = ActionBarDrawerToggle(this, mDrawer,
         toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
     mDrawer.addDrawerListener(mDrawToggle)
-    mDrawer.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.statusbar_white))
+    mDrawer.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.status_bar_white))
     mDrawToggle.syncState()
 
     mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {

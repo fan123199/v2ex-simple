@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
@@ -91,6 +92,7 @@ class TopicDetailAdapter(private val act: AppCompatActivity,
 
                 if (topic.comments.isNotEmpty()) {
                     mainHolder.ll.removeAllViews()
+                    mainHolder.dividerComments.isGone = true
                     topic.comments.forEach {
                         val view = LayoutInflater.from(act).inflate(R.layout.item_comments, mainHolder.ll, false)
                         val th = CommentsViewHolder(view)
@@ -330,6 +332,7 @@ class TopicDetailAdapter(private val act: AppCompatActivity,
     class TopicWithCommentsViewHolder(itemView: View)
         : TopicsRVAdapter.MainViewHolder(itemView) {
         internal var ll: LinearLayout = itemView.findViewById(R.id.ll_comments)
+        internal val dividerComments :View = itemView.findViewById(R.id.divider_comment)
     }
 
     class CommentsViewHolder(itemView: View) {

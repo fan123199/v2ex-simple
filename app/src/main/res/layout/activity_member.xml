@@ -63,55 +63,40 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_intro">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/tv_location"
+                    <ImageView
+                        android:id="@+id/iv_location"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_location"
-                        app:civ_border_color="@color/primary"
-                        app:civ_border_width="1dp"
-                        app:civ_fill_color="@color/white"/>
+                        android:src="@drawable/ic_location"/>
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/tv_twitter"
+                    <ImageView
+                        android:id="@+id/iv_twitter"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_twitter"
-                        app:civ_border_color="@color/primary"
-                        app:civ_border_width="1dp"
-                        app:civ_fill_color="@color/white"/>
+                        android:src="@drawable/ic_twitter"/>
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/tv_github"
+                    <ImageView
+                        android:id="@+id/iv_github"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_github"
-                        app:civ_border_color="@color/primary"
-                        app:civ_border_width="1dp"
-                        app:civ_fill_color="@color/white"/>
+                        android:src="@drawable/ic_github"/>
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/tv_bitcoin"
+                    <ImageView
+                        android:id="@+id/iv_bitcoin"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_bitcoin"
-                        app:civ_border_color="@color/primary"
-                        app:civ_border_width="1dp"
-                        app:civ_fill_color="@color/white"/>
+                        android:src="@drawable/ic_bitcoin"/>
 
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <ImageView
                         android:id="@+id/tv_website"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_website"
-                        app:civ_border_color="@color/primary"
-                        app:civ_border_width="1dp"
-                        app:civ_fill_color="@color/white"/>
+                        android:src="@drawable/ic_website"/>
                 </LinearLayout>
 
 
@@ -119,19 +104,30 @@
                     android:id="@+id/tv_intro"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginRight="8dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginRight="8dp"
                     android:textColor="@color/toolbar_text"
                     android:textSize="@dimen/text_size_small"
                     app:layout_constraintLeft_toLeftOf="@+id/iv_avatar_profile"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile"
-                    tools:text="这是自我简介，可能很长"/>
+                    app:layout_constraintTop_toBottomOf="@+id/tv_tagline"
+                    tools:text="这是自我简介，可能很长" />
 
+                <TextView
+                    android:id="@+id/tv_tagline"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/toolbar_text"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/iv_avatar_profile"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile"
+                    tools:text="我是个性签名" />
 
                 <TextView
                     android:id="@+id/tv_prefix_created"

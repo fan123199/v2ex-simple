@@ -2,14 +2,16 @@ package im.fdx.v2ex.ui.member
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
@@ -35,7 +37,7 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.CustomChrome
-import kotlinx.android.synthetic.main.activity_profile.*
+import kotlinx.android.synthetic.main.activity_member.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -47,18 +49,6 @@ import java.io.IOException
  * 获取user的主题，依然使用api的方式
  */
 class MemberActivity : BaseActivity() {
-
-    private lateinit var mIvAvatar: ImageView
-    private lateinit var mTvUserCreatedPrefix: TextView
-    private lateinit var mTvIntro: TextView
-    private lateinit var mTvLocation: ImageView
-    private lateinit var mTvBitCoin: ImageView
-    private lateinit var mTvGithub: ImageView
-    private lateinit var mTvTwitter: ImageView
-    private lateinit var mTvWebsite: ImageView
-    private lateinit var llInfo: ViewGroup
-    private lateinit var constraintLayout: androidx.constraintlayout.widget.ConstraintLayout
-    private lateinit var collapsingToolbarLayout: com.google.android.material.appbar.CollapsingToolbarLayout
 
     private lateinit var mMenu: Menu
 
@@ -78,52 +68,37 @@ class MemberActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_profile)
-        mIvAvatar = findViewById(R.id.iv_avatar_profile)
-        mTvUserCreatedPrefix = findViewById(R.id.tv_prefix_created)
-        mTvIntro = findViewById(R.id.tv_intro)
-
-        mTvLocation = findViewById(R.id.tv_location)
-        mTvBitCoin = findViewById(R.id.tv_bitcoin)
-        mTvGithub = findViewById(R.id.tv_github)
-        mTvTwitter = findViewById(R.id.tv_twitter)
-        mTvWebsite = findViewById(R.id.tv_website)
-
-        constraintLayout = findViewById(R.id.constraint_member)
-        collapsingToolbarLayout = findViewById(R.id.ctl_profile)
-        llInfo = findViewById(R.id.ll_info)
-
+        setContentView(R.layout.activity_member)
         run {
-            mTvIntro.visibility = View.GONE
-            mTvLocation.visibility = View.GONE
-            mTvBitCoin.visibility = View.GONE
-            mTvGithub.visibility = View.GONE
-            mTvTwitter.visibility = View.GONE
-            mTvWebsite.visibility = View.GONE
-            llInfo.visibility = View.GONE
+            tv_tagline.visibility = View.GONE
+            tv_intro.visibility = View.GONE
+            iv_location.visibility = View.GONE
+            iv_bitcoin.visibility = View.GONE
+            iv_github.visibility = View.GONE
+            iv_twitter.visibility = View.GONE
+            tv_website.visibility = View.GONE
+            ll_info.visibility = View.GONE
 
-            mTvLocation.setOnClickListener(listener)
-            mTvBitCoin.setOnClickListener(listener)
-            mTvGithub.setOnClickListener(listener)
-            mTvTwitter.setOnClickListener(listener)
-            mTvWebsite.setOnClickListener(listener)
+            iv_location.setOnClickListener(listener)
+            iv_bitcoin.setOnClickListener(listener)
+            iv_github.setOnClickListener(listener)
+            iv_twitter.setOnClickListener(listener)
+            tv_website.setOnClickListener(listener)
         }
         username = getName(intent)
 
         setUpToolbar()
 
-        val tabLayout: com.google.android.material.tabs.TabLayout = findViewById(R.id.tl_member)
-        val viewpager: androidx.viewpager.widget.ViewPager = findViewById(R.id.viewpager)
         memberViewpagerAdapter.username = username ?: ""
         viewpager.adapter = memberViewpagerAdapter
-        tabLayout.setupWithViewPager(viewpager)
+        tl_member.setupWithViewPager(viewpager)
 
-        al_profile.addOnOffsetChangedListener(com.google.android.material.appbar.AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        al_profile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toFloat() / maxScroll.toFloat()
             when (percentage) {
-                in 0f..1f -> constraintLayout.alpha = 1 - percentage
+                in 0f..1f -> constraint_member.alpha = 1 - percentage
             }
         })
         getData()
@@ -138,7 +113,7 @@ class MemberActivity : BaseActivity() {
 
     private fun getData() {
         val urlUserInfo = "$API_USER?username=$username"  //Livid's profile
-        collapsingToolbarLayout.title = username
+        ctl_profile.title = username
         urlTopic = "$API_TOPIC?username=$username"
         Log.i(TAG, "$urlUserInfo: \t$urlTopic")
         getUserInfoAPI(urlUserInfo)
@@ -213,11 +188,19 @@ class MemberActivity : BaseActivity() {
 
     private var listener: View.OnClickListener = View.OnClickListener {
         when (it.id) {
-            R.id.tv_location -> {
+            R.id.iv_location -> {
+                if (!member.location.isNullOrEmpty()) {
+                    val contentView = TextView(this@MemberActivity)
+                    contentView.text = member.location
+                    val popupWindow = PopupWindow(contentView,WRAP_CONTENT,WRAP_CONTENT)
+                    popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+                    popupWindow.isOutsideTouchable = true
+                    popupWindow.showAsDropDown(it)
+                }
             }
-            R.id.tv_github -> if (!(member.github).isNullOrEmpty()) CustomChrome(this).load("https://www.github.com/" + member.github)
-            R.id.tv_twitter -> {
-                if (!(member.twitter).isNullOrEmpty()) {
+            R.id.iv_github -> if (!(member.github).isNullOrEmpty()) CustomChrome(this).load("https://www.github.com/" + member.github)
+            R.id.iv_twitter -> {
+                if (!member.twitter.isNullOrEmpty()) {
                     val intent: Intent
                     try {
                         packageManager.getPackageInfo("com.twitter.android", 0)
@@ -240,21 +223,25 @@ class MemberActivity : BaseActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun showUser() {
-        mIvAvatar.load(member.avatarLargeUrl)
-        mTvIntro.text = member.bio
-        mTvUserCreatedPrefix.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
+        iv_avatar_profile.load(member.avatarLargeUrl)
+        tv_tagline.text = member.tagline
+        tv_intro.text = member.bio
+        tv_prefix_created.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
 
-        mTvBitCoin.isGone = member.btc.isNullOrEmpty()
-        mTvGithub.isGone = member.github.isNullOrEmpty()
-        mTvLocation.isGone = member.location.isNullOrEmpty()
-        mTvTwitter.isGone = member.twitter.isNullOrEmpty()
-        mTvWebsite.isGone = member.website.isNullOrEmpty()
+        iv_bitcoin.isGone = member.btc.isNullOrEmpty()
+        iv_github.isGone = member.github.isNullOrEmpty()
+        iv_location.isGone = member.location.isNullOrEmpty()
+        iv_twitter.isGone = member.twitter.isNullOrEmpty()
+        tv_website.isGone = member.website.isNullOrEmpty()
 
-        mTvIntro.isGone = member.bio.isNullOrEmpty()
+        tv_tagline.isGone = member.tagline.isNullOrEmpty()
+        tv_intro.isGone = member.bio.isNullOrEmpty()
 
-        llInfo.isGone = member.btc.isNullOrEmpty() && member.github.isNullOrEmpty() &&
-                member.location.isNullOrEmpty() &&
-                member.twitter.isNullOrEmpty() && member.website.isNullOrEmpty()
+        ll_info.isGone = member.btc.isNullOrEmpty()
+                && member.github.isNullOrEmpty()
+                && member.location.isNullOrEmpty()
+                && member.twitter.isNullOrEmpty()
+                && member.website.isNullOrEmpty()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

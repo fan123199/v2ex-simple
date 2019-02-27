@@ -168,7 +168,9 @@ class NewTopicActivity : BaseActivity() {
                 }
                 once = Parser(response.body()!!.string()).getOnceNum2()
                 if (once == null) {
-                    toast("发布主题失败，请退出app重试")
+                    runOnUiThread {
+                        toast("发布主题失败，请退出app重试")
+                    }
                     return
                 }
 
@@ -182,7 +184,7 @@ class NewTopicActivity : BaseActivity() {
                 HttpHelper.OK_CLIENT.newCall(Request.Builder()
                         .url("https://www.v2ex.com/new")
                         .post(requestBody)
-                        .build()).enqueue(object : Callback {
+                        .build()).start(object : Callback {
                     override fun onFailure(call1: Call, e: IOException) {
                         resetIcon(item)
                         NetManager.dealError(this@NewTopicActivity)
@@ -207,7 +209,9 @@ class NewTopicActivity : BaseActivity() {
                         } else {
                             resetIcon(item)
                             val errorMsg = Parser(response.body()!!.string()).getErrorMsg()
-                            longToast(errorMsg)
+                            runOnUiThread {
+                                longToast(errorMsg)
+                            }
                         }
                     }
                 })

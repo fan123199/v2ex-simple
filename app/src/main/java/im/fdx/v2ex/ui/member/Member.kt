@@ -32,32 +32,32 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Member(
-    @ColumnInfo(name = "member_id")
+        @ColumnInfo(name = "member_id")
         var id: String = "",
-    var username: String = "",
-    var tagline: String = "",
-    var avatar_mini: String = "",
-    @ColumnInfo(name = "member_created")
+        var username: String = "",
+        var tagline: String = "",
+        var avatar_mini: String = "",
+        @ColumnInfo(name = "member_created")
         var created: String = "",
-    @ColumnInfo(name = "member_avatar_normal")
+        @ColumnInfo(name = "member_avatar_normal")
         var avatar_normal: String = "",
-    @ColumnInfo(name = "member_avatar_large")
+        @ColumnInfo(name = "member_avatar_large")
         var avatar_large: String = "",
-    var bio: String? = "",
-    var github: String? = "",
-    var btc: String? = "",
-    var location: String? = "",
-    var twitter: String? = "",
-    var website: String? = ""
+        var bio: String? = "",
+        var github: String? = "",
+        var btc: String? = "",
+        var location: String? = "",
+        var twitter: String? = "",
+        var website: String? = ""
 ) : Parcelable {
 
-    val avatarNormalUrl: String
-        get() = "http:" + avatar_normal
+  val avatarNormalUrl: String
+    get() = "http:" + avatar_normal
 
-    val avatarLargeUrl: String
-        get() = "http:" + avatar_large
+  val avatarLargeUrl: String
+    get() = "http:" + avatar_large
 
-    val avatarMiniUrl: String
-        get() = "http:" + avatar_mini
+  val avatarMiniUrl: String
+    get() = "http:" + avatar_mini
 
 }

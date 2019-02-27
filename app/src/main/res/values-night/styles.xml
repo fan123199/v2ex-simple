@@ -7,7 +7,7 @@
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorLink">@color/primary</item>
         <item name="android:listDivider">@drawable/divider</item>
-        <item name="android:statusBarColor">@color/statusbar_white</item>
+        <item name="android:statusBarColor">@color/status_bar_white</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
 
 

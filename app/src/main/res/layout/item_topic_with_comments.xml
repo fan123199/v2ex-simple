@@ -18,6 +18,9 @@
         android:layout_height="wrap_content"
         tools:ignore="RtlSymmetry"/>
 
-    <include layout="@layout/divider"/>
+    <include
+        android:visibility="gone"
+        android:id="@+id/divider_comment"
+        layout="@layout/divider"/>
 
 </LinearLayout>

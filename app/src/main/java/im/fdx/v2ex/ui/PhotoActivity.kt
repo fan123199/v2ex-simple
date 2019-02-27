@@ -11,6 +11,7 @@ import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.ImageUtil
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.BottomSheetMenu
 import kotlinx.android.parcel.Parcelize
@@ -64,9 +65,7 @@ class PhotoActivity : AppCompatActivity() {
             val itemView = LayoutInflater.from(container.context).inflate(R.layout.pager_item, container, false)
             val imageView = itemView.findViewById(R.id.photo_view) as ImageView
             val imageUrl = list[position].url
-            GlideApp.with(imageView.context)
-                .load(imageUrl)
-                .into(imageView)
+            imageView.load(imageUrl)
             container.addView(itemView)
 
             imageView.setOnLongClickListener {
@@ -80,10 +79,7 @@ class PhotoActivity : AppCompatActivity() {
                         .show()
                 true
             }
-
-
             return itemView
-
         }
 
 
