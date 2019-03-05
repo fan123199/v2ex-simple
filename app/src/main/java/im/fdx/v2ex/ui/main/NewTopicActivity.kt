@@ -192,6 +192,7 @@ class NewTopicActivity : BaseActivity() {
 
                     @Throws(IOException::class)
                     override fun onResponse(call1: Call, response1: Response) {
+                        resetIcon(item)
                         if (response1.code() == 302) {
 
                             val location = response1.header("Location")
@@ -207,7 +208,6 @@ class NewTopicActivity : BaseActivity() {
                             }
                             finish()
                         } else {
-                            resetIcon(item)
                             val errorMsg = Parser(response.body()!!.string()).getErrorMsg()
                             runOnUiThread {
                                 longToast(errorMsg)

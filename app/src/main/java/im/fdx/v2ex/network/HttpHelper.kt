@@ -55,7 +55,6 @@ fun Call.start(callback: Callback) {
             try {
                 callback.onFailure(call!!, e!!)
             } catch (e2: Exception) {
-                Crashlytics.logException(e2)
                 e2.printStackTrace()
             }
         }
@@ -89,7 +88,6 @@ fun Call.start(onResp: (Call, Response) -> Unit, onFail: (Call, IOException)-> U
                 try {
                     callback.onFailure(call!!, e!!)
                 } catch (e2: Exception) {
-                    Crashlytics.logException(e2)
                     e2.printStackTrace()
                 }
             }

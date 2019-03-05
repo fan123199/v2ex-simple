@@ -186,9 +186,11 @@ class TopicsFragment : Fragment() {
                   showRefresh(false)
 
                   val str = response.body()!!.string()
-
                   val type = object : TypeToken<List<Topic>>(){}.type
                   val topicList = Gson().fromJson<List<Topic>>(str, type)
+                  (topicList.forEach {
+                      logi(it.id + ":" + it.title)
+                  })
 
                   activity?.runOnUiThread {
                     if (topicList.isEmpty()) {
@@ -279,7 +281,7 @@ class TopicsFragment : Fragment() {
         .addEncodedQueryParameter("q", query)
         .addEncodedQueryParameter("sort", "created")
         .addEncodedQueryParameter("from", nextIndex.toString()) // 偏移量, 默认0
-        .addEncodedQueryParameter("size", Companion.NUMBER_PER_PAGE.toString()) //数量，默认10
+        .addEncodedQueryParameter("size", NUMBER_PER_PAGE.toString()) //数量，默认10
 //          .addEncodedQueryParameter("node") //节点名称
         .build()
 
