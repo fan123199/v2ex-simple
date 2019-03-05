@@ -92,7 +92,7 @@ class TopicDetailAdapter(private val act: AppCompatActivity,
 
                 if (topic.comments.isNotEmpty()) {
                     mainHolder.ll.removeAllViews()
-                    mainHolder.dividerComments.isGone = true
+                    mainHolder.dividerComments.isGone = false
                     topic.comments.forEach {
                         val view = LayoutInflater.from(act).inflate(R.layout.item_comments, mainHolder.ll, false)
                         val th = CommentsViewHolder(view)
@@ -172,8 +172,7 @@ class TopicDetailAdapter(private val act: AppCompatActivity,
                         //问题，index可能用户输入不准确，导致了我的这个点击会出现错误。 也有可能是黑名单能影响，导致了
                         //了这个错误，所以，我需要进行大数据排错。
                         var index = replyItem.content.getPair(username)
-                        val originIndex = index
-                        //找不错，或大于，明显不可能，取最接近一个评论
+                        //找不到，或大于，明显不可能，取最接近一个评论
                         if (index == -1 || index > position) {
                             replies.forEachIndexed { i, r ->
                                 if (i in 0 until position && r.member?.username == username) {
