@@ -43,43 +43,35 @@ import kotlinx.android.parcel.Parcelize
 @Entity
 @Parcelize
 data class Node(
-    @PrimaryKey
-    @ColumnInfo(name = "node_id")
-    var id: String = "",
-    @ColumnInfo(name = "node_name")
-    var name: String = "",
-    @ColumnInfo(name = "node_url")
+        @PrimaryKey
+        @ColumnInfo(name = "node_id")
+        var id: String = "",
+        @ColumnInfo(name = "node_name")
+        var name: String = "",
+        @ColumnInfo(name = "node_url")
         var url: String = "",
-    @ColumnInfo(name = "node_title")
+        @ColumnInfo(name = "node_title")
         var title: String = "",
-    var title_alternative: String = "",
-    var topics: Int = 0,
-    var stars: Int = 0,
-    @ColumnInfo(name = "node_created")
+        var title_alternative: String = "",
+        var topics: Int = 0,
+        var stars: Int = 0,
+        @ColumnInfo(name = "node_created")
         var created: Long = 0,
-    @ColumnInfo(name = "node_avatar_mini")
-        var avatar_mini: String = "",
-    @ColumnInfo(name = "node_avatar_normal")
+        @ColumnInfo(name = "node_avatar_normal")
+        var avatar_normal: String? = "",
+        var header: String? = "",
+        var category: String? = "") : Parcelable {
 
-        var avatar_normal: String = "",
-    @ColumnInfo(name = "node_avatar_large")
 
-        var avatar_large: String = "",
-    var header: String = "",
-    var category: String = "") : Parcelable {
+  val avatarNormalUrl: String
+    get() = "https:" + Regex("\\?s=\\d{1,3}").replace(avatar_normal?:"", "?s=64")
 
-    val avatarMiniUrl: String
-        get() = "http:$avatar_mini"
+  val avatarLargeUrl: String
+    get() = when {
+      avatar_normal?.startsWith("/static") == true -> "https://www.v2ex.com/static/img/node_large.png"
+      else -> "https:" + Regex("\\?s=\\d{1,3}").replace(avatar_normal?:"", "?s=128").replace("normal","large").replace("mini","large")
+    }
 
-    val avatarNormalUrl: String
-        get() = "http:$avatar_normal"
-
-    val avatarLargeUrl: String
-        get() = when {
-            !avatar_large.startsWith("/static") -> "http:$avatar_large"
-            else -> "https://www.v2ex.com/static/img/node_large.png"
-        }
-
-    override fun toString() = "$title / $name"
+  override fun toString() = "$title / $name"
 
 }

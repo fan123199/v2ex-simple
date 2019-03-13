@@ -94,7 +94,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                 val replyModels = parser.getUserReplies()
 
                 if (totalPage == 0) {
-                    totalPage = parser.getTotalPage()
+                    totalPage = parser.getTotalPageInMember()
                     mScrollListener?.totalPage = totalPage
                 }
                 activity?.runOnUiThread {

@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
@@ -14,7 +13,10 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
+import androidx.core.view.isGone
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -101,15 +103,15 @@ class TopicActivity : BaseActivity() {
     setUpToolbar()
 
     //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
-    val mLayoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+    val mLayoutManager = LinearLayoutManager(this)
     detail_recycler_view.layoutManager = mLayoutManager
-    detail_recycler_view.addOnScrollListener(object : androidx.recyclerview.widget.RecyclerView.OnScrollListener() {
+    detail_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
       private var currentPosition = 0
 
-      override fun onScrollStateChanged(recyclerView: androidx.recyclerview.widget.RecyclerView, newState: Int) {}
+      override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {}
 
-      override fun onScrolled(recyclerView: androidx.recyclerview.widget.RecyclerView, dx: Int, dy: Int) {
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
           if (currentPosition != 0) {
             startAlphaAnimation(tv_toolbar, 500, false)
@@ -173,31 +175,33 @@ class TopicActivity : BaseActivity() {
 
 
   private fun setFootView(beVisible: Boolean) {
-    findViewById<View>(R.id.foot_container).visibility = if (beVisible) View.VISIBLE else View.GONE
+    findViewById<View>(R.id.foot_container).isGone =  !beVisible
   }
 
   private fun parseIntent(intent: Intent) {
     val data = intent.data
+    val parcelableExtra = intent.getParcelableExtra<Topic>(Keys.KEY_TOPIC_MODEL)
+    val topicId = intent.getStringExtra(Keys.KEY_TOPIC_ID)
     mTopicId = when {
       data != null -> data.pathSegments[1]
-      intent.getParcelableExtra<Parcelable>("model") != null -> {
-        val topicModel = intent.getParcelableExtra<Topic>("model")
-        mAdapter.topics[0] = topicModel
+      parcelableExtra != null -> {
+        mAdapter.topics[0] = parcelableExtra
         mAdapter.notifyDataSetChanged()
-        topicModel.id
+        parcelableExtra.id
       }
-      intent.getStringExtra(Keys.KEY_TOPIC_ID) != null -> intent.getStringExtra(Keys.KEY_TOPIC_ID)
+      topicId != null -> topicId
       else -> ""
+    }
+
+    if (mTopicId.isEmpty()) {
+      toast("主题打开失败")
+      finish()
+      return
     }
 
     swipe_details.isRefreshing = true
     getRepliesPageOne(false)
     logd("TopicUrl: ${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId")
-  }
-
-  override fun onNewIntent(intent: Intent) {
-    super.onNewIntent(intent)
-    parseIntent(intent)
   }
 
   private fun getRepliesPageOne(scrollToBottom: Boolean) {

@@ -139,7 +139,9 @@ fun listToMap(nodes: List<Node>): MutableMap<String, MutableList<Node>> {
     } else {
       val value = mutableListOf<Node>()
       value.add(node)
-      map[node.category] = value
+      node.category?.let {
+        map[it] = value
+      }
     }
   }
 

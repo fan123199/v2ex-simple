@@ -1,12 +1,14 @@
 package im.fdx.v2ex.ui.main
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isGone
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.MyCallback
@@ -23,8 +25,7 @@ import org.jetbrains.anko.startActivity
  * Created by a708 on 15-8-14.
  * 主页的Adapter，就一个普通的RecyclerView
  */
-class TopicsRVAdapter(private val mContext: Context)
-  : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class TopicsRVAdapter(private val mContext: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
   private val mInflater = LayoutInflater.from(mContext)
   private var mTopicList: MutableList<Topic> = mutableListOf()
@@ -62,13 +63,14 @@ class TopicsRVAdapter(private val mContext: Context)
   }
 
   //Done 对TextView进行赋值, 也就是操作
-  override fun onBindViewHolder(holder2: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+  override fun onBindViewHolder(holder2: RecyclerView.ViewHolder, position: Int) {
     val currentTopic = mTopicList[position]
-    val listener = MyOnClickListener(mContext, currentTopic)
     val holder = holder2 as MainViewHolder
     holder.tvTitle.maxLines = 2
     holder.tvTitle.text = currentTopic.title
-    holder.itemView.setOnClickListener(listener)
+    holder.itemView.setOnClickListener{
+      mContext.startActivity<TopicActivity>(Keys.KEY_TOPIC_MODEL to currentTopic)
+    }
     holder.tvContent.visibility = View.GONE
 
     //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -84,8 +86,12 @@ class TopicsRVAdapter(private val mContext: Context)
     holder.tvNode.text = currentTopic.node?.title
     holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)
     holder.ivAvatar.load(currentTopic.member?.avatarNormalUrl)
-    holder.tvNode.setOnClickListener(listener)
-    holder.ivAvatar.setOnClickListener(listener)
+    holder.tvNode.setOnClickListener{
+      mContext.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to currentTopic.node?.name!!)
+    }
+    holder.ivAvatar.setOnClickListener{
+      mContext.startActivity<MemberActivity>(Keys.KEY_USERNAME to currentTopic.member?.username!!)
+    }
 
   }
 
@@ -102,15 +108,5 @@ class TopicsRVAdapter(private val mContext: Context)
     var ivAvatar: CircleImageView = container.findViewById(R.id.iv_avatar_profile)
     var tvNode: TextView = container.findViewById(R.id.tv_node)
     var view: View = container.findViewById(R.id.divider)
-  }
-
-  class MyOnClickListener(private val context: Context, private val topic: Topic) : View.OnClickListener {
-    override fun onClick(v: View) {
-      when (v.id) {
-        R.id.iv_avatar_profile -> context.startActivity<MemberActivity>(Keys.KEY_USERNAME to topic.member?.username!!)
-        R.id.tv_node -> context.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to topic.node?.name!!)
-        R.id.main_text_view -> context.startActivity<TopicActivity>("model" to topic)
-      }
-    }
   }
 }

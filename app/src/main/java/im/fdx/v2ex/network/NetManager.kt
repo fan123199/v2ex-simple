@@ -9,6 +9,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.Gson
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
+import im.fdx.v2ex.utils.extensions.logd
 import okhttp3.*
 import org.jetbrains.anko.toast
 import java.io.IOException
@@ -56,11 +57,11 @@ object NetManager {
 
     @JvmOverloads
     fun dealError(context: Context?,  errorCode: Int = -1, swipe: SwipeRefreshLayout? = null, errorMsg:String ?= "") {
-
+        logd(errorMsg)
         if (context is Activity && !context.isFinishing) {
             context.runOnUiThread {
                 swipe?.isRefreshing = false
-                if(errorMsg != null) {
+                if(!errorMsg.isNullOrEmpty()) {
                     context.toast(errorMsg)
                     return@runOnUiThread
                 }

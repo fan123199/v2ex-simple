@@ -27,6 +27,7 @@ import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.ui.member.MemberActivity
+import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.getPair
@@ -103,10 +104,12 @@ class TopicDetailAdapter(private val act: AppCompatActivity,
                     }
                 }
 
-
-                val l = TopicsRVAdapter.MyOnClickListener(act, topic)
-                mainHolder.tvNode.setOnClickListener(l)
-                mainHolder.ivAvatar.setOnClickListener(l)
+                mainHolder.tvNode.setOnClickListener{
+                    act.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to topic.node?.name!!)
+                }
+                mainHolder.ivAvatar.setOnClickListener{
+                    act.startActivity<MemberActivity>(Keys.KEY_USERNAME to topic.member?.username!!)
+                }
 
             }
             TYPE_ITEM -> {

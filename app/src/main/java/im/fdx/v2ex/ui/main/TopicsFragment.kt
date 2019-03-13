@@ -29,6 +29,7 @@ import okhttp3.*
 import org.jetbrains.anko.toast
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * 主题列表页，核心页面。
@@ -50,27 +51,6 @@ class TopicsFragment : Fragment() {
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
     val layout = inflater.inflate(R.layout.fragment_tab_article, container, false)
-    val args: Bundle? = arguments
-    when {
-      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 0 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
-      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = "$HTTPS_V2EX_BASE/my/following"
-      args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
-      args?.getString(Keys.KEY_TAB) == "heated" -> {
-        mRequestURL = API_HEATED
-      }
-      args?.getString(Keys.KEY_TAB) != null -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
-      args?.getString(Keys.KEY_USERNAME) != null -> {
-        currentMode = FROM_MEMBER
-        mRequestURL = "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
-      }
-      args?.getString(Keys.KEY_NODE_NAME) != null -> {
-        currentMode = FROM_NODE
-        mRequestURL = "$HTTPS_V2EX_BASE/go/${args.getString(Keys.KEY_NODE_NAME)}"
-      }
-      args?.getBoolean("search", false) == true -> {
-        currentMode = FROM_SEARCH
-      }
-    }
 
     mSwipeLayout = layout.findViewById(R.id.swipe_container)
     mSwipeLayout.initTheme()
@@ -91,18 +71,55 @@ class TopicsFragment : Fragment() {
         loadMoreTopic(currentPage)
       }
     }
-    when (currentMode) {
-      FROM_MEMBER, FROM_NODE, FROM_SEARCH -> mRecyclerView?.addOnScrollListener(mScrollListener)
-      FROM_HOME -> {}
-    }
+
 
     mAdapter = TopicsRVAdapter(activity!!)
     mRecyclerView?.adapter = mAdapter
 
     flContainer = layout.findViewById(R.id.fl_container)
 
+
+
+    val args: Bundle? = arguments
+    when {
+      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 0 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
+      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = "$HTTPS_V2EX_BASE/my/following"
+      args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
+      args?.getString(Keys.KEY_TAB) == "heated" -> {
+        mRequestURL = API_HEATED
+      }
+      args?.getString(Keys.KEY_TAB) != null -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
+      args?.getString(Keys.KEY_USERNAME) != null -> {
+        currentMode = FROM_MEMBER
+        mRequestURL = "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
+      }
+      args?.getString(Keys.KEY_NODE_NAME) != null -> {
+        currentMode = FROM_NODE
+        mRequestURL = "$HTTPS_V2EX_BASE/go/${args.getString(Keys.KEY_NODE_NAME)}"
+
+      }
+      args?.getBoolean("search", false) == true -> {
+        currentMode = FROM_SEARCH
+      }
+    }
+
+    when (currentMode) {
+      FROM_MEMBER, FROM_NODE, FROM_SEARCH -> mRecyclerView?.addOnScrollListener(mScrollListener)
+      FROM_HOME -> {}
+    }
+
+
     if (currentMode == FROM_SEARCH) {
       flContainer.showNoContent("请输入关键字进行搜索")
+    } else if (currentMode == FROM_NODE){
+      // 已有数据
+      val topicList : ArrayList<Topic>?  = args?.getParcelableArrayList(Keys.KEY_TOPIC_LIST)
+      val totalPage  = args?.getInt(Keys.KEY_PAGE_NUM, 1)?:1
+      if (topicList!=null) {
+        logd(topicList)
+        mScrollListener.totalPage = totalPage
+        setUIData(topicList)
+      }
     } else {
       flContainer.hideNoContent()
       mSwipeLayout.isRefreshing = true
@@ -180,6 +197,9 @@ class TopicsFragment : Fragment() {
               .start(object: Callback {
                 override fun onFailure(call: Call, e: IOException) {
                   showRefresh(false)
+                  activity?.runOnUiThread {
+                    activity?.toast("获取热议主题失败，请重试")
+                  }
                 }
 
                 override fun onResponse(call: Call, response: Response) {
@@ -208,7 +228,13 @@ class TopicsFragment : Fragment() {
       return
     }
 
-    vCall(if (currentPage == 1) requestURL else "$requestURL?p=$currentPage")
+
+    val url =
+            when {
+              currentMode == FROM_HOME -> requestURL
+              else -> "$requestURL?p=$currentPage"
+            }
+    vCall(url)
         .start(object : Callback {
           override fun onFailure(call: Call, e: IOException) {
               showRefresh(false)

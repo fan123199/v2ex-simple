@@ -1,18 +1,10 @@
 package im.fdx.v2ex.ui.node
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.os.bundleOf
-import com.elvishew.xlog.XLog
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
@@ -70,12 +62,12 @@ class NodeActivity : BaseActivity() {
             intent.getStringExtra(Keys.KEY_NODE_NAME) != null -> intent.getStringExtra(Keys.KEY_NODE_NAME)
             else -> ""
         }
-        val fragment: TopicsFragment = TopicsFragment().apply {
-            arguments = bundleOf(Keys.KEY_NODE_NAME to nodeName)
+
+        if (nodeName.isEmpty()) {
+            toast("打开节点失败")
+            finish()
+            return
         }
-        supportFragmentManager.beginTransaction()
-                .add(R.id.fragment_container, fragment, "MyActivity")
-                .commit()
         getNodeInfo()
     }
 
@@ -117,7 +109,7 @@ class NodeActivity : BaseActivity() {
     }
 
     private fun getNodeInfo() {
-        val requestURL = "${NetManager.HTTPS_V2EX_BASE}/go/$nodeName"
+        val requestURL = "${NetManager.HTTPS_V2EX_BASE}/go/$nodeName?p=1"
         logd("url:$requestURL")
         vCall(requestURL).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -132,8 +124,26 @@ class NodeActivity : BaseActivity() {
                     NetManager.dealError(this@NodeActivity, errorCode =  code)
                     return
                 }
+
+
                 val html = response.body()?.string()!!
+
+
                 val parser = Parser(html)
+
+              val topicList = parser.parseTopicLists(Parser.Source.FROM_NODE)
+
+              val pageNum = parser.getTotalPageForTopics()
+              val fragment: TopicsFragment = TopicsFragment().apply {
+                arguments = bundleOf(
+                        Keys.KEY_NODE_NAME to nodeName ,
+                        Keys.KEY_TOPIC_LIST to topicList,
+                        Keys.KEY_PAGE_NUM to pageNum
+                )
+              }
+              supportFragmentManager.beginTransaction()
+                      .add(R.id.fragment_container, fragment, "MyActivity")
+                      .commit()
                 try {
                     mNode = parser.getOneNode()
                 } catch (e: Exception) {

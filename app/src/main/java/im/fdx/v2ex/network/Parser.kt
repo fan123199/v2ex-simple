@@ -164,7 +164,7 @@ class Parser(private val htmlStr: String) {
     }
 
 
-    fun getTotalPage() = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+").find(htmlStr)?.value?.toInt() ?: 0
+    fun getTotalPageInMember() = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+").find(htmlStr)?.value?.toInt() ?: 0
 
 
     fun getOneNode(): Node {
@@ -277,8 +277,7 @@ class Parser(private val htmlStr: String) {
             val avatar = item.getElementsByClass("avatar").attr("src")
             val username = item.getElementsByTag("strong").first().getElementsByAttributeValueStarting("href", "/member/").first().text()
 
-            memberModel.avatar_large = avatar
-            memberModel.avatar_normal = avatar.replace("large", "normal")
+            memberModel.avatar_normal = avatar
             memberModel.username = username
 
             val thanksOriginal = item.getElementsByClass("small fade").text()
@@ -381,8 +380,7 @@ class Parser(private val htmlStr: String) {
         member.username = username
         val largeAvatar = headerTopic
                 .getElementsByClass("avatar").attr("src")
-        member.avatar_large = largeAvatar
-        member.avatar_normal = largeAvatar.replace("large", "normal")
+        member.avatar_normal = largeAvatar
         val nodeElement = headerTopic
                 .getElementsByAttributeValueStarting("href", "/go/").first()
         val nodeName = nodeElement.attr("href").replace("/go/", "")

@@ -13,6 +13,10 @@ object Keys {
     const val KEY_NODE_ID = "node_id"
     const val KEY_NODE_NAME = "name"
     const val KEY_AVATAR = "avatar"
+    const val KEY_TOPIC_MODEL = "model"
+    const val KEY_TOPIC_LIST = "topic_list"
+    const val KEY_PAGE_NUM = "page_num"
+
 
     const val KEY_PHOTO = "extra_photo"
     const val KEY_WARN_IMAGE_UPLOAD = "key_warn_image_upload"
