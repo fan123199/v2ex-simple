@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.content.edit
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.Keys
@@ -46,7 +47,7 @@ class MyApp : Application() {
       putBoolean(Keys.PREF_KEY_IS_LOGIN, login)
     }
     if (!login) {
-      androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
+      LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
     }
   }
 

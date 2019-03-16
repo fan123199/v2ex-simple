@@ -368,7 +368,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       override fun onResponse(call: Call, response: Response) {
 
         if (response.code() == 302) {
-          runOnUiThread { toast("还未登录，请先登录") }
+          runOnUiThread {
+            myApp.setLogin(false)
+            toast("登录信息失效，请先登录") }
           return
         }
 
