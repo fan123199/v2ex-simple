@@ -142,7 +142,7 @@ class TopicsFragment : Fragment() {
         private fun hideFab() {
           if (isFabShowing) {
             isFabShowing = false
-            val translation = fab.y.minus(ViewUtil.screenSize[1])
+            val translation = fab.y.minus(ViewUtil.screenHeight)
             fab.animate().translationYBy(-translation).setDuration(500)?.start()
           }
         }

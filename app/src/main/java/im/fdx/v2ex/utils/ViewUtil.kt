@@ -11,13 +11,16 @@ import android.content.res.Resources
  */
 
 object ViewUtil {
-    val screenSize: IntArray
+    val screenHeight: Int
         get() {
             val metrics = Resources.getSystem().displayMetrics
 
-            val width = metrics.widthPixels
-            val height = metrics.heightPixels
-
-            return intArrayOf(width, height)
+            return metrics.heightPixels
         }
+
+    val screenWight : Int
+    get() {
+
+        return Resources.getSystem().displayMetrics.widthPixels
+    }
 }
