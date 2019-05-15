@@ -10,25 +10,24 @@ Project is first written by Java and now kotlin.
 
 ## Main function
 
-+ 浏览V2ex的内容,包括节点、热门主题、最新主题、以及用户信息
-+ 帖子列表以及详情浏览，发表文章评论
-+ Material Design
++ 浏览V2ex的内容
++ 发表文章和评论
 + 从web打开应用
-+ 后台获取更新（workmanager）
++ 后台获取更新
 + 夜间模式
 + 文字大小配置
++ 搜索文章
 
 ## Next feature
 
-+ 增加文章搜索
 + 多用户
-+ 多主题样式（低优先）
 
-## Libraries
+## 3rd libraries
 
 + Firebase
 + Glide4
 + OkHttp3
++ Firebase
 + Flexbox
 + Gson
 + Anko
@@ -39,8 +38,8 @@ Project is first written by Java and now kotlin.
 ## Thanks
 
 + [greatyao/v2ex-android](https://github.com/greatyao/v2ex-android/tree/master)
-The project guide me to start my project from zero.
-+ learn from *twitter/google+/v2ex+/weico/...* for excellent user experience
+The project guide me to start this project from zero.
++ *twitter/v2ex+/weico/...*  is learned for excellent user experience
 + UI mostly designed by Evermoon [weibo_link](http://weibo.com/evermoon30964)
 
 ## License

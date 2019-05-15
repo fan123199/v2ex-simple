@@ -42,6 +42,8 @@ class BottomSheetMenu(private val activity: Activity) {
 
 
     fun show() {
-        bottomSheet.show()
+        if(!activity.isDestroyed) {
+            bottomSheet.show()
+        }
     }
 }

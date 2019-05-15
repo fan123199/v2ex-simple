@@ -119,6 +119,10 @@ class NodeActivity : BaseActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
 
+                if (isFinishing) {
+                    return
+                }
+
                 val code = response.code()
                 if (code != 200) {
                     NetManager.dealError(this@NodeActivity, errorCode =  code)
