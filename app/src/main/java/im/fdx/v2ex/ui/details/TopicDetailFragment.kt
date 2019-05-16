@@ -78,12 +78,6 @@ class TopicDetailFragment : BaseFragment() {
 
     }
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.activity_details_content, container, false)
     }
@@ -95,6 +89,51 @@ class TopicDetailFragment : BaseFragment() {
         LocalBroadcastManager.getInstance(activity!!).registerReceiver(receiver, filter)
         setFootView(MyApp.get().isLogin)
 
+
+        toolbar.run {
+            inflateMenu(R.menu.menu_details)
+            setNavigationIcon(R.drawable.ic_arrow_back_primary_24dp);
+            setNavigationOnClickListener {
+                activity?.finish()
+            }
+
+            setOnMenuItemClickListener {
+                when (it.itemId) {
+
+                    R.id.menu_favor -> token?.let { favorOrNot(mTopicId, it, isFavored) }
+                    R.id.menu_thank_topic -> {
+                        token?.let { thankTopic(mTopicId, it, isThanked) }
+                    }
+                    R.id.menu_item_share -> activity?.share("来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
+                            " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}")
+                    R.id.menu_item_open_in_browser -> {
+                        val topicId = mAdapter.topics[0].id
+                        val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
+                        val uri = Uri.parse(url)
+                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                        intent.`package` = "com.android.chrome"
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        try {
+                            startActivity(intent)
+                        } catch (e: ActivityNotFoundException) {
+                            intent.`package` = null
+                            startActivity(intent)
+                        }
+                    }
+                }
+                true
+            }
+        }
+
+
+        mMenu = toolbar.menu
+        if (MyApp.get().isLogin) {
+            mMenu?.findItem(R.id.menu_favor)?.isVisible = true
+            mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = true
+        } else {
+            mMenu?.findItem(R.id.menu_favor)?.isVisible = false
+            mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = false
+        }
         //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
         val mLayoutManager = LinearLayoutManager(activity)
         detail_recycler_view.layoutManager = mLayoutManager
@@ -107,13 +146,13 @@ class TopicDetailFragment : BaseFragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
                     if (currentPosition != 0) {
-                        startAlphaAnimation(activity?.tv_toolbar, 500, false)
+                        startAlphaAnimation(tv_toolbar, 500, false)
                         currentPosition = 0
                     }
                 } else {
                     if (currentPosition == 0 && topicHeader != null) {
-                        activity?.tv_toolbar?.text = topicHeader?.title
-                        startAlphaAnimation(activity?.tv_toolbar, 500, true)
+                        tv_toolbar?.text = topicHeader?.title
+                        startAlphaAnimation(tv_toolbar, 500, true)
                         currentPosition = -1
                     }
                 }
@@ -295,48 +334,6 @@ class TopicDetailFragment : BaseFragment() {
             putExtra("currentPage", currentPage)
         }
         activity?.startService(intentGetMoreReply)
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_details, menu)
-        if (MyApp.get().isLogin) {
-            menu.findItem(R.id.menu_favor).isVisible = true
-            menu.findItem(R.id.menu_thank_topic)?.isVisible = true
-        } else {
-            menu.findItem(R.id.menu_favor).isVisible = false
-            menu.findItem(R.id.menu_thank_topic)?.isVisible = false
-        }
-        mMenu = menu
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-
-            R.id.menu_favor -> token?.let { favorOrNot(mTopicId, it, isFavored) }
-            R.id.menu_thank_topic -> {
-                token?.let { thankTopic(mTopicId, it, isThanked) }
-            }
-            R.id.menu_item_share -> activity?.share("来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
-                    " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}")
-            R.id.menu_item_open_in_browser -> {
-                val topicId = mAdapter.topics[0].id
-                val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
-                val uri = Uri.parse(url)
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-                intent.`package` = "com.android.chrome"
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                try {
-                    startActivity(intent)
-                } catch (e: ActivityNotFoundException) {
-                    intent.`package` = null
-                    startActivity(intent)
-                }
-            }
-        }
-
-        return super.onOptionsItemSelected(item)
     }
 
     private fun favorOrNot(topicId: String, token: String, doFavor: Boolean) {

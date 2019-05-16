@@ -30,7 +30,6 @@ class TopicActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_details)
-    setUpToolbar()
 
     vpAdapter = VpAdapter(supportFragmentManager)
     parseIntent(intent)
