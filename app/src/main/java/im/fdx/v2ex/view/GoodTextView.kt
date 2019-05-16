@@ -24,6 +24,12 @@ import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dp2px
 import org.jetbrains.anko.startActivity
+import android.graphics.Bitmap
+import android.graphics.Rect
+import android.text.style.DynamicDrawableSpan.ALIGN_BASELINE
+import com.bumptech.glide.request.target.CustomTarget
+import im.fdx.v2ex.utils.extensions.logi
+import java.io.ByteArrayOutputStream
 
 
 /**
@@ -45,7 +51,7 @@ class GoodTextView @JvmOverloads constructor(
     var popupListener: Popup.PopupListener? = null
 
     //防止 Glide，将target gc了， 导致图片无法显示
-    var targetList: MutableList<SimpleTarget<Drawable>> = mutableListOf()
+    var targetList: MutableList<CustomTarget<Drawable>> = mutableListOf()
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -100,7 +106,7 @@ class GoodTextView @JvmOverloads constructor(
                 }
             }
 
-            //替换原来的ImageSpan
+            //移除 ImageSpan 中的可能存在的clickspan
             val clickableSpans = htmlSpannable.getSpans(start, end, ClickableSpan::class.java)
 
             if (clickableSpans != null && clickableSpans.isNotEmpty()) {
@@ -139,50 +145,51 @@ class GoodTextView @JvmOverloads constructor(
             val bitmapHolder = BitmapHolder()
             Log.i(TAG, " begin getDrawable, Image url: " + source)
 
-            val target = object : SimpleTarget<Drawable>() {
+            val target = object : CustomTarget<Drawable>() {
+                override fun onLoadCleared(placeholder: Drawable?) {
+
+                }
+
+                override fun onLoadStarted(placeholder: Drawable?) {
+                }
+
+
                 override fun onResourceReady(drawable: Drawable, transition: Transition<in Drawable>?) {
 
                     val targetWidth: Int
                     val targetHeight: Int
 
-                    when {
-                        drawable.intrinsicWidth > bestWidth || drawable.intrinsicWidth > bestWidth * 0.3 -> {
-                            targetWidth = bestWidth
-                            targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
-                            drawable.setBounds(0, 0, targetWidth, targetHeight)
-                            bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
-                        }
-
-
-                        drawable.intrinsicWidth >= smallestWidth && drawable.intrinsicWidth <= bestWidth * 0.3 -> {
-                            targetWidth = bestWidth
-                            targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
-                            drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-                            bitmapHolder.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
-                        }
-
+                    targetWidth = when {
+                        //超小图
                         drawable.intrinsicWidth < smallestWidth -> {
-                            targetWidth = smallestWidth
-                            targetHeight = (targetWidth * drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()).toInt()
-                            drawable.setBounds(0, 0, targetWidth, targetHeight)
-                            bitmapHolder.setBounds(0, 0, targetWidth, targetHeight)
+                            smallestWidth
                         }
-
+                        //中小图
+                        drawable.intrinsicWidth >= smallestWidth && drawable.intrinsicWidth <= bestWidth * 0.3 -> {
+                            drawable.intrinsicWidth
+                        }
+                        // 中图，大图，特大图
                         else -> {
-                            targetWidth = drawable.intrinsicWidth
-                            targetHeight = drawable.intrinsicHeight
-                            drawable.setBounds((bestWidth - targetWidth) / 2, 0, (targetWidth + bestWidth) / 2, targetHeight)
-                            bitmapHolder.setBounds(0, 0, bestWidth, targetHeight)
+                            bestWidth
                         }
                     }
 
+                    val ratio = drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()
+                    targetHeight = (targetWidth * ratio).toInt()
+                    val rectHolder  = Rect(0,0, targetWidth, targetHeight)
+                    drawable.bounds = rectHolder
+                    bitmapHolder.bounds = rectHolder
                     bitmapHolder.setDrawable(drawable)
                     this@GoodTextView.text = this@GoodTextView.text
-                    Log.i(TAG, " end getDrawable, Image height: ${drawable.intrinsicHeight}, ${drawable.intrinsicWidth}, $targetHeight,$targetWidth")
+                    Log.i(TAG, " end getDrawable, Image height: " +
+                            "${bitmapHolder.intrinsicHeight}, ${bitmapHolder.intrinsicWidth}," +
+                            " $targetHeight,$targetWidth")
                 }
             }
             targetList.add(target)
-            GlideApp.with(context).load(source).into(target)
+            GlideApp.with(context)
+                    .load(source)
+                    .into(target)
             return bitmapHolder
         }
     }
@@ -215,6 +222,3 @@ class GoodTextView @JvmOverloads constructor(
     }
 
 }
-
-
-
