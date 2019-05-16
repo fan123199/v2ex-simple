@@ -69,7 +69,11 @@ class TopicsRVAdapter(private val mContext: Context) : RecyclerView.Adapter<Recy
     holder.tvTitle.maxLines = 2
     holder.tvTitle.text = currentTopic.title
     holder.itemView.setOnClickListener{
-      mContext.startActivity<TopicActivity>(Keys.KEY_TOPIC_MODEL to currentTopic)
+      mContext.startActivity<TopicActivity>(
+              Keys.KEY_TOPIC_MODEL to currentTopic,
+              Keys.KEY_TOPIC_LIST to mTopicList,
+              Keys.KEY_POSITION to position
+      )
     }
     holder.tvContent.visibility = View.GONE
 

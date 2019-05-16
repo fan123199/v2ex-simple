@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.details
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -17,6 +18,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
@@ -54,7 +57,7 @@ const val TYPE_GO_TO_ROW = -1
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
  */
-class TopicDetailAdapter(private val act: AppCompatActivity,
+class TopicDetailAdapter(private val act: FragmentActivity,
                          private val clickMore: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

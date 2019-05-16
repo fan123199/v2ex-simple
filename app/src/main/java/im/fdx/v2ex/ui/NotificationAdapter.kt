@@ -17,6 +17,7 @@ import im.fdx.v2ex.ui.details.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
+import org.jetbrains.anko.startActivity
 
 /**
  * Created by fdx on 2017/3/24.
@@ -41,9 +42,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
         val model = mModels[position]
 
         notiHolder.itemView.setOnClickListener {
-            val intentDetail = Intent(mContext, TopicActivity::class.java)
-            intentDetail.putExtra(Keys.KEY_TOPIC_ID, model.topic?.id)
-            mContext.startActivity(intentDetail)
+            mContext.startActivity<TopicActivity>(Keys.KEY_TOPIC_ID to model.topic?.id)
         }
 
         notiHolder.tvAction.text = model.type

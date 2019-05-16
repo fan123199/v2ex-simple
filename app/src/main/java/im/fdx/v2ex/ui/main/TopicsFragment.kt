@@ -208,9 +208,9 @@ class TopicsFragment : Fragment() {
                   val str = response.body()!!.string()
                   val type = object : TypeToken<List<Topic>>(){}.type
                   val topicList = Gson().fromJson<List<Topic>>(str, type)
-                  (topicList.forEach {
+                  topicList.forEach {
                       logi(it.id + ":" + it.title)
-                  })
+                  }
 
                   activity?.runOnUiThread {
                     if (topicList.isEmpty()) {
