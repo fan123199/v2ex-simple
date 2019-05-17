@@ -4,10 +4,12 @@ import android.content.*
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
@@ -26,7 +28,6 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.toast
-import kotlinx.android.synthetic.main.activity_details.*
 import kotlinx.android.synthetic.main.activity_details_content.*
 import kotlinx.android.synthetic.main.footer_reply.*
 import okhttp3.*
@@ -92,15 +93,15 @@ class TopicDetailFragment : BaseFragment() {
 
         toolbar.run {
             inflateMenu(R.menu.menu_details)
-            setNavigationIcon(R.drawable.ic_arrow_back_primary_24dp);
+            setNavigationIcon(R.drawable.ic_arrow_back_primary_24dp)
             setNavigationOnClickListener {
                 activity?.finish()
             }
 
-            setOnMenuItemClickListener {
+            setOnMenuItemClickListener { it ->
                 when (it.itemId) {
 
-                    R.id.menu_favor -> token?.let { favorOrNot(mTopicId, it, isFavored) }
+                    R.id.menu_favor -> token?.let { token -> favorOrNot(mTopicId, token, isFavored) }
                     R.id.menu_thank_topic -> {
                         token?.let { thankTopic(mTopicId, it, isThanked) }
                     }
@@ -192,6 +193,7 @@ class TopicDetailFragment : BaseFragment() {
         })
         val models: Topic? = arguments?.get(Keys.KEY_TOPIC_MODEL) as Topic?
         models?.let {
+            it.created = 0L
             mAdapter.topics[0] = it
             mAdapter.notifyDataSetChanged()
         }
@@ -230,7 +232,7 @@ class TopicDetailFragment : BaseFragment() {
             }
 
             @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 val code = response.code()
                 if (code == 302) {
                     //权限问题，需要登录
@@ -272,7 +274,7 @@ class TopicDetailFragment : BaseFragment() {
                     isThanked = parser.isTopicThanked()
                     once = parser.getOnceNum()
 
-                    logd("is favored: " + isFavored.toString())
+                    logd("is favored: $isFavored")
                     activity?.runOnUiThread {
                         if (isFavored) {
                             mMenu?.findItem(R.id.menu_favor)?.setIcon(R.drawable.ic_favorite_white_24dp)
@@ -413,7 +415,7 @@ class TopicDetailFragment : BaseFragment() {
             }
 
             @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
+            override fun onResponse(call: Call, response: Response) {
                 activity?.runOnUiThread {
                     pb_send.visibility = View.GONE
                     iv_send.visibility = View.VISIBLE

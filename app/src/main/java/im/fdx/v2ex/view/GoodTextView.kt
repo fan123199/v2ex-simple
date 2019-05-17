@@ -23,6 +23,8 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.GlideOptions
+import im.fdx.v2ex.MyApp
+import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dp2px
@@ -135,7 +137,12 @@ class GoodTextView @JvmOverloads constructor(
         private var vDrawable: Drawable? = null
 
         override fun draw(canvas: Canvas) {
-            vDrawable?.draw(canvas)
+            if(vDrawable == null) {
+                val d = MyApp.get().getDrawable(R.drawable.ic_github)
+                d?.draw(canvas)
+            } else {
+                vDrawable?.draw(canvas)
+            }
         }
 
         fun setDrawable(drawable: Drawable) {

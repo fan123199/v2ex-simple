@@ -50,9 +50,7 @@ class AllNodesActivity : BaseActivity() {
 
     swipe_container.initTheme()
     swipe_container.setOnRefreshListener {
-      thread {
-        getAllNodes()
-      }
+      getAllNodes()
     }
 
     val isChoose = intent.getBooleanExtra(Keys.KEY_TO_CHOOSE_NODE, false)
@@ -73,15 +71,6 @@ class AllNodesActivity : BaseActivity() {
   }
 
   private fun getAllNodes() {
-//    val nodeCached = DbHelper.db.nodeDao().getNodes()
-
-//    if (nodeCached.isNotEmpty()) {
-//      mAdapter.setData(nodeCached)
-//      runOnUiThread {
-//        mAdapter.notifyDataSetChanged()
-//        swipe_container.isRefreshing = false
-//      }
-//    }
 
     vCall(NetManager.URL_ALL_NODE_WEB)
         .start(object : Callback {
