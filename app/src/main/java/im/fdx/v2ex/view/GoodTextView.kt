@@ -2,34 +2,32 @@ package im.fdx.v2ex.view
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.text.Html
-import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.TextPaint
+import android.os.Build
+import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
+import android.text.style.QuoteSpan
 import android.text.style.URLSpan
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
-import im.fdx.v2ex.R
+import im.fdx.v2ex.GlideOptions
 import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dp2px
 import org.jetbrains.anko.startActivity
-import android.graphics.Bitmap
-import android.graphics.Rect
-import android.text.style.DynamicDrawableSpan.ALIGN_BASELINE
-import com.bumptech.glide.request.target.CustomTarget
-import im.fdx.v2ex.utils.extensions.logi
-import java.io.ByteArrayOutputStream
+import org.xml.sax.XMLReader
 
 
 /**
@@ -44,7 +42,7 @@ class GoodTextView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
-) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
+) : TextView(context, attrs, defStyleAttr) {
 
     var bestWidth = 0
 
@@ -55,9 +53,16 @@ class GoodTextView @JvmOverloads constructor(
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-//        XLog.tag(TAG).e("view width: $width")
         if (bestWidth == 0)
             bestWidth = width
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        targetList.forEach {
+            Glide.with(this@GoodTextView).clear(it)
+        }
+        targetList.clear()
     }
 
     @Suppress("DEPRECATION")
@@ -66,13 +71,13 @@ class GoodTextView @JvmOverloads constructor(
         if (text.isNullOrEmpty()) {
             return
         }
-        setLinkTextColor(ContextCompat.getColor(context, R.color.mode))
+        setLinkTextColor(ContextCompat.getColor(context, im.fdx.v2ex.R.color.mode))
 
         val imageGetter = MyImageGetter()
         val spannedText = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY, imageGetter, null)
+            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY, imageGetter, CodeTagHandler())
         } else {
-            Html.fromHtml(text, imageGetter, null)
+            Html.fromHtml(text, imageGetter, CodeTagHandler())
         }
 
 
@@ -143,23 +148,18 @@ class GoodTextView @JvmOverloads constructor(
 
         override fun getDrawable(source: String): Drawable {
             val bitmapHolder = BitmapHolder()
-            Log.i(TAG, " begin getDrawable, Image url: " + source)
+            Log.i(TAG, " begin getDrawable, Image url: $source")
 
             val target = object : CustomTarget<Drawable>() {
                 override fun onLoadCleared(placeholder: Drawable?) {
-
                 }
 
                 override fun onLoadStarted(placeholder: Drawable?) {
                 }
 
-
                 override fun onResourceReady(drawable: Drawable, transition: Transition<in Drawable>?) {
 
-                    val targetWidth: Int
-                    val targetHeight: Int
-
-                    targetWidth = when {
+                    val targetWidth: Int = when {
                         //超小图
                         drawable.intrinsicWidth < smallestWidth -> {
                             smallestWidth
@@ -173,21 +173,20 @@ class GoodTextView @JvmOverloads constructor(
                             bestWidth
                         }
                     }
-
                     val ratio = drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()
-                    targetHeight = (targetWidth * ratio).toInt()
-                    val rectHolder  = Rect(0,0, targetWidth, targetHeight)
+                    val targetHeight = (targetWidth * ratio).toInt()
+                    val rectHolder = Rect(0, 0, targetWidth, targetHeight)
                     drawable.bounds = rectHolder
                     bitmapHolder.bounds = rectHolder
                     bitmapHolder.setDrawable(drawable)
                     this@GoodTextView.text = this@GoodTextView.text
                     Log.i(TAG, " end getDrawable, Image height: " +
-                            "${bitmapHolder.intrinsicHeight}, ${bitmapHolder.intrinsicWidth}," +
-                            " $targetHeight,$targetWidth")
+                            "${bitmapHolder.bounds}," +
+                            " ${drawable.intrinsicWidth},${drawable.intrinsicHeight}")
                 }
             }
             targetList.add(target)
-            GlideApp.with(context)
+            GlideApp.with(this@GoodTextView)
                     .load(source)
                     .into(target)
             return bitmapHolder
@@ -196,7 +195,9 @@ class GoodTextView @JvmOverloads constructor(
 
 
     inner class UrlSpanNoUnderline : URLSpan {
+        @Suppress("unused")
         constructor(src: URLSpan) : super(src.url)
+
         constructor(url: String) : super(url)
 
         override fun updateDrawState(ds: TextPaint) {
@@ -222,3 +223,69 @@ class GoodTextView @JvmOverloads constructor(
     }
 
 }
+
+
+class CodeTagHandler : Html.TagHandler {
+
+    class Code
+
+    override fun handleTag(opening: Boolean, tag: String?, output: Editable?, xmlReader: XMLReader?) {
+        if (opening) {
+
+            if (tag!!.equals("pre", true)) {
+                start(output!!, Code())
+            }
+        } else {
+
+            if (tag!!.equals("pre", true)) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    end(output!!, Code::class.java, QuoteSpan(Color.LTGRAY, 4, 8))
+                } else {
+                    end(output!!, Code::class.java, QuoteSpan(Color.LTGRAY))
+
+                }
+            }
+        }
+    }
+
+    fun start(output: Editable, mark: Any) {
+        val len = output.length
+        output.setSpan(mark, len, len, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+    }
+
+
+    fun end(output: Editable, kind: Class<*>, repl: Any) {
+        val obj = getLast(output, kind)
+        // start of the tag
+        val where = output.getSpanStart(obj)
+        // end of the tag
+        val len = output.length
+
+        output.removeSpan(obj)
+
+        if (where != len) {
+            output.setSpan(repl, where, len, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        }
+
+    }
+
+    private fun getLast(text: Editable, kind: Class<*>): Any? {
+        val objs = text.getSpans<Any>(0, text.length, kind as Class<Any>)
+        if (objs.isEmpty()) {
+            return null
+        } else {
+            for (i in objs.size downTo 1) {
+                if (text.getSpanFlags(objs[i - 1]) == Spannable.SPAN_INCLUSIVE_EXCLUSIVE) {
+                    return objs[i - 1]
+                }
+            }
+            return null
+        }
+    }
+
+}
+
+
+
+
+

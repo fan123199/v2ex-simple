@@ -68,6 +68,7 @@ object TimeUtil {
         //         · 1 小时 34 分钟前 · 775 次点击
         //         · 100 天前 · 775 次点击
         //       1992.02.03 12:22:22 +0800
+        //       2017-09-26 22:27:57 PM
         //      刚刚
         //其中可能出现一些奇怪的字符，你可能以为是空格。
         var created = System.currentTimeMillis() / 1000 // ms -> second
@@ -98,13 +99,12 @@ object TimeUtil {
         } catch (e2: StringIndexOutOfBoundsException) {
             XLog.tag("TimeUtil").e(" StringIndexOutOfBoundsException error: $theTime, $timeStr")
         } catch (e2: ParseException) {
-            XLog.tag("TimeUtil").e("time str parse error: $theTime")
             try {
                 val ccc = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.US)
                 val date = ccc.parse(theTime.trim())
                 created = date.time / 1000
             } catch (ignore: ParseException) {
-
+                XLog.tag("TimeUtil").e("time str parse error: $theTime")
             }
         }
 
