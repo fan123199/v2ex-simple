@@ -15,6 +15,7 @@
 -keep class im.fdx.v2ex.ui.main.model.**
 
 
+
 -dontwarn okio.**
 -dontwarn javax.annotation.Nullable
 -dontwarn javax.annotation.ParametersAreNonnullByDefault

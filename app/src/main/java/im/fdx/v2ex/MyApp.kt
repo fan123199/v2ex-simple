@@ -41,16 +41,6 @@ class MyApp : Application() {
   }
   internal var isLogin = false
 
-  fun setLogin(login: Boolean) {
-    isLogin = login
-    pref.edit {
-      putBoolean(Keys.PREF_KEY_IS_LOGIN, login)
-    }
-    if (!login) {
-      LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(Keys.ACTION_LOGOUT))
-    }
-  }
-
   override fun onCreate() {
     super.onCreate()
     INSTANCE = this
@@ -62,4 +52,18 @@ class MyApp : Application() {
     logd("onCreate\nisLogin:$isLogin")
     setDefaultNightMode(if (pref.getBoolean("NIGHT_MODE", false)) MODE_NIGHT_YES else MODE_NIGHT_NO)
   }
+}
+
+fun setLogin(login: Boolean) {
+  myApp.isLogin = login
+  pref.edit {
+    putBoolean(Keys.PREF_KEY_IS_LOGIN, login)
+  }
+  LocalBroadcastManager.getInstance(myApp).sendBroadcast(
+          if (login){
+            Intent(Keys.ACTION_LOGIN)
+          } else {
+            Intent(Keys.ACTION_LOGOUT)
+          })
+
 }

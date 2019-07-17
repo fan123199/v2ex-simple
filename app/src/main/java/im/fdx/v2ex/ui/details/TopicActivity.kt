@@ -6,13 +6,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.setUpToolbar
+import im.fdx.v2ex.view.ZoomOutPageTransform
 import kotlinx.android.synthetic.main.activity_details.*
 import org.jetbrains.anko.toast
 
@@ -70,29 +69,31 @@ class TopicActivity : BaseActivity() {
 
     //如果是从首页打开，那么会有所有列表信息，那么就可以获取到列表信息，达到左右滑动
     val out = topicList?.map { topic ->
-      TopicDetailFragment().apply {
+      TopicFragment().apply {
         arguments = bundleOf(Keys.KEY_TOPIC_MODEL to topic, Keys.KEY_TOPIC_ID to topic.id)
       }
     } ?:
-      mutableListOf(TopicDetailFragment().apply {
+      mutableListOf(TopicFragment().apply {
         arguments = bundleOf(Keys.KEY_TOPIC_MODEL to topicModel, Keys.KEY_TOPIC_ID to mTopicId)
       })
 
 
     vpAdapter.initList(out)
-    viewPager_detail.adapter = vpAdapter
-    viewPager_detail.setCurrentItem(position, false)
+    viewPager_detail.run {
+      adapter = vpAdapter
+      setCurrentItem(position, false)
+      setPageTransformer(true, ZoomOutPageTransform())
+      addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+        override fun onPageScrollStateChanged(state: Int) {
+        }
 
-    viewPager_detail.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
-      override fun onPageScrollStateChanged(state: Int) {
-      }
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+        }
 
-      override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-      }
-
-      override fun onPageSelected(position: Int) {
-      }
-    })
+        override fun onPageSelected(position: Int) {
+        }
+      })
+    }
 
   }
 }
@@ -105,14 +106,14 @@ class TopicActivity : BaseActivity() {
  */
 class VpAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
 
-  private val fgList : MutableList<TopicDetailFragment> = mutableListOf()
+  private val fgList : MutableList<TopicFragment> = mutableListOf()
 
 
-  fun initList(list: List<TopicDetailFragment>) {
+  fun initList(list: List<TopicFragment>) {
     fgList.addAll(list)
   }
 
-  fun addList(list: List<TopicDetailFragment>) {
+  fun addList(list: List<TopicFragment>) {
     fgList.addAll(list)
   }
 

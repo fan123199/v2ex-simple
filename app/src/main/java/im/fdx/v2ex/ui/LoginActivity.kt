@@ -155,8 +155,6 @@ class LoginActivity : BaseActivity() {
 
         when (httpcode) {
           302 -> {
-            MyApp.get().setLogin(true)
-
             vCall(HTTPS_V2EX_BASE).start(object : Callback {
               override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
@@ -181,11 +179,7 @@ class LoginActivity : BaseActivity() {
                     putString(Keys.PREF_AVATAR, myInfo.avatarLargeUrl)
                   }
 
-                  val intent = Intent(Keys.ACTION_LOGIN).apply {
-                    putExtra(Keys.KEY_USERNAME, myInfo.username)
-                    putExtra(Keys.KEY_AVATAR, myInfo.avatarLargeUrl)
-                  }
-                  LocalBroadcastManager.getInstance(this@LoginActivity).sendBroadcast(intent)
+                  setLogin(true)
                   runOnUiThread {
                     toast("登录成功")
                     finish()
@@ -243,7 +237,7 @@ class LoginActivity : BaseActivity() {
             }
             .setNegativeButton("退出登录") { _, _ ->
               HttpHelper.myCookieJar.clear()
-              myApp.setLogin(false)
+              setLogin(false)
 
             }
             .setView(dialogEt).show()
@@ -279,8 +273,10 @@ class LoginActivity : BaseActivity() {
               activity.runOnUiThread {
                 if (response?.code() == 302) {
                   activity.toast("登录成功")
-                  myApp.setLogin(true)
-                } else activity.toast("登录失败")
+                  setLogin(true)
+                } else {
+                  activity.toast("登录失败")
+                }
               }
             }
           })

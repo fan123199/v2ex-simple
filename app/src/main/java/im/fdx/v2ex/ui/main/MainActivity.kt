@@ -33,13 +33,10 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import de.hdodenhof.circleimageview.CircleImageView
-import im.fdx.v2ex.MyApp
-import im.fdx.v2ex.R
-import im.fdx.v2ex.myApp
+import im.fdx.v2ex.*
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
-import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -84,8 +81,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       when (action) {
         Keys.ACTION_LOGIN -> {
           invalidateOptionsMenu()
-          val username = intent.getStringExtra(Keys.KEY_USERNAME)
-          val avatar = intent.getStringExtra(Keys.KEY_AVATAR)
+          val username = pref.getString(Keys.PREF_USERNAME, "")
+          val avatar = pref.getString(Keys.PREF_AVATAR, "")
           setUserInfo(username, avatar)
           reloadTab()
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
@@ -369,7 +366,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         if (response.code() == 302) {
           runOnUiThread {
-            myApp.setLogin(false)
+            setLogin(false)
             toast("登录信息失效，请先登录") }
           return
         }

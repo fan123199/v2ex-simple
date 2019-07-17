@@ -91,7 +91,7 @@ class SettingsActivity : BaseActivity() {
             .setMessage("确定要退出吗")
             .setPositiveButton(R.string.ok) { _, _ ->
               HttpHelper.myCookieJar.clear()
-              myApp.setLogin(false)
+              setLogin(false)
               findPreference(Keys.PREF_LOGOUT).isEnabled = false
               pref.edit {
                 remove(PREF_TEXT_SIZE)

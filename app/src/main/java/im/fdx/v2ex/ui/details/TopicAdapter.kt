@@ -235,6 +235,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
         }
 
         if (verifyCode == null) {
+            act.toast("请刷新后重试")
             return true
         }
         val body = FormBody.Builder().add("t", verifyCode!!).build()

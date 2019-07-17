@@ -20,8 +20,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.database.DbHelper
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.*
+import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.ui.BaseFragment
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
@@ -30,6 +32,7 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.toast
 import kotlinx.android.synthetic.main.activity_details_content.*
 import kotlinx.android.synthetic.main.footer_reply.*
+import kotlinx.coroutines.*
 import okhttp3.*
 import org.jetbrains.anko.share
 import java.io.IOException
@@ -37,7 +40,7 @@ import java.io.IOException
 /**
  * Create by fandongxiao on 2019/5/16
  */
-class TopicDetailFragment : BaseFragment() {
+class TopicFragment : BaseFragment() {
 
     private lateinit var mAdapter: TopicDetailAdapter
     private var mMenu: Menu? = null
@@ -54,6 +57,8 @@ class TopicDetailFragment : BaseFragment() {
     private var isFavored: Boolean = false
     private var isThanked: Boolean = false
 
+    private var temp :String = ""
+    private val uiScope = CoroutineScope(Dispatchers.Main)
 
     private var receiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -61,6 +66,8 @@ class TopicDetailFragment : BaseFragment() {
             if (intent.action == Keys.ACTION_LOGIN) {
                 activity?.invalidateOptionsMenu()
                 setFootView(true)
+                swipe_details?.isRefreshing = true
+                getRepliesPageOne(false)
             } else if (intent.action == Keys.ACTION_LOGOUT) {
                 activity?.invalidateOptionsMenu()
                 setFootView(false)
@@ -183,13 +190,17 @@ class TopicDetailFragment : BaseFragment() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
-            override fun afterTextChanged(s: Editable) = if (s.isEmpty()) {
-                iv_send.isClickable = false
-                iv_send.imageTintList = null
-            } else {
-                iv_send.isClickable = true
-                iv_send.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(activity!!, R.color.primary))
+            override fun afterTextChanged(s: Editable) {
+                if (s.isEmpty()) {
+                    iv_send.isClickable = false
+                    iv_send.imageTintList = null
+                } else {
+                    iv_send.isClickable = true
+                    iv_send.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(activity!!, R.color.primary))
+                }
+                temp =  s.toString()
             }
+
         })
         val models: Topic? = arguments?.get(Keys.KEY_TOPIC_MODEL) as Topic?
         models?.let {
@@ -200,7 +211,20 @@ class TopicDetailFragment : BaseFragment() {
 
         mTopicId = (arguments?.get(Keys.KEY_TOPIC_ID) as String?) ?: ""
 
+
+        uiScope.launch {
+            et_post_reply.setText(get())
+        }
+
+        swipe_details.isRefreshing = true
         getRepliesPageOne(false)
+    }
+
+    suspend fun get() : String{
+        return withContext(Dispatchers.IO){
+            val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content?:""
+            text
+        }
     }
 
     // 设置渐变的动画
@@ -261,7 +285,7 @@ class TopicDetailFragment : BaseFragment() {
                     token = parser.getVerifyCode()
 
                     if (token == null) {
-                        myApp.setLogin(false)
+                        setLogin(false)
                         activity?.runOnUiThread {
                             toast("需要登录后查看该主题")
                             activity?.finish()
@@ -435,9 +459,20 @@ class TopicDetailFragment : BaseFragment() {
         })
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        XLog.tag("TopicActivity").d("onDestroy")
+
+    override fun onDestroyView() {
+        super.onDestroyView()
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(receiver)
+        uiScope.launch {
+            insert()
+        }
+        logd("onDestroyView")
+
+    }
+
+    suspend fun insert() {
+        withContext(Dispatchers.IO) {
+            DbHelper.db.myReplyDao().insert(MyReply(mTopicId, temp))
+        }
     }
 }
