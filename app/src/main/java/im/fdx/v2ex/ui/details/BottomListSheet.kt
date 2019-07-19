@@ -31,17 +31,17 @@ class BottomListSheet(var list: List<Reply>) : BottomSheetDialogFragment(){
         rv.adapter = RAdater(list)
     }
 
-    inner class RAdater(var list: List<Reply>) : RecyclerView.Adapter<TopicDetailAdapter.ItemViewHolder>() {
+    inner class RAdater(var list: List<Reply>) : RecyclerView.Adapter<ItemViewHolder>() {
         override fun getItemCount(): Int {
             return list.size
         }
 
-        override fun onBindViewHolder(holder: TopicDetailAdapter.ItemViewHolder, position: Int) {
+        override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
             holder.bind(list[position])
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TopicDetailAdapter.ItemViewHolder {
-            return TopicDetailAdapter.ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_reply_view, parent, false))
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
+            return ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_reply_view, parent, false))
         }
 
     }

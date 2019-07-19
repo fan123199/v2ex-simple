@@ -33,10 +33,7 @@ import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
-import im.fdx.v2ex.utils.extensions.getPair
-import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.showLoginHint
+import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
 import kotlinx.android.extensions.LayoutContainer
@@ -81,12 +78,13 @@ class TopicDetailAdapter(private val act: FragmentActivity,
             TYPE_HEADER -> {
                 val topic = topics[0]
 
+                logd(topic.title)
+                logd(topic.content_rendered)
                 val mainHolder = holder as TopicWithCommentsViewHolder
                 mainHolder.tvTitle.text = topic.title
                 mainHolder.tvTitle.maxLines = 4
-                mainHolder.tvContent.isSelected = true
                 mainHolder.tvContent.setGoodText(topic.content_rendered)
-                logd(topic.content_rendered)
+                mainHolder.tvContent.isSelected = true
 
                 mainHolder.tvReplyNumber.text = topic.replies.toString()
                 mainHolder.tvAuthor.text = topic.member?.username
@@ -221,7 +219,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
     private fun copyText(content: String) {
         logd("I click menu copy")
         val manager = act.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        manager.primaryClip = ClipData.newPlainText("item", content)
+        manager.setPrimaryClip( ClipData.newPlainText("item", content))
         act.toast("评论已复制")
     }
 
@@ -317,34 +315,34 @@ class TopicDetailAdapter(private val act: FragmentActivity,
         notifyDataSetChanged()
     }
 
-    class ItemViewHolder(override val containerView: View)
-        : RecyclerView.ViewHolder(containerView), LayoutContainer {
+}
 
-        @SuppressLint("SetTextI18n")
-        fun bind(data:Reply) {
+class ItemViewHolder(override val containerView: View)
+    : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-            tv_reply_content.setGoodText(data.content_rendered)
-            tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
-            tv_reply_row.text = "#$adapterPosition"
-            tv_replier.text = data.member?.username
-            tv_thanks.text = data.thanks.toString()
-            iv_reply_avatar.load(data.member?.avatarNormalUrl)
-            tv_reply_time.text = TimeUtil.getRelativeTime(data.created)
+    @SuppressLint("SetTextI18n")
+    fun bind(data:Reply) {
 
-        }
+        tv_reply_content.setGoodText(data.content_rendered)
+        tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
+        tv_reply_row.text = "#$adapterPosition"
+        tv_replier.text = data.member?.username
+        tv_thanks.text = data.thanks.toString()
+        iv_reply_avatar.load(data.member?.avatarNormalUrl)
+        tv_reply_time.text = TimeUtil.getRelativeTime(data.created)
 
     }
 
-    class TopicWithCommentsViewHolder(itemView: View)
-        : TopicsRVAdapter.MainViewHolder(itemView) {
-        internal var ll: LinearLayout = itemView.findViewById(R.id.ll_comments)
-        internal val dividerComments :View = itemView.findViewById(R.id.divider_comment)
-    }
+}
 
-    class CommentsViewHolder(itemView: View) {
-        internal var tvCTitle: TextView = itemView.findViewById(R.id.tv_comment_id)
-        internal var tvCTime: TextView = itemView.findViewById(R.id.tv_comment_time)
-        internal var tvCContent: GoodTextView = itemView.findViewById(R.id.tv_comment_content)
-    }
+class TopicWithCommentsViewHolder(itemView: View)
+    : TopicsRVAdapter.MainViewHolder(itemView) {
+    internal var ll: LinearLayout = itemView.findViewById(R.id.ll_comments)
+    internal val dividerComments :View = itemView.findViewById(R.id.divider_comment)
+}
 
+class CommentsViewHolder(itemView: View) {
+    internal var tvCTitle: TextView = itemView.findViewById(R.id.tv_comment_id)
+    internal var tvCTime: TextView = itemView.findViewById(R.id.tv_comment_time)
+    internal var tvCContent: GoodTextView = itemView.findViewById(R.id.tv_comment_content)
 }

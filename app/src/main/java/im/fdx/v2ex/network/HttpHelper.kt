@@ -1,7 +1,7 @@
 package im.fdx.v2ex.network
 
 import com.crashlytics.android.Crashlytics
-import com.readystatesoftware.chuck.ChuckInterceptor
+import com.readystatesoftware.chuck.api.ChuckInterceptor
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor

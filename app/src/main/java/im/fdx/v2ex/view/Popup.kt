@@ -12,6 +12,7 @@ import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.details.ItemViewHolder
 import im.fdx.v2ex.ui.details.Reply
 import im.fdx.v2ex.ui.details.TopicDetailAdapter
 import kotlinx.android.synthetic.main.item_reply_view.*
@@ -43,7 +44,7 @@ class Popup(mActivity: Context) {
     fun show(v: View, data: Reply, index: Int, clickListener: (Int) -> Unit) {
 
         val position  = index + 1 //这是对应关系
-        val hd = TopicDetailAdapter.ItemViewHolder(contentView)
+        val hd = ItemViewHolder(contentView)
         hd.bind(data)
         hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance()
         hd.tv_reply_content.maxLines = 4

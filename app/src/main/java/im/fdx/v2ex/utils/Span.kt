@@ -107,7 +107,7 @@ open class Span {
     fun image(context: Context, resourceId: Int, verticalAlignment: Int = DynamicDrawableSpan.ALIGN_BOTTOM, span: ImageSpan = ImageSpan(context, resourceId, verticalAlignment), init: Span.() -> Unit): Span = span(span, init)
 
     fun clickable(onClick: (ClickableSpan) -> Unit, span: ClickableSpan = object : ClickableSpan() {
-        override fun onClick(view: View?) {
+        override fun onClick(view: View) {
             onClick(this)
         }
     }, init: Span.() -> Unit): Span = span(span, init)

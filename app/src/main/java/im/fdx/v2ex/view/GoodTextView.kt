@@ -1,10 +1,8 @@
 package im.fdx.v2ex.view
 
 import android.content.Context
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.*
@@ -18,13 +16,9 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
-import im.fdx.v2ex.GlideOptions
-import im.fdx.v2ex.MyApp
-import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dp2px
@@ -46,12 +40,9 @@ class GoodTextView @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : TextView(context, attrs, defStyleAttr) {
 
-    var bestWidth = 0
+    private var bestWidth = 0
 
     var popupListener: Popup.PopupListener? = null
-
-    //防止 Glide，将target gc了， 导致图片无法显示
-    var targetList: MutableList<CustomTarget<Drawable>> = mutableListOf()
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
@@ -61,25 +52,23 @@ class GoodTextView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        targetList.forEach {
-            Glide.with(this@GoodTextView).clear(it)
-        }
-        targetList.clear()
+        imageGetter?.clear()
     }
+
+    var imageGetter :MyImageGetter? = null
 
     @Suppress("DEPRECATION")
     fun setGoodText(text: String?, removeClick: Boolean? = false) {
-        targetList.clear()
         if (text.isNullOrEmpty()) {
             return
         }
         setLinkTextColor(ContextCompat.getColor(context, im.fdx.v2ex.R.color.mode))
 
-        val imageGetter = MyImageGetter()
-        val spannedText = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY, imageGetter, CodeTagHandler())
+        imageGetter = MyImageGetter(bestWidth, this)
+        val spannedText = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY, imageGetter,  null)
         } else {
-            Html.fromHtml(text, imageGetter, CodeTagHandler())
+            Html.fromHtml(text, imageGetter, null)
         }
 
 
@@ -90,7 +79,15 @@ class GoodTextView @JvmOverloads constructor(
         for (urlSpan in urlSpans) {
             val spanStart = htmlSpannable.getSpanStart(urlSpan)
             val spanEnd = htmlSpannable.getSpanEnd(urlSpan)
-            val newUrlSpan = UrlSpanNoUnderline(urlSpan.url)
+            val newUrlSpan = UrlSpanNoUnderline(urlSpan.url) { widget ->
+                // url =  https://www.v2ex.com/member/fan123199
+                when {
+                    urlSpan.url.contains("v2ex.com/member/") -> {
+                        popupListener?.onClick(widget, urlSpan.url)
+                    }
+                    else -> CustomChrome(context).load(urlSpan.url)
+                }
+            }
             htmlSpannable.removeSpan(urlSpan)
             htmlSpannable.setSpan(newUrlSpan, spanStart, spanEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
@@ -130,169 +127,134 @@ class GoodTextView @JvmOverloads constructor(
             false -> movementMethod = LinkMovementMethod.getInstance()
         }
     }
+}
 
-    @Suppress("DEPRECATION")
-    private inner class BitmapHolder : BitmapDrawable() {
+class MyImageGetter(val bestWidth: Int, val tv: GoodTextView) : Html.ImageGetter {
+    //防止 Glide，将target gc了， 导致图片无法显示
+    private var targetList: MutableList<CustomTarget<Drawable>> = mutableListOf()
 
-        private var vDrawable: Drawable? = null
+    override fun getDrawable(source: String): Drawable {
+        val bitmapHolder = BitmapHolder()
+        Log.i("GoodTextView", " begin getDrawable, Image url: $source")
 
-        override fun draw(canvas: Canvas) {
-            if(vDrawable == null) {
-                val d = MyApp.get().getDrawable(R.drawable.ic_github)
-                d?.draw(canvas)
-            } else {
-                vDrawable?.draw(canvas)
+        val target = object : CustomTarget<Drawable>() {
+            override fun onLoadCleared(placeholder: Drawable?) {
             }
-        }
 
-        fun setDrawable(drawable: Drawable) {
-            this.vDrawable = drawable
-        }
-    }
+            override fun onLoadStarted(placeholder: Drawable?) {
+            }
 
+            override fun onResourceReady(drawable: Drawable, transition: Transition<in Drawable>?) {
 
-    private inner class MyImageGetter : Html.ImageGetter {
-
-        override fun getDrawable(source: String): Drawable {
-            val bitmapHolder = BitmapHolder()
-            Log.i(TAG, " begin getDrawable, Image url: $source")
-
-            val target = object : CustomTarget<Drawable>() {
-                override fun onLoadCleared(placeholder: Drawable?) {
-                }
-
-                override fun onLoadStarted(placeholder: Drawable?) {
-                }
-
-                override fun onResourceReady(drawable: Drawable, transition: Transition<in Drawable>?) {
-
-                    val targetWidth: Int = when {
-                        //超小图
-                        drawable.intrinsicWidth < smallestWidth -> {
-                            smallestWidth
-                        }
-                        //中小图
-                        drawable.intrinsicWidth >= smallestWidth && drawable.intrinsicWidth <= bestWidth * 0.3 -> {
-                            drawable.intrinsicWidth
-                        }
-                        // 中图，大图，特大图
-                        else -> {
-                            bestWidth
-                        }
+                val smallestWidth = 12.dp2px()
+                val targetWidth: Int = when {
+                    //超小图
+                    drawable.intrinsicWidth < smallestWidth -> {
+                        smallestWidth
                     }
-                    val ratio = drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()
-                    val targetHeight = (targetWidth * ratio).toInt()
-                    val rectHolder = Rect(0, 0, targetWidth, targetHeight)
-                    drawable.bounds = rectHolder
-                    bitmapHolder.bounds = rectHolder
-                    bitmapHolder.setDrawable(drawable)
-                    this@GoodTextView.text = this@GoodTextView.text
-                    Log.i(TAG, " end getDrawable, Image height: " +
-                            "${bitmapHolder.bounds}," +
-                            " ${drawable.intrinsicWidth},${drawable.intrinsicHeight}")
+                    //中小图
+                    drawable.intrinsicWidth >= smallestWidth && drawable.intrinsicWidth <= bestWidth * 0.3 -> {
+                        drawable.intrinsicWidth
+                    }
+                    // 中图，大图，特大图
+                    else -> {
+                        bestWidth
+                    }
                 }
-            }
-            targetList.add(target)
-            GlideApp.with(this@GoodTextView)
-                    .load(source)
-                    .into(target)
-            return bitmapHolder
-        }
-    }
-
-
-    inner class UrlSpanNoUnderline : URLSpan {
-        @Suppress("unused")
-        constructor(src: URLSpan) : super(src.url)
-
-        constructor(url: String) : super(url)
-
-        override fun updateDrawState(ds: TextPaint) {
-            super.updateDrawState(ds)
-            ds.isUnderlineText = false
-        }
-
-        override fun onClick(widget: View) {
-            // url =  https://www.v2ex.com/member/fan123199
-            when {
-                url.contains("v2ex.com/member/") -> {
-                    popupListener?.onClick(widget, url)
-                }
-                else -> CustomChrome(context).load(url)
+                val ratio = drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()
+                val targetHeight = (targetWidth * ratio).toInt()
+                val rectHolder = Rect(0, 0, targetWidth, targetHeight)
+                drawable.bounds = rectHolder
+                bitmapHolder.bounds = rectHolder
+                bitmapHolder.setDrawable(drawable)
+                tv.text = tv.text
+                Log.i("GoodTextView", " end getDrawable, Image height: " +
+                        "${bitmapHolder.bounds}," +
+                        " ${drawable.intrinsicWidth},${drawable.intrinsicHeight}")
             }
         }
+        GlideApp.with(tv)
+                .load(source)
+                .into(target)
+        targetList.add(target)
+        return bitmapHolder
     }
 
-
-    companion object {
-        private val TAG = GoodTextView::class.java.simpleName
-        val smallestWidth = 12.dp2px()
+    fun clear() {
+        targetList.clear()
     }
-
 }
 
 
+class UrlSpanNoUnderline(url: String, var clickListener: (View) -> Unit) : URLSpan(url) {
+
+    override fun updateDrawState(ds: TextPaint) {
+        super.updateDrawState(ds)
+        ds.isUnderlineText = false
+    }
+
+    override fun onClick(widget: View) {
+        clickListener(widget)
+    }
+}
+
+
+/**
+ * 有bug， 会在某些文本中崩溃，看了Html.java也没用
+ */
 class CodeTagHandler : Html.TagHandler {
 
     class Code
 
-    override fun handleTag(opening: Boolean, tag: String?, output: Editable?, xmlReader: XMLReader?) {
+    override fun handleTag(opening: Boolean, tag: String?, output: Editable, xmlReader: XMLReader?) {
         if (opening) {
-
-            if (tag!!.equals("pre", true)) {
-                start(output!!, Code())
+            if (tag.equals("pre", true)) {
+                start(output, Code())
             }
         } else {
 
-            if (tag!!.equals("pre", true)) {
+            if (tag.equals("pre", true)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    end(output!!, Code::class.java, QuoteSpan(Color.LTGRAY, 4, 8))
+                    end(output, Code::class.java, QuoteSpan(Color.LTGRAY, 4, 8))
                 } else {
-                    end(output!!, Code::class.java, QuoteSpan(Color.LTGRAY))
+                    end(output, Code::class.java, QuoteSpan(Color.LTGRAY))
 
                 }
             }
         }
     }
 
-    fun start(output: Editable, mark: Any) {
+    fun start(output: Spannable, mark: Any) {
         val len = output.length
         output.setSpan(mark, len, len, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
     }
 
 
-    fun end(output: Editable, kind: Class<*>, repl: Any) {
-        val obj = getLast(output, kind)
-        // start of the tag
-        val where = output.getSpanStart(obj)
-        // end of the tag
-        val len = output.length
+    fun end(text: Spannable, kind: Class<Code>, repl: Any) {
+        val mark = getLast(text, kind)
 
-        output.removeSpan(obj)
+        mark?.let {
+            // start of the tag
+            val where = text.getSpanStart(mark)
+            text.removeSpan(mark)
+            // end of the tag
+            val len = text.length
 
-        if (where != len) {
-            output.setSpan(repl, where, len, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+            if (where != len) {
+                text.setSpan(repl, where, len, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+
         }
 
     }
 
-    private fun getLast(text: Editable, kind: Class<*>): Any? {
-        val objs = text.getSpans<Any>(0, text.length, kind as Class<Any>)
-        if (objs.isEmpty()) {
-            return null
+    private fun getLast(text: Spannable, kind: Class<Code>): Any? {
+        val objs = text.getSpans(0, text.length, kind)
+        return if (objs.isEmpty()) {
+            null
         } else {
-            for (i in objs.size downTo 1) {
-                if (text.getSpanFlags(objs[i - 1]) == Spannable.SPAN_INCLUSIVE_EXCLUSIVE) {
-                    return objs[i - 1]
-                }
-            }
-            return null
+            objs[objs.size - 1]
         }
     }
 
 }
-
-
-
-
-
