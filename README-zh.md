@@ -1,12 +1,11 @@
 # v2ex-simple
-An simple android client for exploring V2EX. Better UI, Better UX. 
-Project is first written by Java and now kotlin.
 
-[中文Readme](./README-zh.md)
+顾名思义，这是一款简单的v2ex第三方Android客户端。
 
-## status
+## 现状
 
-The project would be less feature update, but you have any issue, I'd like to help you.
+该项目应该不会有大的功能更新了。如有问题，欢迎提出。
+
 
 [![Build Status](https://travis-ci.org/fan123199/v2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/v2ex-simple)
 
@@ -14,17 +13,19 @@ The project would be less feature update, but you have any issue, I'd like to he
 
 [![Download on Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=im.fdx.v2ex)
 
-## Main function
 
-+ show v2ex topic content
-+ create topic and make comment
-+ open from web url
-+ unread message through background
-+ night mode
-+ font size customized
-+ search topic
 
-## 3rd libraries
+## 主要功能
+
++ 浏览V2ex的内容
++ 发表文章和评论
++ 从web打开应用
++ 后台获取更新
++ 夜间模式
++ 文字大小配置
++ 搜索文章
+
+## 用到的第三方库
 
 + Firebase
 + Glide4
@@ -37,14 +38,13 @@ The project would be less feature update, but you have any issue, I'd like to he
 + Jsoup
 + ...
 
-## Thanks
+## 鸣谢
 
 + [greatyao/v2ex-android](https://github.com/greatyao/v2ex-android/tree/master)
-The project guide me to start this project from zero.
-+ *twitter/v2ex+/weico/...*  is learned for excellent user experience
-+ UI mostly designed by Evermoon [weibo_link](http://weibo.com/evermoon30964)
+这是我的入门指导，当时还什么都不会。
++ 部分UI 由 Evermoon 设计完成 [weibo_link](http://weibo.com/evermoon30964)
 
-## License
+## 开源许可证
 
     Copyright 2017 fan123199
     
