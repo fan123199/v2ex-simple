@@ -31,6 +31,7 @@
             android:paddingEnd="@dimen/md_left_margin"
             android:textColorHint="@color/hint"
             android:hint="@string/post_reply"
+            tools:hint="abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefg"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:textAllCaps="false"
@@ -38,11 +39,11 @@
             android:inputType="textMultiLine" />
 
         <FrameLayout
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingStart="8dp"
             android:layout_gravity="bottom"
-            android:layout_marginRight="16dp"
+            android:paddingEnd="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 

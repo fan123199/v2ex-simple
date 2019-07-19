@@ -7,11 +7,11 @@ apply plugin: 'io.fabric'
 
 android {
 
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "im.fdx.v2ex"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 32
         versionName "2.5.3"
     }
@@ -96,8 +96,9 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:2.2.0'
     implementation 'com.squareup.okhttp3:okhttp:3.12.1'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
-    debugImplementation 'com.readystatesoftware.chuck:library:1.1.0'
-    releaseImplementation 'com.readystatesoftware.chuck:library-no-op:1.1.0'
+
+    debugImplementation 'com.github.ChuckerTeam.Chucker:library:2.0.4'
+    releaseImplementation 'com.github.ChuckerTeam.Chucker:library-no-op:2.0.4'
     implementation 'com.elvishew:xlog:1.4.1'
     implementation 'org.jsoup:jsoup:1.11.3'
 //    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
