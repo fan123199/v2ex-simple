@@ -1,16 +1,18 @@
 package im.fdx.v2ex.ui.main
 
-import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.os.bundleOf
 import androidx.core.view.isGone
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.ui.MyCallback
 import im.fdx.v2ex.ui.details.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -19,15 +21,13 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.view.GoodTextView
-import org.jetbrains.anko.startActivity
 
 /**
  * Created by a708 on 15-8-14.
  * 主页的Adapter，就一个普通的RecyclerView
  */
-class TopicsRVAdapter(private val mContext: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-  private val mInflater = LayoutInflater.from(mContext)
   private var mTopicList: MutableList<Topic> = mutableListOf()
 
   fun updateItems(newItems: List<Topic>) {
@@ -59,7 +59,7 @@ class TopicsRVAdapter(private val mContext: Context) : RecyclerView.Adapter<Recy
   //Done onCreateViewHolder一般就这样.除了layoutInflater,没有什么变动
   // 20150916,可以对View进行Layout的设置。
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
-    return MainViewHolder(mInflater.inflate(R.layout.item_topic_view, parent, false))
+    return MainViewHolder(LayoutInflater.from(fragment.activity).inflate(R.layout.item_topic_view, parent, false))
   }
 
   //Done 对TextView进行赋值, 也就是操作
@@ -69,11 +69,12 @@ class TopicsRVAdapter(private val mContext: Context) : RecyclerView.Adapter<Recy
     holder.tvTitle.maxLines = 2
     holder.tvTitle.text = currentTopic.title
     holder.itemView.setOnClickListener{
-      mContext.startActivity<TopicActivity>(
-              Keys.KEY_TOPIC_MODEL to currentTopic,
+
+     val b=  bundleOf(Keys.KEY_TOPIC_MODEL to currentTopic,
               Keys.KEY_TOPIC_LIST to mTopicList,
-              Keys.KEY_POSITION to position
-      )
+              Keys.KEY_POSITION to position)
+
+      fragment.startActivity(Intent(myApp, TopicActivity::class.java).apply { putExtras(b) })
     }
     holder.tvContent.visibility = View.GONE
 
@@ -91,10 +92,10 @@ class TopicsRVAdapter(private val mContext: Context) : RecyclerView.Adapter<Recy
     holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)
     holder.ivAvatar.load(currentTopic.member?.avatarNormalUrl)
     holder.tvNode.setOnClickListener{
-      mContext.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to currentTopic.node?.name!!)
+      fragment.startActivity(Intent(myApp, NodeActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_NODE_NAME to currentTopic.node?.name!!)) })
     }
     holder.ivAvatar.setOnClickListener{
-      mContext.startActivity<MemberActivity>(Keys.KEY_USERNAME to currentTopic.member?.username!!)
+      fragment.startActivity(Intent(myApp, MemberActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_USERNAME to currentTopic.member?.username!!)) })
     }
 
   }

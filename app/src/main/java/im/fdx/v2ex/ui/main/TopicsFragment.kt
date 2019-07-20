@@ -73,7 +73,7 @@ class TopicsFragment : Fragment() {
     }
 
 
-    mAdapter = TopicsRVAdapter(activity!!)
+    mAdapter = TopicsRVAdapter(this)
     mRecyclerView?.adapter = mAdapter
 
     flContainer = layout.findViewById(R.id.fl_container)
