@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primary"
+    android:background="@color/bg_login"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -10,7 +10,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/transparent"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:titleTextColor="@color/white"
         app:contentInsetStartWithNavigation="0dp"
@@ -90,7 +90,7 @@
                 android:background="@drawable/radio_border"
                 android:elevation="24dp"
                 android:minHeight="36dp"
-                android:textColor="@color/primary"
+                android:textColor="@color/bg_login"
                 android:text="@string/login"
                 android:textSize="@dimen/text_size_large"/>
 

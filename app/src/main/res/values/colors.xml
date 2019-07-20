@@ -48,6 +48,7 @@
     <color name="bg_refresh">#FFFAFAFA</color>
     <color name="fab">@color/accent_orange</color>
     <color name="icon">@color/primary</color>
+    <color name="bg_login">@color/primary</color>
 
     <!--end night-->
 

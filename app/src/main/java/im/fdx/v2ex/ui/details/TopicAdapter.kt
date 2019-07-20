@@ -58,8 +58,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                          private val clickMore: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    var verifyCode: String? = null
-
+    var once: String? = null
     val topics: MutableList<Topic> = MutableList(1) { Topic() }
     val replies: MutableList<Reply> = mutableListOf()
 
@@ -223,20 +222,19 @@ class TopicDetailAdapter(private val act: FragmentActivity,
         act.toast("评论已复制")
     }
 
-    private fun thank(replyItem: Reply, itemVH: ItemViewHolder): Boolean {
-        logd("token: $verifyCode")
-
+    private fun thank(replyItem: Reply, itemVH: ItemViewHolder) {
+        logd("once: $once")
         val editText: EditText = act.findViewById(R.id.et_post_reply)
         if (!MyApp.get().isLogin) {
             act.showLoginHint(editText)
-            return false
+            return
         }
 
-        if (verifyCode == null) {
+        if (once == null) {
             act.toast("请刷新后重试")
-            return true
+            return
         }
-        val body = FormBody.Builder().add("t", verifyCode!!).build()
+        val body = FormBody.Builder().add("once", once!!).build()
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url("https://www.v2ex.com/thank/reply/${replyItem.id}")
@@ -254,7 +252,6 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                         act.toast("感谢成功")
                         replyItem.thanks = replyItem.thanks + 1
                         itemVH.tv_thanks.text = (replyItem.thanks).toString()
-                        itemVH.tv_thanks.isClickable = false
                         itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
                         itemVH.iv_thanks.isClickable = false
                         replyItem.isThanked = true
@@ -264,7 +261,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                 }
             }
         })
-        return false
+        return
     }
 
     private fun reply(replyItem: Reply, position: Int) {

@@ -35,7 +35,7 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="register_tip">new? click here to sign up</string>
+    <string name="register_tip">sign up</string>
     <string name="feature">feature</string>
     <string name="communicate">Communicate</string>
     <string name="feedback">Feedback</string>

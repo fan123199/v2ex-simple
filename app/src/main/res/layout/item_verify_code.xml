@@ -8,7 +8,7 @@
     android:layout_marginBottom="@dimen/margin_between_log_in_item"
     android:layout_marginTop="@dimen/margin_between_log_in_item">
 
-    <com.google.android.material.textfield.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
-        android:background="@color/white"
+        android:background="@color/transparent"
         android:contentDescription="验证码"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="4:1"

@@ -23,6 +23,7 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.loge
 import im.fdx.v2ex.utils.extensions.setStatusBarColor
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import kotlinx.android.synthetic.main.activity_login.*
@@ -32,6 +33,7 @@ import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 
 class LoginActivity : BaseActivity() {
 
@@ -54,7 +56,7 @@ class LoginActivity : BaseActivity() {
     setContentView(R.layout.activity_login)
 
     setUpToolbar()
-    setStatusBarColor(R.color.primary)
+    setStatusBarColor(R.color.bg_login)
     progressBar = findViewById(R.id.pb_login)
 
     val usernamePref = pref.getString(Keys.KEY_USERNAME, "")
@@ -91,7 +93,7 @@ class LoginActivity : BaseActivity() {
 
     HttpHelper.OK_CLIENT.newCall(requestToGetOnce).enqueue(object : Callback {
       override fun onFailure(call: Call, e: IOException) {
-        XLog.tag("LoginActivity").e("error in get login page")
+        loge("error in get login page")
       }
 
       @Throws(IOException::class)
@@ -118,7 +120,10 @@ class LoginActivity : BaseActivity() {
               .build()
           val url = GlideUrl(str, headers)
           if (!this@LoginActivity.isDestroyed) {
-            GlideApp.with(iv_code).load(url).centerCrop().into(iv_code)
+            GlideApp.with(iv_code)
+                    .load(url)
+                    .transition(withCrossFade())
+                    .centerCrop().into(iv_code)
           }
         }
         XLog.tag("LoginActivity").d("$nameKey|$passwordKey|$onceCode|$imageCodeKey")

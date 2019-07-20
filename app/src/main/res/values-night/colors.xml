@@ -22,4 +22,6 @@
 
     <color name="divider_color">#606060</color>
     <color name="trans_item_background">#61000000</color>
+
+    <color name="bg_login">@color/base_night</color>
 </resources>

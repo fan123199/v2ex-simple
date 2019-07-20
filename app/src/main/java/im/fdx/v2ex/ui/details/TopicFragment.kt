@@ -51,8 +51,7 @@ class TopicFragment : BaseFragment() {
      * 用于后续操作的token，类似登录信息，每次刷新页面都会更新。
      */
     private var token: String? = null
-    private var once: String = ""
-
+    private var once: String? = null
     private var topicHeader: Topic? = null
     private var isFavored: Boolean = false
     private var isThanked: Boolean = false
@@ -293,10 +292,10 @@ class TopicFragment : BaseFragment() {
                         return
                     }
                     logd("verifyCode is :" + token!!)
-                    mAdapter.verifyCode = token!!
+                    once = parser.getOnceNum()
+                    mAdapter.once = once
                     isFavored = parser.isTopicFavored()
                     isThanked = parser.isTopicThanked()
-                    once = parser.getOnceNum()
 
                     logd("is favored: $isFavored")
                     activity?.runOnUiThread {
@@ -413,10 +412,14 @@ class TopicFragment : BaseFragment() {
     private fun postReply() {
         et_post_reply.clearFocus()
         logd("I clicked")
+        if(once == null ) {
+            toast("发布失败，请刷新后重试")
+            return
+        }
         val content = et_post_reply.text.toString()
         val requestBody = FormBody.Builder()
                 .add("content", content)
-                .add("once", once)
+                .add("once", once!!)
                 .build()
 
         pb_send.visibility = View.VISIBLE
