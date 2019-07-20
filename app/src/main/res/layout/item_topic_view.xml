@@ -101,8 +101,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_avatar_profile"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         android:layout_alignStart="@+id/tv_title"
         android:layout_below="@+id/tv_title"
         android:layout_marginLeft="24dp"
