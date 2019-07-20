@@ -8,6 +8,7 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Switch
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
 import androidx.core.net.toUri
@@ -15,6 +16,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import androidx.work.WorkManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.*
@@ -36,7 +38,7 @@ class SettingsActivity : BaseActivity() {
     setContentView(R.layout.activity_settings)
     setUpToolbar("设置")
     supportFragmentManager.beginTransaction()
-        .add(R.id.container, SettingsFragment())
+        .replace(R.id.container, SettingsFragment())
         .commit()
   }
 
@@ -175,7 +177,7 @@ class SettingsActivity : BaseActivity() {
         "pref_add_row" -> {
         }
 
-        Keys.PREF_TEXT_SIZE -> {
+        PREF_TEXT_SIZE -> {
           LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
           activity?.finish()
         }

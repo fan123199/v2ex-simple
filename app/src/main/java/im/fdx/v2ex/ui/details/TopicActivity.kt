@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import im.fdx.v2ex.R
+import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
@@ -68,7 +69,7 @@ class TopicActivity : BaseActivity() {
     }
 
     //如果是从首页打开，那么会有所有列表信息，那么就可以获取到列表信息，达到左右滑动
-    val out = topicList?.map { topic ->
+    val out2 = topicList?.map { topic ->
       TopicFragment().apply {
         arguments = bundleOf(Keys.KEY_TOPIC_MODEL to topic, Keys.KEY_TOPIC_ID to topic.id)
       }
@@ -76,6 +77,16 @@ class TopicActivity : BaseActivity() {
       mutableListOf(TopicFragment().apply {
         arguments = bundleOf(Keys.KEY_TOPIC_MODEL to topicModel, Keys.KEY_TOPIC_ID to mTopicId)
       })
+
+    val out: List<TopicFragment>
+    if (pref.getBoolean("pref_viewpager", true)) {
+      out = out2
+    } else {
+      out = mutableListOf(TopicFragment().apply {
+        arguments = bundleOf(Keys.KEY_TOPIC_MODEL to topicModel, Keys.KEY_TOPIC_ID to mTopicId)
+      })
+    }
+
 
 
     vpAdapter.initList(out)

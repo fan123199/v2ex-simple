@@ -13,6 +13,13 @@
             android:entries="@array/text_size_string"
             android:title="字体大小" />
 
+        <SwitchPreference
+            android:title="是否启用左右滑动切换主题"
+            android:key="pref_viewpager"
+            android:defaultValue="true"
+            android:summaryOn="启用"
+            android:summaryOff="关闭" />
+
     </PreferenceCategory>
 
 
