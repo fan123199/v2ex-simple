@@ -94,11 +94,11 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.1'
 
-    debugImplementation 'com.github.ChuckerTeam.Chucker:library:2.0.4'
-    releaseImplementation 'com.github.ChuckerTeam.Chucker:library-no-op:2.0.4'
+    debugImplementation 'com.github.ChuckerTeam.Chucker:library:3.0.0-alpha2'
+    releaseImplementation 'com.github.ChuckerTeam.Chucker:library-no-op:3.0.0-alpha2'
     implementation 'com.elvishew:xlog:1.4.1'
     implementation 'org.jsoup:jsoup:1.11.3'
 //    implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'

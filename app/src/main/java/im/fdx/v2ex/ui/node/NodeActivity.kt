@@ -1,12 +1,18 @@
 package im.fdx.v2ex.ui.node
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.core.os.bundleOf
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
@@ -15,10 +21,7 @@ import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.handleAlphaOnTitle
-import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.setUpToolbar
+import im.fdx.v2ex.utils.extensions.*
 import kotlinx.android.synthetic.main.activity_node.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -27,6 +30,7 @@ import okhttp3.Response
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
+import kotlin.math.abs
 
 
 class NodeActivity : BaseActivity() {
@@ -37,15 +41,28 @@ class NodeActivity : BaseActivity() {
     private var mNode: Node? = null
     private lateinit var mMenu: Menu
 
+    val receiver = object : BroadcastReceiver(){
+        override fun onReceive(context: Context, intent: Intent) {
+
+            when(intent.action) {
+                Keys.ACTION_LOGIN -> {
+                    getNodeInfo()
+                }
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_node)
         setUpToolbar()
         supportActionBar?.setDisplayShowTitleEnabled(false) //很关键，不会一闪而过一个东西
 
-      appbar_node.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, IntentFilter(Keys.ACTION_LOGIN))
+
+        appbar_node.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
             val maxScroll = appBarLayout1.totalScrollRange
-            val percentage = Math.abs(verticalOffset).toDouble() / maxScroll.toDouble()
+            val percentage = abs(verticalOffset).toDouble() / maxScroll.toDouble()
             handleAlphaOnTitle(rl_node_header, divider, percentage.toFloat())
         })
 
@@ -108,6 +125,11 @@ class NodeActivity : BaseActivity() {
         })
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
+    }
+
     private fun getNodeInfo() {
         val requestURL = "${NetManager.HTTPS_V2EX_BASE}/go/$nodeName?p=1"
         logd("url:$requestURL")
@@ -118,40 +140,39 @@ class NodeActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-
-                if (isFinishing) {
-                    return
-                }
-
                 val code = response.code()
-                if (code != 200) {
-                    NetManager.dealError(this@NodeActivity, errorCode =  code)
+                if (code == 302) {
+                    if(myApp.isLogin){
+                        toast("无法访问该节点")
+                    } else {
+                        showLoginHint(toolbar)
+                    }
+                    return
+                } else if (code != 200) {
+                    NetManager.dealError(this@NodeActivity, errorCode = code)
                     return
                 }
-
 
                 val html = response.body()?.string()!!
-
-
                 val parser = Parser(html)
 
-              val topicList = parser.parseTopicLists(Parser.Source.FROM_NODE)
+                val topicList = parser.parseTopicLists(Parser.Source.FROM_NODE)
 
-              val pageNum = parser.getTotalPageForTopics()
-              val fragment: TopicsFragment = TopicsFragment().apply {
-                arguments = bundleOf(
-                        Keys.KEY_NODE_NAME to nodeName ,
-                        Keys.KEY_TOPIC_LIST to topicList,
-                        Keys.KEY_PAGE_NUM to pageNum
-                )
-              }
-              supportFragmentManager.beginTransaction()
-                      .add(R.id.fragment_container, fragment, "MyActivity")
-                      .commit()
+                val pageNum = parser.getTotalPageForTopics()
+                val fragment: TopicsFragment = TopicsFragment().apply {
+                    arguments = bundleOf(
+                            Keys.KEY_NODE_NAME to nodeName,
+                            Keys.KEY_TOPIC_LIST to topicList,
+                            Keys.KEY_PAGE_NUM to pageNum
+                    )
+                }
+                supportFragmentManager.beginTransaction()
+                        .add(R.id.fragment_container, fragment, "MyActivity")
+                        .commit()
                 try {
                     mNode = parser.getOneNode()
                 } catch (e: Exception) {
-                    NetManager.dealError(this@NodeActivity, errorMsg = e.message ?: "unknown error" )
+                    NetManager.dealError(this@NodeActivity, errorMsg = e.message ?: "unknown error")
                 }
                 isFollowed = parser.isNodeFollowed()
                 token = parser.getOnce()

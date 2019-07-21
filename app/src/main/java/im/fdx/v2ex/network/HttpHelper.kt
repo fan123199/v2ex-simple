@@ -1,7 +1,7 @@
 package im.fdx.v2ex.network
 
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.crashlytics.android.Crashlytics
-import com.readystatesoftware.chuck.api.ChuckInterceptor
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
@@ -23,7 +23,7 @@ object HttpHelper {
             //            .writeTimeout(10, TimeUnit.SECONDS)
             //            .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
-            .addInterceptor(ChuckInterceptor(MyApp.get()))//好东西，查看Okhttp数据
+            .addInterceptor(ChuckerInterceptor(MyApp.get()))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
                 chain.proceed(chain.request())
             }

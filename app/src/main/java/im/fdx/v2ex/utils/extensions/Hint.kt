@@ -3,6 +3,7 @@ package im.fdx.v2ex.utils.extensions
 import android.app.Activity
 import android.app.ProgressDialog.show
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -60,9 +61,16 @@ fun Any.loge(msg: Any?) {
 }
 
 
-fun Activity.showLoginHint(view: View) {
-    Snackbar.make(view, "您还未登录，请登录后再试", Snackbar.LENGTH_LONG)
+fun Activity.showLoginHint(view: View,message :String ="您还未登录，请登录后再试") {
+    Snackbar.make(view, message, Snackbar.LENGTH_LONG)
             .setAction("登录") {
                 startActivity<LoginActivity>()
+            }.show()
+}
+
+fun Fragment.showLoginHint(view: View, message :String ="您还未登录，请登录后再试") {
+    Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+            .setAction("登录") {
+                activity?.startActivity<LoginActivity>()
             }.show()
 }

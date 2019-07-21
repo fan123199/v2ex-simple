@@ -29,6 +29,7 @@ import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.showLoginHint
 import im.fdx.v2ex.utils.extensions.toast
 import kotlinx.android.synthetic.main.activity_details_content.*
 import kotlinx.android.synthetic.main.footer_reply.*
@@ -90,10 +91,10 @@ class TopicFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val filter = IntentFilter(Keys.ACTION_LOGIN)
-        filter.addAction(Keys.ACTION_LOGOUT)
-        filter.addAction(Keys.ACTION_GET_MORE_REPLY)
-        LocalBroadcastManager.getInstance(activity!!).registerReceiver(receiver, filter)
+        LocalBroadcastManager.getInstance(activity!!).registerReceiver(receiver, IntentFilter(Keys.ACTION_LOGIN).apply {
+            addAction(Keys.ACTION_LOGOUT)
+            addAction(Keys.ACTION_GET_MORE_REPLY)
+        })
         setFootView(MyApp.get().isLogin)
 
 
@@ -260,8 +261,7 @@ class TopicFragment : BaseFragment() {
                 if (code == 302) {
                     //权限问题，需要登录
                     activity?.runOnUiThread {
-                        toast("需要登录后查看该主题")
-                        activity?.finish()
+                        showLoginHint(et_post_reply,"你要查看的页面需要先登录")
                     }
                     return
                 }
@@ -269,7 +269,6 @@ class TopicFragment : BaseFragment() {
                     activity?.runOnUiThread {
                         swipe_details?.isRefreshing = false
                         toast("无法打开该主题")
-
                     }
                     return
                 }
@@ -284,9 +283,8 @@ class TopicFragment : BaseFragment() {
                     token = parser.getVerifyCode()
 
                     if (token == null) {
-                        setLogin(false)
                         activity?.runOnUiThread {
-                            toast("需要登录后查看该主题")
+                            toast("登录状态过期，请重新登录")
                             activity?.finish()
                         }
                         return
