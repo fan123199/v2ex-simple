@@ -76,9 +76,7 @@ dependencies {
     implementation "androidx.cardview:cardview:1.0.0"
     implementation "androidx.recyclerview:recyclerview:1.0.0"
     implementation "androidx.legacy:legacy-support-v13:1.0.0"
-    implementation("androidx.appcompat:appcompat:1.0.0")/* {
-        exclude group: 'androidx.browser', module: 'browser'
-    }*/
+    implementation("androidx.appcompat:appcompat:1.0.0")
     implementation "androidx.legacy:legacy-support-v4:1.0.0"
     implementation "androidx.browser:browser:1.0.0" //已经被appcompat包含
     implementation "androidx.preference:preference:1.0.0"
@@ -89,6 +87,7 @@ dependencies {
 
 
     implementation 'androidx.room:room-runtime:2.1.0'
+    implementation 'androidx.room:room-ktx:2.1.0'
     kapt 'androidx.room:room-compiler:2.1.0'
     //google end
 
@@ -105,12 +104,12 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     kapt 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.8.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.1.13'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.9'
     implementation 'com.google.android:flexbox:1.1.0'
     implementation 'me.drakeet.multitype:multitype:3.5.0'
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.github.esafirm.android-image-picker:imagepicker:2.0.0'
-    implementation 'com.google.firebase:firebase-core:17.0.1'
+    implementation 'com.google.firebase:firebase-core:17.1.0'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
 }
 

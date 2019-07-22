@@ -9,9 +9,9 @@ import androidx.room.Query
 interface MyReplyDao {
 
     @Query("SELECT * FROM my_reply WHERE topic_id = (:topicId)")
-    fun getMyReplyById(topicId: String) : MyReply?
+    suspend fun getMyReplyById(topicId: String) : MyReply?
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(myReply: MyReply)
+    suspend fun insert(myReply: MyReply)
 }

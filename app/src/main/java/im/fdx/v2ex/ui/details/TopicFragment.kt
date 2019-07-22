@@ -23,7 +23,6 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.database.DbHelper
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.*
-import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.ui.BaseFragment
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
@@ -213,18 +212,12 @@ class TopicFragment : BaseFragment() {
 
 
         uiScope.launch {
-            et_post_reply.setText(get())
+            val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content?:""
+            et_post_reply.setText(text)
         }
 
         swipe_details.isRefreshing = true
         getRepliesPageOne(false)
-    }
-
-    suspend fun get() : String{
-        return withContext(Dispatchers.IO){
-            val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content?:""
-            text
-        }
     }
 
     // 设置渐变的动画
@@ -465,15 +458,9 @@ class TopicFragment : BaseFragment() {
         super.onDestroyView()
         LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(receiver)
         uiScope.launch {
-            insert()
+            DbHelper.db.myReplyDao().insert(MyReply(mTopicId, temp))
         }
         logd("onDestroyView")
 
-    }
-
-    suspend fun insert() {
-        withContext(Dispatchers.IO) {
-            DbHelper.db.myReplyDao().insert(MyReply(mTopicId, temp))
-        }
     }
 }
