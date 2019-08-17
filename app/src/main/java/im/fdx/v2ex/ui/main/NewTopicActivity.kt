@@ -7,9 +7,11 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
@@ -28,6 +30,7 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.openImagePicker
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import kotlinx.android.synthetic.main.activity_create_topic.*
+import kotlinx.coroutines.delay
 import okhttp3.*
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivityForResult
@@ -83,7 +86,7 @@ class NewTopicActivity : BaseActivity() {
                 }
             }
 
-        } else if (requestCode == NewTopicActivity.REQUEST_NODE && resultCode == Activity.RESULT_OK && data != null) {
+        } else if (requestCode == REQUEST_NODE && resultCode == Activity.RESULT_OK && data != null) {
             val nodeInfo = data.getParcelableExtra<Node>("extra_node")
             mNodename = nodeInfo.name
             search_spinner_node.text = "${nodeInfo.name} | ${nodeInfo.title}"
@@ -103,15 +106,37 @@ class NewTopicActivity : BaseActivity() {
     }
 
 
+    fun rotate(iv: View) {
+        (iv as ImageView).setImageResource(R.drawable.loading)
+        val rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh)
+        rotation.repeatCount = Animation.INFINITE
+        iv.startAnimation(rotation)
+        toast("rotate")
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val iv = layoutInflater.inflate(R.layout.iv_refresh, null) as ImageView
+        iv.setImageResource(R.drawable.ic_send_primary_24dp)
+
         menu.add(0, MENU_ID_SEND, 1, "send")
-                .setIcon(R.drawable.ic_send_primary_24dp)
+                .setActionView(iv)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
         menu.add(0, MENU_ID_UPLOAD, 0, "upload")
                 .setIcon(R.drawable.ic_image)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
         return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+
+        val menuSend = menu.findItem(MENU_ID_SEND)
+
+        menuSend?.actionView?.setOnClickListener {
+            onOptionsItemSelected(menuSend)
+        }
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -144,13 +169,8 @@ class NewTopicActivity : BaseActivity() {
 
     @SuppressLint("InflateParams")
     private fun postNew(item: MenuItem) {
+        rotate(item.actionView)
 
-        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val iv = inflater.inflate(R.layout.iv_refresh, null) as ImageView
-        val rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh)
-        rotation.repeatCount = Animation.INFINITE
-        iv.startAnimation(rotation)
-        item.actionView = iv
 
         vCall("https://www.v2ex.com/new").start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -191,11 +211,11 @@ class NewTopicActivity : BaseActivity() {
                     }
 
                     @Throws(IOException::class)
-                    override fun onResponse(call1: Call, response1: Response) {
+                    override fun onResponse(call1: Call, response2: Response) {
                         resetIcon(item)
-                        if (response1.code() == 302) {
+                        if (response2.code() == 302) {
 
-                            val location = response1.header("Location")
+                            val location = response2.header("Location")
                             val p = Pattern.compile("(?<=/t/)(\\d+)")
                             val matcher = p.matcher(location!!)
                             val topic: String
@@ -208,7 +228,7 @@ class NewTopicActivity : BaseActivity() {
                             }
                             finish()
                         } else {
-                            val errorMsg = Parser(response.body()!!.string()).getErrorMsg()
+                            val errorMsg = Parser(response2.body()!!.string()).getErrorMsg()
                             runOnUiThread {
                                 longToast(errorMsg)
                             }
@@ -221,7 +241,8 @@ class NewTopicActivity : BaseActivity() {
 
     private fun resetIcon(item: MenuItem) {
         runOnUiThread {
-            item.setIcon(R.drawable.ic_send_primary_24dp)
+            (item.actionView as ImageView).clearAnimation()
+            (item.actionView as ImageView).setImageResource(R.drawable.ic_send_primary_24dp)
         }
     }
 

@@ -91,12 +91,20 @@ class Parser(private val htmlStr: String) {
                 memberModel.username = username
                 memberModel.avatar_normal = avatarLarge
 
-
+//            FROM_HOME &nbsp;•&nbsp; <strong><a href="/member/nodwang">nodwang</a></strong> &nbsp;•&nbsp; 2 分钟前 &nbsp;•&nbsp; 最后回复来自
+//             FROM_NODE   &nbsp;•&nbsp; 6 小时 15 分钟前 &nbsp;•&nbsp; 最后回复来自
                 val created = when (source) {
-                    FROM_HOME, FROM_MEMBER,FROM_NODE -> {
+                    FROM_HOME, FROM_MEMBER -> {
                         val smallItem = item.getElementsByClass("topic_info")?.first()?.ownText()?:""
                         when {
                             smallItem.contains("最后回复") -> TimeUtil.toUtcTime(smallItem.split("•")[2])
+                            else -> -1L
+                        }
+                    }
+                    FROM_NODE -> {
+                        val smallItem = item.getElementsByClass("topic_info")?.first()?.ownText()?:""
+                        when {
+                            smallItem.contains("最后回复") -> TimeUtil.toUtcTime(smallItem.split("•")[1])
                             else -> -1L
                         }
                     }
@@ -410,7 +418,7 @@ class Parser(private val htmlStr: String) {
 
     fun getErrorMsg(): String {
         logd(htmlStr)
-        val message = doc.getElementsByClass("problem") ?: return ""
+        val message = doc.getElementsByClass("problem") ?: return "未知错误"
         return message.text().trim()
     }
 

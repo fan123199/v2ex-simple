@@ -32,7 +32,10 @@ object Api {
                 .addFormDataPart("smfile", fileName, MultipartBody.create(MediaType.parse("image/*"), File(path)))
                 .build()
 
-        client.newCall(Request.Builder().url("https://sm.ms/api/upload?ssl=true").post(requestBody).build())
+        client.newCall(Request.Builder()
+                .url("https://sm.ms/api/upload?ssl=true")
+                .post(requestBody)
+                .build())
                 .start(object : Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                       callback(null, 2)
