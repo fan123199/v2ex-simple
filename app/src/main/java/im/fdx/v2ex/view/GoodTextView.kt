@@ -1,6 +1,7 @@
 package im.fdx.v2ex.view
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.Drawable
@@ -16,6 +17,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
@@ -131,49 +133,51 @@ class GoodTextView @JvmOverloads constructor(
 
 class MyImageGetter(val bestWidth: Int, val tv: GoodTextView) : Html.ImageGetter {
     //防止 Glide，将target gc了， 导致图片无法显示
-    private var targetList: MutableList<CustomTarget<Drawable>> = mutableListOf()
+    private var targetList: MutableList<CustomTarget<Bitmap>> = mutableListOf()
 
     override fun getDrawable(source: String): Drawable {
         val bitmapHolder = BitmapHolder()
         Log.i("GoodTextView", " begin getDrawable, Image url: $source")
 
-        val target = object : CustomTarget<Drawable>() {
+        val target = object : CustomTarget<Bitmap>() {
             override fun onLoadCleared(placeholder: Drawable?) {
             }
 
             override fun onLoadStarted(placeholder: Drawable?) {
             }
 
-            override fun onResourceReady(drawable: Drawable, transition: Transition<in Drawable>?) {
+            override fun onResourceReady(bitmap: Bitmap, transition: Transition<in Bitmap>?) {
 
                 val smallestWidth = 12.dp2px()
                 val targetWidth: Int = when {
                     //超小图
-                    drawable.intrinsicWidth < smallestWidth -> {
+                    bitmap.width < smallestWidth -> {
                         smallestWidth
                     }
                     //中小图
-                    drawable.intrinsicWidth >= smallestWidth && drawable.intrinsicWidth <= bestWidth * 0.3 -> {
-                        drawable.intrinsicWidth
+                    bitmap.width >= smallestWidth && bitmap.width <= bestWidth * 0.3 -> {
+                        bitmap.width
                     }
                     // 中图，大图，特大图
                     else -> {
                         bestWidth
                     }
                 }
-                val ratio = drawable.intrinsicHeight.toDouble() / drawable.intrinsicWidth.toDouble()
-                val targetHeight = (targetWidth * ratio).toInt()
+                val targetHeight = (targetWidth * (bitmap.height.toDouble() / bitmap.width.toDouble())).toInt()
                 val rectHolder = Rect(0, 0, targetWidth, targetHeight)
-                drawable.bounds = rectHolder
+                val newBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth,targetHeight, false)
                 bitmapHolder.bounds = rectHolder
+                val drawable = newBitmap.toDrawable(tv.context.resources)
+                drawable.bounds = rectHolder
                 bitmapHolder.setDrawable(drawable)
                 tv.text = tv.text
                 Log.i("GoodTextView", " end getDrawable, Image height: " +
                         "${bitmapHolder.bounds}," +
-                        " ${drawable.intrinsicWidth},${drawable.intrinsicHeight}")
+                        " ${bitmap.width},${bitmap.height}")
             }
         }
         GlideApp.with(tv)
+                .asBitmap()
                 .load(source)
                 .into(target)
         targetList.add(target)

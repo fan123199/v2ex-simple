@@ -21,6 +21,7 @@ import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.crashlytics.android.Crashlytics
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -76,7 +77,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
         when (getItemViewType(position)) {
             TYPE_HEADER -> {
                 val topic = topics[0]
-
+                Crashlytics.setString("topic_id", topic.id)
                 logd(topic.title)
                 logd(topic.content_rendered)
                 val mainHolder = holder as TopicWithCommentsViewHolder
