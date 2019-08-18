@@ -5,7 +5,9 @@ import com.crashlytics.android.Crashlytics
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
+import im.fdx.v2ex.utils.extensions.logi
 import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 
 /**
@@ -23,6 +25,9 @@ object HttpHelper {
             //            .writeTimeout(10, TimeUnit.SECONDS)
             //            .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
+            .addNetworkInterceptor(
+                    HttpLoggingInterceptor { logi("okhttp: $it") }
+                            .setLevel(HttpLoggingInterceptor.Level.HEADERS))
             .addInterceptor(ChuckerInterceptor(MyApp.get()))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
                 chain.proceed(chain.request())
@@ -83,24 +88,24 @@ fun Call.start(onResp: (Call, Response) -> Unit, onFail: (Call, IOException)-> U
         }
     }
     enqueue(object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
-                Crashlytics.logException(e)
-                try {
-                    callback.onFailure(call!!, e!!)
-                } catch (e2: Exception) {
-                    e2.printStackTrace()
-                }
+        override fun onFailure(call: Call?, e: IOException?) {
+            Crashlytics.logException(e)
+            try {
+                callback.onFailure(call!!, e!!)
+            } catch (e2: Exception) {
+                e2.printStackTrace()
             }
+        }
 
-            override fun onResponse(call: Call?, response: Response?) {
-                try {
-                    callback.onResponse(call!!, response!!)
-                } catch (e: Exception) {
-                    Crashlytics.logException(e)
-                    e.printStackTrace()
-                }
+        override fun onResponse(call: Call?, response: Response?) {
+            try {
+                callback.onResponse(call!!, response!!)
+            } catch (e: Exception) {
+                Crashlytics.logException(e)
+                e.printStackTrace()
             }
-        })
+        }
+    })
 }
 
 

@@ -17,6 +17,7 @@ import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.API_HEATED
 import im.fdx.v2ex.ui.main.model.SearchResult
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.Parser.Source.*
 import im.fdx.v2ex.ui.member.Member
@@ -83,7 +84,7 @@ class TopicsFragment : Fragment() {
     val args: Bundle? = arguments
     when {
       args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 0 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
-      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = "$HTTPS_V2EX_BASE/my/following"
+      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = URL_FOLLOWING
       args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
       args?.getString(Keys.KEY_TAB) == "heated" -> {
         mRequestURL = API_HEATED

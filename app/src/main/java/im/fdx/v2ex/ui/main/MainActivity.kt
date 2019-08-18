@@ -27,6 +27,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.viewpager.widget.ViewPager
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -253,7 +254,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       val compressionWork = PeriodicWorkRequestBuilder<GetMsgWorker>(timeSec, TimeUnit.SECONDS)
               .addTag(TAG_WORKER)
               .build()
-      WorkManager.getInstance().enqueue(compressionWork)
+      WorkManager.getInstance().enqueueUniquePeriodicWork("getUnread", ExistingPeriodicWorkPolicy.REPLACE , compressionWork)
 
     }
   }
