@@ -24,7 +24,6 @@ class TopicActivity : BaseActivity() {
 
   private lateinit var mTopicId :String
 
-  private var topicList : MutableList<Topic>? = null
   private var position = 0
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,23 +41,22 @@ class TopicActivity : BaseActivity() {
     val topicId = intent.getStringExtra(Keys.KEY_TOPIC_ID)
     val list = intent.getParcelableArrayListExtra<Topic>(Keys.KEY_TOPIC_LIST)
     val pos = intent.getIntExtra(Keys.KEY_POSITION, 0)
-    when {
+    mTopicId = when {
       data != null -> {
-        mTopicId = data.pathSegments[1]
+        data.pathSegments[1]
       }
       topicModel != null -> {
-        mTopicId = topicModel.id
+        topicModel.id
       }
       topicId != null -> {
-        mTopicId = topicId
+        topicId
       }
       else -> {
-        mTopicId = ""
+        ""
       }
     }
 
     if(list!=null) {
-      topicList = list
       position = pos
     }
 
@@ -69,7 +67,7 @@ class TopicActivity : BaseActivity() {
     }
 
     //如果是从首页打开，那么会有所有列表信息，那么就可以获取到列表信息，达到左右滑动
-    val out2 = topicList?.map { topic ->
+    val out2 = list?.map { topic ->
       TopicFragment().apply {
         arguments = bundleOf(Keys.KEY_TOPIC_MODEL to topic, Keys.KEY_TOPIC_ID to topic.id)
       }

@@ -31,12 +31,11 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
   private var mTopicList: MutableList<Topic> = mutableListOf()
 
   fun updateItems(newItems: List<Topic>) {
-    val callback = MyCallback()
-    callback.adapter = this
+    val callback = MyCallback(this)
     val diffResult = DiffUtil.calculateDiff(MyDiffCallback(mTopicList, newItems))
-    diffResult.dispatchUpdatesTo(callback)
     mTopicList.clear()
     mTopicList.addAll(newItems)
+    diffResult.dispatchUpdatesTo(callback)
   }
 
   fun clearAndNotify() {
@@ -64,17 +63,18 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
 
   //Done 对TextView进行赋值, 也就是操作
   override fun onBindViewHolder(holder2: RecyclerView.ViewHolder, position: Int) {
-    val currentTopic = mTopicList[position]
+    val currentTopic = mTopicList[holder2.adapterPosition]
     val holder = holder2 as MainViewHolder
     holder.tvTitle.maxLines = 2
     holder.tvTitle.text = currentTopic.title
     holder.itemView.setOnClickListener{
 
-     val b=  bundleOf(Keys.KEY_TOPIC_MODEL to currentTopic,
-              Keys.KEY_TOPIC_LIST to mTopicList,
-              Keys.KEY_POSITION to position)
-
-      fragment.startActivity(Intent(myApp, TopicActivity::class.java).apply { putExtras(b) })
+     fragment.startActivity(Intent(myApp, TopicActivity::class.java)
+             .apply {
+               putExtras(bundleOf(
+                       Keys.KEY_TOPIC_MODEL to currentTopic,
+                       Keys.KEY_TOPIC_LIST to mTopicList,
+                       Keys.KEY_POSITION to holder2.adapterPosition)) })
     }
     holder.tvContent.visibility = View.GONE
 
