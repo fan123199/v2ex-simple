@@ -100,7 +100,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                         val th = CommentsViewHolder(view)
                         th.tvCTitle.text = it.title
                         th.tvCTime.text = TimeUtil.getRelativeTime(it.created)
-                        th.tvCContent.setGoodText(it.content)
+                        th.tvCContent.setGoodText(it.content, type = 2)
                         mainHolder.ll.addView(view)
                     }
                 }
@@ -321,7 +321,7 @@ class ItemViewHolder(override val containerView: View)
     @SuppressLint("SetTextI18n")
     fun bind(data:Reply) {
 
-        tv_reply_content.setGoodText(data.content_rendered)
+        tv_reply_content.setGoodText(data.content_rendered , type = 3)
         tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
         tv_reply_row.text = "#$adapterPosition"
         tv_replier.text = data.member?.username

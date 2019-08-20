@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.*
@@ -21,12 +22,20 @@ import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
+import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.dp2px
 import org.jetbrains.anko.startActivity
 import org.xml.sax.XMLReader
 
+typealias TextType = Int
+
+val abc = 1
+val efg: TextType = 1
+val hij: TextType = 1
 
 /**
  * Created by fdx on 2016/9/11.
@@ -42,33 +51,25 @@ class GoodTextView @JvmOverloads constructor(
         defStyleAttr: Int = 0
 ) : TextView(context, attrs, defStyleAttr) {
 
-    private var bestWidth = 0
-
     var popupListener: Popup.PopupListener? = null
-
-    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
-        super.onLayout(changed, left, top, right, bottom)
-        if (bestWidth == 0)
-            bestWidth = width
-    }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         imageGetter?.clear()
     }
 
-    var imageGetter :MyImageGetter? = null
+    var imageGetter: MyImageGetter? = null
+
 
     @Suppress("DEPRECATION")
-    fun setGoodText(text: String?, removeClick: Boolean? = false) {
+    fun setGoodText(text: String?, removeClick: Boolean? = false, type: TextType = 1) {
         if (text.isNullOrEmpty()) {
             return
         }
         setLinkTextColor(ContextCompat.getColor(context, im.fdx.v2ex.R.color.mode))
-
-        imageGetter = MyImageGetter(bestWidth, this)
+        imageGetter = MyImageGetter(this, type)
         val spannedText = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY, imageGetter,  null)
+            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY, imageGetter, null)
         } else {
             Html.fromHtml(text, imageGetter, null)
         }
@@ -131,12 +132,15 @@ class GoodTextView @JvmOverloads constructor(
     }
 }
 
-class MyImageGetter(val bestWidth: Int, val tv: GoodTextView) : Html.ImageGetter {
+class MyImageGetter(val tv: GoodTextView, val type: Int) : Html.ImageGetter {
     //防止 Glide，将target gc了， 导致图片无法显示
     private var targetList: MutableList<CustomTarget<Bitmap>> = mutableListOf()
 
     override fun getDrawable(source: String): Drawable {
         val bitmapHolder = BitmapHolder()
+        //todo 考虑加入占位图，测试时间不足，暂不加入
+//            val d = myApp.getDrawable(R.drawable.loading_image)
+//            d?.draw(canvas)
         Log.i("GoodTextView", " begin getDrawable, Image url: $source")
 
         val target = object : CustomTarget<Bitmap>() {
@@ -149,6 +153,12 @@ class MyImageGetter(val bestWidth: Int, val tv: GoodTextView) : Html.ImageGetter
             override fun onResourceReady(bitmap: Bitmap, transition: Transition<in Bitmap>?) {
 
                 val smallestWidth = 12.dp2px()
+                val bestWidth = when (type) {
+                    1 -> ViewUtil.screenWidth - (16 * 2).dp2px()   //主题
+                    2 -> ViewUtil.screenWidth - (16 * 2 + 8 * 2).dp2px()  //附言
+                    3 -> ViewUtil.screenWidth - (16 * 2 + 26 + 8).dp2px() //评论
+                    else -> 0
+                }
                 val targetWidth: Int = when {
                     //超小图
                     bitmap.width < smallestWidth -> {
@@ -165,12 +175,13 @@ class MyImageGetter(val bestWidth: Int, val tv: GoodTextView) : Html.ImageGetter
                 }
                 val targetHeight = (targetWidth * (bitmap.height.toDouble() / bitmap.width.toDouble())).toInt()
                 val rectHolder = Rect(0, 0, targetWidth, targetHeight)
-                val newBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth,targetHeight, false)
+                val newBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false)
                 bitmapHolder.bounds = rectHolder
                 val drawable = newBitmap.toDrawable(tv.context.resources)
                 drawable.bounds = rectHolder
                 bitmapHolder.setDrawable(drawable)
                 tv.text = tv.text
+                tv.invalidate()
                 Log.i("GoodTextView", " end getDrawable, Image height: " +
                         "${bitmapHolder.bounds}," +
                         " ${bitmap.width},${bitmap.height}")

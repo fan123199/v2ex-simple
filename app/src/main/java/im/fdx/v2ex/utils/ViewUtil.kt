@@ -18,7 +18,7 @@ object ViewUtil {
             return metrics.heightPixels
         }
 
-    val screenWight : Int
+    val screenWidth : Int
     get() {
 
         return Resources.getSystem().displayMetrics.widthPixels
