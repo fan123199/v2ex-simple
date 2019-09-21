@@ -140,6 +140,10 @@ class NodeActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
+
+                if(isFinishing) {
+                    return
+                }
                 val code = response.code()
                 if (code == 302) {
                     if(myApp.isLogin){
@@ -166,9 +170,6 @@ class NodeActivity : BaseActivity() {
                             Keys.KEY_PAGE_NUM to pageNum
                     )
                 }
-                supportFragmentManager.beginTransaction()
-                        .add(R.id.fragment_container, fragment, "MyActivity")
-                        .commit()
                 try {
                     mNode = parser.getOneNode()
                 } catch (e: Exception) {
@@ -176,8 +177,10 @@ class NodeActivity : BaseActivity() {
                 }
                 isFollowed = parser.isNodeFollowed()
                 token = parser.getOnce()
-
                 runOnUiThread {
+                    supportFragmentManager.beginTransaction()
+                            .add(R.id.fragment_container, fragment, "MyActivity")
+                            .commit()
                     iv_node_image.load(mNode?.avatarLargeUrl)
                     logd(mNode?.title)
                     ctl_node?.title = mNode?.title
