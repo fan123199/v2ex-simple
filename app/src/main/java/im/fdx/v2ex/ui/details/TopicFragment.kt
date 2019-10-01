@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -254,7 +255,14 @@ class TopicFragment : BaseFragment() {
                 if (code == 302) {
                     //权限问题，需要登录
                     activity?.runOnUiThread {
-                        showLoginHint(et_post_reply,"你要查看的页面需要先登录")
+                        swipe_details?.isRefreshing = false
+                    if(!myApp.isLogin) {
+                        activity?.showLoginHint(et_post_reply)
+                    } else {
+                        if(this@TopicFragment.isVisible){
+                            toast("你要查看的页面可能遭遇权限问题");
+                        }
+                    }
                     }
                     return
                 }
@@ -337,19 +345,6 @@ class TopicFragment : BaseFragment() {
         intentGetMoreReply.putExtra("bottom", scrollToBottom)
         activity?.startService(intentGetMoreReply)
         logd("yes I startIntentService")
-    }
-
-
-    @Suppress("unused")
-    private fun getNextReplies(totalPage: Int, currentPage: Int) {
-        val intentGetMoreReply = Intent(activity, MoreReplyService::class.java)
-        intentGetMoreReply.run {
-            action = "im.fdx.v2ex.get.one.more"
-            putExtra("page", totalPage)
-            putExtra("topic_id", mTopicId)
-            putExtra("currentPage", currentPage)
-        }
-        activity?.startService(intentGetMoreReply)
     }
 
     private fun favorOrNot(topicId: String, token: String, doFavor: Boolean) {

@@ -2,30 +2,32 @@ package im.fdx.v2ex.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.elvishew.xlog.XLog
-import im.fdx.v2ex.*
+import im.fdx.v2ex.GlideApp
+import im.fdx.v2ex.R
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
+import im.fdx.v2ex.pref
+import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.loge
 import im.fdx.v2ex.utils.extensions.setStatusBarColor
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import im.fdx.v2ex.view.CustomChrome
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.item_verify_code.*
 import okhttp3.*
@@ -33,7 +35,6 @@ import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 
 class LoginActivity : BaseActivity() {
 
@@ -64,14 +65,13 @@ class LoginActivity : BaseActivity() {
       if (!isValidated()) return@setOnClickListener
       loginName = input_username.text.toString()
       password = input_password.text.toString()
-      progressBar.visibility = View.VISIBLE
-      btn_login.visibility = View.GONE
+      progressBar.visibility = VISIBLE
+      btn_login.visibility = GONE
       postLogin(nameKey ?: "", passwordKey ?: "", onceCode = onceCode
           ?: "", imageCodeKey = imageCodeKey ?: "")
     }
     link_sign_up.setOnClickListener {
-      val openUrl = Intent(Intent.ACTION_VIEW, Uri.parse(NetManager.SIGN_UP_URL))
-      startActivity(openUrl)
+      CustomChrome(this@LoginActivity).load(NetManager.SIGN_UP_URL)
     }
     iv_code.setOnClickListener {
       getLoginElement()
@@ -166,11 +166,11 @@ class LoginActivity : BaseActivity() {
               }
 
               @Throws(IOException::class)
-              override fun onResponse(call: Call, response2: okhttp3.Response) {
+              override fun onResponse(call: Call, response2: Response) {
                 if (response2.code() == 302) {
                   if (("/2fa" == response2.header("Location"))) {
                     runOnUiThread {
-                      progressBar.visibility = View.GONE
+                      progressBar.visibility = GONE
                       btn_login.visibility = VISIBLE
                       showTwoStepDialog(this@LoginActivity)
                     }
@@ -196,7 +196,7 @@ class LoginActivity : BaseActivity() {
           }
           200 -> runOnUiThread {
             longToast("登录失败:\n $errorMsg")
-            progressBar.visibility = View.GONE
+            progressBar.visibility = GONE
             btn_login.visibility = VISIBLE
           }
         }

@@ -113,7 +113,7 @@ class TopicActivity : BaseActivity() {
  *
  * todo 需要加入和endlessScrollListener的联动，不然这里的list没法增加。
  */
-class VpAdapter(fm: FragmentManager?) : FragmentPagerAdapter(fm) {
+class VpAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
   private val fgList : MutableList<TopicFragment> = mutableListOf()
 

@@ -11,8 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/transparent"
+        app:title=""
         android:theme="@style/AppTheme.AppBarOverlay"
-        app:titleTextColor="@color/white"
         app:contentInsetStartWithNavigation="0dp"
         app:popupTheme="@style/AppTheme.PopupOverlay">
 
@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/log_in_v2ex"
-            android:textAppearance="@style/VText.ToolbarStyle"/>
+            android:textAppearance="@style/VText.ToolbarStyle.Light"/>
 
     </androidx.appcompat.widget.Toolbar>
 

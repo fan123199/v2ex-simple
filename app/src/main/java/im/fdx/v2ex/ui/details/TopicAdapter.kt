@@ -85,6 +85,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                 mainHolder.tvTitle.maxLines = 4
                 mainHolder.tvContent.setGoodText(topic.content_rendered)
                 mainHolder.tvContent.isSelected = true
+                mainHolder.tvContent.setTextIsSelectable(true)
 
                 mainHolder.tvReplyNumber.text = topic.replies.toString()
                 mainHolder.tvAuthor.text = topic.member?.username

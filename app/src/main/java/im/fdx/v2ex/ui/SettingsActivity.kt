@@ -53,7 +53,7 @@ class SettingsActivity : BaseActivity() {
       when {
         MyApp.get().isLogin -> {
           addPreferencesFromResource(R.xml.preference_login)
-          findPreference("group_user").title = pref.getString(Keys.PREF_USERNAME, "user")
+          findPreference<Preference>("group_user")?.title = pref.getString(Keys.PREF_USERNAME, "user")
           prefUser()
           prefMessage()
           prefTab()
@@ -66,19 +66,19 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun prefMessage() {
-      val listPreference: ListPreference = findPreference("pref_msg_period") as ListPreference
-      listPreference.entry?.let {
+      val listPreference = findPreference<ListPreference>("pref_msg_period")
+      listPreference?.entry?.let {
         listPreference.summary = it//初始化时设置summary
       }
 
       if (!pref.getBoolean("pref_msg", false)) {
-        findPreference("pref_background_msg").isEnabled = false
-        findPreference("pref_msg_period").isEnabled = false
+        findPreference<Preference>("pref_background_msg")?.isEnabled = false
+        findPreference<Preference>("pref_msg_period")?.isEnabled = false
       }
     }
 
     private fun prefTab() {
-      findPreference("pref_tab_bar").onPreferenceClickListener = Preference.OnPreferenceClickListener {
+      findPreference<Preference>("pref_tab_bar")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
         val intent = Intent(activity!!, TabSettingActivity::class.java)
         startActivityForResult(intent, 110)
         true
@@ -86,7 +86,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun prefUser() {
-      findPreference(Keys.PREF_LOGOUT).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+      findPreference<Preference>(Keys.PREF_LOGOUT)?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 
         AlertDialog.Builder(activity!!)
             .setTitle("提示")
@@ -94,7 +94,7 @@ class SettingsActivity : BaseActivity() {
             .setPositiveButton(R.string.ok) { _, _ ->
               HttpHelper.myCookieJar.clear()
               setLogin(false)
-              findPreference(Keys.PREF_LOGOUT).isEnabled = false
+              findPreference<Preference>(Keys.PREF_LOGOUT)?.isEnabled = false
               pref.edit {
                 remove(PREF_TEXT_SIZE)
                 remove(PREF_TAB)
@@ -111,11 +111,11 @@ class SettingsActivity : BaseActivity() {
 
     private fun prefVersion() {
 
-      findPreference(PREF_VERSION).summary = BuildConfig.VERSION_NAME
+      findPreference<Preference>(PREF_VERSION)?.summary = BuildConfig.VERSION_NAME
 
       val ha = resources.getStringArray(R.array.j)
       count = 7
-      findPreference(PREF_VERSION).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+      findPreference<Preference>(PREF_VERSION)?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
         if (count < 0) {
           count = 3
           activity?.longToast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
@@ -126,7 +126,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun prefRate() {
-      findPreference(Keys.PREF_RATES).onPreferenceClickListener = Preference.OnPreferenceClickListener {
+      findPreference<Preference>(Keys.PREF_RATES)?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
         try {
           val uri = "market://details?id=im.fdx.v2ex".toUri()
           val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -156,21 +156,21 @@ class SettingsActivity : BaseActivity() {
         "pref_msg" ->
 
           if (sharedPreferences.getBoolean(key, false)) {
-            findPreference("pref_msg_period").isEnabled = true
-            findPreference("pref_background_msg").isEnabled = true
+            findPreference<Preference>("pref_msg_period")?.isEnabled = true
+            findPreference<Preference>("pref_background_msg")?.isEnabled = true
           } else {
             val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(notifyID)
             WorkManager.getInstance().cancelAllWorkByTag(TAG_WORKER)
-            findPreference("pref_msg_period").isEnabled = false
-            findPreference("pref_background_msg").isEnabled = false
+            findPreference<Preference>("pref_msg_period")?.isEnabled = false
+            findPreference<Preference>("pref_background_msg")?.isEnabled = false
 
           }
         "pref_background_msg" -> {
         }
         "pref_msg_period" -> {
-          val listPreference: ListPreference = findPreference("pref_msg_period") as ListPreference
-          listPreference.summary = listPreference.entry
+          val listPreference= findPreference<ListPreference>("pref_msg_period")
+          listPreference?.summary = listPreference?.entry
           XLog.d("pref_msg_period changed")
         }
 
