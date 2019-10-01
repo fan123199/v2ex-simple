@@ -136,11 +136,13 @@ class MyImageGetter(val tv: GoodTextView, val type: Int) : Html.ImageGetter {
     //防止 Glide，将target gc了， 导致图片无法显示
     private var targetList: MutableList<CustomTarget<Bitmap>> = mutableListOf()
 
-    override fun getDrawable(source: String): Drawable {
+    override fun getDrawable(source: String?): Drawable {
         val bitmapHolder = BitmapHolder()
         //todo 考虑加入占位图，测试时间不足，暂不加入
 //            val d = myApp.getDrawable(R.drawable.loading_image)
 //            d?.draw(canvas)
+
+        if(source == null) return bitmapHolder // 某些机型 source可能为空
         Log.i("GoodTextView", " begin getDrawable, Image url: $source")
 
         val target = object : CustomTarget<Bitmap>() {
