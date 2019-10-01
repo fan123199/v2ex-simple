@@ -1,9 +1,7 @@
 package im.fdx.v2ex.utils.extensions
 
 import android.app.Activity
-import android.app.ProgressDialog.show
 import android.content.Context
-import android.content.Intent
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -33,11 +31,14 @@ fun Context.dealError(errorCode: Int = -1, swipe: androidx.swiperefreshlayout.wi
     }
 }
 
-fun Fragment.toast(message : CharSequence): Toast = Toast
-        .makeText(activity, message, Toast.LENGTH_SHORT)
-        .apply {
-            show()
-        }
+fun Fragment.toast(message : CharSequence): Toast? {
+    return activity?.let {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT)
+                .apply {
+                    show()
+                }
+    }
+}
 
 
 fun Any.logv(msg: Any?) {

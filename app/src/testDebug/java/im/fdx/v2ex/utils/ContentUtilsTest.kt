@@ -23,7 +23,7 @@ class ContentUtilsTest {
     @Test
     @Throws(Exception::class)
     fun TimeFormat() {
-        val s = TimeUtil.getAbsoluteTime(1341262360)
+        val s = TimeUtil.getAbsoluteTime("1341262360")
         assertEquals("succeed", "2012/07/03", s)
     }
 

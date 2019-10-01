@@ -224,7 +224,7 @@ class MemberActivity : BaseActivity() {
         iv_avatar_profile.load(member.avatarLargeUrl)
         tv_tagline.text = member.tagline
         tv_intro.text = member.bio
-        tv_prefix_created.text = "加入于${TimeUtil.getAbsoluteTime((member.created).toLong())},${getString(R.string.the_n_member, member.id)}"
+        tv_prefix_created.text = "加入于${TimeUtil.getAbsoluteTime((member.created))},${getString(R.string.the_n_member, member.id)}"
 
         iv_bitcoin.isGone = member.btc.isNullOrEmpty()
         iv_github.isGone = member.github.isNullOrEmpty()

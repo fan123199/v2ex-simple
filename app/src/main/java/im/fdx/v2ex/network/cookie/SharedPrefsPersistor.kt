@@ -2,8 +2,10 @@ package im.fdx.v2ex.network.cookie
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import im.fdx.v2ex.network.NetManager
+import im.fdx.v2ex.utils.extensions.loge
 import okhttp3.Cookie
 import java.util.*
 
@@ -58,6 +60,8 @@ class SharedPrefsPersistor : CookiePersistor {
         return "${if (cookie.secure) "https" else "http"}://${cookie.domain}${cookie.path}|${cookie.name}"
     }
 
+
+    @Deprecated("目前没有用到")
     override fun loadAll(): List<Cookie> {
 
         val cookies = ArrayList<Cookie>()
@@ -78,6 +82,7 @@ class SharedPrefsPersistor : CookiePersistor {
         mapSet.forEach { (key, value) ->
             if (key.contains(url)) {
                 val strCookie = value as String
+                Log.e("fdx2" , strCookie)
                 val cookie = NetManager.myGson.fromJson(strCookie, Cookie::class.java)
                 cookies.add(cookie)
             }

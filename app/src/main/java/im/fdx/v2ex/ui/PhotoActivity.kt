@@ -30,7 +30,12 @@ class PhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo)
         setUpToolbar()
-        thelist = intent.getParcelableArrayListExtra<V2Photo>(Keys.KEY_PHOTO)
+        val list = intent.getParcelableArrayListExtra<V2Photo>(Keys.KEY_PHOTO)
+        if(list == null ) {
+            finish()
+            return
+        }
+        thelist = list
         position = intent.getIntExtra(Keys.KEY_POSITION, 0)
 
         toolbar.title = "${position + 1}/${thelist.size}"

@@ -124,8 +124,7 @@ class TopicFragment : BaseFragment() {
                         try {
                             startActivity(intent)
                         } catch (e: ActivityNotFoundException) {
-                            intent.`package` = null
-                            startActivity(intent)
+                            //ignore who has no chrome
                         }
                     }
                 }

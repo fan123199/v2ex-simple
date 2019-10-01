@@ -43,8 +43,9 @@ object TimeUtil {
     }
 
 
-    fun getAbsoluteTime(created: Long): String {
-        val obj = 1000 * created
+    fun getAbsoluteTime(created: String): String {
+        val createdNum = created.toLongOrNull() ?: return ""
+        val obj = 1000 * createdNum
         val format1 = SimpleDateFormat("yyyy/MM/dd", Locale.US)
         format1.timeZone = TimeZone.getTimeZone("GMT+8:00")
         return format1.format(obj)

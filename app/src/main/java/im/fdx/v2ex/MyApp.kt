@@ -9,9 +9,12 @@ import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
+import im.fdx.v2ex.network.HttpHelper
+import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
 import org.jetbrains.anko.defaultSharedPreferences
+import java.net.HttpCookie
 
 val pref: SharedPreferences by lazy {
   myApp.defaultSharedPreferences
@@ -59,11 +62,11 @@ fun setLogin(login: Boolean) {
   pref.edit {
     putBoolean(Keys.PREF_KEY_IS_LOGIN, login)
   }
+  HttpHelper.myCookieJar.clear()
   LocalBroadcastManager.getInstance(myApp).sendBroadcast(
           if (login){
             Intent(Keys.ACTION_LOGIN)
           } else {
             Intent(Keys.ACTION_LOGOUT)
           })
-
 }
