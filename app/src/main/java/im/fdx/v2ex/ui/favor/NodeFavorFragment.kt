@@ -71,11 +71,11 @@ class NodeFavorFragment : androidx.fragment.app.Fragment() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
 
-                if (response.code() != 200) {
-                    NetManager.dealError(activity, response.code(), swipe)
+                if (response.code != 200) {
+                    NetManager.dealError(activity, response.code, swipe)
                     return
                 }
-                val nodeModels = Parser(response.body()?.string()!!).parseToNode()
+                val nodeModels = Parser(response.body?.string()!!).parseToNode()
                 if (nodeModels.isEmpty()) {
                     activity?.runOnUiThread {
                         adapter.clear()

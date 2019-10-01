@@ -38,7 +38,7 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
         try {
             for (i in 2..totalPage) {
                 val response = vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$i").execute()
-                val parser = Parser(response.body()!!.string())
+                val parser = Parser(response.body!!.string())
                 val replies = parser.getReplies()
                 val token = parser.getVerifyCode()
 

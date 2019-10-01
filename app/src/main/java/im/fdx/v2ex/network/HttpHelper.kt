@@ -9,6 +9,8 @@ import im.fdx.v2ex.utils.extensions.logi
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * Created by fdx on 2016/11/20.
@@ -26,8 +28,12 @@ object HttpHelper {
             //            .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
             .addNetworkInterceptor(
-                    HttpLoggingInterceptor { logi("okhttp: $it") }
-                            .setLevel(HttpLoggingInterceptor.Level.HEADERS))
+                        HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                            override fun log(message: String) {
+                                logi("okhttp: $message")
+                            }
+                        }).apply { level = HttpLoggingInterceptor.Level.HEADERS }
+                    )
             .addInterceptor(ChuckerInterceptor(MyApp.get()))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
                 chain.proceed(chain.request())
@@ -56,17 +62,17 @@ fun vCall(url: String): Call = HttpHelper.OK_CLIENT.newCall(Request.Builder().ur
 
 fun Call.start(callback: Callback) {
     enqueue(object : Callback {
-        override fun onFailure(call: Call?, e: IOException?) {
+        override fun onFailure(call: Call, e: IOException) {
             try {
-                callback.onFailure(call!!, e!!)
+                callback.onFailure(call, e)
             } catch (e2: Exception) {
                 e2.printStackTrace()
             }
         }
 
-        override fun onResponse(call: Call?, response: Response?) {
+        override fun onResponse(call: Call, response: Response) {
             try {
-                callback.onResponse(call!!, response!!)
+                callback.onResponse(call, response)
             } catch (e: Exception) {
                 Crashlytics.logException(e)
                 e.printStackTrace()
@@ -88,18 +94,18 @@ fun Call.start(onResp: (Call, Response) -> Unit, onFail: (Call, IOException)-> U
         }
     }
     enqueue(object : Callback {
-        override fun onFailure(call: Call?, e: IOException?) {
+        override fun onFailure(call: Call, e: IOException) {
             Crashlytics.logException(e)
             try {
-                callback.onFailure(call!!, e!!)
+                callback.onFailure(call, e)
             } catch (e2: Exception) {
                 e2.printStackTrace()
             }
         }
 
-        override fun onResponse(call: Call?, response: Response?) {
+        override fun onResponse(call: Call, response: Response) {
             try {
-                callback.onResponse(call!!, response!!)
+                callback.onResponse(call, response)
             } catch (e: Exception) {
                 Crashlytics.logException(e)
                 e.printStackTrace()

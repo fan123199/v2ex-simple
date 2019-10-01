@@ -37,13 +37,13 @@ class GetMsgWorker(val context: Context, workerParameters: WorkerParameters) : W
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                val code = response.code()
+                val code = response.code
                 if (code != 200) {
                     NetManager.dealError(context, code)
                     return
                 }
 
-                val html = response.body()!!.string()
+                val html = response.body!!.string()
                 //                <a href="/notifications" class="fade">0 条未读提醒</a>
                 val p = Pattern.compile("(?<=<a href=\"/notifications\".{0,20}>)\\d+")
                 val matcher = p.matcher(html)

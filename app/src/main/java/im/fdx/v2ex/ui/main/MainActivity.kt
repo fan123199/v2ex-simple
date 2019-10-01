@@ -215,7 +215,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       }
 
       override fun onResponse(call: Call, response: Response) {
-        val body = response.body()?.string()!!
+        val body = response.body?.string()!!
         val myInfo = Parser(body).getMember()
 
         pref.edit {
@@ -365,14 +365,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       @Throws(IOException::class)
       override fun onResponse(call: Call, response: Response) {
 
-        if (response.code() == 302) {
+        if (response.code == 302) {
           runOnUiThread {
             setLogin(false)
             toast("登录信息失效，请先登录") }
           return
         }
 
-        val body = response.body()!!.string()
+        val body = response.body!!.string()
 
         if (body.contains("每日登录奖励已领取")) {
           logi("已领取")

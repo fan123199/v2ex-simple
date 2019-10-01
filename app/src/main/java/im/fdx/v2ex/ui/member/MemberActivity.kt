@@ -130,8 +130,8 @@ class MemberActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                if (response.code() == 200) {
-                    val html = response.body()!!.string()
+                if (response.code == 200) {
+                    val html = response.body!!.string()
                     isBlocked = isBlock(html)
                     isFollowed = isFollowed(html)
                     logd("isBlocked: $isBlocked|isFollowed: $isFollowed")
@@ -171,10 +171,10 @@ class MemberActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                if (response.code() != 200) {
+                if (response.code != 200) {
                     dealError(this@MemberActivity)
                 } else {
-                    val body = response.body()!!.string()
+                    val body = response.body!!.string()
                     logi(body)
                     member = myGson.fromJson(body, Member::class.java)
                     runOnUiThread { showUser() }
@@ -270,7 +270,7 @@ class MemberActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                if (response.code() == 302) {
+                if (response.code == 302) {
                     getBlockAndFollowWeb()
                     runOnUiThread {
                         toast("${if (isFollowed) "取消" else ""}关注成功")
@@ -289,7 +289,7 @@ class MemberActivity : BaseActivity() {
 
                     @Throws(IOException::class)
                     override fun onResponse(call: Call, response: Response) {
-                        if (response.code() == 302) {
+                        if (response.code == 302) {
                             getBlockAndFollowWeb()
                             runOnUiThread {
                                 toast("${if (isBlocked) "取消" else ""}屏蔽成功")

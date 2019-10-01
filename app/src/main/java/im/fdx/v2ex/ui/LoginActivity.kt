@@ -31,6 +31,7 @@ import im.fdx.v2ex.view.CustomChrome
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.item_verify_code.*
 import okhttp3.*
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
@@ -98,7 +99,7 @@ class LoginActivity : BaseActivity() {
 
       @Throws(IOException::class)
       override fun onResponse(call: Call, response0: Response) {
-        val htmlString = response0.body()?.string()
+        val htmlString = response0.body?.string()
         val body = Jsoup.parse(htmlString).body()
         nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮箱地址").attr("name")
         passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
@@ -116,7 +117,7 @@ class LoginActivity : BaseActivity() {
               //  .addHeader("X-Requested-With", "com.android.browser")
               //  .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
               .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36")
-              .addHeader("cookie", HttpHelper.myCookieJar.loadForRequest(HttpUrl.parse(str)!!).joinToString(separator = ";"))
+              .addHeader("cookie", HttpHelper.myCookieJar.loadForRequest(str.toHttpUrlOrNull()!!).joinToString(separator = ";"))
               .build()
           val url = GlideUrl(str, headers)
           if (!this@LoginActivity.isDestroyed) {
@@ -153,9 +154,9 @@ class LoginActivity : BaseActivity() {
 
       @Throws(IOException::class)
       override fun onResponse(call: Call, response: Response) {
-        val httpcode = response.code()
-        val errorMsg = Parser(response.body()!!.string()).getErrorMsg()
-        logd("http code: ${response.code()}")
+        val httpcode = response.code
+        val errorMsg = Parser(response.body!!.string()).getErrorMsg()
+        logd("http code: ${response.code}")
         logd("errorMsg: $errorMsg")
 
         when (httpcode) {
@@ -167,7 +168,7 @@ class LoginActivity : BaseActivity() {
 
               @Throws(IOException::class)
               override fun onResponse(call: Call, response2: Response) {
-                if (response2.code() == 302) {
+                if (response2.code == 302) {
                   if (("/2fa" == response2.header("Location"))) {
                     runOnUiThread {
                       progressBar.visibility = GONE
@@ -176,7 +177,7 @@ class LoginActivity : BaseActivity() {
                     }
                   }
                 } else {
-                  val body = response2.body()?.string()!!
+                  val body = response2.body?.string()!!
                   val myInfo = Parser(body).getMember()
 
                   pref.edit {
@@ -254,13 +255,13 @@ class LoginActivity : BaseActivity() {
   private fun finishLogin(code: String, activity: Activity) {
     val twoStepUrl = "https://www.v2ex.com/2fa"
     vCall(twoStepUrl).enqueue(object : Callback {
-      override fun onFailure(call: Call?, e: IOException?) {
+      override fun onFailure(call: Call, e: IOException) {
         NetManager.dealError(activity)
       }
 
-      override fun onResponse(call: Call?, response: Response?) {
-        if (response?.code() == 200) {
-          val bodyStr = response.body()?.string()!!
+      override fun onResponse(call: Call, response: Response) {
+        if (response.code == 200) {
+          val bodyStr = response.body?.string()!!
           val once = Parser(bodyStr).getOnceNum()
           val body: RequestBody = FormBody.Builder()
                   .add("code", code)
@@ -270,13 +271,13 @@ class LoginActivity : BaseActivity() {
                   .url(twoStepUrl)
                   .build())
                   .enqueue(object : Callback {
-            override fun onFailure(call: Call?, e: IOException?) {
+            override fun onFailure(call: Call, e: IOException) {
               NetManager.dealError(activity)
             }
 
-            override fun onResponse(call: Call?, response: Response?) {
+            override fun onResponse(call: Call, response: Response) {
               activity.runOnUiThread {
-                if (response?.code() == 302) {
+                if (response?.code == 302) {
                   activity.toast("登录成功")
                   setLogin(true)
                 } else {

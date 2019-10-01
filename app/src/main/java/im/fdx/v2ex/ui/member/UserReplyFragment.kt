@@ -89,7 +89,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-                val body = response.body()!!.string()
+                val body = response.body!!.string()
                 val parser = Parser(body)
                 val replyModels = parser.getUserReplies()
 

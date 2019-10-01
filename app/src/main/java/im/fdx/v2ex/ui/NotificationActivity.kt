@@ -64,12 +64,12 @@ class NotificationActivity : BaseActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
 
-                when (response.code()) {
+                when (response.code) {
                     302 -> runOnUiThread {
                         toast("您未登录或登录信息已过时，请重新登录")
                     }
                     200 -> {
-                        val c = Parser(response.body()!!.string()).parseToNotifications()
+                        val c = Parser(response.body!!.string()).parseToNotifications()
                         if (c.isEmpty()) {
                             runOnUiThread {
                               mSwipe.isRefreshing = false
@@ -84,7 +84,7 @@ class NotificationActivity : BaseActivity() {
                             mSwipe.isRefreshing = false
                         }
                     }
-                    else -> NetManager.dealError(this@NotificationActivity, response.code(), mSwipe)
+                    else -> NetManager.dealError(this@NotificationActivity, response.code, mSwipe)
                 }
             }
         })

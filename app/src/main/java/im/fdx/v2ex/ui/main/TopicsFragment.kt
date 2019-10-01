@@ -206,7 +206,7 @@ class TopicsFragment : Fragment() {
                 override fun onResponse(call: Call, response: Response) {
                   showRefresh(false)
 
-                  val str = response.body()!!.string()
+                  val str = response.body!!.string()
                   val type = object : TypeToken<List<Topic>>(){}.type
                   val topicList = Gson().fromJson<List<Topic>>(str, type)
                   topicList.forEach {
@@ -245,15 +245,15 @@ class TopicsFragment : Fragment() {
           override fun onResponse(call: Call, response: okhttp3.Response) {
             showRefresh(false)
 
-            if (response.code() == 302) {
+            if (response.code == 302) {
               if (Objects.equals("/2fa", response.header("Location"))) {
               }
-            } else if (response.code() != 200) {
-              dealError(activity, response.code())
+            } else if (response.code != 200) {
+              dealError(activity, response.code)
               return
             }
 
-            val str = response.body()?.string()!!
+            val str = response.body?.string()!!
             val parser = Parser(str)
             val topicList = parser.parseTopicLists(currentMode)
 
@@ -319,13 +319,14 @@ class TopicsFragment : Fragment() {
         .url(url)
         .build())
         .start(object : Callback {
-          override fun onFailure(call: Call?, e: IOException?) {
+
+          override fun onFailure(call: Call, e: IOException) {
             showRefresh(false)
             dealError(context)
           }
 
-          override fun onResponse(call: Call?, response: Response?) {
-            val body = response?.body()!!.string()
+          override fun onResponse(call: Call, response: Response) {
+            val body = response.body?.string()
             loge(body)
             val result: SearchResult = Gson().fromJson(body, SearchResult::class.java)
             if (nextIndex == 0) {

@@ -181,12 +181,12 @@ class NewTopicActivity : BaseActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
 
-                if (response.code() != 200) {
+                if (response.code != 200) {
                     resetIcon(item)
-                    NetManager.dealError(this@NewTopicActivity, response.code())
+                    NetManager.dealError(this@NewTopicActivity, response.code)
                     return
                 }
-                once = Parser(response.body()!!.string()).getOnceNum2()
+                once = Parser(response.body!!.string()).getOnceNum2()
                 if (once == null) {
                     runOnUiThread {
                         toast("发布主题失败，请退出app重试")
@@ -213,7 +213,7 @@ class NewTopicActivity : BaseActivity() {
                     @Throws(IOException::class)
                     override fun onResponse(call1: Call, response2: Response) {
                         resetIcon(item)
-                        if (response2.code() == 302) {
+                        if (response2.code == 302) {
 
                             val location = response2.header("Location")
                             val p = Pattern.compile("(?<=/t/)(\\d+)")
@@ -228,7 +228,7 @@ class NewTopicActivity : BaseActivity() {
                             }
                             finish()
                         } else {
-                            val errorMsg = Parser(response2.body()!!.string()).getErrorMsg()
+                            val errorMsg = Parser(response2.body!!.string()).getErrorMsg()
                             runOnUiThread {
                                 longToast(errorMsg)
                             }

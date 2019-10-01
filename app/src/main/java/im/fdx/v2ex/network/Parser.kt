@@ -352,7 +352,7 @@ class Parser(private val htmlStr: String) {
                 val wholeText = gray.text()
                 val index = wholeText.indexOf("回复")
                 replyNum = wholeText.substring(0, index - 1)
-                if (!replyNum.isEmpty()) {
+                if (replyNum.isNotEmpty()) {
                     hasReply = true
                 }
                 break

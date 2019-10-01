@@ -2,6 +2,7 @@ package im.fdx.v2ex.network.cookie
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import im.fdx.v2ex.network.NetManager
 import okhttp3.Cookie
 import java.util.*
@@ -45,7 +46,7 @@ class SharedPrefsPersistor : CookiePersistor {
     override fun persistAll(cookies: Collection<Cookie>) {
         val editor = sharedPreferences.edit()
         for (cookie in cookies) {
-            val encode = NetManager.myGson.toJson(cookie)
+            val encode =  Gson().toJson(cookie)
             editor.putString(createCookieKey(cookie), encode)
         }
         editor.apply()
@@ -54,7 +55,7 @@ class SharedPrefsPersistor : CookiePersistor {
 
 
     private fun createCookieKey(cookie: Cookie): String {
-        return "${if (cookie.secure()) "https" else "http"}://${cookie.domain()}${cookie.path()}|${cookie.name()}"
+        return "${if (cookie.secure) "https" else "http"}://${cookie.domain}${cookie.path}|${cookie.name}"
     }
 
     override fun loadAll(): List<Cookie> {

@@ -249,7 +249,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
 
-                if (response.code() == 200) {
+                if (response.code == 200) {
                     act.runOnUiThread {
                         act.toast("感谢成功")
                         replyItem.thanks = replyItem.thanks + 1
@@ -259,7 +259,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                         replyItem.isThanked = true
                     }
                 } else {
-                    NetManager.dealError(act, response.code())
+                    NetManager.dealError(act, response.code)
                 }
             }
         })

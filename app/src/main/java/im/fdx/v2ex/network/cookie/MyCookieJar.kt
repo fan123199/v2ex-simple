@@ -18,17 +18,17 @@ class MyCookieJar(private val cookiePersistor: SharedPrefsPersistor) : CookieJar
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
         mCookies.clear()
         mCookies.addAll(cookies)
-        cookieStore[url.host()] = mCookies
+        cookieStore[url.host] = mCookies
         cookiePersistor.persistAll(cookies)
     }
 
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
 
-        val cookies: List<Cookie>? = if (cookiePersistor.loadByHost(url.host()).isNotEmpty()) {
-            cookiePersistor.loadByHost(url.host().removePrefix("www."))
+        val cookies: List<Cookie>? = if (cookiePersistor.loadByHost(url.host).isNotEmpty()) {
+            cookiePersistor.loadByHost(url.host.removePrefix("www."))
         } else
-            cookieStore[url.host()]
-        return cookies ?: ArrayList<Cookie>()
+            cookieStore[url.host]
+        return cookies ?: ArrayList()
     }
 
     fun clear() {

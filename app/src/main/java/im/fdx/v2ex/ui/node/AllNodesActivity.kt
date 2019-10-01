@@ -81,12 +81,12 @@ class AllNodesActivity : BaseActivity() {
           @Throws(IOException::class)
           override fun onResponse(call: Call, response: okhttp3.Response) {
 
-            if (response.code() != 200) {
-              dealError(response.code())
+            if (response.code != 200) {
+              dealError(response.code)
               return
             }
 
-            val nodeModels = Parser(response.body()!!.string()).getAllNode()
+            val nodeModels = Parser(response.body!!.string()).getAllNode()
 
             mAdapter.setData(nodeModels)
             runOnUiThread {

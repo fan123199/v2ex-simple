@@ -117,7 +117,7 @@ class NodeActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                if (response.code() == 302) {
+                if (response.code == 302) {
                     getNodeInfo()
                     runOnUiThread { toast("${if (isFavorite) "取消" else ""}关注成功") }
                 }
@@ -144,7 +144,7 @@ class NodeActivity : BaseActivity() {
                 if(isFinishing) {
                     return
                 }
-                val code = response.code()
+                val code = response.code
                 if (code == 302) {
                     if(myApp.isLogin){
                         toast("无法访问该节点")
@@ -157,7 +157,7 @@ class NodeActivity : BaseActivity() {
                     return
                 }
 
-                val html = response.body()?.string()!!
+                val html = response.body?.string()!!
                 val parser = Parser(html)
 
                 val topicList = parser.parseTopicLists(Parser.Source.FROM_NODE)

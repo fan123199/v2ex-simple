@@ -251,7 +251,7 @@ class TopicFragment : BaseFragment() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
-                val code = response.code()
+                val code = response.code
                 if (code == 302) {
                     //权限问题，需要登录
                     activity?.runOnUiThread {
@@ -274,7 +274,7 @@ class TopicFragment : BaseFragment() {
                     return
                 }
 
-                val bodyStr = response.body()!!.string()
+                val bodyStr = response.body!!.string()
 
                 val parser = Parser(bodyStr)
                 topicHeader = parser.parseResponseToTopic(mTopicId)
@@ -357,7 +357,7 @@ class TopicFragment : BaseFragment() {
 
                     @Throws(IOException::class)
                     override fun onResponse(call: Call, response: Response) {
-                        if (response.code() == 302) {
+                        if (response.code == 302) {
                             activity?.runOnUiThread {
                                 toast("${if (doFavor) "取消" else ""}收藏成功")
                                 swipe_details?.isRefreshing = true
@@ -382,13 +382,13 @@ class TopicFragment : BaseFragment() {
                     }
 
                     override fun onResponse(call: Call, response: Response) {
-                        if (response.code() == 200) {
+                        if (response.code == 200) {
                             activity?.runOnUiThread {
                                 toast("感谢成功")
                                 mMenu?.findItem(R.id.menu_thank_topic)?.setTitle(R.string.already_thank)
                             }
                         } else {
-                            NetManager.dealError(activity, response.code())
+                            NetManager.dealError(activity, response.code)
                         }
                     }
                 })
@@ -432,7 +432,7 @@ class TopicFragment : BaseFragment() {
                 activity?.runOnUiThread {
                     pb_send.visibility = View.GONE
                     iv_send.visibility = View.VISIBLE
-                    if (response.code() == 302) {
+                    if (response.code == 302) {
                         logd("成功发布")
                         toast("发表评论成功")
                         et_post_reply.setText("")
