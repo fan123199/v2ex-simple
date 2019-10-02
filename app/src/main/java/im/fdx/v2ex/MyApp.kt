@@ -62,7 +62,9 @@ fun setLogin(login: Boolean) {
   pref.edit {
     putBoolean(Keys.PREF_KEY_IS_LOGIN, login)
   }
-  HttpHelper.myCookieJar.clear()
+  if(!login){
+    HttpHelper.myCookieJar.clear()
+  }
   LocalBroadcastManager.getInstance(myApp).sendBroadcast(
           if (login){
             Intent(Keys.ACTION_LOGIN)
