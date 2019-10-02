@@ -81,4 +81,6 @@
     <string name="indicator">指示</string>
     <string name="show_user_all_reply">显示该用户全部评论</string>
     <string name="already_thank">已感谢</string>
+    <string name="ignore">忽略</string>
+    <string name="already_ignore">取消忽略</string>
 </resources>

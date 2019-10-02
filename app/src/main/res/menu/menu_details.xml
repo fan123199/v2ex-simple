@@ -13,6 +13,12 @@
         android:orderInCategory="91"
         android:title="@string/thanks"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_ignore_topic"
+        android:orderInCategory="92"
+        android:title="@string/ignore"
+        app:showAsAction="never" />
     <item
         android:id="@+id/menu_item_share"
         android:icon="@drawable/ic_share_white_24dp"

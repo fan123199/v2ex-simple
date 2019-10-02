@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -56,6 +55,7 @@ class TopicFragment : BaseFragment() {
     private var topicHeader: Topic? = null
     private var isFavored: Boolean = false
     private var isThanked: Boolean = false
+    private var isIgnored: Boolean = false
 
     private var temp :String = ""
     private val uiScope = CoroutineScope(Dispatchers.Main)
@@ -109,6 +109,9 @@ class TopicFragment : BaseFragment() {
                 when (it.itemId) {
 
                     R.id.menu_favor -> token?.let { token -> favorOrNot(mTopicId, token, isFavored) }
+                    R.id.menu_ignore_topic -> {
+                        once?.let {  ignoreTopicOrNot(mTopicId, it, isIgnored)  }
+                    }
                     R.id.menu_thank_topic -> {
                         token?.let { thankTopic(mTopicId, it, isThanked) }
                     }
@@ -220,6 +223,8 @@ class TopicFragment : BaseFragment() {
         getRepliesPageOne(false)
     }
 
+
+
     // 设置渐变的动画
     fun startAlphaAnimation(v: View?, duration: Int, show: Boolean) {
         val anim = when {
@@ -294,6 +299,7 @@ class TopicFragment : BaseFragment() {
                     mAdapter.once = once
                     isFavored = parser.isTopicFavored()
                     isThanked = parser.isTopicThanked()
+                    isIgnored = parser.isIgnored()
 
                     logd("is favored: $isFavored")
                     activity?.runOnUiThread {
@@ -312,7 +318,11 @@ class TopicFragment : BaseFragment() {
                             mMenu?.findItem(R.id.menu_thank_topic)?.setTitle(R.string.thanks)
                         }
 
-
+                        if (isIgnored) {
+                            mMenu?.findItem(R.id.menu_ignore_topic)?.setTitle(R.string.already_ignore)
+                        } else {
+                            mMenu?.findItem(R.id.menu_ignore_topic)?.setTitle(R.string.ignore)
+                        }
                     }
 
                 }
@@ -393,6 +403,28 @@ class TopicFragment : BaseFragment() {
                 })
     }
 
+
+    ///unignore/topic/605954?once=10562
+    ///ignore/topic/605954?once=10562
+    private fun ignoreTopicOrNot(topicId: String, once: String, isIgnored: Boolean) {
+        vCall("https://www.v2ex.com/${if (isIgnored) "un" else ""}ignore/topic/$topicId?once=$once")
+                .start(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        NetManager.dealError(activity)
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.code == 302) {
+                            activity?.runOnUiThread {
+                                toast("${if (isIgnored) "取消" else ""}忽略成功")
+                            }
+                        } else {
+                            NetManager.dealError(activity, response.code)
+                        }
+                    }
+                })
+
+    }
 
     private fun postReply() {
         et_post_reply.clearFocus()
