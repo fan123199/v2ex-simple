@@ -147,7 +147,9 @@ class NodeActivity : BaseActivity() {
                 val code = response.code
                 if (code == 302) {
                     if(myApp.isLogin){
-                        toast("无法访问该节点")
+                        runOnUiThread {
+                            toast("无法访问该节点")
+                        }
                     } else {
                         showLoginHint(toolbar)
                     }
