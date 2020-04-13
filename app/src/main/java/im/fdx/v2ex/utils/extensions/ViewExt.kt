@@ -18,9 +18,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
 import com.elvishew.xlog.XLog
 import com.esafirm.imagepicker.features.ImagePicker
-import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
@@ -137,7 +137,7 @@ fun SwipeRefreshLayout.initTheme() {
 }
 
 fun ImageView.load(url: Any?) {
-  GlideApp.with(this)
+  Glide.with(this)
       .load(url)
       .into(this)
 }

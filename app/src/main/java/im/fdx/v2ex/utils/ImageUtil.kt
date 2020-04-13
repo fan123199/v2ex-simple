@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Base64
 import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -14,7 +15,6 @@ import java.io.IOException
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.BuildConfig
-import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.myApp
 import org.jetbrains.anko.toast
 
@@ -42,7 +42,7 @@ object ImageUtil {
 
     private fun downloadImage(url: String, ready : (Uri) ->Unit) {
 
-        GlideApp.with(myApp)
+        Glide.with(myApp)
                 .asBitmap()
                 .load(url)
                 .into(object : SimpleTarget<Bitmap>() {

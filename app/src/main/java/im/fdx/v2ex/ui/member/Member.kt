@@ -51,8 +51,14 @@ data class Member(
 ) : Parcelable {
 
   val avatarNormalUrl: String
-    get() = "https:" + Regex("\\?s=\\d{1,3}").replace(avatar_normal, "?s=64")
+    get() {
+        val prefix = if (avatar_normal.startsWith("https:")) "" else "https:"
+        return prefix + Regex("\\?s=\\d{1,3}").replace(avatar_normal, "?s=64")
+    }
 
   val avatarLargeUrl: String
-    get() = "https:" + Regex("\\?s=\\d{1,3}").replace(avatar_normal, "?s=128").replace("normal","large").replace("mini","large")
+    get() {
+        val prefix = if (avatar_normal.startsWith("https:")) "" else "https:"
+        return prefix + Regex("\\?s=\\d{1,3}").replace(avatar_normal, "?s=128").replace("normal","large").replace("mini","large")
+    }
 }

@@ -19,9 +19,9 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.ui.PhotoActivity
@@ -49,7 +49,7 @@ class GoodTextView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
-) : TextView(context, attrs, defStyleAttr) {
+) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
 
     var popupListener: Popup.PopupListener? = null
 
@@ -189,7 +189,7 @@ class MyImageGetter(val tv: GoodTextView, val type: Int) : Html.ImageGetter {
                         " ${bitmap.width},${bitmap.height}")
             }
         }
-        GlideApp.with(tv)
+        Glide.with(tv)
                 .asBitmap()
                 .load(source)
                 .into(target)

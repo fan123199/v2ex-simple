@@ -11,11 +11,11 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.elvishew.xlog.XLog
-import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
@@ -121,7 +121,7 @@ class LoginActivity : BaseActivity() {
               .build()
           val url = GlideUrl(str, headers)
           if (!this@LoginActivity.isDestroyed) {
-            GlideApp.with(iv_code)
+            Glide.with(iv_code)
                     .load(url)
                     .transition(withCrossFade())
                     .centerCrop().into(iv_code)
