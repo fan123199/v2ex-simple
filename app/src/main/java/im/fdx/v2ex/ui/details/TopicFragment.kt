@@ -140,9 +140,11 @@ class TopicFragment : BaseFragment() {
         if (MyApp.get().isLogin) {
             mMenu?.findItem(R.id.menu_favor)?.isVisible = true
             mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = true
+            mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = true
         } else {
             mMenu?.findItem(R.id.menu_favor)?.isVisible = false
             mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = false
+            mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = false
         }
         //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
         val mLayoutManager = LinearLayoutManager(activity)
