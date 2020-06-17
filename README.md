@@ -1,5 +1,5 @@
 # v2ex-simple
-An simple android client for exploring V2EX. Better UI, Better UX. 
+A simple android client for exploring V2EX. Excellent user experience. 
 Project is first written by Java and now kotlin.
 
 [中文Readme](./README-zh.md)
