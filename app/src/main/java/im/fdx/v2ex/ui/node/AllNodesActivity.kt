@@ -86,7 +86,8 @@ class AllNodesActivity : BaseActivity() {
               return
             }
 
-            val nodeModels = Parser(response.body!!.string()).getAllNode()
+            val htmlStr = response.body!!.string()
+            val nodeModels = Parser(htmlStr).getAllNode()
 
             mAdapter.setData(nodeModels)
             runOnUiThread {

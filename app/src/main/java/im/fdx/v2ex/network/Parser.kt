@@ -128,8 +128,7 @@ class Parser(private val htmlStr: String) {
     fun getAllNode(): MutableList<Node> {
         val allNodes = mutableListOf<Node>()
         val body = doc.body()
-        val main = body.getElementsByAttributeValue("id", "Main").getOrNull(0)
-        val boxes: Elements? = main?.getElementsByClass("box")
+        val boxes: Elements? = body?.getElementsByClass("box")
 
         boxes?.filterIndexed { index, _ -> index > 0 }?.forEach {
             val title = it.getElementsByClass("header")?.first()?.ownText()?:""
@@ -285,7 +284,7 @@ class Parser(private val htmlStr: String) {
             val thanked = item.getElementsByClass("thank_area thanked").first()
             replyModel.isThanked = thanked != null && "感谢已发送" == thanked.text()
 
-            val createdOriginal = item.getElementsByClass("ago").text()
+            val createdOriginal = item.getElementsByClass("fade small").text()
             val replyContent = item.getElementsByClass("reply_content").first()
             replyModel.created = TimeUtil.toUtcTime(createdOriginal)
             replyModel.member = memberModel
@@ -344,10 +343,10 @@ class Parser(private val htmlStr: String) {
 
         topicModel.content_rendered = contentRendered.fullUrl()
 
-        val headerTopic = doc.getElementById("Main").getElementsByClass("header").first()
+        val headerTopic = doc.getElementsByClass("header").first()
         val createdUnformed = headerTopic.getElementsByClass("gray").first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
-        val time = createdUnformed.split("·")[1]
+        val time = createdUnformed.split("·")[0].split("at")[1]
         val created = TimeUtil.toUtcTime(time)
 
         var replyNum = ""

@@ -56,12 +56,12 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_replier"
         android:layout_alignTop="@+id/iv_reply_avatar"
-        android:layout_marginLeft="48dp"
+        android:layout_marginEnd="36dp"
         android:layout_marginTop="8dp"
         android:layout_toEndOf="@+id/tv_replier"
         android:text="@string/reply_time"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
-        app:layout_constraintLeft_toRightOf="@+id/tv_replier"
+        app:layout_constraintEnd_toStartOf="@+id/iv_thanks"
         app:layout_constraintTop_toTopOf="@+id/tv_replier"
         app:layout_constraintVertical_bias="1.0" />
 

@@ -1,5 +1,6 @@
 package im.fdx.v2ex.network
 
+import android.util.Log
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.crashlytics.android.Crashlytics
 import im.fdx.v2ex.MyApp
@@ -9,6 +10,7 @@ import im.fdx.v2ex.utils.extensions.logi
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -23,9 +25,9 @@ object HttpHelper {
 
     val OK_CLIENT: OkHttpClient = OkHttpClient().newBuilder()
 //                        .addInterceptor(HttpLoggingInterceptor())
-            //            .connectTimeout(10, TimeUnit.SECONDS)
-            //            .writeTimeout(10, TimeUnit.SECONDS)
-            //            .readTimeout(30, TimeUnit.SECONDS)
+                        .connectTimeout(10, TimeUnit.SECONDS)
+                        .writeTimeout(10, TimeUnit.SECONDS)
+                        .readTimeout(30, TimeUnit.SECONDS)
             .followRedirects(false)  //禁止重定向
             .addNetworkInterceptor(
                         HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
@@ -36,19 +38,16 @@ object HttpHelper {
                     )
             .addInterceptor(ChuckerInterceptor(MyApp.get()))//好东西，查看Okhttp数据
             .addInterceptor { chain ->
-                chain.proceed(chain.request())
-            }
-            .addInterceptor { chain ->
                 val request = chain.request()
                         .newBuilder()
-                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
                         .header("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
+                        .header("Accept-Encoding", "gzip, deflate, br")
                         .header("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
                         .header("Host", "www.v2ex.com")
+                        .header("Authority", "v2ex.com")
                         .header("Cache-Control", "max-age=0")
-                        //  .header("X-Requested-With", "com.android.browser")
-                        //  .header("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
-                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36")
+                        .header("User-Agent", "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Mobile Safari/537.36")
                         .build()
                 chain.proceed(request)
             }
@@ -57,7 +56,10 @@ object HttpHelper {
 
 }
 
-fun vCall(url: String): Call = HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).build())
+fun vCall(url: String): Call {
+    Log.d("fdx", "vCall: $url ")
+    return HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).build())
+}
 
 
 fun Call.start(callback: Callback) {
