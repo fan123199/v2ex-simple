@@ -111,6 +111,12 @@
                 android:text="@string/register_tip"
                 android:textColor="@color/light_hint"
                 android:textSize="@dimen/text_size_medium"/>
+            
+            <TextView
+                android:text="Google Login"
+                android:id="@+id/tv_google_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
     </ScrollView>

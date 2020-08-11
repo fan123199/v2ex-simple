@@ -49,7 +49,7 @@ class GoodTextView @JvmOverloads constructor(
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0
-) : TextView(context, attrs, defStyleAttr) {
+) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
 
     var popupListener: Popup.PopupListener? = null
 

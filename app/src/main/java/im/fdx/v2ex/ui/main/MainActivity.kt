@@ -82,9 +82,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       when (action) {
         Keys.ACTION_LOGIN -> {
           invalidateOptionsMenu()
-          val username = pref.getString(Keys.PREF_USERNAME, "")
-          val avatar = pref.getString(Keys.PREF_AVATAR, "")
-          setUserInfo(username, avatar)
+          updateUserInBackground()
           reloadTab()
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))

@@ -21,7 +21,8 @@ import java.util.logging.Logger
 
 object HttpHelper {
 
-    val myCookieJar: MyCookieJar = MyCookieJar(SharedPrefsPersistor(MyApp.get()))
+    val cookiePersistor = SharedPrefsPersistor(MyApp.get())
+    val myCookieJar: MyCookieJar = MyCookieJar(cookiePersistor)
 
     val OK_CLIENT: OkHttpClient = OkHttpClient().newBuilder()
 //                        .addInterceptor(HttpLoggingInterceptor())

@@ -19,7 +19,6 @@ class SharedPrefsPersistor : CookiePersistor {
 
     private var sharedPreferences: SharedPreferences
 
-
     constructor(context: Context) {
         this.sharedPreferences = context.getSharedPreferences("v2ex_cookie", Context.MODE_PRIVATE)
     }

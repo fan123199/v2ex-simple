@@ -79,7 +79,7 @@ class SettingsActivity : BaseActivity() {
 
     private fun prefTab() {
       findPreference<Preference>("pref_tab_bar")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-        val intent = Intent(activity!!, TabSettingActivity::class.java)
+        val intent = Intent(requireActivity(), TabSettingActivity::class.java)
         startActivityForResult(intent, 110)
         true
       }
@@ -88,7 +88,7 @@ class SettingsActivity : BaseActivity() {
     private fun prefUser() {
       findPreference<Preference>(Keys.PREF_LOGOUT)?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
 
-        AlertDialog.Builder(activity!!)
+        AlertDialog.Builder(requireActivity())
             .setTitle("提示")
             .setMessage("确定要退出吗")
             .setPositiveButton(R.string.ok) { _, _ ->
@@ -178,7 +178,7 @@ class SettingsActivity : BaseActivity() {
         }
 
         PREF_TEXT_SIZE -> {
-          LocalBroadcastManager.getInstance(activity!!).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
+          LocalBroadcastManager.getInstance(myApp).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
           activity?.finish()
         }
       }

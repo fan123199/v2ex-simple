@@ -51,7 +51,7 @@
         <item
             android:visible="false"
             android:id="@+id/nav_change_daylight"
-            android:title="nav_testMenu2 "/>
+            android:title="nav_testMenu2_openWebview"/>
 
     </group>
 

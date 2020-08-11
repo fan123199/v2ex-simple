@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.item_verify_code.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.anko.longToast
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -76,6 +77,10 @@ class LoginActivity : BaseActivity() {
     }
     iv_code.setOnClickListener {
       getLoginElement()
+    }
+
+    tv_google_login.setOnClickListener{
+      startActivity<WebViewActivity>("url" to "https://www.v2ex.com/signin")
     }
 
     if (!usernamePref.isNullOrEmpty()) {
@@ -177,14 +182,6 @@ class LoginActivity : BaseActivity() {
                     }
                   }
                 } else {
-                  val body = response2.body?.string()!!
-                  val myInfo = Parser(body).getMember()
-
-                  pref.edit {
-                    putString(Keys.PREF_USERNAME, myInfo.username)
-                    putString(Keys.PREF_AVATAR, myInfo.avatarLargeUrl)
-                  }
-
                   setLogin(true)
                   runOnUiThread {
                     toast("登录成功")
@@ -241,7 +238,7 @@ class LoginActivity : BaseActivity() {
             .setPositiveButton("验证") { _, _ ->
               finishLogin(etCode.text.toString(), activity)
             }
-            .setNegativeButton("退出登录") { _, _ ->
+            .setNegativeButton("暂不登录") { _, _ ->
               HttpHelper.myCookieJar.clear()
               setLogin(false)
 

@@ -65,12 +65,12 @@ class TopicFragment : BaseFragment() {
             XLog.tag("TopicActivity").d("get in broadcast: " + intent.action)
             if (intent.action == Keys.ACTION_LOGIN) {
                 activity?.invalidateOptionsMenu()
-                setFootView(true)
+                setFootView()
                 swipe_details?.isRefreshing = true
                 getRepliesPageOne(false)
             } else if (intent.action == Keys.ACTION_LOGOUT) {
                 activity?.invalidateOptionsMenu()
-                setFootView(false)
+                setFootView()
             } else if (intent.action == Keys.ACTION_GET_MORE_REPLY) {
                 logd("MSG_GET  LocalBroadCast")
                 if (intent.getStringExtra(Keys.KEY_TOPIC_ID) == mTopicId) {
@@ -91,11 +91,14 @@ class TopicFragment : BaseFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        LocalBroadcastManager.getInstance(activity!!).registerReceiver(receiver, IntentFilter(Keys.ACTION_LOGIN).apply {
-            addAction(Keys.ACTION_LOGOUT)
-            addAction(Keys.ACTION_GET_MORE_REPLY)
-        })
-        setFootView(MyApp.get().isLogin)
+        LocalBroadcastManager.getInstance(myApp)
+                .registerReceiver(receiver, IntentFilter()
+                        .apply {
+                            addAction(Keys.ACTION_LOGIN)
+                            addAction(Keys.ACTION_LOGOUT)
+                            addAction(Keys.ACTION_GET_MORE_REPLY)
+                        })
+        setFootView()
 
 
         toolbar.run {
@@ -171,7 +174,7 @@ class TopicFragment : BaseFragment() {
             }
         })
 
-        mAdapter = TopicDetailAdapter(activity!!) { position: Int ->
+        mAdapter = TopicDetailAdapter(requireActivity()) { position: Int ->
             detail_recycler_view.smoothScrollToPosition(position)
         }
         detail_recycler_view.adapter = mAdapter
@@ -181,7 +184,7 @@ class TopicFragment : BaseFragment() {
         et_post_reply.setOnFocusChangeListener { v, hasFocus ->
 
             if (!hasFocus) {
-                val inputMethodManager = activity!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
             }
         }
@@ -239,8 +242,8 @@ class TopicFragment : BaseFragment() {
     }
 
 
-    private fun setFootView(isVisible: Boolean) {
-        activity?.findViewById<View>(R.id.foot_container)?.isVisible = isVisible
+    private fun setFootView() {
+        activity?.findViewById<View>(R.id.foot_container)?.isVisible = myApp.isLogin
     }
 
 
@@ -484,7 +487,7 @@ class TopicFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        LocalBroadcastManager.getInstance(activity!!).unregisterReceiver(receiver)
+        LocalBroadcastManager.getInstance(myApp).unregisterReceiver(receiver)
         uiScope.launch {
             DbHelper.db.myReplyDao().insert(MyReply(mTopicId, temp))
         }

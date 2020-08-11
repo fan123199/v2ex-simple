@@ -123,7 +123,7 @@ class TabSettingActivity : BaseActivity() {
       putString(PREF_TAB, savedList)
     }
 
-    LocalBroadcastManager.getInstance(this).sendBroadcast(Intent("im.fdx.v2ex.main_page_setting_change"))
+    LocalBroadcastManager.getInstance(this).sendBroadcast(Intent(Keys.ACTION_TAB_SETTING))
 
     finish()
 

@@ -13,12 +13,12 @@
         android:id="@+id/tv_my_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="0dp"
         android:layout_marginTop="16dp"
         android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/iv_my_avatar"
         app:layout_constraintStart_toStartOf="@+id/iv_my_avatar"
         app:layout_constraintTop_toBottomOf="@+id/iv_my_avatar"
-        tools:text="@string/username"/>
+        tools:text="fdx" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_my_avatar"

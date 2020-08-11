@@ -149,10 +149,11 @@ class Parser(private val htmlStr: String) {
 
 
     fun getMember(): Member {
-        val rightbar = doc.getElementById("Rightbar")
-        val memberElement = rightbar?.getElementsByTag("a")?.first()
+        val rightbar = doc.getElementById("menu-entry")
+        val avatarUrl = rightbar?.getElementsByTag("img")?.first()?.attr("src")?:""
+        val userMenu = doc.getElementById("user-menu")
+        val memberElement = userMenu?.getElementsByTag("a")?.first()
         val username = memberElement?.attr("href")?.replace("/member/", "")?:""
-        val avatarUrl = memberElement?.getElementsByClass("avatar")?.first()?.attr("src")?:""
         val memberModel = Member()
         memberModel.username = username
         memberModel.avatar_normal = avatarUrl
@@ -302,10 +303,8 @@ class Parser(private val htmlStr: String) {
     fun getVerifyCode(): String? {
 
         // <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
-        val element: Element = doc.getElementsByClass("topic_buttons")?.first()?.getElementsByTag("a")?.first()
-                ?: return null
         val p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+")
-        val matcher = p.matcher(element.outerHtml())
+        val matcher = p.matcher(htmlStr)
         return if (matcher.find()) {
             matcher.group()
         } else
