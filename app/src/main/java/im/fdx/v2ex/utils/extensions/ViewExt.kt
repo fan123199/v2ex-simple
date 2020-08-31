@@ -169,9 +169,9 @@ fun openImagePicker(activity: Activity) {
         }
         .setTitle("使用须知")
         .setMessage("""
-                    1. 本app使用图床来自https://sm.ms。
-                    2. 上传的图片为公开图片，且暂无删除功能，请谨慎使用。
-                    3. 图片内容需遵守当地法律法规。
+                    1. 本app使用图床来自https://sm.ms
+                    2. 上传的图片为公开图片，且暂无删除功能，请谨慎使用
+                    3. 图片内容需遵守当地法律法规
                     4. 每次最多选择10张图片
                 """.trimIndent()).show()
   } else {
