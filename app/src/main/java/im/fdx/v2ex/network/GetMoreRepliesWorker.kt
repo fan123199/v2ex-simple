@@ -1,34 +1,37 @@
-package im.fdx.v2ex.ui.details
+package im.fdx.v2ex.network
 
-import android.app.IntentService
+import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.os.Build
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.vCall
+import androidx.work.Worker
+import androidx.work.WorkerParameters
+import com.elvishew.xlog.XLog
+import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.NotificationActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
-import okhttp3.Request
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
 import java.io.IOException
+import java.util.regex.Pattern
 
-/**
- * 为什么不用Thread？感觉Thread不高级
- */
-class MoreReplyService @JvmOverloads constructor(name: String = "what") : IntentService(name) {
+class GetMoreRepliesWorker(val context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
+    override fun doWork(): Result {
 
-    override fun onHandleIntent(intent: Intent?) {
+        getAllMore()
 
-        when (intent) {
-            null -> return
-            else -> getAllMore(intent)
-        }
+        return Result.success()
+
     }
-
-    private fun getAllMore(intent: Intent) {
-        val totalPage = intent.getIntExtra("page", -1)
-        val topicId = intent.getStringExtra("topic_id")
-        val isToBottom = intent.getBooleanExtra("bottom", false)
+    private fun getAllMore() {
+        val totalPage = inputData.getInt("page", -1)
+        val topicId = inputData.getString("topic_id")
+        val isToBottom = inputData.getBoolean("bottom", false)
 
         logd(totalPage.toString() + " | " + topicId)
         if (totalPage <= 1 || topicId == null) {
@@ -54,7 +57,7 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
                 if (i == totalPage && isToBottom) {
                     replyIntent.putExtra("bottom", true)
                 }
-              LocalBroadcastManager.getInstance(this).sendBroadcast(replyIntent)
+                LocalBroadcastManager.getInstance(context).sendBroadcast(replyIntent)
             }
 
         } catch (e: IOException) {
@@ -62,4 +65,5 @@ class MoreReplyService @JvmOverloads constructor(name: String = "what") : Intent
         }
 
     }
+
 }

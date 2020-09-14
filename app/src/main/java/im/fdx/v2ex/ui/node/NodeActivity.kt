@@ -76,7 +76,7 @@ class NodeActivity : BaseActivity() {
 
         nodeName = when {
             intent.data != null -> intent.data!!.pathSegments[1]
-            intent.getStringExtra(Keys.KEY_NODE_NAME) != null -> intent.getStringExtra(Keys.KEY_NODE_NAME)
+            intent.getStringExtra(Keys.KEY_NODE_NAME) != null -> intent.getStringExtra(Keys.KEY_NODE_NAME)!!
             else -> ""
         }
 
@@ -98,8 +98,8 @@ class NodeActivity : BaseActivity() {
     }
 
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.menu_follow -> {
                 switchFollowAndRefresh(isFollowed)
             }

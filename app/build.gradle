@@ -7,11 +7,11 @@ apply plugin: 'io.fabric'
 
 android {
 
-    compileSdkVersion 29
+    compileSdkVersion 30
     defaultConfig {
         applicationId "im.fdx.v2ex"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 39
         versionName "2.6.5"
     }

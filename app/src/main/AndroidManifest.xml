@@ -181,8 +181,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ui.details.MoreReplyService"/>
-
         <activity android:name=".ui.WebViewActivity" />
 
         <activity

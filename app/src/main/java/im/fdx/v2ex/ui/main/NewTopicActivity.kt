@@ -87,7 +87,7 @@ class NewTopicActivity : BaseActivity() {
             }
 
         } else if (requestCode == REQUEST_NODE && resultCode == Activity.RESULT_OK && data != null) {
-            val nodeInfo = data.getParcelableExtra<Node>("extra_node")
+            val nodeInfo = data.getParcelableExtra<Node>("extra_node")!!
             mNodename = nodeInfo.name
             search_spinner_node.text = "${nodeInfo.name} | ${nodeInfo.title}"
         }

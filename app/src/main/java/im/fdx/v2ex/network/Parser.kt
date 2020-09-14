@@ -223,11 +223,8 @@ class Parser(private val htmlStr: String) {
 
     fun getPageValue(): IntArray {
 
-        val currentPage: Int
-        val totalPage: Int
-        val pageInput = doc.getElementsByClass("page_input").first() ?: return intArrayOf(-1, -1)
-        currentPage = (pageInput.attr("value")).toIntOrNull()?:-1
-        totalPage = (pageInput.attr("max")).toIntOrNull()?:-1
+        val currentPage: Int = doc.getElementsByClass("page_current").first().ownText().toIntOrNull()?: -1
+        val totalPage: Int = doc.getElementsByClass("page_normal").first().ownText().toIntOrNull()?:-1
         return intArrayOf(currentPage, totalPage)
 
     }

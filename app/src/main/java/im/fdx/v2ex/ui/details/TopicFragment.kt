@@ -17,6 +17,7 @@ import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.*
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -36,6 +37,7 @@ import kotlinx.coroutines.*
 import okhttp3.*
 import org.jetbrains.anko.share
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 /**
  * Create by fandongxiao on 2019/5/16
@@ -75,8 +77,8 @@ class TopicFragment : BaseFragment() {
                 logd("MSG_GET  LocalBroadCast")
                 if (intent.getStringExtra(Keys.KEY_TOPIC_ID) == mTopicId) {
                     token = intent.getStringExtra("token")
-                    val rm = intent.getParcelableArrayListExtra<Reply>("replies")
-                    mAdapter.addItems(rm)
+                    val rm: ArrayList<Reply>? = intent.getParcelableArrayListExtra("replies")
+                    rm?.let { mAdapter.addItems(it) }
                     if (intent.getBooleanExtra("bottom", false)) {
                         detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
                     }
@@ -352,13 +354,16 @@ class TopicFragment : BaseFragment() {
     }
 
     private fun getMoreRepliesByOrder(totalPage: Int, scrollToBottom: Boolean) {
-        val intentGetMoreReply = Intent(activity, MoreReplyService::class.java)
-        intentGetMoreReply.action = "im.fdx.v2ex.get.other.more"
-        intentGetMoreReply.putExtra("page", totalPage)
-        intentGetMoreReply.putExtra("topic_id", mTopicId)
-        intentGetMoreReply.putExtra("bottom", scrollToBottom)
-        activity?.startService(intentGetMoreReply)
-        logd("yes I startIntentService")
+
+
+        val compressionWork = OneTimeWorkRequestBuilder<GetMoreRepliesWorker>()
+                .setInputData(workDataOf(
+                        "page" to totalPage,
+                        "topic_id" to mTopicId,
+                        "bottom" to scrollToBottom
+                ))
+                .build()
+        WorkManager.getInstance().enqueue(compressionWork)
     }
 
     private fun favorOrNot(topicId: String, token: String, doFavor: Boolean) {
