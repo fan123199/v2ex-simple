@@ -16,7 +16,8 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import com.google.android.material.appbar.AppBarLayout
-import im.fdx.v2ex.*
+import im.fdx.v2ex.BuildConfig
+import im.fdx.v2ex.R
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.API_TOPIC
 import im.fdx.v2ex.network.NetManager.API_USER
@@ -25,6 +26,8 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.pref
+import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
@@ -82,9 +85,15 @@ class MemberActivity : BaseActivity() {
             iv_twitter.setOnClickListener(listener)
             tv_website.setOnClickListener(listener)
         }
-        username = getName(intent)
 
         setUpToolbar()
+
+        username = getName(intent)
+
+        if(username.isNullOrEmpty()) {
+            toast("未知问题，无法访问用户信息")
+            return
+        }
 
         memberViewpagerAdapter.username = username ?: ""
         viewpager.adapter = memberViewpagerAdapter

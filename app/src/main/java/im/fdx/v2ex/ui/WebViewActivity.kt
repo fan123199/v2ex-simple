@@ -2,23 +2,17 @@ package im.fdx.v2ex.ui
 
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.os.Build
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.webkit.*
-import android.widget.TextView
-import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.setLogin
-import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.Cookie
-import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 
@@ -54,7 +48,7 @@ class WebViewActivity : AppCompatActivity() {
         myWebView.webViewClient = webViewClient
 
 
-        if (url != null) {
+        if (url.isNotEmpty()) {
             myWebView.loadUrl(url)
         }
     }
@@ -103,6 +97,19 @@ class WebViewActivity : AppCompatActivity() {
             toolbar.title = title
             super.onReceivedTitle(view, title)
         }
+
+        override fun onProgressChanged(view: WebView?, newProgress: Int) {
+            if(newProgress < 100) {
+                if(view?.url.equals("https://www.v2ex.com/#")) {
+                    val progressDialog = ProgressDialog(this@WebViewActivity)
+                    progressDialog.setMessage("请等待加载完成")
+                    progressDialog.show()
+                }
+            } else{
+
+            }
+        }
+
     }
 
 

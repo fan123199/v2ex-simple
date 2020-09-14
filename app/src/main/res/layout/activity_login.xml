@@ -103,17 +103,21 @@
 
             <TextView
                 android:id="@+id/link_sign_up"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="16dp"
+                android:padding="8dp"
                 android:layout_marginTop="16dp"
-                android:gravity="center"
                 android:text="@string/register_tip"
                 android:textColor="@color/light_hint"
                 android:textSize="@dimen/text_size_medium"/>
             
             <TextView
-                android:text="Google Login"
+                android:text="@string/google_login"
+                android:textColor="@color/light_hint"
+                android:padding="8dp"
+                android:textSize="@dimen/text_size_medium"
+                android:visibility="gone"
                 android:id="@+id/tv_google_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>

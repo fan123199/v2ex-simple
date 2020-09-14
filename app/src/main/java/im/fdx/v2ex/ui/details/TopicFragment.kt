@@ -338,7 +338,7 @@ class TopicFragment : BaseFragment() {
 
                 }
 
-                logd("got page 1 , next is more page")
+                logd("got page 1")
 
                 val totalPage = parser.getPageValue()[1]  // [2,3]
                 activity?.runOnUiThread {
@@ -350,7 +350,7 @@ class TopicFragment : BaseFragment() {
                 }
 
                 if (totalPage > 1) {
-                    XLog.tag("TopicActivity").d(totalPage.toString())
+                    logd("totalPatge: ${totalPage.toString()}")
                     getMoreRepliesByOrder(totalPage, scrollToBottom)
                 }
             }

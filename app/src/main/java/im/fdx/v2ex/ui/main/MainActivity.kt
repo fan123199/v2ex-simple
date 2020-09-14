@@ -35,9 +35,12 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
-import im.fdx.v2ex.network.*
+import im.fdx.v2ex.network.GetMsgWorker
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.network.Parser
+import im.fdx.v2ex.network.start
+import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -207,7 +210,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
   private fun updateUserInBackground() {
-    vCall(NetManager.HTTPS_V2EX_BASE).start(object : Callback {
+    vCall(HTTPS_V2EX_BASE).start(object : Callback {
       override fun onFailure(call: Call, e: IOException) {
 
       }

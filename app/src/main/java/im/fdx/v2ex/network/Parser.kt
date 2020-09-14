@@ -151,9 +151,7 @@ class Parser(private val htmlStr: String) {
     fun getMember(): Member {
         val rightbar = doc.getElementById("menu-entry")
         val avatarUrl = rightbar?.getElementsByTag("img")?.first()?.attr("src")?:""
-        val userMenu = doc.getElementById("user-menu")
-        val memberElement = userMenu?.getElementsByTag("a")?.first()
-        val username = memberElement?.attr("href")?.replace("/member/", "")?:""
+        val username = rightbar?.getElementsByTag("img")?.first()?.attr("alt")?:""
         val memberModel = Member()
         memberModel.username = username
         memberModel.avatar_normal = avatarUrl
@@ -222,9 +220,8 @@ class Parser(private val htmlStr: String) {
     }
 
     fun getPageValue(): IntArray {
-
-        val currentPage: Int = doc.getElementsByClass("page_current").first().ownText().toIntOrNull()?: -1
-        val totalPage: Int = doc.getElementsByClass("page_normal").first().ownText().toIntOrNull()?:-1
+        val currentPage: Int = doc.getElementsByClass("page_current")?.first()?.ownText()?.toIntOrNull()?: -1
+        val totalPage: Int = doc.getElementsByClass("page_normal")?.first()?.ownText()?.toIntOrNull()?:-1
         return intArrayOf(currentPage, totalPage)
 
     }

@@ -159,6 +159,7 @@
     <string name="already_thank">thanked</string>
     <string name="ignore">Ignore Topic</string>
     <string name="already_ignore">cancel ignore</string>
+    <string name="google_login">Google Login</string>
 
     <string-array name="j" translatable="false">
         <item>一颗赛艇</item>
