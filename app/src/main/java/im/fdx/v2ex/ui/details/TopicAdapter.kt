@@ -1,7 +1,6 @@
 package im.fdx.v2ex.ui.details
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -15,14 +14,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.crashlytics.android.Crashlytics
-import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
@@ -34,7 +29,10 @@ import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
-import im.fdx.v2ex.utils.extensions.*
+import im.fdx.v2ex.utils.extensions.getPair
+import im.fdx.v2ex.utils.extensions.load
+import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.showLoginHint
 import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
 import kotlinx.android.extensions.LayoutContainer
@@ -43,7 +41,6 @@ import okhttp3.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
-
 
 
 private const val TYPE_HEADER = 0
@@ -77,7 +74,6 @@ class TopicDetailAdapter(private val act: FragmentActivity,
         when (getItemViewType(position)) {
             TYPE_HEADER -> {
                 val topic = topics[0]
-                Crashlytics.setString("topic_id", topic.id)
                 logd(topic.title)
                 logd(topic.content_rendered)
                 val mainHolder = holder as TopicWithCommentsViewHolder
@@ -123,6 +119,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                     itemVH.divider.visibility = View.VISIBLE
                 }
 
+                itemVH.bind(replyItem)
 
                 act.registerForContextMenu(itemVH.itemView)
 
@@ -154,10 +151,9 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                 itemVH.iv_reply.setOnClickListener { reply(replyItem, position) }
 
 
-                XLog.i(replyItem.content_rendered)
+//                logi(replyItem.content_rendered)
 
-                itemVH.bind(replyItem)
-                itemVH.tv_thanks.text = replyItem.thanks.toString()
+
                 itemVH.iv_reply_avatar.setOnClickListener {
                     act.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
                 }
@@ -302,6 +298,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
         this.replies.addAll(replies)
         replies.forEach {
             it.isLouzu = it.member?.username == topics[0].member?.username
+            it.showTime = TimeUtil.getRelativeTime(it.created)
         }
         notifyDataSetChanged()
     }
@@ -309,6 +306,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
     fun addItems(replies: List<Reply>) {
         replies.forEach {
             it.isLouzu = it.member?.username == topics[0].member?.username
+            it.showTime = TimeUtil.getRelativeTime(it.created)
         }
         this.replies.addAll(replies)
         notifyDataSetChanged()
@@ -328,7 +326,7 @@ class ItemViewHolder(override val containerView: View)
         tv_replier.text = data.member?.username
         tv_thanks.text = data.thanks.toString()
         iv_reply_avatar.load(data.member?.avatarNormalUrl)
-        tv_reply_time.text = TimeUtil.getRelativeTime(data.created)
+        tv_reply_time.text = data.showTime
 
     }
 

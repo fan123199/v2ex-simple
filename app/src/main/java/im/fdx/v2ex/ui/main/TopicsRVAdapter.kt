@@ -69,14 +69,14 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     holder.tvTitle.text = currentTopic.title
     holder.itemView.setOnClickListener{
 
-     fragment.startActivity(Intent(myApp, TopicActivity::class.java)
-             .apply {
-               putExtras(bundleOf(
-                       Keys.KEY_TOPIC_MODEL to currentTopic,
-                       Keys.KEY_TOPIC_LIST to mTopicList,
-                       Keys.KEY_POSITION to holder2.adapterPosition)) })
+      fragment.startActivity(Intent(myApp, TopicActivity::class.java)
+              .apply {
+                putExtras(bundleOf(
+                        Keys.KEY_TOPIC_MODEL to currentTopic,
+                        Keys.KEY_TOPIC_LIST to mTopicList,
+                        Keys.KEY_POSITION to holder2.adapterPosition)) })
     }
-    holder.tvContent.visibility = View.GONE
+    holder.tvContent.isGone = true
 
     //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
     //            holder.tvContent.setTransitionName("header");
@@ -104,7 +104,7 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
 
   // 这是构建一个引用 到每个数据item的视图.用findViewById将视图的元素与变量对应起来,。
   // 用static就是为了复用
-  open class MainViewHolder(container: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(container) {
+  open class MainViewHolder(container: View) : RecyclerView.ViewHolder(container) {
     var tvTitle: TextView = container.findViewById(R.id.tv_title)
     var tvContent: GoodTextView = container.findViewById(R.id.tv_content)
     var tvReplyNumber: TextView = container.findViewById(R.id.tv_reply_number)

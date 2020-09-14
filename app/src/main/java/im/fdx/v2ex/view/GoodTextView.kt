@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Rect
-import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.*
@@ -16,14 +15,11 @@ import android.text.style.URLSpan
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
-import im.fdx.v2ex.R
-import im.fdx.v2ex.myApp
 import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
@@ -33,9 +29,9 @@ import org.xml.sax.XMLReader
 
 typealias TextType = Int
 
-val abc = 1
-val efg: TextType = 1
-val hij: TextType = 1
+val typeTopic: TextType = 1
+val typeComment: TextType = 2
+val typeReply: TextType = 3
 
 /**
  * Created by fdx on 2016/9/11.
@@ -132,7 +128,7 @@ class GoodTextView @JvmOverloads constructor(
     }
 }
 
-class MyImageGetter(val tv: GoodTextView, val type: Int) : Html.ImageGetter {
+class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter {
     //防止 Glide，将target gc了， 导致图片无法显示
     private var targetList: MutableList<CustomTarget<Bitmap>> = mutableListOf()
 
@@ -156,9 +152,9 @@ class MyImageGetter(val tv: GoodTextView, val type: Int) : Html.ImageGetter {
 
                 val smallestWidth = 12.dp2px()
                 val bestWidth = when (type) {
-                    1 -> ViewUtil.screenWidth - (16 * 2).dp2px()   //主题
-                    2 -> ViewUtil.screenWidth - (16 * 2 + 8 * 2).dp2px()  //附言
-                    3 -> ViewUtil.screenWidth - (16 * 2 + 26 + 8).dp2px() //评论
+                    typeTopic -> ViewUtil.screenWidth - (16 * 2).dp2px()   //主题
+                    typeComment -> ViewUtil.screenWidth - (16 * 2 + 8 * 2).dp2px()  //附言
+                    typeReply -> ViewUtil.screenWidth - (16 * 2 + 26 + 8).dp2px() //评论
                     else -> 0
                 }
                 val targetWidth: Int = when {

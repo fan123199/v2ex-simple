@@ -17,7 +17,10 @@ import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.*
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
+import com.crashlytics.android.Crashlytics
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -33,11 +36,12 @@ import im.fdx.v2ex.utils.extensions.showLoginHint
 import im.fdx.v2ex.utils.extensions.toast
 import kotlinx.android.synthetic.main.activity_details_content.*
 import kotlinx.android.synthetic.main.footer_reply.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.*
 import org.jetbrains.anko.share
 import java.io.IOException
-import java.util.concurrent.TimeUnit
 
 /**
  * Create by fandongxiao on 2019/5/16
@@ -219,7 +223,7 @@ class TopicFragment : BaseFragment() {
         }
 
         mTopicId = (arguments?.get(Keys.KEY_TOPIC_ID) as String?) ?: ""
-
+        Crashlytics.setString("topic_id", mTopicId)
 
         uiScope.launch {
             val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content?:""
