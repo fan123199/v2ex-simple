@@ -25,8 +25,8 @@ import java.util.*
 class TabSettingActivity : BaseActivity() {
 
 
-  val curlist: MutableList<Tab> = mutableListOf()
-  lateinit var adapter: DefaultAdapter
+  private val curlist: MutableList<Tab> = mutableListOf()
+  private lateinit var adapter: DefaultAdapter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -78,13 +78,9 @@ class TabSettingActivity : BaseActivity() {
     val tabPaths = resources.getStringArray(R.array.v2ex_favorite_tab_paths)
 
     val list = mutableListOf<Tab>()
-    list.addAll(tabTitles.map {
-      Tab(it, "")
-    })
-
-    list.forEachWithIndex { a, b ->
-      b.path = tabPaths[a]
-    }
+    list.addAll(tabTitles.mapIndexed { index, s ->
+      Tab(s, tabPaths[index])
+    } )
     return list
   }
 

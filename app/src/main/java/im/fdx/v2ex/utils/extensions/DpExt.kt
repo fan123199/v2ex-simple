@@ -1,6 +1,8 @@
 package im.fdx.v2ex.utils.extensions
 
 import android.content.res.Resources
+import kotlin.math.roundToInt
+
 
 /**
  * Created by fdx on 2017/6/8.
@@ -11,11 +13,11 @@ import android.content.res.Resources
 fun Int.dp2px(): Int {
     val metrics = Resources.getSystem().displayMetrics
     val px = this * 1.0f * (metrics.densityDpi / 160f)
-    return Math.round(px)
+    return px.roundToInt()
 }
 
 fun Int.px2dp(): Int {
     val metrics = Resources.getSystem().displayMetrics
     val dp = this * 1.0f / (metrics.densityDpi / 160f)
-    return Math.round(dp)
+    return dp.roundToInt()
 }

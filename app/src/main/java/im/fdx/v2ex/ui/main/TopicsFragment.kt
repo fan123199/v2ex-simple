@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -238,7 +239,7 @@ class TopicsFragment : Fragment() {
     vCall(url)
         .start(object : Callback {
           override fun onFailure(call: Call, e: IOException) {
-              showRefresh(false)
+            showRefresh(false)
           }
 
           @Throws(IOException::class)
@@ -254,6 +255,9 @@ class TopicsFragment : Fragment() {
             }
 
             val str = response.body?.string()!!
+
+            logi( "onResponse: $str")
+
             val parser = Parser(str)
             val topicList = parser.parseTopicLists(currentMode)
 
