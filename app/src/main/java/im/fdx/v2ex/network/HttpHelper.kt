@@ -43,7 +43,7 @@ object HttpHelper {
                         .newBuilder()
                         .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9")
                         .header("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
-                        .header("Accept-Encoding", "gzip, deflate, br")
+//                        .header("Accept-Encoding", "gzip, deflate, br")
                         .header("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
                         .header("Host", "www.v2ex.com")
                         .header("Authority", "v2ex.com")
