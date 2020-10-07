@@ -31,114 +31,95 @@ class Parser(private val htmlStr: String) {
 
         val body = doc.body()
 
-        val head = doc.head()
+        val items = when (source) {
+          FROM_HOME, FROM_MEMBER -> body.getElementsByClass("cell item")
+          FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
+          else -> null
+        }
+        if (items != null) {
+            for (item in items) {
+                val topicModel = Topic()
+                val title = item.getElementsByClass("item_title")?.first()?.text()?:""
 
-        when (source) {
-            FROM_HOME, FROM_MEMBER -> {
-                val items = body.getElementsByClass("cell item")
-                if (items != null) {
-                    for (item in items) {
-                        val topicModel = Topic()
-                        val title = item.getElementsByClass("item_title")?.first()?.text()?:""
+                val linkWithReply = item.getElementsByClass("item_title")?.first()
+                        ?.getElementsByTag("a")?.first()?.attr("href")?:""
+                val replies = Integer.parseInt(linkWithReply.split("reply".toRegex())[1])
 
-                        val linkWithReply = item.getElementsByClass("item_title")?.first()
-                                ?.getElementsByTag("a")?.first()?.attr("href")?:""
-                        val replies = Integer.parseInt(linkWithReply.split("reply".toRegex())[1])
+                val regex = Regex("(?<=/t/)\\d+")
+                val id: String = regex.find(linkWithReply)?.value ?: return emptyList()
 
-                        val regex = Regex("(?<=/t/)\\d+")
-                        val id: String = regex.find(linkWithReply)?.value ?: return emptyList()
-
-                        val nodeModel = Node()
+                val nodeModel = Node()
+                when (source) {
+                    FROM_HOME, FROM_MEMBER -> {
                         //  <a class="node" href="/go/career">职场话题</a>
                         val nodeTitle = item.getElementsByClass("node")?.text()
                         val nodeName = item.getElementsByClass("node")?.attr("href")?.substring(4)
                         nodeModel.title = nodeTitle?:""
                         nodeModel.name = nodeName?:""
-                        val memberModel = Member()
-                        //            <a href="/member/wineway">
-                        // <img src="//v2" class="avatar" border="0" align="default" style="max-width: 48px; max-height: 48px;"></a>
+
+                    }
+                    //            <a href="/member/wineway">
+                    // <img src="//v2" class="avatar" ></a>
+                    FROM_NODE -> {
+                        val strHeader = body.getElementsByClass("node_header")?.first()?.text()?:""
+                        var nodeTitle = ""
+                        if (strHeader.contains("›")) {
+                            nodeTitle = strHeader.split("›".toRegex())[1].split(" ".toRegex())[1].trim { it <= ' ' }
+                        }
+
+                        val elements = doc.head().getElementsByTag("script")
+                        val script = elements.last()
+                        //注意，script 的tag 不含 text。
+                        val strScript = script.html()
+                        val nodeName = strScript.split("\"".toRegex())[1]
+                        nodeModel.title = nodeTitle
+                        nodeModel.name = nodeName
+                    }
+                    else -> {
+                    }
+                }
+
+
+                val memberModel = Member()
+                //            <a href="/member/wineway">
+                // <img src="//v2" class="avatar" border="0" align="default" style="max-width: 48px; max-height: 48px;"></a>
 //            val username = item.getElementsByTag("a").first().attr("href").substring(8)
 
-                        val username = Regex("(?<=/member/)\\w+").find(item.html())?.value?:""
+                val username = Regex("(?<=/member/)\\w+").find(item.html())?.value?:""
 
-                        val avatarLarge = item.getElementsByClass("avatar")?.attr("src")?.replace("large", "normal")?:""
-                        memberModel.username = username
-                        memberModel.avatar_normal = avatarLarge
+                val avatarLarge = item.getElementsByClass("avatar")?.attr("src")?.replace("large", "normal")?:""
+                memberModel.username = username
+                memberModel.avatar_normal = avatarLarge
 
 //            FROM_HOME &nbsp;•&nbsp; <strong><a href="/member/nodwang">nodwang</a></strong> &nbsp;•&nbsp; 2 分钟前 &nbsp;•&nbsp; 最后回复来自
 //             FROM_NODE   &nbsp;•&nbsp; 6 小时 15 分钟前 &nbsp;•&nbsp; 最后回复来自
+                val created = when (source) {
+                    FROM_HOME, FROM_MEMBER -> {
                         val smallItem = item.getElementsByClass("topic_info")?.first()?.ownText()?:""
-                          val created =   when {
+                        when {
                             smallItem.contains("最后回复") -> TimeUtil.toUtcTime(smallItem.split("•")[2])
                             else -> -1L
                         }
-                        topicModel.node = nodeModel
-                        topicModel.replies = replies
-                        topicModel.content = ""
-                        topicModel.content_rendered = ""
-                        topicModel.title = title
-                        topicModel.member = memberModel
-                        topicModel.id = id
-                        topicModel.created = created
-                        topics.add(topicModel)
                     }
-                }
-            }
-
-
-
-            FROM_NODE -> {
-                val content = body.getElementById("Wrapper")?.getElementsByClass("box")?.first()
-               val items = content?.getElementsByAttributeValue("class", "cell")
-
-                val nodeTitle = content?.getElementsByClass("header")?.first()?.ownText()?:""
-
-                if (items != null) {
-                    for (item in items) {
-                        val topicModel = Topic()
-                        val title = item.getElementsByClass("item_title")?.first()?.text()?:""
-
-                        val linkWithReply = item.getElementsByClass("item_title")?.first()
-                                ?.getElementsByTag("a")?.first()?.attr("href")?:""
-                        val replies = Integer.parseInt(linkWithReply.split("reply")[1])
-
-                        val regex = Regex("(?<=/t/)\\d+")
-                        val id: String = regex.find(linkWithReply)?.value ?: ""
-
-                        val nodeModel = Node()
-                        nodeModel.title = nodeTitle
-                        nodeModel.name = head.getElementsByTag("title")?.text()?:""
-                        val memberModel = Member()
-                        //            <a href="/member/wineway">
-                        // <img src="//v2" class="avatar" border="0" align="default" style="max-width: 48px; max-height: 48px;"></a>
-//            val username = item.getElementsByTag("a").first().attr("href").substring(8)
-
-                        val username = Regex("(?<=/member/)\\w+").find(item.html())?.value?:""
-
-                        val avatarLarge = item.getElementsByClass("avatar")?.attr("src")?.replace("large", "normal")?:""
-                        memberModel.username = username
-                        memberModel.avatar_normal = avatarLarge
-
-//            FROM_HOME &nbsp;•&nbsp; <strong><a href="/member/nodwang">nodwang</a></strong> &nbsp;•&nbsp; 2 分钟前 &nbsp;•&nbsp; 最后回复来自
-//             FROM_NODE   &nbsp;•&nbsp; 6 小时 15 分钟前 &nbsp;•&nbsp; 最后回复来自
+                    FROM_NODE -> {
                         val smallItem = item.getElementsByClass("topic_info")?.first()?.ownText()?:""
-                        val created =    when {
-                                  smallItem.contains("最后回复") -> TimeUtil.toUtcTime(smallItem.split("•")[1])
-                            else -> 0L
+                        when {
+                            smallItem.contains("最后回复") -> TimeUtil.toUtcTime(smallItem.split("•")[1])
+                            else -> -1L
                         }
-                        topicModel.node = nodeModel
-                        topicModel.replies = replies
-                        topicModel.content = ""
-                        topicModel.content_rendered = ""
-                        topicModel.title = title
-                        topicModel.member = memberModel
-                        topicModel.id = id
-                        topicModel.created = created
-                        topics.add(topicModel)
                     }
+                    else -> 0L
                 }
+                topicModel.node = nodeModel
+                topicModel.replies = replies
+                topicModel.content = ""
+                topicModel.content_rendered = ""
+                topicModel.title = title
+                topicModel.member = memberModel
+                topicModel.id = id
+                topicModel.created = created
+                topics.add(topicModel)
             }
-            else -> {}
         }
         return topics
     }
@@ -186,14 +167,27 @@ class Parser(private val htmlStr: String) {
         val nodeModel = Node()
         //        Document html = Jsoup.parse(response);
         val body = doc.body()
-        val head = doc.head()
-        val content = body.getElementById("Wrapper")?.getElementsByClass("box")?.first()
-        val nodeTitle = content?.getElementsByClass("header")?.first()?.ownText()?:""
-        val nodeName = head.getElementsByTag("title")?.text()?:""
-        val number = getTotalPageForTopicsInNode()
+        val header = body.getElementsByClass("node_header").first()
+        val contentElement = header.getElementsByClass("node_info").first().getElementsByTag("span").last()
+        val content = contentElement.text()
+        val number = header.getElementsByTag("strong").first().text()
+        val strTitle = header.getElementsByClass("node_info").first().ownText().trim()
+
+        if (header.getElementsByTag("img").first() != null) {
+            val avatarLarge = header.getElementsByTag("img").first().attr("src")
+            nodeModel.avatar_normal = avatarLarge.replace("large", "normal")
+        }
+
+        val elements = doc.head().getElementsByTag("script")
+        val script = elements.last()
+        //注意，script 的tag 不含 text。
+        val strScript = script.html()
+        val nodeName = strScript.split("\"".toRegex())[1]
+
         nodeModel.name = nodeName
-        nodeModel.title = nodeTitle
-        nodeModel.topics = number
+        nodeModel.title = strTitle
+        nodeModel.topics = Integer.parseInt(number)
+        nodeModel.header = content
 
         return nodeModel
     }
@@ -418,10 +412,6 @@ class Parser(private val htmlStr: String) {
 
     //        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8"
     fun getTotalPageForTopics() = Regex("(?<=max=\")\\d{1,8}").find(htmlStr)?.value?.toInt() ?: 0
-
-    fun getTotalPageForTopicsInNode() :Int {
-        return doc.getElementsByClass("fr f12")?.first()?.getElementsByClass("gray")?.first()?.ownText()?.toInt()?:0
-    }
 
 
     fun getErrorMsg(): String {

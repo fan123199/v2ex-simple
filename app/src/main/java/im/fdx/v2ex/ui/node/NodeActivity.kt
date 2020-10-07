@@ -161,15 +161,22 @@ class NodeActivity : BaseActivity() {
 
                 val html = response.body?.string()!!
                 val parser = Parser(html)
+
                 val topicList = parser.parseTopicLists(Parser.Source.FROM_NODE)
 
+                val pageNum = parser.getTotalPageForTopics()
                 val fragment: TopicsFragment = TopicsFragment().apply {
                     arguments = bundleOf(
                             Keys.KEY_NODE_NAME to nodeName,
                             Keys.KEY_TOPIC_LIST to topicList,
+                            Keys.KEY_PAGE_NUM to pageNum
                     )
                 }
-                mNode = parser.getOneNode()
+                try {
+                    mNode = parser.getOneNode()
+                } catch (e: Exception) {
+                    NetManager.dealError(this@NodeActivity, errorMsg = e.message ?: "unknown error")
+                }
                 isFollowed = parser.isNodeFollowed()
                 token = parser.getOnce()
                 runOnUiThread {

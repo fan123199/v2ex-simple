@@ -61,7 +61,6 @@ object TimeUtil {
      * @return long value
      */
     fun toUtcTime(timeStr: String): Long {
-        if (timeStr.isEmpty()) return 0L
         var theTime = timeStr
 
         theTime = theTime.trim()
