@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui
 
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.setLogin
+import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -23,6 +25,8 @@ class WebViewActivity : AppCompatActivity() {
 
     private lateinit var toolbar: androidx.appcompat.widget.Toolbar
 
+    private var noFirst: Boolean = false
+
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +38,7 @@ class WebViewActivity : AppCompatActivity() {
             url = intent.getStringExtra("url")?:""
         }
 
+        logi(url)
         WebView.setWebContentsDebuggingEnabled(true)
 
         myWebView = findViewById(R.id.webview)
@@ -79,12 +84,14 @@ class WebViewActivity : AppCompatActivity() {
         override fun onPageFinished(view: WebView?, url: String?) {
             val cookie = CookieManager.getInstance().getCookie(url)
             Log.i("fdxcookie",url + "----"+  cookie)
-            if(url.equals("https://www.v2ex.com/#")) {
+            if(cookie.contains("A2=") && url !=null) {
                 // "abc:efg;"
-                HttpHelper.cookiePersistor.persistAll(strtocookie(url!!, cookie))
+                HttpHelper.cookiePersistor.persistAll(strtocookie(url, cookie))
+                setResult(Activity.RESULT_OK)
                 setLogin(true)
                 finish()
             }
+            noFirst = true
             super.onPageFinished(view, url)
         }
 

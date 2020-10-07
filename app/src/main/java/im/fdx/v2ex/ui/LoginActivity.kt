@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.edit
+import androidx.core.os.bundleOf
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -80,7 +82,14 @@ class LoginActivity : BaseActivity() {
     }
 
     tv_google_login.setOnClickListener{
-      startActivity<WebViewActivity>("url" to "https://www.v2ex.com/signin")
+      if(onceCode == null) {
+        toast("请稍后")
+      } else {
+        val intent = Intent(this, WebViewActivity::class.java).apply {
+          bundleOf(  "url" to "https://www.v2ex.com/auth/google?once=$onceCode")
+        }
+        startActivityForResult(intent, 144 )
+      }
     }
 
     if (!usernamePref.isNullOrEmpty()) {
@@ -89,6 +98,13 @@ class LoginActivity : BaseActivity() {
     }
 
     getLoginElement()
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == 144 && resultCode == RESULT_OK) {
+      finish()
+    }
   }
 
   private fun getLoginElement() {

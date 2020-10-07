@@ -83,4 +83,5 @@
     <string name="already_thank">已感谢</string>
     <string name="ignore">忽略</string>
     <string name="already_ignore">取消忽略</string>
+    <string name="google_login">Google 登录</string>
 </resources>

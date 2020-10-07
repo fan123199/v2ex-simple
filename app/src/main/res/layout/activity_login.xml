@@ -117,7 +117,6 @@
                 android:textColor="@color/light_hint"
                 android:padding="8dp"
                 android:textSize="@dimen/text_size_medium"
-                android:visibility="gone"
                 android:id="@+id/tv_google_login"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
