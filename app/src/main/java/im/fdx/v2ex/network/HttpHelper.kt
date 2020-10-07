@@ -2,7 +2,7 @@ package im.fdx.v2ex.network
 
 import android.util.Log
 import com.chuckerteam.chucker.api.ChuckerInterceptor
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
@@ -77,7 +77,7 @@ fun Call.start(callback: Callback) {
             try {
                 callback.onResponse(call, response)
             } catch (e: Exception) {
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 e.printStackTrace()
             }
         }
@@ -98,10 +98,10 @@ fun Call.start(onResp: (Call, Response) -> Unit, onFail: (Call, IOException)-> U
     }
     enqueue(object : Callback {
         override fun onFailure(call: Call, e: IOException) {
-            Crashlytics.logException(e)
             try {
                 callback.onFailure(call, e)
             } catch (e2: Exception) {
+                FirebaseCrashlytics.getInstance().recordException(e2)
                 e2.printStackTrace()
             }
         }
@@ -110,7 +110,7 @@ fun Call.start(onResp: (Call, Response) -> Unit, onFail: (Call, IOException)-> U
             try {
                 callback.onResponse(call, response)
             } catch (e: Exception) {
-                Crashlytics.logException(e)
+                FirebaseCrashlytics.getInstance().recordException(e)
                 e.printStackTrace()
             }
         }

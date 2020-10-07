@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.crashlytics.android.Crashlytics
 import com.elvishew.xlog.XLog
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.database.DbHelper
@@ -105,6 +105,9 @@ class TopicFragment : BaseFragment() {
                             addAction(Keys.ACTION_GET_MORE_REPLY)
                         })
         setFootView()
+
+        mTopicId = (arguments?.get(Keys.KEY_TOPIC_ID) as String?) ?: ""
+        FirebaseCrashlytics.getInstance().setCustomKey("topic_id", mTopicId)
 
 
         toolbar.run {
@@ -221,9 +224,6 @@ class TopicFragment : BaseFragment() {
             mAdapter.topics[0] = it
             mAdapter.notifyDataSetChanged()
         }
-
-        mTopicId = (arguments?.get(Keys.KEY_TOPIC_ID) as String?) ?: ""
-        Crashlytics.setString("topic_id", mTopicId)
 
         uiScope.launch {
             val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content?:""
