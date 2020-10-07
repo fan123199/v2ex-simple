@@ -165,13 +165,6 @@ class NodeActivity : BaseActivity() {
                 val topicList = parser.parseTopicLists(Parser.Source.FROM_NODE)
 
                 val pageNum = parser.getTotalPageForTopics()
-                val fragment: TopicsFragment = TopicsFragment().apply {
-                    arguments = bundleOf(
-                            Keys.KEY_NODE_NAME to nodeName,
-                            Keys.KEY_TOPIC_LIST to topicList,
-                            Keys.KEY_PAGE_NUM to pageNum
-                    )
-                }
                 try {
                     mNode = parser.getOneNode()
                 } catch (e: Exception) {
@@ -181,10 +174,15 @@ class NodeActivity : BaseActivity() {
                 token = parser.getOnce()
                 runOnUiThread {
                     supportFragmentManager.beginTransaction()
-                            .add(R.id.fragment_container, fragment, "MyActivity")
+                            .add(R.id.fragment_container, TopicsFragment().apply {
+                                arguments = bundleOf(
+                                        Keys.KEY_NODE_NAME to nodeName,
+                                        Keys.KEY_TOPIC_LIST to topicList,
+                                        Keys.KEY_PAGE_NUM to pageNum
+                                )
+                            }, "MyActivity")
                             .commit()
                     iv_node_image.load(mNode?.avatarLargeUrl)
-                    logd(mNode?.title)
                     ctl_node?.title = mNode?.title
                     tv_node_details.text = mNode?.header
                     tv_topic_num.text = getString(R.string.topic_number, mNode?.topics)

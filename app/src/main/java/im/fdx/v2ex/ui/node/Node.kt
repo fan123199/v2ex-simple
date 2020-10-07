@@ -69,7 +69,7 @@ data class Node(
   val avatarLargeUrl: String
     get() = when {
       avatar_normal?.startsWith("/static") == true -> "https://www.v2ex.com/static/img/node_large.png"
-      else -> "https:" + Regex("\\?s=\\d{1,3}").replace(avatar_normal?:"", "?s=128").replace("normal","large").replace("mini","large")
+      else -> Regex("\\?s=\\d{1,3}").replace(avatar_normal?:"", "?s=128").replace("normal","large").replace("mini","large")
     }
 
   override fun toString() = "$title / $name"

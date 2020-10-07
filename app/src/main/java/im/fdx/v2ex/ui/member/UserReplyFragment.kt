@@ -48,7 +48,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
         }
 
         val rvReply: androidx.recyclerview.widget.RecyclerView = view.findViewById(R.id.rv_container)
-        val layoutManager = LinearLayoutManager(activity!!)
+        val layoutManager = LinearLayoutManager(requireActivity())
 
 
         rvReply.layoutManager = layoutManager
@@ -69,7 +69,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
         }
 
         rvReply.addOnScrollListener(mScrollListener!!)
-        adapter = ReplyAdapter(activity!!)
+        adapter = ReplyAdapter(requireActivity())
         rvReply.adapter = adapter
         swipeRefreshLayout.isRefreshing = true
         getRepliesByWeb(1)

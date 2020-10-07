@@ -48,7 +48,9 @@ object HttpHelper {
                         .header("Host", "www.v2ex.com")
                         .header("Authority", "v2ex.com")
                         .header("Cache-Control", "max-age=0")
-                        .header("User-Agent", "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Mobile Safari/537.36")
+//                        .header("User-Agent", "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Mobile Safari/537.36")
+                        //换回PC端的User-Agent, 因为一些奇怪的问题
+                        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36")
                         .build()
                 chain.proceed(request)
             }

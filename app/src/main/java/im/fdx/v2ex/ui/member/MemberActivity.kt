@@ -326,7 +326,7 @@ class MemberActivity : BaseActivity() {
         private fun getOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
     }
 
-    inner class MemberViewpagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm) {
+    inner class MemberViewpagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         lateinit var username: String
         //目前不好做，先留着

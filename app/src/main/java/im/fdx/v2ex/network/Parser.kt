@@ -32,8 +32,8 @@ class Parser(private val htmlStr: String) {
         val body = doc.body()
 
         val items = when (source) {
-          FROM_HOME, FROM_MEMBER -> body.getElementsByClass("cell item")
-          FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
+          Source.FROM_HOME, Source.FROM_MEMBER -> body.getElementsByClass("cell item")
+          Source.FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
           else -> null
         }
         if (items != null) {
@@ -149,7 +149,7 @@ class Parser(private val htmlStr: String) {
 
 
     fun getMember(): Member {
-        val rightbar = doc.getElementById("menu-entry")
+        val rightbar = doc.getElementById("Rightbar").getElementsByClass("cell").first()
         val avatarUrl = rightbar?.getElementsByTag("img")?.first()?.attr("src")?:""
         val username = rightbar?.getElementsByTag("img")?.first()?.attr("alt")?:""
         val memberModel = Member()
@@ -175,7 +175,7 @@ class Parser(private val htmlStr: String) {
 
         if (header.getElementsByTag("img").first() != null) {
             val avatarLarge = header.getElementsByTag("img").first().attr("src")
-            nodeModel.avatar_normal = avatarLarge.replace("large", "normal")
+            nodeModel.avatar_normal = avatarLarge.replace("xxlarge", "normal")
         }
 
         val elements = doc.head().getElementsByTag("script")
@@ -271,15 +271,12 @@ class Parser(private val htmlStr: String) {
 
             memberModel.avatar_normal = avatar
             memberModel.username = username
-
-            val thanks = when (val thanksOriginal = item.getElementsByClass("small fade")?.text()?:"") {
-                "" -> 0
-                else -> (thanksOriginal.replace("♥ ", "").trim()).toIntOrNull()?:0
-            }
+            val thanksOriginal = item.getElementsByClass("small fade")?.first()?.ownText()?:""
+            val thanks = thanksOriginal.trim().toIntOrNull()?:0
             val thanked = item.getElementsByClass("thank_area thanked").first()
             replyModel.isThanked = thanked != null && "感谢已发送" == thanked.text()
 
-            val createdOriginal = item.getElementsByClass("fade small").text()
+            val createdOriginal = item.getElementsByClass("ago").text()
             val replyContent = item.getElementsByClass("reply_content").first()
             replyModel.created = TimeUtil.toUtcTime(createdOriginal)
             replyModel.member = memberModel
@@ -339,8 +336,9 @@ class Parser(private val htmlStr: String) {
         val headerTopic = doc.getElementsByClass("header").first()
         val createdUnformed = headerTopic.getElementsByClass("gray").first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
-        val time = createdUnformed.split("·")[0].split("at")[1]
-        val created = TimeUtil.toUtcTime(time)
+        // · 54 天前 · 36030 次点击
+        // · 9 小时 6 分钟前 via Android · 1036 次点击
+        val created = TimeUtil.toUtcTime(createdUnformed)
 
         var replyNum = ""
         val grays = doc.getElementsByClass("gray")

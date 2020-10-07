@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 import okhttp3.*
 import org.jetbrains.anko.share
 import java.io.IOException
+import java.lang.Exception
 
 /**
  * Create by fandongxiao on 2019/5/16
@@ -291,9 +292,16 @@ class TopicFragment : BaseFragment() {
 
                 val bodyStr = response.body!!.string()
 
+                var repliesFirstPage: List<Reply> = arrayListOf()
                 val parser = Parser(bodyStr)
-                topicHeader = parser.parseResponseToTopic(mTopicId)
-                val repliesFirstPage = parser.getReplies()
+                try {
+                    topicHeader = parser.parseResponseToTopic(mTopicId)
+                    repliesFirstPage = parser.getReplies()
+                } catch (e: Exception){
+                    activity?.runOnUiThread {
+                        toast("未知内容错误")
+                    }
+                }
 
                 if (myApp.isLogin) {
                     token = parser.getVerifyCode()

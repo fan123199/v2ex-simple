@@ -22,12 +22,11 @@ object TimeUtil {
      * @return
      */
     fun getRelativeTime(created: Long): String {
-        var c = created
-        if (c <= 0) {
+        if (created <= 0) {
             return ""
         }
 
-        c *= 1000
+        val c = created * 1000
         val now = System.currentTimeMillis()
         val difference = now - c
         val text = if (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS)
@@ -92,7 +91,7 @@ object TimeUtil {
                 else -> {
                     val sdf = SimpleDateFormat("yyyy-MM-dd hh:mm:ss +08:00", Locale.getDefault())
                     val date = sdf.parse(theTime.trim())
-                    created = date.time / 1000
+                    created = date?.time?.div(1000) ?: 0
                 }
             }
         } catch (e1: NumberFormatException) {
@@ -103,9 +102,15 @@ object TimeUtil {
             try {
                 val ccc = SimpleDateFormat("yyyy-MM-dd hh:mm:ss a", Locale.US)
                 val date = ccc.parse(theTime.trim())
-                created = date.time / 1000
+                created = date?.time?.div(1000) ?: 0
             } catch (ignore: ParseException) {
-                XLog.tag("TimeUtil").e("time str parse error: $theTime")
+                try {
+                    val ccc = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US)
+                    val date = ccc.parse(theTime.trim())
+                    created = date?.time?.div(1000) ?: 0
+                } catch (ignre:ParseException){
+                    XLog.tag("TimeUtil").e("time str parse error: $theTime")
+                }
             }
         }
 

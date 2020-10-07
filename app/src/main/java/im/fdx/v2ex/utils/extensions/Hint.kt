@@ -63,7 +63,7 @@ fun Any.loge(msg: Any?) {
 
 
 fun Activity.showLoginHint(view: View,message :String ="您还未登录，请登录后再试") {
-    Snackbar.make(view, message, Snackbar.LENGTH_INDEFINITE)
+    Snackbar.make(view, message, Snackbar.LENGTH_LONG)
             .setAction("登录") {
                 startActivity<LoginActivity>()
             }.show()
