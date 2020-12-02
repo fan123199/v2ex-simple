@@ -358,7 +358,7 @@ class TopicFragment : BaseFragment() {
                 }
 
                 if (totalPage > 1) {
-                    logd("totalPatge: ${totalPage.toString()}")
+                    logd("totalPage: $totalPage")
                     getMoreRepliesByOrder(totalPage, scrollToBottom)
                 }
             }

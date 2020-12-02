@@ -216,12 +216,18 @@ class Parser(private val htmlStr: String) {
     fun isIgnored(): Boolean {
         val p = Pattern.compile("un(?=ignore/topic/\\d{1,10})")
         val matcher = p.matcher(doc.outerHtml())
-        return !matcher.find()
+        return matcher.find()
     }
 
     fun getPageValue(): IntArray {
-        val currentPage: Int = doc.getElementsByClass("page_current")?.first()?.ownText()?.toIntOrNull()?: -1
-        val totalPage: Int = doc.getElementsByClass("page_normal")?.first()?.ownText()?.toIntOrNull()?:-1
+        //注释的是移动端的方法
+//        val currentPage: Int = doc.getElementsByClass("page_current")?.first()?.ownText()?.toIntOrNull()?: -1
+//        val totalPage: Int = doc.getElementsByClass("page_normal")?.first()?.ownText()?.toIntOrNull()?:-1
+        val currentPage: Int
+        val totalPage: Int
+        val pageInput = doc.getElementsByClass("page_input").first() ?: return intArrayOf(-1, -1)
+        currentPage = (pageInput.attr("value")).toIntOrNull()?:-1
+        totalPage = (pageInput.attr("max")).toIntOrNull()?:-1
         return intArrayOf(currentPage, totalPage)
 
     }

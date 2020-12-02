@@ -140,10 +140,6 @@ class NodeActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: okhttp3.Response) {
-
-                if(isFinishing) {
-                    return
-                }
                 val code = response.code
                 if (code == 302) {
                     if(myApp.isLogin){
@@ -172,6 +168,9 @@ class NodeActivity : BaseActivity() {
                 }
                 isFollowed = parser.isNodeFollowed()
                 token = parser.getOnce()
+                if(isFinishing || isDestroyed) {
+                    return
+                }
                 runOnUiThread {
                     supportFragmentManager.beginTransaction()
                             .add(R.id.fragment_container, TopicsFragment().apply {
