@@ -351,10 +351,13 @@ class TopicFragment : BaseFragment() {
                 val totalPage = parser.getPageValue()[1]  // [2,3]
                 activity?.runOnUiThread {
                     swipe_details?.isRefreshing = false
-                    mAdapter.updateItems(topicHeader!!, repliesFirstPage)
-                    if (totalPage == 1 && scrollToBottom) {
-                        detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
+                    topicHeader?.let {
+                        mAdapter.updateItems(it, repliesFirstPage)
+                        if (totalPage == 1 && scrollToBottom) {
+                            detail_recycler_view?.scrollToPosition(mAdapter.itemCount - 1)
+                        }
                     }
+
                 }
 
                 if (totalPage > 1) {
