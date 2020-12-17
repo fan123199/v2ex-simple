@@ -15,7 +15,6 @@ const val MODE_BIG4 = 3
 abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         val textSizeMode = pref.getString(Keys.PREF_TEXT_SIZE, MODE_SMALL.toString())!!.toInt()
         when (textSizeMode) {
             MODE_SMALL -> {
@@ -31,5 +30,6 @@ abstract class BaseActivity : AppCompatActivity() {
                 setTheme(R.style.Theme_V2ex_big4)
             }
         }
+        super.onCreate(savedInstanceState)
     }
 }

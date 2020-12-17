@@ -7,6 +7,7 @@ import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
 import im.fdx.v2ex.R
@@ -14,12 +15,13 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import kotlinx.android.synthetic.main.activity_web_view.*
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
 
 @Suppress("UNUSED_VARIABLE")
-class WebViewActivity : AppCompatActivity() {
+class WebViewActivity : BaseActivity() {
 
     private lateinit var myWebView: WebView
 
@@ -38,7 +40,7 @@ class WebViewActivity : AppCompatActivity() {
             url = intent.getStringExtra("url")?:""
         }
 
-        logi(url)
+        logi("loadUrl: $url")
         WebView.setWebContentsDebuggingEnabled(true)
 
         myWebView = findViewById(R.id.webview)
@@ -108,8 +110,9 @@ class WebViewActivity : AppCompatActivity() {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             if(newProgress < 100) {
                 if(view?.url.equals("https://www.v2ex.com/#")) {
+                    webview.visibility = View.INVISIBLE
                     val progressDialog = ProgressDialog(this@WebViewActivity)
-                    progressDialog.setMessage("请等待加载完成")
+                    progressDialog.setMessage("正在登录中，请稍后")
                     progressDialog.show()
                 }
             } else{

@@ -86,7 +86,7 @@ class LoginActivity : BaseActivity() {
         toast("请稍后")
       } else {
         val intent = Intent(this, WebViewActivity::class.java).apply {
-          bundleOf(  "url" to "https://www.v2ex.com/auth/google?once=$onceCode")
+          putExtras(bundleOf( "url" to "https://www.v2ex.com/auth/google?once=$onceCode"))
         }
         startActivityForResult(intent, 144 )
       }
