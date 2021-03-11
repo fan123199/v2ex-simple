@@ -32,8 +32,8 @@ class Parser(private val htmlStr: String) {
         val body = doc.body()
 
         val items = when (source) {
-          Source.FROM_HOME, Source.FROM_MEMBER -> body.getElementsByClass("cell item")
-          Source.FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
+          FROM_HOME, FROM_MEMBER -> body.getElementsByClass("cell item")
+          FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
           else -> null
         }
         if (items != null) {
@@ -339,8 +339,9 @@ class Parser(private val htmlStr: String) {
 
         topicModel.content_rendered = contentRendered.fullUrl()
 
-        val headerTopic = doc.getElementsByClass("header").first()
-        val createdUnformed = headerTopic.getElementsByClass("gray").first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
+        val headerTopic = doc.getElementById("Main").getElementsByClass("header").first()
+        val elementsByClass = headerTopic.getElementsByClass("gray")
+        val createdUnformed = elementsByClass.first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
         // · 54 天前 · 36030 次点击
         // · 9 小时 6 分钟前 via Android · 1036 次点击

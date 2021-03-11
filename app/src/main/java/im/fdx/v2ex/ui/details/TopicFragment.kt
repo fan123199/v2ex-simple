@@ -298,6 +298,7 @@ class TopicFragment : BaseFragment() {
                     topicHeader = parser.parseResponseToTopic(mTopicId)
                     repliesFirstPage = parser.getReplies()
                 } catch (e: Exception){
+                    FirebaseCrashlytics.getInstance().recordException(e)
                     activity?.runOnUiThread {
                         toast("未知内容错误")
                     }

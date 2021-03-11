@@ -47,7 +47,7 @@ class TopicsFragment : Fragment() {
 
   var mRequestURL: String = ""
   lateinit var mScrollListener: EndlessOnScrollListener
-  var currentMode = Parser.Source.FROM_HOME
+  var currentMode = FROM_HOME
   var totalPage = 0
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -87,9 +87,7 @@ class TopicsFragment : Fragment() {
       args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 0 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
       args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = URL_FOLLOWING
       args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
-      args?.getString(Keys.KEY_TAB) == "heated" -> {
-        mRequestURL = API_HEATED
-      }
+      args?.getString(Keys.KEY_TAB) == "heated" -> mRequestURL = API_HEATED
       args?.getString(Keys.KEY_TAB) != null -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
       args?.getString(Keys.KEY_USERNAME) != null -> {
         currentMode = FROM_MEMBER
@@ -231,11 +229,7 @@ class TopicsFragment : Fragment() {
     }
 
 
-    val url =
-            when {
-              currentMode == FROM_HOME -> requestURL
-              else -> "$requestURL?p=$currentPage"
-            }
+    val url = if (currentMode == FROM_HOME) requestURL else "$requestURL?p=$currentPage"
     vCall(url)
         .start(object : Callback {
           override fun onFailure(call: Call, e: IOException) {
