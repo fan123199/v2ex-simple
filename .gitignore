@@ -15,3 +15,4 @@
 keystore.properties
 *.apk
 output.json
+/app/release/output-metadata.json
