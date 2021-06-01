@@ -111,7 +111,6 @@ class NewTopicActivity : BaseActivity() {
         val rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh)
         rotation.repeatCount = Animation.INFINITE
         iv.startAnimation(rotation)
-        toast("rotate")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
