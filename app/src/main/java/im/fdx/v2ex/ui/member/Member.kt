@@ -2,7 +2,7 @@ package im.fdx.v2ex.ui.member
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Created by a708 on 16-1-16.

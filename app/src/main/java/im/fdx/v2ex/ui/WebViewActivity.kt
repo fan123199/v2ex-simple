@@ -10,12 +10,12 @@ import android.view.KeyEvent
 import android.view.View
 import android.webkit.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import kotlinx.android.synthetic.main.activity_web_view.*
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrl
 
@@ -25,7 +25,7 @@ class WebViewActivity : BaseActivity() {
 
     private lateinit var myWebView: WebView
 
-    private lateinit var toolbar: androidx.appcompat.widget.Toolbar
+    private lateinit var toolbar: Toolbar
 
     private var noFirst: Boolean = false
 
@@ -111,7 +111,7 @@ class WebViewActivity : BaseActivity() {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             if(newProgress < 100) {
                 if(view?.url.equals("https://www.v2ex.com/#")) {
-                    webview.visibility = View.INVISIBLE
+                    myWebView.visibility = View.INVISIBLE
                     val progressDialog = ProgressDialog(this@WebViewActivity)
                     progressDialog.setMessage("正在登录中，请稍后")
                     progressDialog.show()

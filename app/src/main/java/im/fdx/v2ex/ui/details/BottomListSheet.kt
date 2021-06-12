@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import im.fdx.v2ex.R
-import kotlinx.android.synthetic.main.bottom_list_sheet.*
+import im.fdx.v2ex.databinding.ItemReplyViewBinding
 
 class BottomListSheet(var list: List<Reply>) : BottomSheetDialogFragment(){
 
@@ -26,12 +26,12 @@ class BottomListSheet(var list: List<Reply>) : BottomSheetDialogFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val rv = view.findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(rv.context)
-        rv.adapter = RAdater(list)
+        rv.adapter = RAdapter(list)
     }
 
-    inner class RAdater(var list: List<Reply>) : RecyclerView.Adapter<ItemViewHolder>() {
+    inner class RAdapter(var list: List<Reply>) : RecyclerView.Adapter<ItemViewHolder>() {
         override fun getItemCount(): Int {
             return list.size
         }
@@ -41,7 +41,7 @@ class BottomListSheet(var list: List<Reply>) : BottomSheetDialogFragment(){
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
-            return ItemViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_reply_view, parent, false))
+            return ItemViewHolder(ItemReplyViewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
 
     }

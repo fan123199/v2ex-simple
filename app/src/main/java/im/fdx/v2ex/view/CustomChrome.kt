@@ -3,6 +3,7 @@ package im.fdx.v2ex.view
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
+import androidx.browser.customtabs.CustomTabColorSchemeParams
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
@@ -18,8 +19,11 @@ class CustomChrome(private val context: Context) {
 
     init {
         builder.setShowTitle(true)
-        builder.setToolbarColor(ContextCompat.getColor(context, R.color.chrome_tab))
-        builder.addDefaultShareMenuItem()
+        builder.setDefaultColorSchemeParams(
+            CustomTabColorSchemeParams.Builder()
+                .setToolbarColor(ContextCompat.getColor(context, R.color.chrome_tab)).build()
+        )
+        builder.setShareState(CustomTabsIntent.SHARE_STATE_ON)
     }
 
     fun load(url: String) {

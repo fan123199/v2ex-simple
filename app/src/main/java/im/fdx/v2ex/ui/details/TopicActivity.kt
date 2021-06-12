@@ -7,19 +7,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
-import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ActivityDetailsBinding
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.view.ZoomOutPageTransform
-import kotlinx.android.synthetic.main.activity_details.*
 import org.jetbrains.anko.toast
+
 
 
 class TopicActivity : BaseActivity() {
 
-
+  private lateinit var binding: ActivityDetailsBinding
   private lateinit var vpAdapter: VpAdapter
 
   private lateinit var mTopicId :String
@@ -28,7 +28,9 @@ class TopicActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_details)
+    binding = ActivityDetailsBinding.inflate(layoutInflater)
+    val view = binding.root
+    setContentView(view)
 
     vpAdapter = VpAdapter(supportFragmentManager)
     parseIntent(intent)
@@ -88,7 +90,7 @@ class TopicActivity : BaseActivity() {
 
 
     vpAdapter.initList(out)
-    viewPager_detail.run {
+    binding.viewPagerDetail.run {
       adapter = vpAdapter
       setCurrentItem(position, false)
       setPageTransformer(true, ZoomOutPageTransform())

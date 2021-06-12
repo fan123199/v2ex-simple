@@ -3,7 +3,7 @@ package im.fdx.v2ex.model
 import android.os.Parcelable
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.member.Member
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Created by fdx on 2017/3/24.

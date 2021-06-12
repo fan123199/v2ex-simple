@@ -25,6 +25,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.database.DbHelper
+import im.fdx.v2ex.databinding.ActivityDetailsContentBinding
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseFragment
@@ -34,8 +35,6 @@ import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.showLoginHint
 import im.fdx.v2ex.utils.extensions.toast
-import kotlinx.android.synthetic.main.activity_details_content.*
-import kotlinx.android.synthetic.main.footer_reply.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,7 +72,7 @@ class TopicFragment : BaseFragment() {
             if (intent.action == Keys.ACTION_LOGIN) {
                 activity?.invalidateOptionsMenu()
                 setFootView()
-                swipe_details?.isRefreshing = true
+                binding.swipeDetails?.isRefreshing = true
                 getRepliesPageOne(false)
             } else if (intent.action == Keys.ACTION_LOGOUT) {
                 activity?.invalidateOptionsMenu()
@@ -85,7 +84,7 @@ class TopicFragment : BaseFragment() {
                     val rm: ArrayList<Reply>? = intent.getParcelableArrayListExtra("replies")
                     rm?.let { mAdapter.addItems(it) }
                     if (intent.getBooleanExtra("bottom", false)) {
-                        detail_recycler_view.scrollToPosition(mAdapter.itemCount - 1)
+                        binding.detailRecyclerView.scrollToPosition(mAdapter.itemCount - 1)
                     }
                 }
             }
@@ -93,8 +92,16 @@ class TopicFragment : BaseFragment() {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.activity_details_content, container, false)
+    private var _binding: ActivityDetailsContentBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = ActivityDetailsContentBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -111,7 +118,7 @@ class TopicFragment : BaseFragment() {
         FirebaseCrashlytics.getInstance().setCustomKey("topic_id", mTopicId)
 
 
-        toolbar.run {
+        binding.toolbar.run {
             inflateMenu(R.menu.menu_details)
             setNavigationIcon(R.drawable.ic_arrow_back_primary_24dp)
             setNavigationOnClickListener {
@@ -149,7 +156,7 @@ class TopicFragment : BaseFragment() {
         }
 
 
-        mMenu = toolbar.menu
+        mMenu = binding.toolbar.menu
         if (MyApp.get().isLogin) {
             mMenu?.findItem(R.id.menu_favor)?.isVisible = true
             mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = true
@@ -161,8 +168,8 @@ class TopicFragment : BaseFragment() {
         }
         //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
         val mLayoutManager = LinearLayoutManager(activity)
-        detail_recycler_view.layoutManager = mLayoutManager
-        detail_recycler_view.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.detailRecyclerView.layoutManager = mLayoutManager
+        binding.detailRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             private var currentPosition = 0
 
@@ -171,13 +178,13 @@ class TopicFragment : BaseFragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (mLayoutManager.findFirstVisibleItemPosition() == 0) {
                     if (currentPosition != 0) {
-                        startAlphaAnimation(tv_toolbar, 500, false)
+                        startAlphaAnimation(binding.tvToolbar, 500, false)
                         currentPosition = 0
                     }
                 } else {
                     if (currentPosition == 0 && topicHeader != null) {
-                        tv_toolbar?.text = topicHeader?.title
-                        startAlphaAnimation(tv_toolbar, 500, true)
+                        binding.tvToolbar.text = topicHeader?.title
+                        startAlphaAnimation(binding.tvToolbar, 500, true)
                         currentPosition = -1
                     }
                 }
@@ -185,13 +192,13 @@ class TopicFragment : BaseFragment() {
         })
 
         mAdapter = TopicAdapter(requireActivity()) { position: Int ->
-            detail_recycler_view.smoothScrollToPosition(position)
+            binding.detailRecyclerView.smoothScrollToPosition(position)
         }
-        detail_recycler_view.adapter = mAdapter
-        swipe_details?.initTheme()
-        swipe_details?.setOnRefreshListener { getRepliesPageOne(false) }
+        binding.detailRecyclerView.adapter = mAdapter
+        binding.swipeDetails.initTheme()
+        binding.swipeDetails.setOnRefreshListener { getRepliesPageOne(false) }
 
-        et_post_reply.setOnFocusChangeListener { v, hasFocus ->
+        binding.etPostReply.setOnFocusChangeListener { v, hasFocus ->
 
             if (!hasFocus) {
                 val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -199,21 +206,21 @@ class TopicFragment : BaseFragment() {
             }
         }
 
-        iv_send.setOnClickListener {
+        binding.ivSend.setOnClickListener {
             postReply()
         }
 
-        et_post_reply.addTextChangedListener(object : TextWatcher {
+        binding.etPostReply.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable) {
                 if (s.isEmpty()) {
-                    iv_send.isClickable = false
-                    iv_send.imageTintList = null
+                    binding.ivSend.isClickable = false
+                    binding.ivSend.imageTintList = null
                 } else {
-                    iv_send.isClickable = true
-                    iv_send.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(activity!!, R.color.primary))
+                    binding.ivSend.isClickable = true
+                    binding.ivSend.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(activity!!, R.color.primary))
                 }
                 temp =  s.toString()
             }
@@ -228,10 +235,10 @@ class TopicFragment : BaseFragment() {
 
         uiScope.launch {
             val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content?:""
-            et_post_reply.setText(text)
+            binding.etPostReply.setText(text)
         }
 
-        swipe_details.isRefreshing = true
+        binding.swipeDetails.isRefreshing = true
         getRepliesPageOne(false)
     }
 
@@ -259,7 +266,7 @@ class TopicFragment : BaseFragment() {
 
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
-                    swipe_details?.isRefreshing = false
+                    binding.swipeDetails?.isRefreshing = false
                     toast("无法打开该主题")
 
                 }
@@ -271,9 +278,9 @@ class TopicFragment : BaseFragment() {
                 if (code == 302) {
                     //权限问题，需要登录
                     activity?.runOnUiThread {
-                        swipe_details?.isRefreshing = false
+                        binding.swipeDetails?.isRefreshing = false
                     if(!myApp.isLogin) {
-                        activity?.showLoginHint(et_post_reply)
+                        activity?.showLoginHint(binding.etPostReply)
                     } else {
                         if(this@TopicFragment.isVisible){
                             toast("你要查看的页面可能遭遇权限问题");
@@ -284,7 +291,7 @@ class TopicFragment : BaseFragment() {
                 }
                 if (code != 200) {
                     activity?.runOnUiThread {
-                        swipe_details?.isRefreshing = false
+                        binding.swipeDetails?.isRefreshing = false
                         toast("无法打开该主题")
                     }
                     return
@@ -351,11 +358,11 @@ class TopicFragment : BaseFragment() {
 
                 val totalPage = parser.getPageValue()[1]  // [2,3]
                 activity?.runOnUiThread {
-                    swipe_details?.isRefreshing = false
+                    binding.swipeDetails?.isRefreshing = false
                     topicHeader?.let {
                         mAdapter.updateItems(it, repliesFirstPage)
                         if (totalPage == 1 && scrollToBottom) {
-                            detail_recycler_view?.scrollToPosition(mAdapter.itemCount - 1)
+                            binding.detailRecyclerView?.scrollToPosition(mAdapter.itemCount - 1)
                         }
                     }
 
@@ -387,7 +394,7 @@ class TopicFragment : BaseFragment() {
                 .start(object : Callback {
 
                     override fun onFailure(call: Call, e: IOException) {
-                        NetManager.dealError(activity, swipe = swipe_details)
+                        NetManager.dealError(activity, swipe = binding.swipeDetails)
                     }
 
                     @Throws(IOException::class)
@@ -395,7 +402,7 @@ class TopicFragment : BaseFragment() {
                         if (response.code == 302) {
                             activity?.runOnUiThread {
                                 toast("${if (doFavor) "取消" else ""}收藏成功")
-                                swipe_details?.isRefreshing = true
+                                binding.swipeDetails?.isRefreshing = true
                                 getRepliesPageOne(false)
                             }
                         }
@@ -453,20 +460,20 @@ class TopicFragment : BaseFragment() {
     }
 
     private fun postReply() {
-        et_post_reply.clearFocus()
+        binding.etPostReply.clearFocus()
         logd("I clicked")
         if(once == null ) {
             toast("发布失败，请刷新后重试")
             return
         }
-        val content = et_post_reply.text.toString()
+        val content = binding.etPostReply.text.toString()
         val requestBody = FormBody.Builder()
                 .add("content", content)
                 .add("once", once!!)
                 .build()
 
-        pb_send.visibility = View.VISIBLE
-        iv_send.visibility = View.INVISIBLE
+        binding.pbSend.visibility = View.VISIBLE
+        binding.ivSend.visibility = View.INVISIBLE
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .header("Origin", NetManager.HTTPS_V2EX_BASE)
@@ -478,26 +485,26 @@ class TopicFragment : BaseFragment() {
 
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
-                    pb_send.visibility = View.GONE
-                    iv_send.visibility = View.VISIBLE
+                    binding.pbSend.visibility = View.GONE
+                    binding.ivSend.visibility = View.VISIBLE
                 }
-                NetManager.dealError(activity, swipe = swipe_details)
+                NetManager.dealError(activity, swipe = binding.swipeDetails)
             }
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 activity?.runOnUiThread {
-                    pb_send.visibility = View.GONE
-                    iv_send.visibility = View.VISIBLE
+                    binding.pbSend.visibility = View.GONE
+                    binding.ivSend.visibility = View.VISIBLE
                     if (response.code == 302) {
                         logd("成功发布")
                         toast("发表评论成功")
-                        et_post_reply.setText("")
-                        swipe_details?.isRefreshing = true
+                        binding.etPostReply.setText("")
+                        binding.swipeDetails?.isRefreshing = true
                         getRepliesPageOne(true)
                     } else {
                         toast("发表评论失败")
-                        swipe_details?.isRefreshing = true
+                        binding.swipeDetails?.isRefreshing = true
                         getRepliesPageOne(true)
                     }
                 }
@@ -508,6 +515,7 @@ class TopicFragment : BaseFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         LocalBroadcastManager.getInstance(myApp).unregisterReceiver(receiver)
         uiScope.launch {
             DbHelper.db.myReplyDao().insert(MyReply(mTopicId, temp))

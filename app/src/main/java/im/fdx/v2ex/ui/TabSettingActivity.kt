@@ -3,8 +3,10 @@ package im.fdx.v2ex.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.TextView
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
@@ -14,10 +16,6 @@ import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.PREF_TAB
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.activity_tab_setting.*
-import kotlinx.android.synthetic.main.item_text_switch.*
-import org.jetbrains.anko.collections.forEachWithIndex
 import org.jetbrains.anko.toast
 import java.util.*
 
@@ -43,7 +41,8 @@ class TabSettingActivity : BaseActivity() {
       curlist.addAll(initTab())
     }
 
-    val manager = androidx.recyclerview.widget.GridLayoutManager(this, 4)
+    val manager = GridLayoutManager(this, 4)
+    val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
     recyclerView.layoutManager = manager
     adapter = DefaultAdapter(curlist)
     recyclerView.adapter = adapter
@@ -149,6 +148,9 @@ class DefaultAdapter(val list: MutableList<Tab>) : RecyclerView.Adapter<DefaultA
     }
   }
 
-  class VH(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer
+  class VH(val containerView: View) : RecyclerView.ViewHolder(containerView){
+    val tv = containerView.findViewById<TextView>(R.id.tv)
+    val ivDelete = containerView.findViewById<View>(R.id.ivDelete)
+  }
 
 }

@@ -11,6 +11,7 @@
     tools:openDrawer="start">
 
     <include
+        android:id="@+id/activity_main_content"
         layout="@layout/activity_main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

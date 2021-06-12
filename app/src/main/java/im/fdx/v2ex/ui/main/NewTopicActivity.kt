@@ -4,21 +4,17 @@ package im.fdx.v2ex.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.EditText
 import android.widget.ImageView
 import com.esafirm.imagepicker.features.ImagePicker
-import com.google.android.material.textfield.TextInputEditText
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ActivityCreateTopicBinding
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.details.TopicActivity
@@ -29,8 +25,6 @@ import im.fdx.v2ex.utils.Keys.KEY_TO_CHOOSE_NODE
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.openImagePicker
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import kotlinx.android.synthetic.main.activity_create_topic.*
-import kotlinx.coroutines.delay
 import okhttp3.*
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivityForResult
@@ -42,23 +36,22 @@ import java.util.regex.Pattern
 class NewTopicActivity : BaseActivity() {
 
     private var mNodename: String = ""
-    private lateinit var etTitle: TextInputEditText
-    private lateinit var etContent: EditText
 
     private var mTitle: String = ""
     private var mContent: String = ""
     private var once: String? = null
+    private lateinit var binding: ActivityCreateTopicBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_topic)
+
+        binding = ActivityCreateTopicBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         setUpToolbar(getString(R.string.new_top))
 
-        etTitle = findViewById(R.id.et_title)
-        etContent = findViewById(R.id.et_content)
 
-
-        search_spinner_node.setOnClickListener {
+        binding.searchSpinnerNode.setOnClickListener {
             startActivityForResult<AllNodesActivity>(REQUEST_NODE, KEY_TO_CHOOSE_NODE to true)
         }
         parseIntent(intent)
@@ -76,8 +69,8 @@ class NewTopicActivity : BaseActivity() {
                     runOnUiThread {
                         when (i) {
                             0 -> {
-                                etContent.append("![image](${s?.url})\n") //todo 做到点击删除。那就完美了
-                                etContent.setSelection(etContent.length())
+                                binding.etContent.append("![image](${s?.url})\n") //todo 做到点击删除。那就完美了
+                                binding.etContent.setSelection(binding.etContent.length())
                             }
                             1 -> toast("网络错误")
                             2 -> toast(s?.msg ?: "上传失败")
@@ -89,7 +82,7 @@ class NewTopicActivity : BaseActivity() {
         } else if (requestCode == REQUEST_NODE && resultCode == Activity.RESULT_OK && data != null) {
             val nodeInfo = data.getParcelableExtra<Node>("extra_node")!!
             mNodename = nodeInfo.name
-            search_spinner_node.text = "${nodeInfo.name} | ${nodeInfo.title}"
+            binding.searchSpinnerNode.text = "${nodeInfo.name} | ${nodeInfo.title}"
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -100,7 +93,7 @@ class NewTopicActivity : BaseActivity() {
         if (Intent.ACTION_SEND == action && type != null) {
             if ("text/plain" == type) {
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
-                etContent.setText(sharedText)
+                binding.etContent.setText(sharedText)
             }
         }
     }
@@ -143,8 +136,8 @@ class NewTopicActivity : BaseActivity() {
         when (item.itemId) {
             MENU_ID_SEND -> {
 
-                mTitle = etTitle.text.toString()
-                mContent = etContent.text.toString()
+                mTitle = binding.etTitle.text.toString()
+                mContent = binding.etContent.text.toString()
 
                 when {
                     mTitle.isEmpty() -> toast("标题和内容不能为空")

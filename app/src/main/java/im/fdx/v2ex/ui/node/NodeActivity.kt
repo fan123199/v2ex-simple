@@ -7,11 +7,13 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.annotation.NonNull
 import androidx.core.os.bundleOf
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ActivityNodeBinding
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
@@ -22,7 +24,6 @@ import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.*
-import kotlinx.android.synthetic.main.activity_node.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -41,10 +42,10 @@ class NodeActivity : BaseActivity() {
     private var mNode: Node? = null
     private lateinit var mMenu: Menu
 
-    val receiver = object : BroadcastReceiver(){
+    val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
-            when(intent.action) {
+            when (intent.action) {
                 Keys.ACTION_LOGIN -> {
                     getNodeInfo()
                 }
@@ -52,26 +53,29 @@ class NodeActivity : BaseActivity() {
         }
     }
 
+    private lateinit var binding: ActivityNodeBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_node)
+        binding = ActivityNodeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setUpToolbar()
         supportActionBar?.setDisplayShowTitleEnabled(false) //很关键，不会一闪而过一个东西
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, IntentFilter(Keys.ACTION_LOGIN))
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(receiver, IntentFilter(Keys.ACTION_LOGIN))
 
-        appbar_node.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        binding.appbarNode.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = abs(verticalOffset).toDouble() / maxScroll.toDouble()
-            handleAlphaOnTitle(rl_node_header, divider, percentage.toFloat())
+            handleAlphaOnTitle(binding.rlNodeHeader, binding.divider, percentage.toFloat())
         })
 
-        fab_node.setOnClickListener {
+        binding.fabNode.setOnClickListener {
             startActivity<NewTopicActivity>(Keys.KEY_NODE_NAME to nodeName)
         }
 
         if (!MyApp.get().isLogin) {
-            fab_node.hide()
+            binding.fabNode.hide()
         }
 
         nodeName = when {
@@ -108,9 +112,11 @@ class NodeActivity : BaseActivity() {
     }
 
     private fun switchFollowAndRefresh(isFavorite: Boolean) {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
+        HttpHelper.OK_CLIENT.newCall(
+            Request.Builder()
                 .url("${NetManager.HTTPS_V2EX_BASE}/${if (isFavorite) "un" else ""}$token")
-                .build()).enqueue(object : Callback {
+                .build()
+        ).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(this@NodeActivity)
             }
@@ -142,12 +148,12 @@ class NodeActivity : BaseActivity() {
             override fun onResponse(call: Call, response: okhttp3.Response) {
                 val code = response.code
                 if (code == 302) {
-                    if(myApp.isLogin){
+                    if (myApp.isLogin) {
                         runOnUiThread {
                             toast("无法访问该节点")
                         }
                     } else {
-                        showLoginHint(toolbar)
+                        showLoginHint(binding.root)
                     }
                     return
                 } else if (code != 200) {
@@ -168,27 +174,28 @@ class NodeActivity : BaseActivity() {
                 }
                 isFollowed = parser.isNodeFollowed()
                 token = parser.getOnce()
-                if(isFinishing || isDestroyed) {
+                if (isFinishing || isDestroyed) {
                     return
                 }
                 runOnUiThread {
                     supportFragmentManager.beginTransaction()
-                            .add(R.id.fragment_container, TopicsFragment().apply {
-                                arguments = bundleOf(
-                                        Keys.KEY_NODE_NAME to nodeName,
-                                        Keys.KEY_TOPIC_LIST to topicList,
-                                        Keys.KEY_PAGE_NUM to pageNum
-                                )
-                            }, "MyActivity")
-                            .commit()
-                    iv_node_image.load(mNode?.avatarLargeUrl)
-                    ctl_node?.title = mNode?.title
-                    tv_node_details.text = mNode?.header
-                    tv_topic_num.text = getString(R.string.topic_number, mNode?.topics)
+                        .add(R.id.fragment_container, TopicsFragment().apply {
+                            arguments = bundleOf(
+                                Keys.KEY_NODE_NAME to nodeName,
+                                Keys.KEY_TOPIC_LIST to topicList,
+                                Keys.KEY_PAGE_NUM to pageNum
+                            )
+                        }, "MyActivity")
+                        .commit()
+                    binding.ivNodeImage.load(mNode?.avatarLargeUrl)
+                    binding.ctlNode.title = mNode?.title
+                    binding.tvNodeDetails.text = mNode?.header
+                    binding.tvTopicNum.text = getString(R.string.topic_number, mNode?.topics)
                     if (isFollowed) {
                         mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp)
                     } else {
-                        mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
+                        mMenu.findItem(R.id.menu_follow)
+                            .setIcon(R.drawable.ic_favorite_border_white_24dp)
                     }
                 }
             }

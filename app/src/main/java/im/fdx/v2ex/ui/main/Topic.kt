@@ -4,7 +4,7 @@ import android.os.Parcelable
 import androidx.room.*
 import im.fdx.v2ex.ui.member.Member
 import im.fdx.v2ex.ui.node.Node
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 /**
  * Created by a708 on 15-8-18.

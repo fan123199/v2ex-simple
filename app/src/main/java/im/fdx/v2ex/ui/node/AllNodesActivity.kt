@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ActivityAllNodesBinding
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.start
@@ -19,7 +20,6 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dealError
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import kotlinx.android.synthetic.main.activity_all_nodes.*
 import okhttp3.Call
 import okhttp3.Callback
 import org.jetbrains.anko.startActivity
@@ -31,9 +31,12 @@ class AllNodesActivity : BaseActivity() {
 
   private lateinit var mAdapter: AllNodesAdapterNew
 
+  private lateinit var binding: ActivityAllNodesBinding
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_all_nodes)
+    binding = ActivityAllNodesBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
     setUpToolbar(getString(R.string.all_nodes))
     //这里是后续不卡的关键，但是第一次滑动还是卡
@@ -42,14 +45,14 @@ class AllNodesActivity : BaseActivity() {
         return 300
       }
     }
-    rv_node.apply {
+    binding.rvNode.apply {
       setHasFixedSize(true) //要做filter，不能用
       setItemViewCacheSize(20)
       layoutManager = linearLayoutManager
     }
 
-    swipe_container.initTheme()
-    swipe_container.setOnRefreshListener {
+    binding.swipeContainer.initTheme()
+    binding.swipeContainer.setOnRefreshListener {
       getAllNodes()
     }
 
@@ -63,8 +66,8 @@ class AllNodesActivity : BaseActivity() {
         startActivity<NodeActivity>(Keys.KEY_NODE_NAME to it.name)
       }
     }
-    rv_node.adapter = mAdapter
-    swipe_container.isRefreshing = true
+    binding.rvNode.adapter = mAdapter
+    binding.swipeContainer.isRefreshing = true
     thread {
       getAllNodes()
     }
@@ -75,7 +78,7 @@ class AllNodesActivity : BaseActivity() {
     vCall(NetManager.URL_ALL_NODE_WEB)
         .start(object : Callback {
           override fun onFailure(call: Call, e: IOException) {
-            dealError(-1, swipe_container)
+            dealError(-1, binding.swipeContainer)
           }
 
           @Throws(IOException::class)
@@ -92,7 +95,7 @@ class AllNodesActivity : BaseActivity() {
             mAdapter.setData(nodeModels)
             runOnUiThread {
               mAdapter.notifyDataSetChanged()
-              swipe_container.isRefreshing = false
+              binding.swipeContainer.isRefreshing = false
             }
 
           }

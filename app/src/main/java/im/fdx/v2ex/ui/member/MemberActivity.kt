@@ -18,6 +18,7 @@ import androidx.core.view.isGone
 import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ActivityMemberBinding
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.API_TOPIC
 import im.fdx.v2ex.network.NetManager.API_USER
@@ -37,7 +38,6 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.CustomChrome
-import kotlinx.android.synthetic.main.activity_member.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -60,7 +60,7 @@ class MemberActivity : BaseActivity() {
     private var followOfOnce: String? = null
     private var isBlocked: Boolean = false
     private var isFollowed: Boolean = false
-
+    private lateinit var binding: ActivityMemberBinding
 
     private val memberViewpagerAdapter: MemberViewpagerAdapter by lazy {
         MemberViewpagerAdapter(supportFragmentManager)
@@ -68,22 +68,24 @@ class MemberActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_member)
-        run {
-            tv_tagline.visibility = View.GONE
-            tv_intro.visibility = View.GONE
-            iv_location.visibility = View.GONE
-            iv_bitcoin.visibility = View.GONE
-            iv_github.visibility = View.GONE
-            iv_twitter.visibility = View.GONE
-            tv_website.visibility = View.GONE
-            ll_info.visibility = View.GONE
 
-            iv_location.setOnClickListener(listener)
-            iv_bitcoin.setOnClickListener(listener)
-            iv_github.setOnClickListener(listener)
-            iv_twitter.setOnClickListener(listener)
-            tv_website.setOnClickListener(listener)
+        binding = ActivityMemberBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        run {
+            binding.tvTagline.visibility = View.GONE
+            binding.tvIntro.visibility = View.GONE
+            binding.ivLocation.visibility = View.GONE
+            binding.ivBitcoin.visibility = View.GONE
+            binding.ivGithub.visibility = View.GONE
+            binding.ivTwitter.visibility = View.GONE
+            binding.tvWebsite.visibility = View.GONE
+            binding.llInfo.visibility = View.GONE
+
+            binding.ivLocation.setOnClickListener(listener)
+            binding.ivBitcoin.setOnClickListener(listener)
+            binding.ivGithub.setOnClickListener(listener)
+            binding.ivTwitter.setOnClickListener(listener)
+            binding.tvWebsite.setOnClickListener(listener)
         }
 
         setUpToolbar()
@@ -96,15 +98,15 @@ class MemberActivity : BaseActivity() {
         }
 
         memberViewpagerAdapter.username = username ?: ""
-        viewpager.adapter = memberViewpagerAdapter
-        tl_member.setupWithViewPager(viewpager)
+        binding.viewpager.adapter = memberViewpagerAdapter
+        binding.tlMember.setupWithViewPager(binding.viewpager)
 
-        al_profile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
+        binding.alProfile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
             val percentage = Math.abs(verticalOffset).toFloat() / maxScroll.toFloat()
             when (percentage) {
-                in 0f..1f -> constraint_member.alpha = 1 - percentage
+                in 0f..1f -> binding.constraintMember.alpha = 1 - percentage
             }
         })
         getData()
@@ -119,7 +121,7 @@ class MemberActivity : BaseActivity() {
 
     private fun getData() {
         val urlUserInfo = "$API_USER?username=$username"  //Livid's profile
-        ctl_profile.title = username
+        binding.ctlProfile.title = username
         urlTopic = "$API_TOPIC?username=$username"
         Log.i(TAG, "$urlUserInfo: \t$urlTopic")
         getUserInfoAPI(urlUserInfo)
@@ -230,21 +232,21 @@ class MemberActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     private fun showUser() {
         if(this.isDestroyed) return
-        iv_avatar_profile.load(member.avatarLargeUrl)
-        tv_tagline.text = member.tagline
-        tv_intro.text = member.bio
-        tv_prefix_created.text = "加入于${TimeUtil.getAbsoluteTime((member.created))},${getString(R.string.the_n_member, member.id)}"
+        binding.ivAvatarProfile.load(member.avatarLargeUrl)
+        binding.tvTagline.text = member.tagline
+        binding.tvIntro.text = member.bio
+        binding.tvPrefixCreated.text = "加入于${TimeUtil.getAbsoluteTime((member.created))},${getString(R.string.the_n_member, member.id)}"
 
-        iv_bitcoin.isGone = member.btc.isNullOrEmpty()
-        iv_github.isGone = member.github.isNullOrEmpty()
-        iv_location.isGone = member.location.isNullOrEmpty()
-        iv_twitter.isGone = member.twitter.isNullOrEmpty()
-        tv_website.isGone = member.website.isNullOrEmpty()
+        binding.ivBitcoin.isGone = member.btc.isNullOrEmpty()
+        binding.ivGithub.isGone = member.github.isNullOrEmpty()
+        binding.ivLocation.isGone = member.location.isNullOrEmpty()
+        binding.ivTwitter.isGone = member.twitter.isNullOrEmpty()
+        binding.tvWebsite.isGone = member.website.isNullOrEmpty()
 
-        tv_tagline.isGone = member.tagline.isNullOrEmpty()
-        tv_intro.isGone = member.bio.isNullOrEmpty()
+        binding.tvTagline.isGone = member.tagline.isNullOrEmpty()
+        binding.tvIntro.isGone = member.bio.isNullOrEmpty()
 
-        ll_info.isGone = member.btc.isNullOrEmpty()
+        binding.llInfo.isGone = member.btc.isNullOrEmpty()
                 && member.github.isNullOrEmpty()
                 && member.location.isNullOrEmpty()
                 && member.twitter.isNullOrEmpty()

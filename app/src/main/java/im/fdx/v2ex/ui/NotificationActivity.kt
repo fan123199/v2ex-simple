@@ -3,6 +3,9 @@ package im.fdx.v2ex.ui
 import android.content.Intent
 import android.os.Bundle
 import android.widget.FrameLayout
+import androidx.appcompat.widget.Toolbar
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.NetManager
@@ -12,7 +15,6 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.showNoContent
-import kotlinx.android.synthetic.main.app_toolbar.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -23,8 +25,8 @@ class NotificationActivity : BaseActivity() {
 
     private var notifications: MutableList<NotificationModel> = mutableListOf()
     private lateinit var adapter: NotificationAdapter
-  private lateinit var mSwipe: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-  private lateinit var rvNotification: androidx.recyclerview.widget.RecyclerView
+    private lateinit var  mSwipe: SwipeRefreshLayout
+    private lateinit var rvNotification: RecyclerView
     private lateinit var flContainer: FrameLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +41,7 @@ class NotificationActivity : BaseActivity() {
         mSwipe.setOnRefreshListener { fetchNotification() }
 
         rvNotification = findViewById(R.id.rv_container)
-      rvNotification.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        rvNotification.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         adapter = NotificationAdapter(this, notifications)
         rvNotification.adapter = adapter
         parseIntent(intent)
@@ -48,7 +50,7 @@ class NotificationActivity : BaseActivity() {
     private fun parseIntent(intent: Intent) {
         val numUnread = intent.getIntExtra(Keys.KEY_UNREAD_COUNT, -1)
         adapter.number = numUnread
-        toolbar.title = "${getString(R.string.notification)} " +
+        findViewById<Toolbar>(R.id.toolbar).title = "${getString(R.string.notification)} " +
                 if (numUnread != -1) "($numUnread 条未读)" else ""
         mSwipe.isRefreshing = true
         fetchNotification()
@@ -72,8 +74,8 @@ class NotificationActivity : BaseActivity() {
                         val c = Parser(response.body!!.string()).parseToNotifications()
                         if (c.isEmpty()) {
                             runOnUiThread {
-                              mSwipe.isRefreshing = false
-                              flContainer.showNoContent()
+                                mSwipe.isRefreshing = false
+                                flContainer.showNoContent()
                             }
                             return
                         }

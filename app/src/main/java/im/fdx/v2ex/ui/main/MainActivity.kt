@@ -26,15 +26,14 @@ import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.viewpager.widget.ViewPager
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
+import im.fdx.v2ex.databinding.ActivityMainNavDrawerBinding
 import im.fdx.v2ex.network.GetMsgWorker
 import im.fdx.v2ex.network.NetManager.DAILY_CHECK
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
@@ -48,8 +47,6 @@ import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.TAG_WORKER
 import im.fdx.v2ex.utils.extensions.*
-import kotlinx.android.synthetic.main.activity_main_content.*
-import kotlinx.android.synthetic.main.activity_main_nav_drawer.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -62,10 +59,6 @@ import java.util.concurrent.TimeUnit
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
-
-  private lateinit var mDrawer: DrawerLayout
-  private lateinit var mViewPager: ViewPager
-  private lateinit var fab: FloatingActionButton
 
   private lateinit var mAdapter: MyViewPagerAdapter
   private val shortcutId = "create_topic"
@@ -118,17 +111,21 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   fun reloadTab() {
     mAdapter.initFragment()
     mAdapter.notifyDataSetChanged()
-    mViewPager.adapter = mAdapter
-    sliding_tabs.setupWithViewPager(mViewPager)
+    binding.activityMainContent.viewpagerMain.adapter = mAdapter
+    binding.activityMainContent.slidingTabs.setupWithViewPager(binding.activityMainContent.viewpagerMain)
   }
 
+  private lateinit var binding: ActivityMainNavDrawerBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     logd("onCreate")
     window.statusBarColor = Color.TRANSPARENT
-    setContentView(R.layout.activity_main_nav_drawer)
-    setSupportActionBar(toolbar)
+
+    binding = ActivityMainNavDrawerBinding.inflate(layoutInflater)
+    val view = binding.root
+    setContentView(view)
+    setSupportActionBar(binding.activityMainContent.toolbar)
 
     val intentFilter = IntentFilter().apply {
       addAction(Keys.ACTION_LOGIN)
@@ -141,30 +138,28 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     createShortCut()
 
-    mDrawer = findViewById(R.id.drawer_layout)
-    val mDrawToggle = ActionBarDrawerToggle(this, mDrawer,
-        toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-    mDrawer.addDrawerListener(mDrawToggle)
-    mDrawer.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.status_bar_white))
+    val mDrawToggle = ActionBarDrawerToggle(this, binding.drawerLayout,
+      binding.activityMainContent.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+    binding.drawerLayout.addDrawerListener(mDrawToggle)
+    binding.drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.status_bar_white))
     mDrawToggle.syncState()
 
-    mDrawer.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+    binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
       override fun onDrawerClosed(drawerView: View) {
-        val menu = nav_view.menu
+        val menu = binding.navView.menu
         (0 until menu.size()).forEach { j -> menu.getItem(j).isChecked = false }
       }
     })
 
-    nav_view.setNavigationItemSelectedListener(this)
-    fab = findViewById(R.id.fab_main)
-    fab.setOnClickListener {
+    binding.navView.setNavigationItemSelectedListener(this)
+    binding.activityMainContent.fabMain.setOnClickListener {
       if(myApp.isLogin) {
         startActivity<NewTopicActivity>()
       } else {
         showLoginHint(it)
       }
     }
-    val ivMode = nav_view.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
+    val ivMode = binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
     ivMode.setOnClickListener {
       if (pref.getBoolean("NIGHT_MODE", false)) {
@@ -189,15 +184,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       dailyCheck(true)
     }
 
-    mViewPager = findViewById(R.id.viewpager_main)
     mAdapter = MyViewPagerAdapter(supportFragmentManager, this@MainActivity)
-    mViewPager.adapter = mAdapter
+    binding.activityMainContent.viewpagerMain.adapter = mAdapter
 
 
     //内部实现就是加入一堆的listener给viewpager，不用自己实现
-    sliding_tabs.setupWithViewPager(mViewPager)
+    binding.activityMainContent.slidingTabs.setupWithViewPager(binding.activityMainContent.viewpagerMain)
 
-    sliding_tabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+    binding.activityMainContent.slidingTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
       override fun onTabSelected(tab: TabLayout.Tab) {}
       override fun onTabUnselected(tab: TabLayout.Tab) {}
 
@@ -267,8 +261,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
   private fun setUserInfo(username: String?, avatar: String?) {
-    val tvMyName: TextView = nav_view.getHeaderView(0).findViewById(R.id.tv_my_username)
-    val ivMyAvatar: CircleImageView = nav_view.getHeaderView(0).findViewById(R.id.iv_my_avatar)
+    val tvMyName: TextView = binding.navView.getHeaderView(0).findViewById(R.id.tv_my_username)
+    val ivMyAvatar: CircleImageView = binding.navView.getHeaderView(0).findViewById(R.id.iv_my_avatar)
     tvMyName.text = username
     ivMyAvatar.load(avatar)
     ivMyAvatar.setOnClickListener {
@@ -279,8 +273,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
   override fun onBackPressed() {
-    if (mDrawer.isDrawerOpen(GravityCompat.START)) {
-      mDrawer.closeDrawer(GravityCompat.START)
+    if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+      binding.drawerLayout.closeDrawer(GravityCompat.START)
     } else {
       super.onBackPressed()
     }
@@ -334,7 +328,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if(myApp.isLogin) {
           dailyCheck(autoCheck = false)
         } else {
-          showLoginHint(fab)
+          showLoginHint(binding.activityMainContent.fabMain)
         }
       R.id.nav_node ->
         startActivity<AllNodesActivity>()
@@ -342,7 +336,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if(myApp.isLogin) {
           startActivity<FavorActivity>()
         } else {
-          showLoginHint(fab)
+          showLoginHint(binding.activityMainContent.fabMain)
         }
       R.id.nav_change_daylight -> startActivity<WebViewActivity>()
       R.id.nav_testNotify -> {}
@@ -350,7 +344,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       R.id.nav_feedback -> email(Keys.AUTHOR_EMAIL, getString(R.string.feedback_subject), getString(R.string.feedback_hint))
       R.id.nav_setting -> startActivity<SettingsActivity>()
     }
-    mDrawer.closeDrawer(GravityCompat.START)
+    binding.drawerLayout.closeDrawer(GravityCompat.START)
     return true
   }
 
@@ -432,7 +426,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     super.onDestroy()
     logd("onDestroy")
     stopGetNotification()
-    mViewPager.clearOnPageChangeListeners()
+    binding.activityMainContent.viewpagerMain.clearOnPageChangeListeners()
     LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
   }
 

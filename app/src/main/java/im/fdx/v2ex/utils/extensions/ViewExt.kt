@@ -24,7 +24,6 @@ import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
-import kotlinx.android.synthetic.main.activity_node.*
 
 /**
  * Created by fdx on 2017/6/14.

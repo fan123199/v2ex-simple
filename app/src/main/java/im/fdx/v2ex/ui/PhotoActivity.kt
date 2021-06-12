@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.viewpager.widget.ViewPager
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.ImageUtil
@@ -14,9 +16,7 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.BottomSheetMenu
-import kotlinx.android.parcel.Parcelize
-import kotlinx.android.synthetic.main.activity_photo.*
-import kotlinx.android.synthetic.main.app_toolbar.*
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 
@@ -30,6 +30,8 @@ class PhotoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo)
         setUpToolbar()
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val viewPager: ViewPager = findViewById(R.id.viewPager)
         val list = intent.getParcelableArrayListExtra<V2Photo>(Keys.KEY_PHOTO)
         if(list == null ) {
             finish()

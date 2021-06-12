@@ -9,9 +9,7 @@ import android.view.LayoutInflater
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.EditText
-import android.widget.ProgressBar
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.edit
 import androidx.core.os.bundleOf
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
@@ -19,6 +17,7 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withC
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ActivityLoginBinding
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
@@ -30,19 +29,14 @@ import im.fdx.v2ex.utils.extensions.loge
 import im.fdx.v2ex.utils.extensions.setStatusBarColor
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.view.CustomChrome
-import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.item_verify_code.*
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
 
 class LoginActivity : BaseActivity() {
-
-  private lateinit var progressBar: ProgressBar
 
   /**
    * 不一定是用户名，可能是邮箱
@@ -54,34 +48,34 @@ class LoginActivity : BaseActivity() {
   var passwordKey: String? = null
   var nameKey: String? = null
   var imageCodeKey: String? = null
-
+  private lateinit var binding: ActivityLoginBinding
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_login)
+
+    binding = ActivityLoginBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
     setUpToolbar()
     setStatusBarColor(R.color.bg_login)
-    progressBar = findViewById(R.id.pb_login)
-
     val usernamePref = pref.getString(Keys.KEY_USERNAME, "")
-    btn_login.setOnClickListener {
+    binding.btnLogin.setOnClickListener {
       if (!isValidated()) return@setOnClickListener
-      loginName = input_username.text.toString()
-      password = input_password.text.toString()
-      progressBar.visibility = VISIBLE
-      btn_login.visibility = GONE
+      loginName = binding.inputUsername.text.toString()
+      password = binding.inputPassword.text.toString()
+      binding.pbLogin.visibility = VISIBLE
+      binding.btnLogin.visibility = GONE
       postLogin(nameKey ?: "", passwordKey ?: "", onceCode = onceCode
           ?: "", imageCodeKey = imageCodeKey ?: "")
     }
-    link_sign_up.setOnClickListener {
+    binding.linkSignUp.setOnClickListener {
       CustomChrome(this@LoginActivity).load(NetManager.SIGN_UP_URL)
     }
-    iv_code.setOnClickListener {
+    binding.ivCode.setOnClickListener {
       getLoginElement()
     }
 
-    tv_google_login.setOnClickListener{
+    binding.tvGoogleLogin.setOnClickListener{
       if(onceCode == null) {
         toast("请稍后")
       } else {
@@ -93,8 +87,8 @@ class LoginActivity : BaseActivity() {
     }
 
     if (!usernamePref.isNullOrEmpty()) {
-      input_username.setText(usernamePref)
-      input_password.requestFocus()
+      binding.inputUsername.setText(usernamePref)
+      binding.inputPassword.requestFocus()
     }
 
     getLoginElement()
@@ -142,10 +136,10 @@ class LoginActivity : BaseActivity() {
               .build()
           val url = GlideUrl(str, headers)
           if (!this@LoginActivity.isDestroyed) {
-            GlideApp.with(iv_code)
+            GlideApp.with(binding.ivCode)
                     .load(url)
                     .transition(withCrossFade())
-                    .centerCrop().into(iv_code)
+                    .centerCrop().into(binding.ivCode)
           }
         }
         XLog.tag("LoginActivity").d("$nameKey|$passwordKey|$onceCode|$imageCodeKey")
@@ -155,9 +149,9 @@ class LoginActivity : BaseActivity() {
 
   private fun postLogin(nameKey: String, passwordKey: String, onceCode: String, imageCodeKey: String) {
     val requestBody = FormBody.Builder()
-        .add(nameKey, input_username.text.toString())
-        .add(passwordKey, input_password.text.toString())
-        .add(imageCodeKey, et_input_code.text.toString())
+        .add(nameKey, binding.inputUsername.text.toString())
+        .add(passwordKey, binding.inputPassword.text.toString())
+        .add(imageCodeKey, binding.etInputCode.text.toString())
         .add("once", onceCode)
         .build()
 
@@ -192,8 +186,8 @@ class LoginActivity : BaseActivity() {
                 if (response2.code == 302) {
                   if (("/2fa" == response2.header("Location"))) {
                     runOnUiThread {
-                      progressBar.visibility = GONE
-                      btn_login.visibility = VISIBLE
+                      binding.pbLogin.visibility = GONE
+                      binding.btnLogin.visibility = VISIBLE
                       showTwoStepDialog(this@LoginActivity)
                     }
                   }
@@ -210,8 +204,8 @@ class LoginActivity : BaseActivity() {
           }
           200 -> runOnUiThread {
             longToast("登录失败:\n $errorMsg")
-            progressBar.visibility = GONE
-            btn_login.visibility = VISIBLE
+            binding.pbLogin.visibility = GONE
+            binding.btnLogin.visibility = VISIBLE
           }
         }
 
@@ -220,22 +214,22 @@ class LoginActivity : BaseActivity() {
   }
 
   private fun isValidated(): Boolean {
-    val username = input_username.text.toString()
-    val password = input_password.text.toString()
+    val username = binding.inputUsername.text.toString()
+    val password = binding.inputPassword.text.toString()
 
     if (username.isEmpty()) {
-      input_username.error = "名字不能为空"
-      input_username.requestFocus()
+      binding.inputUsername.error = "名字不能为空"
+      binding.inputUsername.requestFocus()
       return false
     }
     if (password.isEmpty()) {
-      input_password.error = "密码不能为空"
-      input_password.requestFocus()
+      binding.inputPassword.error = "密码不能为空"
+      binding.inputPassword.requestFocus()
       return false
     }
-    if (et_input_code.text.isNullOrEmpty()) {
-      et_input_code.error = "验证码不能为空"
-      et_input_code.requestFocus()
+    if (binding.etInputCode.text.isNullOrEmpty()) {
+      binding.etInputCode.error = "验证码不能为空"
+      binding.etInputCode.requestFocus()
       return false
     }
 

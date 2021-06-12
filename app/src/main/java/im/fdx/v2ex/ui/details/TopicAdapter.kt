@@ -20,6 +20,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ItemReplyViewBinding
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.pref
@@ -37,8 +38,6 @@ import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
 import im.fdx.v2ex.view.typeComment
 import im.fdx.v2ex.view.typeReply
-import kotlinx.android.extensions.LayoutContainer
-import kotlinx.android.synthetic.main.item_reply_view.*
 import okhttp3.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
@@ -64,7 +63,7 @@ class TopicAdapter(private val act: FragmentActivity,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
             when (viewType) {
                 TYPE_HEADER -> TopicWithCommentsViewHolder(LayoutInflater.from(act).inflate(R.layout.item_topic_with_comments, parent, false))
-                TYPE_ITEM -> ItemViewHolder(LayoutInflater.from(act).inflate(R.layout.item_reply_view, parent, false))
+                TYPE_ITEM -> ItemViewHolder(ItemReplyViewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
                 else -> throw RuntimeException(" No type that matches $viewType + Make sure using types correctly")
             }
 
@@ -114,9 +113,9 @@ class TopicAdapter(private val act: FragmentActivity,
                 val itemVH = holder as ItemViewHolder
                 val replyItem = replies[position - 1]
                 if (position == itemCount - 1) {
-                    itemVH.divider.visibility = View.INVISIBLE
+                    itemVH.binding.divider.visibility = View.INVISIBLE
                 } else {
-                    itemVH.divider.visibility = View.VISIBLE
+                    itemVH.binding.divider.visibility = View.VISIBLE
                 }
 
                 itemVH.bind(replyItem)
@@ -146,24 +145,24 @@ class TopicAdapter(private val act: FragmentActivity,
 
                 }
 
-                itemVH.iv_thanks.setOnClickListener { thank(replyItem, itemVH) }
-                itemVH.tv_thanks.setOnClickListener { thank(replyItem, itemVH) }
-                itemVH.iv_reply.setOnClickListener { reply(replyItem, position) }
+                itemVH.binding.ivThanks.setOnClickListener { thank(replyItem, itemVH) }
+                itemVH.binding.tvThanks.setOnClickListener { thank(replyItem, itemVH) }
+                itemVH.binding.ivReply.setOnClickListener { reply(replyItem, position) }
 
 
-                itemVH.iv_reply_avatar.setOnClickListener {
+                itemVH.binding.ivReplyAvatar.setOnClickListener {
                     act.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
                 }
 
                 if (replyItem.isThanked) {
-                    itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
-                    itemVH.iv_thanks.isClickable = false
-                    itemVH.tv_thanks.isClickable = false
+                    itemVH.binding.ivThanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
+                    itemVH.binding.ivThanks.isClickable = false
+                    itemVH.binding.tvThanks.isClickable = false
                 } else {
-                    itemVH.iv_thanks.imageTintList = null
+                    itemVH.binding.ivThanks.imageTintList = null
                 }
 
-                itemVH.tv_reply_content.popupListener = object : Popup.PopupListener {
+                itemVH.binding.tvReplyContent.popupListener = object : Popup.PopupListener {
                     override fun onClick(v: View, url: String) {
                         val username = url.split("/").last()
 
@@ -235,9 +234,9 @@ class TopicAdapter(private val act: FragmentActivity,
                     act.runOnUiThread {
                         act.toast("感谢成功")
                         replyItem.thanks = replyItem.thanks + 1
-                        itemVH.tv_thanks.text = (replyItem.thanks).toString()
-                        itemVH.iv_thanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
-                        itemVH.iv_thanks.isClickable = false
+                        itemVH.binding.tvThanks.text = (replyItem.thanks).toString()
+                        itemVH.binding.ivThanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
+                        itemVH.binding.ivThanks.isClickable = false
                         replyItem.isThanked = true
                     }
                 } else {
@@ -272,8 +271,8 @@ class TopicAdapter(private val act: FragmentActivity,
 
     override fun getItemCount() = 1 + replies.size
 
-    override fun getItemViewType(position: Int) = when {
-        position == 0 -> TYPE_HEADER
+    override fun getItemViewType(position: Int) = when (position) {
+        0 -> TYPE_HEADER
         else -> TYPE_ITEM
     }
 
@@ -300,19 +299,19 @@ class TopicAdapter(private val act: FragmentActivity,
 
 }
 
-class ItemViewHolder(override val containerView: View)
-    : RecyclerView.ViewHolder(containerView), LayoutContainer {
+class ItemViewHolder(var binding: ItemReplyViewBinding)
+    : RecyclerView.ViewHolder(binding.root) {
 
     @SuppressLint("SetTextI18n")
     fun bind(data:Reply) {
 
-        tv_reply_content.setGoodText(data.content_rendered , type = typeReply)
-        tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
-        tv_reply_row.text = "#$adapterPosition"
-        tv_replier.text = data.member?.username
-        tv_thanks.text = data.thanks.toString()
-        iv_reply_avatar.load(data.member?.avatarNormalUrl)
-        tv_reply_time.text = data.showTime
+        binding.tvReplyContent.setGoodText(data.content_rendered , type = typeReply)
+        binding.tvLouzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
+        binding.tvReplyRow.text = "#$adapterPosition"
+        binding.tvReplier.text = data.member?.username
+        binding.tvThanks.text = data.thanks.toString()
+        binding.ivReplyAvatar.load(data.member?.avatarNormalUrl)
+        binding.tvReplyTime.text = data.showTime
 
     }
 

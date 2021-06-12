@@ -10,13 +10,9 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.ItemReplyViewBinding
 import im.fdx.v2ex.ui.details.ItemViewHolder
 import im.fdx.v2ex.ui.details.Reply
-import kotlinx.android.synthetic.main.item_reply_view.*
-
-
-
-
 
 /**
  * Created by fdx on 2017/7/14.
@@ -25,10 +21,10 @@ import kotlinx.android.synthetic.main.item_reply_view.*
 
 class Popup(mActivity: Context) {
     private val popupWindow: PopupWindow
-    private var contentView: View = LayoutInflater.from(mActivity).inflate(R.layout.item_reply_view, null)
+    private var binding: ItemReplyViewBinding = ItemReplyViewBinding.inflate(LayoutInflater.from(mActivity), null, false)
 
     init {
-        popupWindow = PopupWindow(contentView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        popupWindow = PopupWindow(binding.root, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         popupWindow.isOutsideTouchable = true
         popupWindow.elevation = 16f
         popupWindow.isFocusable = true
@@ -41,16 +37,16 @@ class Popup(mActivity: Context) {
     fun show(v: View, data: Reply, index: Int, clickListener: (Int) -> Unit) {
 
         val position  = index + 1 //这是对应关系
-        val hd = ItemViewHolder(contentView)
+        val hd = ItemViewHolder(binding)
         hd.bind(data)
-        hd.tv_reply_content.movementMethod = ScrollingMovementMethod.getInstance()
-        hd.tv_reply_content.maxLines = 4
-        hd.tv_reply_content.isVerticalScrollBarEnabled = true
-        hd.tv_reply_row.text = "#$position"
-        hd.iv_thanks.visibility = View.INVISIBLE
-        hd.iv_reply.visibility = View.INVISIBLE
-        hd.divider.visibility = View.INVISIBLE
-        contentView.setOnClickListener {
+        hd.binding.tvReplyContent.movementMethod = ScrollingMovementMethod.getInstance()
+        hd.binding.tvReplyContent.maxLines = 4
+        hd.binding.tvReplyContent.isVerticalScrollBarEnabled = true
+        hd.binding.tvReplyRow.text = "#$position"
+        hd.binding.ivThanks.visibility = View.INVISIBLE
+        hd.binding.ivReply.visibility = View.INVISIBLE
+        hd.binding.divider.visibility = View.INVISIBLE
+        hd.binding.root.setOnClickListener {
             clickListener(position)
         }
 

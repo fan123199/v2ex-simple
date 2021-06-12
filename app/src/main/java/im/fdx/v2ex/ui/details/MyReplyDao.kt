@@ -13,5 +13,5 @@ interface MyReplyDao {
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(myReply: MyReply)
+    suspend fun insert(myReply: MyReply): Long
 }

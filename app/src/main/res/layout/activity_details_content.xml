@@ -26,12 +26,12 @@
 
             <TextView
                 android:id="@+id/tv_toolbar"
-                android:textAppearance="@style/VText.ToolbarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLines="1"
                 android:ellipsize="end"
-                tools:text="我是个大标我是个大标题"/>
+                android:maxLines="1"
+                android:textAppearance="@style/VText.ToolbarStyle"
+                tools:text="我是个大标我是个大标题" />
 
 
         </androidx.appcompat.widget.Toolbar>
@@ -50,5 +50,62 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <include layout="@layout/footer_reply" />
+    <include
+        layout="@layout/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1px" />
+
+    <LinearLayout
+        android:id="@+id/foot_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_background"
+        android:elevation="3dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/et_post_reply"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/post_reply"
+            android:inputType="textMultiLine"
+            android:maxLines="5"
+            android:minLines="1"
+            android:paddingStart="@dimen/md_left_margin"
+            android:paddingTop="10dp"
+            android:paddingEnd="@dimen/md_left_margin"
+            android:paddingBottom="10dp"
+            android:textAllCaps="false"
+            android:textColorHint="@color/hint"
+            android:textSize="?text_large"
+            tools:hint="abcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefgabcdefg"
+            tools:ignore="Autofill" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:paddingStart="8dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:id="@+id/iv_send"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:contentDescription="@string/reply"
+                android:src="@drawable/ic_send_hint_24dp" />
+
+            <ProgressBar
+                android:id="@+id/pb_send"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </LinearLayout>
 </LinearLayout>

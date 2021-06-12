@@ -20,10 +20,12 @@ import java.util.*
  * Created by fdx on 2015/10/15.
  * 从MainActivity分离出来. 用了FragmentStatePagerAdapter 替代FragmentPagerAdapter，才可以动态切换Fragment
  * 弃用了Volley 和 模拟web + okhttp
+ *
+ * todo pageadapter有更新，明天需要完成
  */
 internal class MyViewPagerAdapter(
         fm: FragmentManager,
-        private val mContext: Context) : FragmentStatePagerAdapter(fm) {
+        private val mContext: Context) : FragmentStatePagerAdapter(fm, BEHAVIOR_SET_USER_VISIBLE_HINT ) {
 
     private val mFragments = ArrayList<TopicsFragment>()
     private val tabList = mutableListOf<Tab>()
