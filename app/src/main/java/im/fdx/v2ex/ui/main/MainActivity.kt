@@ -3,14 +3,12 @@
 package im.fdx.v2ex.ui.main
 
 import android.app.NotificationManager
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.Color
 import android.graphics.drawable.Icon
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -19,6 +17,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -341,11 +340,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
       R.id.nav_change_daylight -> startActivity<WebViewActivity>()
       R.id.nav_testNotify -> {}
       R.id.nav_share -> share("https://play.google.com/store/apps/details?id=$packageName")
-      R.id.nav_feedback -> email(Keys.AUTHOR_EMAIL, getString(R.string.feedback_subject), getString(R.string.feedback_hint))
+      R.id.nav_feedback -> sendEmail(Keys.AUTHOR_EMAIL, getString(R.string.feedback_subject), getString(R.string.feedback_hint))
       R.id.nav_setting -> startActivity<SettingsActivity>()
     }
     binding.drawerLayout.closeDrawer(GravityCompat.START)
     return true
+  }
+
+  fun sendEmail(email: String, subject: String = "", text: String = "") {
+    val selectorIntent = Intent(Intent.ACTION_SENDTO)
+    selectorIntent.data = Uri.parse("mailto:")
+    val emailIntent = Intent(Intent.ACTION_SEND)
+    emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+    emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+    emailIntent.putExtra(Intent.EXTRA_TEXT, text)
+    emailIntent.selector = selectorIntent
+    try {
+      startActivity(Intent.createChooser(emailIntent, "Select a Email Client"))
+    } catch (ex: ActivityNotFoundException) {
+      Toast.makeText(
+        this@MainActivity, "No Email client found!!",
+        Toast.LENGTH_SHORT
+      ).show()
+    }
   }
 
 
