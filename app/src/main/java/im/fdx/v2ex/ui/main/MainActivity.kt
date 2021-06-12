@@ -250,7 +250,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
   private fun startGetNotification() {
-    if (MyApp.get().isLogin && isOpenMessage) {
+    if (myApp.isLogin && isOpenMessage) {
       val timeSec = pref.getString("pref_msg_period", "900")!!.toLong()
       val compressionWork = PeriodicWorkRequestBuilder<GetMsgWorker>(timeSec, TimeUnit.SECONDS)
               .addTag(TAG_WORKER)
@@ -261,9 +261,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
   private fun stopGetNotification() {
-    if (myApp.isLogin
-            && isOpenMessage
-            && !pref.getBoolean("pref_background_msg", false)) {
+    if (!myApp.isLogin || !pref.getBoolean("pref_background_msg", false)) {
       WorkManager.getInstance().cancelAllWorkByTag(TAG_WORKER)
     }
   }
