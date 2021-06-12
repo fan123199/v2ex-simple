@@ -7,14 +7,11 @@ import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.details.ItemViewHolder
 import im.fdx.v2ex.ui.details.Reply
-import im.fdx.v2ex.ui.details.TopicDetailAdapter
 import kotlinx.android.synthetic.main.item_reply_view.*
 
 

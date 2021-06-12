@@ -35,6 +35,8 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.showLoginHint
 import im.fdx.v2ex.view.GoodTextView
 import im.fdx.v2ex.view.Popup
+import im.fdx.v2ex.view.typeComment
+import im.fdx.v2ex.view.typeReply
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_reply_view.*
 import okhttp3.*
@@ -46,14 +48,12 @@ import java.io.IOException
 private const val TYPE_HEADER = 0
 private const val TYPE_ITEM = 1
 
-const val TYPE_GO_TO_ROW = -1
-
 /**
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
  */
-class TopicDetailAdapter(private val act: FragmentActivity,
-                         private val clickMore: (Int) -> Unit
+class TopicAdapter(private val act: FragmentActivity,
+                   private val clickMore: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var once: String? = null
@@ -97,7 +97,7 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                         val th = CommentsViewHolder(view)
                         th.tvCTitle.text = it.title
                         th.tvCTime.text = TimeUtil.getRelativeTime(it.created)
-                        th.tvCContent.setGoodText(it.content, type = 2)
+                        th.tvCContent.setGoodText(it.content, type = typeComment)
                         mainHolder.ll.addView(view)
                     }
                 }
@@ -151,9 +151,6 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                 itemVH.iv_reply.setOnClickListener { reply(replyItem, position) }
 
 
-//                logi(replyItem.content_rendered)
-
-
                 itemVH.iv_reply_avatar.setOnClickListener {
                     act.startActivity<MemberActivity>(Keys.KEY_USERNAME to replyItem.member!!.username)
                 }
@@ -184,17 +181,6 @@ class TopicDetailAdapter(private val act: FragmentActivity,
                         if (index == -1 || index > position) {
                             return
                         }
-
-                        //自我优化的失败案例
-                        if (replies[index].member!!.username != username) {
-                            for(i in (index -2)..(index + 2)) {
-                                if (replies[i].member!!.username == username ){
-                                    index = i
-                                    break
-                                }
-                            }
-                        }
-
                         Popup(act).show(v, replies[index], index, clickMore)
                     }
 
@@ -320,7 +306,7 @@ class ItemViewHolder(override val containerView: View)
     @SuppressLint("SetTextI18n")
     fun bind(data:Reply) {
 
-        tv_reply_content.setGoodText(data.content_rendered , type = 3)
+        tv_reply_content.setGoodText(data.content_rendered , type = typeReply)
         tv_louzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
         tv_reply_row.text = "#$adapterPosition"
         tv_replier.text = data.member?.username

@@ -49,7 +49,7 @@ import java.lang.Exception
  */
 class TopicFragment : BaseFragment() {
 
-    private lateinit var mAdapter: TopicDetailAdapter
+    private lateinit var mAdapter: TopicAdapter
     private var mMenu: Menu? = null
 
     private lateinit var mTopicId: String
@@ -184,7 +184,7 @@ class TopicFragment : BaseFragment() {
             }
         })
 
-        mAdapter = TopicDetailAdapter(requireActivity()) { position: Int ->
+        mAdapter = TopicAdapter(requireActivity()) { position: Int ->
             detail_recycler_view.smoothScrollToPosition(position)
         }
         detail_recycler_view.adapter = mAdapter

@@ -29,9 +29,9 @@ import org.xml.sax.XMLReader
 
 typealias TextType = Int
 
-val typeTopic: TextType = 1
-val typeComment: TextType = 2
-val typeReply: TextType = 3
+const val typeTopic: TextType = 1
+const val typeComment: TextType = 2
+const val typeReply: TextType = 3
 
 /**
  * Created by fdx on 2016/9/11.
@@ -58,7 +58,7 @@ class GoodTextView @JvmOverloads constructor(
 
 
     @Suppress("DEPRECATION")
-    fun setGoodText(text: String?, removeClick: Boolean? = false, type: TextType = 1) {
+    fun setGoodText(text: String?, removeClick: Boolean? = false, type: TextType = typeTopic) {
         if (text.isNullOrEmpty()) {
             return
         }
