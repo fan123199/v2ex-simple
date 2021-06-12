@@ -83,10 +83,11 @@ class WebViewActivity : BaseActivity() {
             super.onReceivedHttpError(view, request, errorResponse)
         }
 
+        //todo hard code for google login
         override fun onPageFinished(view: WebView?, url: String?) {
             val cookie = CookieManager.getInstance().getCookie(url)
-            Log.i("fdxcookie",url + "----"+  cookie)
-            if(cookie.contains("A2=") && url !=null) {
+            Log.i("fdxcookie", "$url----$cookie")
+            if(cookie?.contains("A2=") == true && url !=null) {
                 // "abc:efg;"
                 HttpHelper.cookiePersistor.persistAll(strtocookie(url, cookie))
                 setResult(Activity.RESULT_OK)
