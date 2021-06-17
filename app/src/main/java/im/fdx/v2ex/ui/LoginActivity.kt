@@ -244,7 +244,7 @@ class LoginActivity : BaseActivity() {
     val dialogEt = LayoutInflater.from(activity).inflate(R.layout.dialog_et, null)
     val etCode = dialogEt.findViewById<EditText>(R.id.et_two_step_code)
     AlertDialog.Builder(activity, R.style.AppTheme_Simple)
-            .setTitle("您开启了两步验证")
+            .setTitle("您需要进行两步验证")
             .setPositiveButton("验证") { _, _ ->
               finishLogin(etCode.text.toString(), activity)
             }

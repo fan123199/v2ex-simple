@@ -4,24 +4,22 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.widget.Switch
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import androidx.work.WorkManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.*
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.Keys.PREF_NIGHT_MODE
 import im.fdx.v2ex.utils.Keys.PREF_TAB
 import im.fdx.v2ex.utils.Keys.PREF_TEXT_SIZE
 import im.fdx.v2ex.utils.Keys.PREF_VERSION
@@ -48,20 +46,22 @@ class SettingsActivity : BaseActivity() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, what: String?) {
       addPreferencesFromResource(R.xml.preference)
-
-
-      when {
-        MyApp.get().isLogin -> {
-          addPreferencesFromResource(R.xml.preference_login)
-          findPreference<Preference>("group_user")?.title = pref.getString(Keys.PREF_USERNAME, "user")
-          prefUser()
-          prefMessage()
-          prefTab()
-        }
-      }
-
+      prefTab()
+      prefNightMode()
       prefRate()
       prefVersion()
+
+      if (myApp.isLogin) {
+        addPreferencesFromResource(R.xml.preference_login)
+        findPreference<Preference>("group_user")?.title = pref.getString(Keys.PREF_USERNAME, "user")
+        prefUser()
+        prefMessage()
+      }
+
+    }
+
+    private fun prefNightMode() {
+
 
     }
 
@@ -167,6 +167,10 @@ class SettingsActivity : BaseActivity() {
 
           }
         "pref_background_msg" -> {
+        }
+        PREF_NIGHT_MODE -> {
+          val mode = pref.getString(PREF_NIGHT_MODE, "1")!!
+           AppCompatDelegate.setDefaultNightMode(mode.toInt())
         }
         "pref_msg_period" -> {
           val listPreference= findPreference<ListPreference>("pref_msg_period")

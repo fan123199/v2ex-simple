@@ -43,9 +43,11 @@ import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
+import im.fdx.v2ex.utils.ImageUtil
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.TAG_WORKER
 import im.fdx.v2ex.utils.extensions.*
+import im.fdx.v2ex.view.BottomSheetMenu
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -161,15 +163,25 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     val ivMode = binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
     ivMode.setOnClickListener {
-      if (pref.getBoolean("NIGHT_MODE", false)) {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        pref.edit().putBoolean("NIGHT_MODE", false).apply()
-        recreate()
-      } else {
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-        pref.edit().putBoolean("NIGHT_MODE", true).apply()
-        recreate()
-      }
+      BottomSheetMenu(this)
+        .addItem("关闭") {
+          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_NO.toString()).apply()
+          recreate()
+        }
+        .addItem("开启") {
+          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES.toString()).apply()
+          recreate()
+        }
+        .addItem("随系统") {
+          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+          pref.edit().putString(Keys.PREF_NIGHT_MODE,
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM.toString()
+          ).apply()
+          recreate()
+        }
+        .show()
     }
 
     if (myApp.isLogin) {

@@ -13,10 +13,6 @@
             android:summaryOn="当前格式: @user #n "
             android:summaryOff="当前格式: @user " />
 
-        <Preference
-            android:key="pref_tab_bar"
-            android:title="分类栏自定义" />
-
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -24,7 +20,7 @@
         android:title="消息"
         android:key="group_msg">
         <SwitchPreference
-            android:title="是否启用未读消息通知"
+            android:title="未读消息通知"
             android:key="pref_msg"
             android:defaultValue="true"
             android:summaryOn="启用"
@@ -32,8 +28,8 @@
         <SwitchPreference
             android:key="pref_background_msg"
             android:title="后台获取未读消息"
-            android:summaryOn="获取"
-            android:summaryOff="不获取"
+            android:summaryOn="启用"
+            android:summaryOff="关闭"
             android:defaultValue="false" />
         <ListPreference
             android:defaultValue="900"

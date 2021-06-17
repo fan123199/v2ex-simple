@@ -8,6 +8,7 @@ import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -41,7 +42,7 @@ class TabSettingActivity : BaseActivity() {
       curlist.addAll(initTab())
     }
 
-    val manager = GridLayoutManager(this, 4)
+    val manager = LinearLayoutManager(this)
     val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
     recyclerView.layoutManager = manager
     adapter = DefaultAdapter(curlist)

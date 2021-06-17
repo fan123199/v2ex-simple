@@ -30,8 +30,9 @@ object Keys {
     const val ACTION_LOGOUT = "im.fdx.v2ex.event.logout"
     const val ACTION_START_NOTIFICATION = "im.fdx.v2ex.notification"
     const val ACTION_PREFERENCE_CHANGED = "im.fdx.v2ex.preference"
-    const val ACTION_TAB_SETTING = "im.fdx.v2ex.main_page_setting_change"
+    const val ACTION_TAB_SETTING = "im.fdx.v2ex.ACTION_TAB_SETTING"
     const val ACTION_TEXT_SIZE_CHANGE = "im.fdx.v2ex.ACTION_TEXT_SIZE_CHANGE"
+    const val ACTION_NIGHT_MODE_CHANGE = "im.fdx.v2ex.ACTION_NIGHT_MODE_CHANGE"
 
     const val ACTION_GET_MORE_REPLY = "im.fdx.v2ex.reply"
 
@@ -51,6 +52,7 @@ object Keys {
     const val PREF_USERNAME = "pref_username"
     const val PREF_AVATAR = "pref_avatar"
     const val PREF_TEXT_SIZE = "pref_text_size"
+    const val PREF_NIGHT_MODE = "pref_night_mode"
     //------------------------------------------------
 
 

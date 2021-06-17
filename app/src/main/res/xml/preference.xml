@@ -14,11 +14,23 @@
             android:title="字体大小" />
 
         <SwitchPreference
-            android:title="是否启用左右滑动切换主题"
+            android:title="左右滑动切换主题"
             android:key="pref_viewpager"
             android:defaultValue="true"
             android:summaryOn="启用"
             android:summaryOff="关闭" />
+
+        <ListPreference
+            android:key="pref_tab_bar"
+            android:title="分类栏自定义" />
+
+        <ListPreference
+            android:key="pref_night_mode"
+            android:title="夜间模式设置"
+            android:defaultValue="0"
+            android:entries="@array/night_mode_string"
+            android:entryValues="@array/night_mode"
+            />
 
     </PreferenceCategory>
 

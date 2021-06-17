@@ -108,6 +108,18 @@
         <item>特大</item>
     </string-array>
 
+    <string-array name="night_mode_string">
+        <item>关闭</item>
+        <item>开启</item>
+        <item>随系统</item>
+    </string-array>
+
+    <string-array name="night_mode">
+        <item>1</item>
+        <item>2</item>
+        <item>-1</item>
+    </string-array>
+
 
     <string name="title_activity_node">Node</string>
     <string name="node_image" translatable="false">node image</string>
@@ -162,16 +174,13 @@
     <string name="google_login">Google Login</string>
 
     <string-array name="j" translatable="false">
-        <item>一颗赛艇</item>
-        <item>不要搞个大新闻</item>
-        <item>无可奉告</item>
-        <item>把我批判一番</item>
-        <item>我说支持</item>
-        <item>见着风是得雨</item>
-        <item>哪一个国家我没去过</item>
-        <item>识得唔识得</item>
-        <item>too young, too simple</item>
-        <item>sometimes naive</item>
+        <item>风</item>
+        <item>火</item>
+        <item>雷</item>
+        <item>电</item>
+        <item>张开第三只眼，好看清世界的真相</item>
+        <item>花绽放于长安的春日，温暖又幸福</item>
+        <item>naive</item>
     </string-array>
 
 </resources>
