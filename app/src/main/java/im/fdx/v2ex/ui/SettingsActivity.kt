@@ -49,6 +49,7 @@ class SettingsActivity : BaseActivity() {
       prefTab()
       prefNightMode()
       prefRate()
+
       prefVersion()
 
       if (myApp.isLogin) {

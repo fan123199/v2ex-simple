@@ -2,8 +2,8 @@ package im.fdx.v2ex.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import im.fdx.v2ex.ui.details.MyReply
-import im.fdx.v2ex.ui.details.MyReplyDao
+import im.fdx.v2ex.ui.topic.MyReply
+import im.fdx.v2ex.ui.topic.MyReplyDao
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.main.TopicDao
 import im.fdx.v2ex.ui.node.Node

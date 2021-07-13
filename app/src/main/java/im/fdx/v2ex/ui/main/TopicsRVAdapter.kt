@@ -14,7 +14,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.ui.MyCallback
-import im.fdx.v2ex.ui.details.TopicActivity
+import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys

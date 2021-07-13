@@ -17,7 +17,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityCreateTopicBinding
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseActivity
-import im.fdx.v2ex.ui.details.TopicActivity
+import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.Keys

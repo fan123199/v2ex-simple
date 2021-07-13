@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import im.fdx.v2ex.R
-import im.fdx.v2ex.ui.details.TopicActivity
+import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.view.GoodTextView

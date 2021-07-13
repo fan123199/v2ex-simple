@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui.details
+package im.fdx.v2ex.ui.topic
 
 import android.os.Bundle
 import android.view.LayoutInflater

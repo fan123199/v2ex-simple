@@ -2,7 +2,7 @@ package im.fdx.v2ex.network
 
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.network.Parser.Source.*
-import im.fdx.v2ex.ui.details.Reply
+import im.fdx.v2ex.ui.topic.Reply
 import im.fdx.v2ex.ui.main.Comment
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.member.Member

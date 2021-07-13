@@ -12,4 +12,7 @@
         android:title="@string/copy_content" />
     <item android:id="@+id/menu_show_user_all_reply"
         android:title="@string/show_user_all_reply"/>
+
+    <item android:id="@+id/menu_show_user_conversation"
+        android:title="显示对话列表"/>
 </menu>

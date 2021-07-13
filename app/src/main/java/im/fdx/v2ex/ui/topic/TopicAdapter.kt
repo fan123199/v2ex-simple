@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui.details
+package im.fdx.v2ex.ui.topic
 
 import android.annotation.SuppressLint
 import android.content.ClipData
@@ -143,6 +143,11 @@ class TopicAdapter(private val act: FragmentActivity,
                         true
                     }
 
+                    menu.findItem(R.id.menu_show_user_conversation).setOnMenuItemClickListener {
+                        showUserConversation(replyItem)
+                        true
+                    }
+
                 }
 
                 itemVH.binding.ivThanks.setOnClickListener { thank(replyItem, itemVH) }
@@ -196,6 +201,18 @@ class TopicAdapter(private val act: FragmentActivity,
 
         val bs = BottomListSheet.newInstance(theUserReplyList)
         bs.show(act.supportFragmentManager , "list_of_user_all_reply")
+    }
+
+    //todo
+    private fun showUserConversation(replyItem: Reply) {
+
+        val theUserReplyList = replies.filter {
+//            it.member!=null && it.member?.username == replyItem.member?.username
+            false
+        }
+
+        val bs = BottomListSheet.newInstance(theUserReplyList)
+        bs.show(act.supportFragmentManager , "user_conversation")
     }
 
     private fun copyText(content: String) {

@@ -1,4 +1,4 @@
-package im.fdx.v2ex.ui.details
+package im.fdx.v2ex.ui.topic
 
 import android.content.*
 import android.content.res.ColorStateList
@@ -182,7 +182,7 @@ class TopicFragment : BaseFragment() {
                         currentPosition = 0
                     }
                 } else {
-                    if (currentPosition == 0 && topicHeader != null) {
+                    if (currentPosition == 0) {
                         binding.tvToolbar.text = topicHeader?.title
                         startAlphaAnimation(binding.tvToolbar, 500, true)
                         currentPosition = -1

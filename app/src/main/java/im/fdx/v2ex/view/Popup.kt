@@ -11,8 +11,8 @@ import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ItemReplyViewBinding
-import im.fdx.v2ex.ui.details.ItemViewHolder
-import im.fdx.v2ex.ui.details.Reply
+import im.fdx.v2ex.ui.topic.ItemViewHolder
+import im.fdx.v2ex.ui.topic.Reply
 
 /**
  * Created by fdx on 2017/7/14.
