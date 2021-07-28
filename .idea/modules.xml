@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/v2ex-simple.iml" filepath="$PROJECT_DIR$/v2ex-simple.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/v2ex-simple.iml" filepath="$PROJECT_DIR$/.idea/modules/v2ex-simple.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/v2ex-simple.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/v2ex-simple.app.iml" />
     </modules>
   </component>

@@ -1,5 +1,7 @@
 import java.util.*
 
+val kotlin_version: String by extra
+
 plugins {
     id("com.android.application")
     id("com.google.firebase.crashlytics")
@@ -7,6 +9,9 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
+}
+apply {
+    plugin("kotlin-android")
 }
 
 android {
@@ -76,18 +81,18 @@ dependencies {
     //kotlin start
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.anko:anko-commons:0.10.8")
-    implementation("androidx.core:core-ktx:1.3.2")
+    implementation("androidx.core:core-ktx:1.6.0")
     //kotlin end
 
     //google start
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.1.0")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
     implementation("androidx.legacy:legacy-support-v13:1.0.0")
-    implementation("androidx.appcompat:appcompat:1.2.0")
+    implementation("androidx.appcompat:appcompat:1.3.1")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("androidx.browser:browser:1.3.0")
     implementation("androidx.preference:preference-ktx:1.1.1")
-    implementation("com.google.android.material:material:1.3.0")
+    implementation("com.google.android.material:material:1.4.0")
 
     implementation("android.arch.work:work-runtime-ktx:1.0.1")
     implementation("androidx.constraintlayout:constraintlayout:2.0.4")
@@ -119,4 +124,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:28.1.0"))
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+}
+repositories {
+    mavenCentral()
 }
