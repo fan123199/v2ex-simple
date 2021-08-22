@@ -16,15 +16,15 @@ apply {
 
 android {
 
-    compileSdkVersion(30)
+    compileSdk = 30
     defaultConfig {
         applicationId = "im.fdx.v2ex"
-        minSdkVersion(21)
-        targetSdkVersion(30)
+        minSdk = 21
+        targetSdk = 31
         versionCode = 43
         versionName = "2.6.9"
     }
-    lintOptions {
+    lint {
         isCheckReleaseBuilds = false
         isAbortOnError = false
     }
@@ -73,7 +73,7 @@ android.applicationVariants.all { variant ->
 }
 
 dependencies {
-    val room_version = "2.3.0"
+    val roomVersion = "2.3.0"
     //test related, use test when you really need it, or you forget always.
     testImplementation("junit:junit:4.13.2")
     //test end
@@ -95,11 +95,11 @@ dependencies {
     implementation("com.google.android.material:material:1.4.0")
 
     implementation("android.arch.work:work-runtime-ktx:1.0.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.0.4")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.0")
 
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    kapt ("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    kapt ("androidx.room:room-compiler:$roomVersion")
     //google end
 
     implementation("com.google.code.gson:gson:2.8.6")
