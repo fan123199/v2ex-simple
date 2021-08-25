@@ -4,8 +4,8 @@ val kotlin_version: String by extra
 
 plugins {
     id("com.android.application")
-    id("com.google.firebase.crashlytics")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")

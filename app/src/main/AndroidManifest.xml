@@ -20,6 +20,7 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:label="@string/app_simple_name"
+            android:exported="true"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,6 +35,7 @@
         <activity
             android:name=".ui.topic.TopicActivity"
             android:label="@string/title_activity_details"
+            android:exported="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -95,6 +97,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.node.NodeActivity"
+            android:exported="true"
             android:label="@string/title_activity_node">
             <intent-filter>
                 <action android:name="im.fdx.v2ex.intent.node" />
@@ -127,7 +130,9 @@
 
         <activity
             android:name=".ui.member.MemberActivity"
+            android:exported="true"
             android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="im.fdx.v2ex.intent.profile" />
 
@@ -158,6 +163,7 @@
         </activity>
         <activity
             android:name=".ui.node.AllNodesActivity"
+            android:exported="false"
             android:parentActivityName=".ui.main.MainActivity">
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -198,11 +204,12 @@
         <activity android:name=".ui.PhotoActivity" />
         <activity
             android:name=".ui.TestActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
             android:name=".ui.TabSettingActivity"
-            android:exported="true" />
+            android:exported="false" />
         <activity
+            android:exported="false"
             android:name=".ui.main.SearchActivity"
             android:launchMode="singleTop">
 
