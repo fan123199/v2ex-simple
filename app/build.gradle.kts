@@ -19,7 +19,7 @@ android {
     compileSdk = 30
     defaultConfig {
         applicationId = "im.fdx.v2ex"
-        minSdk = 21
+        minSdk = 22
         targetSdk = 31
         versionCode = 43
         versionName = "2.6.9"
@@ -113,9 +113,9 @@ dependencies {
     releaseImplementation("com.github.ChuckerTeam.Chucker:library-no-op:3.1.2")
     implementation("com.elvishew:xlog:1.6.1")
     implementation("org.jsoup:jsoup:1.11.3")
-    implementation("com.github.bumptech.glide:glide:4.11.0")
-    kapt ("com.github.bumptech.glide:compiler:4.11.0")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.11.0")
+    implementation("com.github.bumptech.glide:glide:4.12.0")
+    kapt ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.12.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.14")
     implementation("com.google.android:flexbox:2.0.1")
     implementation("me.drakeet.multitype:multitype:3.5.0")
