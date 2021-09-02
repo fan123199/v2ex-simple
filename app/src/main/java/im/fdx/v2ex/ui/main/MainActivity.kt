@@ -15,7 +15,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -43,7 +42,6 @@ import im.fdx.v2ex.ui.*
 import im.fdx.v2ex.ui.favor.FavorActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
-import im.fdx.v2ex.utils.ImageUtil
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.TAG_WORKER
 import im.fdx.v2ex.utils.extensions.*
@@ -51,7 +49,6 @@ import im.fdx.v2ex.view.BottomSheetMenu
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.email
 import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
@@ -139,10 +136,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     createShortCut()
 
-    val mDrawToggle = ActionBarDrawerToggle(this, binding.drawerLayout,
-      binding.activityMainContent.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+    val mDrawToggle = ActionBarDrawerToggle(
+      this,
+      binding.drawerLayout,
+      binding.activityMainContent.toolbar,
+      R.string.navigation_drawer_open,
+      R.string.navigation_drawer_close
+    )
     binding.drawerLayout.addDrawerListener(mDrawToggle)
-    binding.drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(this, R.color.status_bar_white))
+    binding.drawerLayout.setStatusBarBackgroundColor(
+      ContextCompat.getColor(
+        this,
+        R.color.status_bar_white
+      )
+    )
     mDrawToggle.syncState()
 
     binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
@@ -154,29 +161,69 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     binding.navView.setNavigationItemSelectedListener(this)
     binding.activityMainContent.fabMain.setOnClickListener {
-      if(myApp.isLogin) {
+      if (myApp.isLogin) {
         startActivity<NewTopicActivity>()
       } else {
         showLoginHint(it)
       }
     }
-    val ivMode = binding.navView.getHeaderView(0).findViewById<ImageView>(R.id.iv_night_mode)
 
-    ivMode.setOnClickListener {
+    val listener = View.OnClickListener {
+      when (it.id) {
+        R.id.nav_daily ->
+          if (myApp.isLogin) {
+            dailyCheck(autoCheck = false)
+          } else {
+            showLoginHint(binding.activityMainContent.fabMain)
+          }
+        R.id.nav_node ->
+          startActivity<AllNodesActivity>()
+        R.id.nav_favor ->
+          if (myApp.isLogin) {
+            startActivity<FavorActivity>()
+          } else {
+            showLoginHint(binding.activityMainContent.fabMain)
+          }
+        R.id.nav_testNotify -> {
+        }
+        R.id.nav_share -> share("https://play.google.com/store/apps/details?id=$packageName")
+        R.id.nav_feedback -> sendEmail(
+          Keys.AUTHOR_EMAIL,
+          getString(R.string.feedback_subject),
+          getString(R.string.feedback_hint)
+        )
+        R.id.nav_setting -> startActivity<SettingsActivity>()
+      }
+      binding.drawerLayout.closeDrawer(GravityCompat.START)
+    }
+
+    binding.navDaily.setOnClickListener(listener)
+    binding.navNode.setOnClickListener(listener)
+    binding.navFavor.setOnClickListener(listener)
+    binding.navShare.setOnClickListener(listener)
+    binding.navFeedback.setOnClickListener(listener)
+    binding.navSetting.setOnClickListener(listener)
+
+
+
+    binding.ivNightMode.setOnClickListener {
       BottomSheetMenu(this)
-        .addItem("关闭") {
+        .addItem("夜间模式") {
           AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_NO.toString()).apply()
+          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_NO.toString())
+            .apply()
           recreate()
         }
-        .addItem("开启") {
+        .addItem("白天模式") {
           AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES.toString()).apply()
+          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES.toString())
+            .apply()
           recreate()
         }
-        .addItem("随系统") {
+        .addItem("跟随系统") {
           AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-          pref.edit().putString(Keys.PREF_NIGHT_MODE,
+          pref.edit().putString(
+            Keys.PREF_NIGHT_MODE,
             AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM.toString()
           ).apply()
           recreate()
@@ -202,7 +249,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     //内部实现就是加入一堆的listener给viewpager，不用自己实现
     binding.activityMainContent.slidingTabs.setupWithViewPager(binding.activityMainContent.viewpagerMain)
 
-    binding.activityMainContent.slidingTabs.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+    binding.activityMainContent.slidingTabs.addOnTabSelectedListener(object :
+      TabLayout.OnTabSelectedListener {
       override fun onTabSelected(tab: TabLayout.Tab) {}
       override fun onTabUnselected(tab: TabLayout.Tab) {}
 
@@ -272,8 +320,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
   private fun setUserInfo(username: String?, avatar: String?) {
-    val tvMyName: TextView = binding.navView.getHeaderView(0).findViewById(R.id.tv_my_username)
-    val ivMyAvatar: CircleImageView = binding.navView.getHeaderView(0).findViewById(R.id.iv_my_avatar)
+    val tvMyName: TextView = binding.tvMyUsername
+    val ivMyAvatar: CircleImageView = binding.ivMyAvatar
     tvMyName.text = username
     ivMyAvatar.load(avatar)
     ivMyAvatar.setOnClickListener {
@@ -333,29 +381,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   }
 
   override fun onNavigationItemSelected(item: MenuItem): Boolean {
-    @Suppress("DEPRECATION")
-    when (item.itemId) {
-      R.id.nav_daily ->
-        if(myApp.isLogin) {
-          dailyCheck(autoCheck = false)
-        } else {
-          showLoginHint(binding.activityMainContent.fabMain)
-        }
-      R.id.nav_node ->
-        startActivity<AllNodesActivity>()
-      R.id.nav_favor ->
-        if(myApp.isLogin) {
-          startActivity<FavorActivity>()
-        } else {
-          showLoginHint(binding.activityMainContent.fabMain)
-        }
-      R.id.nav_change_daylight -> startActivity<WebViewActivity>()
-      R.id.nav_testNotify -> {}
-      R.id.nav_share -> share("https://play.google.com/store/apps/details?id=$packageName")
-      R.id.nav_feedback -> sendEmail(Keys.AUTHOR_EMAIL, getString(R.string.feedback_subject), getString(R.string.feedback_hint))
-      R.id.nav_setting -> startActivity<SettingsActivity>()
-    }
-    binding.drawerLayout.closeDrawer(GravityCompat.START)
     return true
   }
 
