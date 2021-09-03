@@ -15,6 +15,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
+import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.R
@@ -62,9 +63,6 @@ class MemberActivity : BaseActivity() {
     private var isFollowed: Boolean = false
     private lateinit var binding: ActivityMemberBinding
 
-    private val memberViewpagerAdapter: MemberViewpagerAdapter by lazy {
-        MemberViewpagerAdapter(supportFragmentManager)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,9 +94,6 @@ class MemberActivity : BaseActivity() {
             toast("未知问题，无法访问用户信息")
             return
         }
-
-        memberViewpagerAdapter.username = username ?: ""
-        binding.viewpager.adapter = memberViewpagerAdapter
         binding.tlMember.setupWithViewPager(binding.viewpager)
 
         binding.alProfile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
@@ -186,7 +181,7 @@ class MemberActivity : BaseActivity() {
                     dealError(this@MemberActivity)
                 } else {
                     val body = response.body!!.string()
-                    logi(body)
+                    logi("body:" +body)
                     member = myGson.fromJson(body, Member::class.java)
                     runOnUiThread { showUser() }
                 }
@@ -232,6 +227,11 @@ class MemberActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     private fun showUser() {
         if(this.isDestroyed) return
+
+        binding.viewpager.adapter = MemberViewpagerAdapter(supportFragmentManager).apply {
+            username = member.username
+            avatar = member.avatar_normal
+        }
         binding.ivAvatarProfile.load(member.avatarLargeUrl)
         binding.tvTagline.text = member.tagline
         binding.tvIntro.text = member.bio
@@ -328,17 +328,26 @@ class MemberActivity : BaseActivity() {
         private fun getOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
     }
 
-    inner class MemberViewpagerAdapter(fm: androidx.fragment.app.FragmentManager) : androidx.fragment.app.FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    inner class MemberViewpagerAdapter(fm: androidx.fragment.app.FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
         lateinit var username: String
+
+//        private var _avatar = ""
         //目前不好做，先留着
         lateinit var avatar: String
+//            get() {
+//                return _avatar
+//            }
+//            set(value) {
+//                _avatar = value
+//                (getItem(0) as TopicsFragment).updateAvatar(_avatar)
+//            }
         private val titles = arrayOf("主题", "评论")
 
         override fun getItem(position: Int) = when (position) {
             0 -> TopicsFragment()
             else -> UserReplyFragment()
-        }.apply { arguments = bundleOf(Keys.KEY_USERNAME to username) }
+        }.apply { arguments = bundleOf(Keys.KEY_USERNAME to username, Keys.KEY_AVATAR to avatar) }
 
         override fun getCount() = titles.size
         override fun getPageTitle(position: Int) = titles[position]

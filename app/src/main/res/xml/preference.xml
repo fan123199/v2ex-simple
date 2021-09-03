@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
     android:order="15"
@@ -11,6 +12,7 @@
             android:key="pref_text_size"
             android:entryValues="@array/text_size"
             android:entries="@array/text_size_string"
+            app:useSimpleSummaryProvider="true"
             android:title="字体大小" />
 
         <SwitchPreference
@@ -20,7 +22,7 @@
             android:summaryOn="启用"
             android:summaryOff="关闭" />
 
-        <ListPreference
+        <Preference
             android:key="pref_tab_bar"
             android:title="分类栏自定义" />
 

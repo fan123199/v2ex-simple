@@ -43,6 +43,10 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     notifyDataSetChanged()
   }
 
+  fun getList(): MutableList<Topic> {
+    return mTopicList
+  }
+
   fun clear() {
     mTopicList.clear()
   }

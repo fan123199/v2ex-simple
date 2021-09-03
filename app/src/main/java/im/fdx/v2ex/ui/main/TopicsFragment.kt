@@ -190,6 +190,13 @@ class TopicsFragment : Fragment() {
     }
   }
 
+//  fun updateAvatar(avatar: String) {
+//      mAdapter.getList().forEach{
+//        it.member?.avatar_normal =  avatar
+//      }
+//      mAdapter.notifyDataSetChanged()
+//  }
+
   private fun getTopics(requestURL: String, currentPage: Int = 1) {
 
     if (requestURL == API_HEATED) {
@@ -220,8 +227,6 @@ class TopicsFragment : Fragment() {
                       mAdapter.updateItems(topicList)
                     }
                   }
-
-
                 }
               })
 
@@ -250,7 +255,7 @@ class TopicsFragment : Fragment() {
 
             val str = response.body?.string()!!
 
-            logi( "onResponse: $str")
+//            logi( "onResponse: $str")
 
             val parser = Parser(str)
             val topicList = parser.parseTopicLists(currentMode)
@@ -274,7 +279,19 @@ class TopicsFragment : Fragment() {
       } else {
         flContainer.hideNoContent()
         when (currentMode) {
-          FROM_MEMBER, FROM_NODE ->
+          FROM_MEMBER-> {
+            topicList.forEach {
+              it.member?.avatar_normal  = arguments?.getString(Keys.KEY_AVATAR)?:""
+              logi(it.id + ":" + it.title + " -- " + it.member?.avatar_normal)
+            }
+            if (mScrollListener.isRestart()) {
+              topicList.let { mAdapter.updateItems(it) }
+            } else {
+              mScrollListener.success()
+              topicList.let { mAdapter.addAllItems(it) }
+            }
+          }
+          FROM_NODE ->
             if (mScrollListener.isRestart()) {
               topicList.let { mAdapter.updateItems(it) }
             } else {

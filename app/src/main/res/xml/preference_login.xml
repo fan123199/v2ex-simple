@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <PreferenceCategory
@@ -7,11 +8,11 @@
         android:title="个性化"
         android:key="group_custom">
         <SwitchPreference
-            android:title="回复时加入楼层"
+            android:title="回复加入楼层"
             android:key="pref_add_row"
             android:defaultValue="false"
-            android:summaryOn="当前格式: @user #n "
-            android:summaryOff="当前格式: @user " />
+            android:summaryOn="格式: @user #n "
+            android:summaryOff="格式: @user " />
 
     </PreferenceCategory>
 
@@ -35,6 +36,7 @@
             android:defaultValue="900"
             android:entries="@array/period_string"
             android:entryValues="@array/period_int"
+            app:useSimpleSummaryProvider="true"
             android:key="pref_msg_period"
             android:title="消息间隔" />
     </PreferenceCategory>

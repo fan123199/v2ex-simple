@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.gson.Gson
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.utils.extensions.loge
+import im.fdx.v2ex.utils.extensions.logv
 import okhttp3.Cookie
 import java.util.*
 
@@ -81,7 +82,7 @@ class SharedPrefsPersistor : CookiePersistor {
         mapSet.forEach { (key, value) ->
             if (key.contains(url)) {
                 val strCookie = value as String
-                loge("fdx2:$strCookie")
+                logv("fdx2:$strCookie")
                 val cookie = NetManager.myGson.fromJson(strCookie, Cookie::class.java)
                 cookies.add(cookie)
             }

@@ -26,7 +26,8 @@
         android:paddingRight="16dp"
         android:paddingBottom="16dp"
         android:paddingTop="16dp"
-        android:textSize="?text_small"
+        android:textColor="@color/title_text"
+        android:textSize="?text_medium"
         android:layout_marginRight="20dp"
         tools:text="Hello, NaviItem" />
 

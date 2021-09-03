@@ -6,6 +6,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
@@ -62,16 +65,10 @@ class SettingsActivity : BaseActivity() {
     }
 
     private fun prefNightMode() {
-
-
     }
 
     private fun prefMessage() {
       val listPreference = findPreference<ListPreference>("pref_msg_period")
-      listPreference?.entry?.let {
-        listPreference.summary = it//初始化时设置summary
-      }
-
       if (!pref.getBoolean("pref_msg", false)) {
         findPreference<Preference>("pref_background_msg")?.isEnabled = false
         findPreference<Preference>("pref_msg_period")?.isEnabled = false
@@ -80,8 +77,7 @@ class SettingsActivity : BaseActivity() {
 
     private fun prefTab() {
       findPreference<Preference>("pref_tab_bar")?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
-        val intent = Intent(requireActivity(), TabSettingActivity::class.java)
-        startActivityForResult(intent, 110)
+        startActivity(Intent(requireActivity(), TabSettingActivity::class.java))
         true
       }
     }
@@ -167,21 +163,13 @@ class SettingsActivity : BaseActivity() {
             findPreference<Preference>("pref_background_msg")?.isEnabled = false
 
           }
-        "pref_background_msg" -> {
-        }
+        "pref_background_msg" -> {}
+        "pref_msg_period" -> {}
+        "pref_add_row" -> {}
         PREF_NIGHT_MODE -> {
           val mode = pref.getString(PREF_NIGHT_MODE, "1")!!
-           AppCompatDelegate.setDefaultNightMode(mode.toInt())
+          AppCompatDelegate.setDefaultNightMode(mode.toInt())
         }
-        "pref_msg_period" -> {
-          val listPreference= findPreference<ListPreference>("pref_msg_period")
-          listPreference?.summary = listPreference?.entry
-          XLog.d("pref_msg_period changed")
-        }
-
-        "pref_add_row" -> {
-        }
-
         PREF_TEXT_SIZE -> {
           LocalBroadcastManager.getInstance(myApp).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
           activity?.finish()

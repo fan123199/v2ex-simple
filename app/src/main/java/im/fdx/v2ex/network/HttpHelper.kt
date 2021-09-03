@@ -6,6 +6,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.network.cookie.MyCookieJar
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.logi
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,7 +34,7 @@ object HttpHelper {
             .addNetworkInterceptor(
                         HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                             override fun log(message: String) {
-                                logi("okhttp: $message")
+                                logd("okhttp: $message")
                             }
                         }).apply { level = HttpLoggingInterceptor.Level.HEADERS }
                     )
