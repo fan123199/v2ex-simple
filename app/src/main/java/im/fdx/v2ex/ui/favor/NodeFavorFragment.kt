@@ -13,9 +13,7 @@ import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import im.fdx.v2ex.R
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
+import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.node.AllNodesAdapter
 import im.fdx.v2ex.utils.extensions.hideNoContent
 import im.fdx.v2ex.utils.extensions.initTheme
@@ -63,9 +61,7 @@ class NodeFavorFragment : androidx.fragment.app.Fragment() {
     }
 
     private fun getNode() {
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .url("https://www.v2ex.com/my/nodes")
-                .build()).enqueue(object : Callback {
+        vCall("https://www.v2ex.com/my/nodes").start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(activity, swipe = swipe)
             }

@@ -236,19 +236,19 @@ class Parser(private val htmlStr: String) {
     fun parseToNode(): ArrayList<Node> {
 
         val nodeModels = ArrayList<Node>()
-        val items = doc.getElementsByClass("grid_item")
+        val items = doc.getElementById("my-nodes").children()
 
         for (item in items) {
             val nodeModel = Node()
             val id = item.attr("id").substring(2)
             nodeModel.id = id
 
-            val title = item.getElementsByTag("div").first().ownText().trim { it <= ' ' }
+            val title = item.getElementsByClass("fav-node-name").first().ownText().trim()
             nodeModel.title = title
             val name = item.attr("href").replace("/go/", "")
             nodeModel.name = name
 
-            val num = item.getElementsByTag("span").first().ownText().trim { it <= ' ' }
+            val num = item.getElementsByTag("span")[1].ownText().trim()
 
             nodeModel.topics = Integer.parseInt(num)
 
