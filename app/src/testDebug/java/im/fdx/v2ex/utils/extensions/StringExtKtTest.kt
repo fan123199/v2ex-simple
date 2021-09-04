@@ -10,12 +10,12 @@ import org.junit.Test
 class StringExtKtTest {
     @Test
     fun getPair() {
-        val row = " @fdx #23".getPair("fdx")
+        val row = " @fdx #23".getRowNum("fdx")
 
-        val row2 = "@fdx sjfksd".getPair("fdx")
-        val row3 = "abcdefsdf".getPair("fdx")
+        val row2 = "@fdx sjfksd".getRowNum("fdx")
+        val row3 = "abcdefsdf".getRowNum("fdx")
 
-        val row4 = "@fdx sdssds, @ccc #123 , bac \n @3224 #345".getPair("3224")
+        val row4 = "@fdx sdssds, @ccc #123 , bac \n @3224 #345".getRowNum("3224")
         assertEquals(row, 23)
         assertEquals(row2, -1)
         assertEquals(row3, -1)

@@ -30,7 +30,7 @@ import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
-import im.fdx.v2ex.utils.extensions.getPair
+import im.fdx.v2ex.utils.extensions.getRowNum
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.showLoginHint
@@ -68,8 +68,8 @@ class TopicAdapter(private val act: FragmentActivity,
             }
 
     @SuppressLint("SetTextI18n")
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, p: Int) {
+        val position = holder.bindingAdapterPosition
         when (getItemViewType(position)) {
             TYPE_HEADER -> {
                 val topic = topics[0]
@@ -173,19 +173,20 @@ class TopicAdapter(private val act: FragmentActivity,
 
                         //问题，index可能用户输入不准确，导致了我的这个点击会出现错误。 也有可能是黑名单能影响，导致了
                         //了这个错误，所以，我需要进行大数据排错。
-                        var index = replyItem.content.getPair(username)
+                        //rowNum 是真是的楼层数， 但是在数组的index = rowNum -1
+                        var rowNum = replyItem.content.getRowNum(username)
                         //找不到，或大于，明显不可能，取最接近一个评论
-                        if (index == -1 || index > position) {
+                        if (rowNum == -1 || rowNum > position) {
                             replies.forEachIndexed { i, r ->
                                 if (i in 0 until position && r.member?.username == username) {
-                                    index = i
+                                    rowNum = i + 1
                                 }
                             }
                         }
-                        if (index == -1 || index > position) {
+                        if (rowNum == -1 || rowNum > position) {
                             return
                         }
-                        Popup(act).show(v, replies[index], index, clickMore)
+                        Popup(act).show(v, replies[rowNum -1], rowNum, clickMore)
                     }
 
                 }
@@ -324,7 +325,7 @@ class ItemViewHolder(var binding: ItemReplyViewBinding)
 
         binding.tvReplyContent.setGoodText(data.content_rendered , type = typeReply)
         binding.tvLouzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
-        binding.tvReplyRow.text = "#$adapterPosition"
+        binding.tvReplyRow.text = "#$bindingAdapterPosition"
         binding.tvReplier.text = data.member?.username
         binding.tvThanks.text = data.thanks.toString()
         binding.ivReplyAvatar.load(data.member?.avatarNormalUrl)

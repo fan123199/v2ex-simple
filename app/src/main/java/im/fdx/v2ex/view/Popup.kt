@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ItemReplyViewBinding
 import im.fdx.v2ex.ui.topic.ItemViewHolder
@@ -34,20 +35,23 @@ class Popup(mActivity: Context) {
 
 
     @SuppressLint("SetTextI18n")
-    fun show(v: View, data: Reply, index: Int, clickListener: (Int) -> Unit) {
-
-        val position  = index + 1 //这是对应关系
+    fun show(v: View, data: Reply, rowNum: Int, clickListener: (Int) -> Unit) {
         val hd = ItemViewHolder(binding)
         hd.bind(data)
-        hd.binding.tvReplyContent.movementMethod = ScrollingMovementMethod.getInstance()
         hd.binding.tvReplyContent.maxLines = 4
         hd.binding.tvReplyContent.isVerticalScrollBarEnabled = true
-        hd.binding.tvReplyRow.text = "#$position"
+        hd.binding.tvReplyContent.disableTouch()
+        hd.binding.tvReplyRow.text = "#$rowNum"
         hd.binding.ivThanks.visibility = View.INVISIBLE
+        hd.binding.tvThanks.visibility = View.INVISIBLE
+        hd.binding.root.forEach {
+            it.isClickable = false
+        }
         hd.binding.ivReply.visibility = View.INVISIBLE
         hd.binding.divider.visibility = View.INVISIBLE
         hd.binding.root.setOnClickListener {
-            clickListener(position)
+            popupWindow.dismiss()
+            clickListener(rowNum - 1)
         }
 
         popupWindow.width = v.width

@@ -16,7 +16,9 @@ import im.fdx.v2ex.view.ZoomOutPageTransform
 import org.jetbrains.anko.toast
 
 
-
+/**
+ *  这个仅是容器，因为加入了左右滑动， 于是就又用Fragment来做内容
+ */
 class TopicActivity : BaseActivity() {
 
   private lateinit var binding: ActivityDetailsBinding

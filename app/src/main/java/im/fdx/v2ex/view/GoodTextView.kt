@@ -1,5 +1,6 @@
 package im.fdx.v2ex.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -14,6 +15,7 @@ import android.text.style.QuoteSpan
 import android.text.style.URLSpan
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -42,9 +44,9 @@ const val typeReply: TextType = 3
  *
  */
 class GoodTextView @JvmOverloads constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
 ) : androidx.appcompat.widget.AppCompatTextView(context, attrs, defStyleAttr) {
 
     var popupListener: Popup.PopupListener? = null
@@ -54,8 +56,19 @@ class GoodTextView @JvmOverloads constructor(
         imageGetter?.clear()
     }
 
+    private var disableTouch = false
     var imageGetter: MyImageGetter? = null
 
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return if (disableTouch) false
+        else super.onTouchEvent(event)
+    }
+
+    fun disableTouch() {
+        this.disableTouch = true
+    }
 
     @Suppress("DEPRECATION")
     fun setGoodText(text: String?, removeClick: Boolean? = false, type: TextType = typeTopic) {
@@ -104,8 +117,10 @@ class GoodTextView @JvmOverloads constructor(
             //生成自定义可点击的span
             val newClickableSpan = object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    widget.context.startActivity<PhotoActivity>(Keys.KEY_PHOTO to photos,
-                            Keys.KEY_POSITION to index)
+                    widget.context.startActivity<PhotoActivity>(
+                        Keys.KEY_PHOTO to photos,
+                        Keys.KEY_POSITION to index
+                    )
                 }
             }
 
@@ -138,10 +153,10 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
 //            val d = myApp.getDrawable(R.drawable.loading_image)
 //            d?.draw(canvas)
 
-        if(source == null) return bitmapHolder // 某些机型 source可能为空
+        if (source == null) return bitmapHolder // 某些机型 source可能为空
         var newsource = source
-        if(source.startsWith("http://")) {
-            newsource = source.replaceFirst("http://","https://")
+        if (source.startsWith("http://")) {
+            newsource = source.replaceFirst("http://", "https://")
         }
         Log.i("GoodTextView", " begin getDrawable, Image url: $newsource")
 
@@ -175,7 +190,8 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
                         bestWidth
                     }
                 }
-                val targetHeight = (targetWidth * (bitmap.height.toDouble() / bitmap.width.toDouble())).toInt()
+                val targetHeight =
+                    (targetWidth * (bitmap.height.toDouble() / bitmap.width.toDouble())).toInt()
                 val rectHolder = Rect(0, 0, targetWidth, targetHeight)
                 val newBitmap = Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, false)
                 bitmapHolder.bounds = rectHolder
@@ -184,15 +200,17 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
                 bitmapHolder.setDrawable(drawable)
                 tv.text = tv.text
                 tv.invalidate()
-                Log.i("GoodTextView", " end getDrawable, Image height: " +
-                        "${bitmapHolder.bounds}," +
-                        " ${bitmap.width},${bitmap.height}")
+                Log.i(
+                    "GoodTextView", " end getDrawable, Image height: " +
+                            "${bitmapHolder.bounds}," +
+                            " ${bitmap.width},${bitmap.height}"
+                )
             }
         }
         GlideApp.with(tv)
-                .asBitmap()
-                .load(newsource)
-                .into(target)
+            .asBitmap()
+            .load(newsource)
+            .into(target)
         targetList.add(target)
         return bitmapHolder
     }
@@ -223,7 +241,12 @@ class CodeTagHandler : Html.TagHandler {
 
     class Code
 
-    override fun handleTag(opening: Boolean, tag: String?, output: Editable, xmlReader: XMLReader?) {
+    override fun handleTag(
+        opening: Boolean,
+        tag: String?,
+        output: Editable,
+        xmlReader: XMLReader?
+    ) {
         if (opening) {
             if (tag.equals("pre", true)) {
                 start(output, Code())
