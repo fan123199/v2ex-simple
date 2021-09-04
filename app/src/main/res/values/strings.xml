@@ -109,14 +109,14 @@
     </string-array>
 
     <string-array name="night_mode_string">
-        <item>关闭</item>
-        <item>开启</item>
-        <item>随系统</item>
+        <item>夜间模式</item>
+        <item>白天模式</item>
+        <item>跟随系统</item>
     </string-array>
 
     <string-array name="night_mode">
-        <item>1</item>
         <item>2</item>
+        <item>1</item>
         <item>-1</item>
     </string-array>
 

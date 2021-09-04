@@ -14,7 +14,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginLeft="16dp"
-        app:tint="@color/primary"
+        app:tint="@color/nav_icon"
         tools:src="@drawable/ic_block_primary_24dp"
          />
 
@@ -28,8 +28,10 @@
         android:paddingTop="16dp"
         android:textColor="@color/title_text"
         android:textSize="?text_medium"
+        android:textFontWeight="700"
         android:layout_marginRight="20dp"
-        tools:text="Hello, NaviItem" />
+        tools:text="Hello, NaviItem"
+        tools:targetApi="p" />
 
 
 </LinearLayout>

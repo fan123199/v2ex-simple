@@ -28,10 +28,11 @@
 
         <ListPreference
             android:key="pref_night_mode"
-            android:title="夜间模式设置"
-            android:defaultValue="0"
+            android:title="夜间模式"
+            android:defaultValue="-1"
             android:entries="@array/night_mode_string"
             android:entryValues="@array/night_mode"
+            app:useSimpleSummaryProvider="true"
             />
 
     </PreferenceCategory>

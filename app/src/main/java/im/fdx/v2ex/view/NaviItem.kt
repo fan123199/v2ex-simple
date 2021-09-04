@@ -1,13 +1,8 @@
 package im.fdx.v2ex.view
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.graphics.drawable.Drawable
-import android.text.TextPaint
 import android.util.AttributeSet
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -51,7 +46,7 @@ class NaviItem : FrameLayout {
         )
         icon = a.getDrawable(R.styleable.NaviItem_icon)
         a.recycle()
-        inflate(context, R.layout.sample_navi_item, this)
+        inflate(context, R.layout.navi_item, this)
 
         findViewById<TextView>(R.id.title).text = title
         findViewById<ImageView>(R.id.icon).setImageDrawable(icon)

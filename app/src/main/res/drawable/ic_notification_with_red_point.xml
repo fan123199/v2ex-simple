@@ -4,11 +4,12 @@
     </item>
     <item
         android:gravity="top|right"
+        android:end="3dp"
         >
         <shape android:shape="oval">
             <size
-                android:height="6dp"
-                android:width="6dp"/>
+                android:height="8dp"
+                android:width="8dp"/>
             <solid android:color="@color/fab"/>
         </shape>
     </item>

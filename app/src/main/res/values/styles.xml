@@ -105,9 +105,9 @@
     </style>
 
     <style name="AppTheme.Simple" parent="Theme.AppCompat.Light.Dialog">
-        <item name="android:colorAccent">@color/primary</item>
+        <item name="android:colorAccent">@color/title_text</item>
         <item name="android:textColor">@color/title_text</item>
-        <item name="android:textColorPrimary">@color/primary</item>
+        <item name="android:textColorPrimary">@color/title_text</item>
     </style>
 
 
@@ -163,6 +163,15 @@
         <!--<item name="android:background">@android:color/transparent</item>-->
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+
+
+
+    <!-- 圆形图片 -->
+    <style name="circleStyle">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
 
 
 </resources>

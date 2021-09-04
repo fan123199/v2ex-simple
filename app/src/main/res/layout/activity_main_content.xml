@@ -23,6 +23,7 @@
             android:background="@color/toolbar_background"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:titleTextAppearance="@style/VText.ToolbarStyle"
+            android:contentDescription="@string/title"
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
@@ -34,6 +35,7 @@
 
     <!--if not contain layout_behavior,it shows buggy-->
     <androidx.viewpager.widget.ViewPager
+        android:contentDescription="@string/content"
         android:id="@+id/viewpager_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -43,15 +45,16 @@
         android:id="@+id/fab_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:fabSize="normal"
-        app:elevation="12dp"
-        app:backgroundTint="@color/fab"
-        android:src="@drawable/ic_edit_white_24dp"
         android:layout_gravity="bottom|end"
-        android:layout_marginBottom="@dimen/fab_margin"
         android:layout_marginEnd="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/fab_margin"
+        android:contentDescription="add topic"
         android:scaleType="fitXY"
-        android:contentDescription="add topic" />
+        android:src="@drawable/ic_edit_white_24dp"
+        app:backgroundTint="@color/fab"
+        app:elevation="12dp"
+        app:fabSize="normal"
+        tools:ignore="ImageContrastCheck" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

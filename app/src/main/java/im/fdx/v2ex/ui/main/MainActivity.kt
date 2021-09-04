@@ -7,6 +7,7 @@ import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
@@ -64,6 +65,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
   private val shortcutIds = listOf("create_topic")
   private var createTopicInfo: ShortcutInfo? = null
   private var isGetNotification: Boolean = false
+  private lateinit var  mDrawToggle: ActionBarDrawerToggle
 
   private var count: Int = -1
 
@@ -136,7 +138,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
     createShortCut()
 
-    val mDrawToggle = ActionBarDrawerToggle(
+    mDrawToggle = ActionBarDrawerToggle(
       this,
       binding.drawerLayout,
       binding.activityMainContent.toolbar,
@@ -209,14 +211,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     binding.ivNightMode.setOnClickListener {
       BottomSheetMenu(this)
         .addItem("夜间模式") {
-          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_NO.toString())
+          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES.toString())
             .apply()
           recreate()
         }
         .addItem("白天模式") {
-          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_YES.toString())
+          AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+          pref.edit().putString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_NO.toString())
             .apply()
           recreate()
         }
