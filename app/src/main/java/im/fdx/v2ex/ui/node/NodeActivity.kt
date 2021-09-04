@@ -174,10 +174,10 @@ class NodeActivity : BaseActivity() {
                 }
                 isFollowed = parser.isNodeFollowed()
                 token = parser.getOnce()
-                if (isFinishing || isDestroyed) {
-                    return
-                }
                 runOnUiThread {
+                    if (isFinishing || isDestroyed) {
+                        return@runOnUiThread
+                    }
                     supportFragmentManager.beginTransaction()
                         .add(R.id.fragment_container, TopicsFragment().apply {
                             arguments = bundleOf(
@@ -186,7 +186,7 @@ class NodeActivity : BaseActivity() {
                                 Keys.KEY_PAGE_NUM to pageNum
                             )
                         }, "MyActivity")
-                        .commit()
+                        .commitAllowingStateLoss()
                     binding.ivNodeImage.load(mNode?.avatarLargeUrl)
                     binding.ctlNode.title = mNode?.title
                     binding.tvNodeDetails.text = mNode?.header
