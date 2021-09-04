@@ -153,12 +153,8 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
 //            val d = myApp.getDrawable(R.drawable.loading_image)
 //            d?.draw(canvas)
 
-        if (source == null) return bitmapHolder // 某些机型 source可能为空
-        var newsource = source
-        if (source.startsWith("http://")) {
-            newsource = source.replaceFirst("http://", "https://")
-        }
-        Log.i("GoodTextView", " begin getDrawable, Image url: $newsource")
+        if(source == null) return bitmapHolder // 某些机型 source可能为空
+        Log.i("GoodTextView", " begin getDrawable, Image url: $source")
 
         val target = object : CustomTarget<Bitmap>() {
             override fun onLoadCleared(placeholder: Drawable?) {
@@ -208,9 +204,9 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
             }
         }
         GlideApp.with(tv)
-            .asBitmap()
-            .load(newsource)
-            .into(target)
+                .asBitmap()
+                .load(source)
+                .into(target)
         targetList.add(target)
         return bitmapHolder
     }

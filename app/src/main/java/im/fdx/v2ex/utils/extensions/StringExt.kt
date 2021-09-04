@@ -13,7 +13,7 @@ fun String.fullUrl() = this.replace("href=\"/member/", "href=\"https://www.v2ex.
         .replace("href=\"/i/", "href=\"https://i.v2ex.co/")
         .replace("href=\"/t/", "href=\"https://www.v2ex.com/t/")
         .replace("href=\"/go/", "href=\"https://www.v2ex.com/go/")
-        .replace("<img src=\"//", "<img src=\"http://")
+        .replace("<img src=\"//", "<img src=\"https://")
 
 
 fun String.getNum(): String {

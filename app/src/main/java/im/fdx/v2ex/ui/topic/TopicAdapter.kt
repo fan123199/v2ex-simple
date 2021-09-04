@@ -207,13 +207,35 @@ class TopicAdapter(private val act: FragmentActivity,
     //todo
     private fun showUserConversation(replyItem: Reply) {
 
-        val theUserReplyList = replies.filter {
-//            it.member!=null && it.member?.username == replyItem.member?.username
-            false
-        }
+        val oneName = replyItem.member?.username?:""
+        var theOtherName =  ""
+        if (replyItem.content_rendered.contains("v2ex.com/member/")) {//说明有对话
 
-        val bs = BottomListSheet.newInstance(theUserReplyList)
-        bs.show(act.supportFragmentManager , "user_conversation")
+            var find = """(?<=v2ex\.com/member/)\w+""".toRegex().find(replyItem.content_rendered)
+            find?.let {
+                theOtherName = it.value
+            }
+
+            val theUserReplyList = replies.filter {
+                val username = it.member?.username
+                (username == oneName && hasRelate(theOtherName, it)) //需要是和other相关的
+                        || (username == theOtherName && hasRelate(oneName, it))  //需要是和本楼相关的
+            }
+
+            if (theUserReplyList.isEmpty()) {
+                return
+            }
+            val bs = BottomListSheet.newInstance(theUserReplyList)
+            bs.show(act.supportFragmentManager, "user_conversation")
+        }
+    }
+
+    fun hasRelate(name:String, item: Reply) : Boolean{
+        var find = """v2ex\.com/member/$name""".toRegex().find(item.content_rendered)
+        find?.let {
+            return true
+        }
+        return false
     }
 
     private fun copyText(content: String) {
@@ -299,17 +321,21 @@ class TopicAdapter(private val act: FragmentActivity,
         this.topics.add(t)
         this.replies.clear()
         this.replies.addAll(replies)
-        replies.forEach {
+
+
+        replies.forEachIndexed { index ,it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
             it.showTime = TimeUtil.getRelativeTime(it.created)
+            it.rowNum = index + 1
         }
         notifyDataSetChanged()
     }
 
     fun addItems(replies: List<Reply>) {
-        replies.forEach {
+        replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
             it.showTime = TimeUtil.getRelativeTime(it.created)
+            it.rowNum = index + 1
         }
         this.replies.addAll(replies)
         notifyDataSetChanged()
@@ -325,7 +351,7 @@ class ItemViewHolder(var binding: ItemReplyViewBinding)
 
         binding.tvReplyContent.setGoodText(data.content_rendered , type = typeReply)
         binding.tvLouzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
-        binding.tvReplyRow.text = "#$bindingAdapterPosition"
+        binding.tvReplyRow.text = "# ${data.rowNum}"
         binding.tvReplier.text = data.member?.username
         binding.tvThanks.text = data.thanks.toString()
         binding.ivReplyAvatar.load(data.member?.avatarNormalUrl)

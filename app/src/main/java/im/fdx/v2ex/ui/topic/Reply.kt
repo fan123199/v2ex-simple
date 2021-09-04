@@ -36,7 +36,8 @@ data class Reply(var id: String = "",
                  var isThanked: Boolean = false,
                  var member: Member? = null,
                  var isLouzu: Boolean = false,
-                 var showTime: String = ""
+                 var showTime: String = "",
+                 var rowNum: Int = 0,
 ) : Parcelable {
 
     override fun toString() = "Reply{content='$content_rendered}"
