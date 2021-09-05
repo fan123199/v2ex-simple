@@ -16,7 +16,7 @@ apply {
 
 android {
 
-    compileSdk = 30
+    compileSdk = 31
     defaultConfig {
         applicationId = "im.fdx.v2ex"
         minSdk = 22

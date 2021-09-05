@@ -70,7 +70,7 @@ class GetMsgWorker(val context: Context, workerParameters: WorkerParameters) : W
 
         stackBuilder.addNextIntentWithParentStack(resultIntent)
         val resultPendingIntent = stackBuilder
-                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE )
 
         val color = ContextCompat.getColor(context, R.color.primary)
 
