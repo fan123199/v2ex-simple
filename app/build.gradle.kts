@@ -94,7 +94,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.1.1")
     implementation("com.google.android.material:material:1.4.0")
 
-    implementation("android.arch.work:work-runtime-ktx:1.0.1")
+    implementation("androidx.work:work-runtime-ktx:2.7.0-beta01")
     implementation("androidx.constraintlayout:constraintlayout:2.1.0")
 
     implementation("androidx.room:room-runtime:$roomVersion")
