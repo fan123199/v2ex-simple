@@ -24,7 +24,7 @@
 
         <Preference
             android:key="pref_tab_bar"
-            android:title="分类栏自定义" />
+            android:title="栏目自定义" />
 
         <ListPreference
             android:key="pref_night_mode"

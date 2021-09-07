@@ -6,7 +6,6 @@ import android.view.*
 import android.widget.TextView
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +23,7 @@ import java.util.*
 class TabSettingActivity : BaseActivity() {
 
 
-  private val curlist: MutableList<Tab> = mutableListOf()
+  private val curList: MutableList<Tab> = mutableListOf()
   private lateinit var adapter: DefaultAdapter
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,15 +36,15 @@ class TabSettingActivity : BaseActivity() {
     val turnsType = object : TypeToken<List<Tab>>() {}.type
     val savedList = Gson().fromJson<List<Tab>>(str, turnsType)
     if (savedList != null) {
-      curlist.addAll(savedList)
+      curList.addAll(savedList)
     } else {
-      curlist.addAll(initTab())
+      curList.addAll(initTab())
     }
 
     val manager = LinearLayoutManager(this)
     val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
     recyclerView.layoutManager = manager
-    adapter = DefaultAdapter(curlist)
+    adapter = DefaultAdapter(curList)
     recyclerView.adapter = adapter
 
     val helper = ItemTouchHelper(object : ItemTouchHelper.Callback() {
@@ -59,8 +58,8 @@ class TabSettingActivity : BaseActivity() {
 
       override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
         //滑动事件
-        Collections.swap(curlist, viewHolder.adapterPosition, target.adapterPosition)
-        adapter.notifyItemMoved(viewHolder.adapterPosition, target.adapterPosition)
+        Collections.swap(curList, viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
+        adapter.notifyItemMoved(viewHolder.bindingAdapterPosition, target.bindingAdapterPosition)
         return false
       }
 
@@ -101,19 +100,19 @@ class TabSettingActivity : BaseActivity() {
 
 
   private fun reset() {
-    curlist.clear()
-    curlist.addAll(initTab())
+    curList.clear()
+    curList.addAll(initTab())
     adapter.notifyDataSetChanged()
 
   }
 
 
   private fun save() {
-    if (curlist.isEmpty()) {
+    if (curList.isEmpty()) {
       toast("至少保留一个")
       return
     }
-    val savedList = Gson().toJson(curlist)
+    val savedList = Gson().toJson(curList)
 
     pref.edit {
       putString(PREF_TAB, savedList)
@@ -144,12 +143,12 @@ class DefaultAdapter(val list: MutableList<Tab>) : RecyclerView.Adapter<DefaultA
     vh.tv.text = list[position].title
 
     vh.ivDelete.setOnClickListener {
-      list.removeAt(vh.adapterPosition)
-      notifyItemRemoved(vh.adapterPosition)
+      list.removeAt(vh.bindingAdapterPosition)
+      notifyItemRemoved(vh.bindingAdapterPosition)
     }
   }
 
-  class VH(val containerView: View) : RecyclerView.ViewHolder(containerView){
+  class VH(containerView: View) : RecyclerView.ViewHolder(containerView){
     val tv = containerView.findViewById<TextView>(R.id.tv)
     val ivDelete = containerView.findViewById<View>(R.id.ivDelete)
   }
