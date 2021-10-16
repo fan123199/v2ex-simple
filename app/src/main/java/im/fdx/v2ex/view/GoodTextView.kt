@@ -19,9 +19,11 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
+import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
@@ -149,29 +151,36 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
 
     override fun getDrawable(source: String?): Drawable {
         val bitmapHolder = BitmapHolder()
-        //todo 考虑加入占位图，测试时间不足，暂不加入
-//            val d = myApp.getDrawable(R.drawable.loading_image)
-//            d?.draw(canvas)
-
         if(source == null) return bitmapHolder // 某些机型 source可能为空
+
+//        val d =  ContextCompat.getDrawable(tv.context, R.drawable.loading_image)
+//        bitmapHolder.setDrawable(d)
         Log.i("GoodTextView", " begin getDrawable, Image url: $source")
 
+        val smallestWidth = 12.dp2px()
+        val bestWidth = when (type) {
+            typeTopic -> ViewUtil.screenWidth - (16 * 2).dp2px()   //主题
+            typeComment -> ViewUtil.screenWidth - (16 * 2 + 8 * 2).dp2px()  //附言
+            typeReply -> ViewUtil.screenWidth - (16 * 2 + 26 + 8).dp2px() //评论
+            else -> 0
+        }
+
         val target = object : CustomTarget<Bitmap>() {
+
+
             override fun onLoadCleared(placeholder: Drawable?) {
             }
 
             override fun onLoadStarted(placeholder: Drawable?) {
+                placeholder?.let {
+                    val rect = Rect(0, 0, 200.dp2px(), 200.dp2px() * placeholder.intrinsicHeight /placeholder.intrinsicWidth)
+                    bitmapHolder.bounds = rect
+                    placeholder.bounds = rect
+                    bitmapHolder.setDrawable(placeholder)
+                }
             }
 
             override fun onResourceReady(bitmap: Bitmap, transition: Transition<in Bitmap>?) {
-
-                val smallestWidth = 12.dp2px()
-                val bestWidth = when (type) {
-                    typeTopic -> ViewUtil.screenWidth - (16 * 2).dp2px()   //主题
-                    typeComment -> ViewUtil.screenWidth - (16 * 2 + 8 * 2).dp2px()  //附言
-                    typeReply -> ViewUtil.screenWidth - (16 * 2 + 26 + 8).dp2px() //评论
-                    else -> 0
-                }
                 val targetWidth: Int = when {
                     //超小图
                     bitmap.width < smallestWidth -> {
@@ -205,6 +214,7 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
         }
         GlideApp.with(tv)
                 .asBitmap()
+            .placeholder(R.drawable.loading_image_4_3)
                 .load(source)
                 .into(target)
         targetList.add(target)
