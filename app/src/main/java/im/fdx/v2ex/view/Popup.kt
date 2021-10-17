@@ -40,18 +40,17 @@ class Popup(mActivity: Context) {
         hd.bind(data)
         hd.binding.tvReplyContent.maxLines = 4
         hd.binding.tvReplyContent.isVerticalScrollBarEnabled = true
-        hd.binding.tvReplyContent.disableTouch()
         hd.binding.tvReplyRow.text = "#$rowNum"
-        hd.binding.ivThanks.visibility = View.INVISIBLE
-        hd.binding.tvThanks.visibility = View.INVISIBLE
+        hd.binding.ivThanks.visibility = View.GONE
+        hd.binding.tvThanks.visibility = View.GONE
         hd.binding.root.forEach {
             it.isClickable = false
         }
-        hd.binding.ivReply.visibility = View.INVISIBLE
-        hd.binding.divider.visibility = View.INVISIBLE
+        hd.binding.ivReply.visibility = View.GONE
+        hd.binding.divider.visibility = View.GONE
         hd.binding.root.setOnClickListener {
             popupWindow.dismiss()
-            clickListener(rowNum - 1)
+            clickListener(rowNum) //加上正文， index = rowNum
         }
 
         popupWindow.width = v.width

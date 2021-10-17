@@ -228,9 +228,7 @@ class TopicFragment : BaseFragment() {
         })
         val models: Topic? = arguments?.get(Keys.KEY_TOPIC_MODEL) as Topic?
         models?.let {
-            it.created = 0L
-            mAdapter.topics[0] = it
-            mAdapter.notifyDataSetChanged()
+            mAdapter.initTopic(it)
         }
 
         uiScope.launch {

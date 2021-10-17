@@ -351,9 +351,9 @@ class Parser(private val htmlStr: String) {
         val grays = doc.getElementsByClass("gray")
         var hasReply = false
         for (gray in grays) {
-            if (gray.text().contains("回复") && gray.text().contains("•")) {
+            if (gray.text().contains("条回复")) {
                 val wholeText = gray.text()
-                val index = wholeText.indexOf("回复")
+                val index = wholeText.indexOf("条回复")
                 replyNum = wholeText.substring(0, index - 1).trim()
                 if (replyNum.isNotEmpty()) {
                     hasReply = true

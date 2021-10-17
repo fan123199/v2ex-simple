@@ -51,8 +51,9 @@ private const val TYPE_ITEM = 1
  * Created by fdx on 15-9-7.
  * 详情页的Adapter。
  */
-class TopicAdapter(private val act: FragmentActivity,
-                   private val clickMore: (Int) -> Unit
+class TopicAdapter(
+    private val act: FragmentActivity,
+    private val clickMore: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var once: String? = null
@@ -61,11 +62,19 @@ class TopicAdapter(private val act: FragmentActivity,
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
-            when (viewType) {
-                TYPE_HEADER -> TopicWithCommentsViewHolder(LayoutInflater.from(act).inflate(R.layout.item_topic_with_comments, parent, false))
-                TYPE_ITEM -> ItemViewHolder(ItemReplyViewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-                else -> throw RuntimeException(" No type that matches $viewType + Make sure using types correctly")
-            }
+        when (viewType) {
+            TYPE_HEADER -> TopicWithCommentsViewHolder(
+                LayoutInflater.from(act).inflate(R.layout.item_topic_with_comments, parent, false)
+            )
+            TYPE_ITEM -> ItemViewHolder(
+                ItemReplyViewBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
+            else -> throw RuntimeException(" No type that matches $viewType + Make sure using types correctly")
+        }
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, p: Int) {
@@ -92,7 +101,8 @@ class TopicAdapter(private val act: FragmentActivity,
                     mainHolder.ll.removeAllViews()
                     mainHolder.dividerComments.isGone = false
                     topic.comments.forEach {
-                        val view = LayoutInflater.from(act).inflate(R.layout.item_comments, mainHolder.ll, false)
+                        val view = LayoutInflater.from(act)
+                            .inflate(R.layout.item_comments, mainHolder.ll, false)
                         val th = CommentsViewHolder(view)
                         th.tvCTitle.text = it.title
                         th.tvCTime.text = TimeUtil.getRelativeTime(it.created)
@@ -101,10 +111,10 @@ class TopicAdapter(private val act: FragmentActivity,
                     }
                 }
 
-                mainHolder.tvNode.setOnClickListener{
+                mainHolder.tvNode.setOnClickListener {
                     act.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to topic.node?.name!!)
                 }
-                mainHolder.ivAvatar.setOnClickListener{
+                mainHolder.ivAvatar.setOnClickListener {
                     act.startActivity<MemberActivity>(Keys.KEY_USERNAME to topic.member?.username!!)
                 }
 
@@ -160,7 +170,8 @@ class TopicAdapter(private val act: FragmentActivity,
                 }
 
                 if (replyItem.isThanked) {
-                    itemVH.binding.ivThanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
+                    itemVH.binding.ivThanks.imageTintList =
+                        ContextCompat.getColorStateList(act, R.color.primary)
                     itemVH.binding.ivThanks.isClickable = false
                     itemVH.binding.tvThanks.isClickable = false
                 } else {
@@ -186,7 +197,7 @@ class TopicAdapter(private val act: FragmentActivity,
                         if (rowNum == -1 || rowNum > position) {
                             return
                         }
-                        Popup(act).show(v, replies[rowNum -1], rowNum, clickMore)
+                        Popup(act).show(v, replies[rowNum - 1], rowNum, clickMore)
                     }
 
                 }
@@ -197,18 +208,18 @@ class TopicAdapter(private val act: FragmentActivity,
     private fun showUserAllReply(replyItem: Reply) {
 
         val theUserReplyList = replies.filter {
-            it.member!=null && it.member?.username == replyItem.member?.username
+            it.member != null && it.member?.username == replyItem.member?.username
         }
 
         val bs = BottomListSheet.newInstance(theUserReplyList)
-        bs.show(act.supportFragmentManager , "list_of_user_all_reply")
+        bs.show(act.supportFragmentManager, "list_of_user_all_reply")
     }
 
     //todo
     private fun showUserConversation(replyItem: Reply) {
 
-        val oneName = replyItem.member?.username?:""
-        var theOtherName =  ""
+        val oneName = replyItem.member?.username ?: ""
+        var theOtherName = ""
         if (replyItem.content_rendered.contains("v2ex.com/member/")) {//说明有对话
 
             var find = """(?<=v2ex\.com/member/)\w+""".toRegex().find(replyItem.content_rendered)
@@ -230,7 +241,7 @@ class TopicAdapter(private val act: FragmentActivity,
         }
     }
 
-    fun hasRelate(name:String, item: Reply) : Boolean{
+    fun hasRelate(name: String, item: Reply): Boolean {
         var find = """v2ex\.com/member/$name""".toRegex().find(item.content_rendered)
         find?.let {
             return true
@@ -241,7 +252,7 @@ class TopicAdapter(private val act: FragmentActivity,
     private fun copyText(content: String) {
         logd("I click menu copy")
         val manager = act.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-        manager.setPrimaryClip( ClipData.newPlainText("item", content))
+        manager.setPrimaryClip(ClipData.newPlainText("item", content))
         act.toast("评论已复制")
     }
 
@@ -259,10 +270,12 @@ class TopicAdapter(private val act: FragmentActivity,
         }
         val body = FormBody.Builder().add("once", once!!).build()
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
+        HttpHelper.OK_CLIENT.newCall(
+            Request.Builder()
                 .url("https://www.v2ex.com/thank/reply/${replyItem.id}")
                 .post(body)
-                .build()).enqueue(object : Callback {
+                .build()
+        ).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(act)
             }
@@ -275,7 +288,8 @@ class TopicAdapter(private val act: FragmentActivity,
                         act.toast("感谢成功")
                         replyItem.thanks = replyItem.thanks + 1
                         itemVH.binding.tvThanks.text = (replyItem.thanks).toString()
-                        itemVH.binding.ivThanks.imageTintList = ContextCompat.getColorStateList(act, R.color.primary)
+                        itemVH.binding.ivThanks.imageTintList =
+                            ContextCompat.getColorStateList(act, R.color.primary)
                         itemVH.binding.ivThanks.isClickable = false
                         replyItem.isThanked = true
                     }
@@ -323,7 +337,7 @@ class TopicAdapter(private val act: FragmentActivity,
         this.replies.addAll(replies)
 
 
-        replies.forEachIndexed { index ,it ->
+        replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
             it.showTime = TimeUtil.getRelativeTime(it.created)
             it.rowNum = index + 1
@@ -341,15 +355,20 @@ class TopicAdapter(private val act: FragmentActivity,
         notifyDataSetChanged()
     }
 
+    fun initTopic(topic: Topic) {
+        topic.created = 0L
+        topics[0] = topic
+        notifyItemChanged(0)
+    }
+
 }
 
-class ItemViewHolder(var binding: ItemReplyViewBinding)
-    : RecyclerView.ViewHolder(binding.root) {
+class ItemViewHolder(var binding: ItemReplyViewBinding) : RecyclerView.ViewHolder(binding.root) {
 
     @SuppressLint("SetTextI18n")
-    fun bind(data:Reply) {
+    fun bind(data: Reply) {
 
-        binding.tvReplyContent.setGoodText(data.content_rendered , type = typeReply)
+        binding.tvReplyContent.setGoodText(data.content_rendered, type = typeReply)
         binding.tvLouzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
         binding.tvReplyRow.text = "# ${data.rowNum}"
         binding.tvReplier.text = data.member?.username
@@ -361,10 +380,9 @@ class ItemViewHolder(var binding: ItemReplyViewBinding)
 
 }
 
-class TopicWithCommentsViewHolder(itemView: View)
-    : TopicsRVAdapter.MainViewHolder(itemView) {
+class TopicWithCommentsViewHolder(itemView: View) : TopicsRVAdapter.MainViewHolder(itemView) {
     internal var ll: LinearLayout = itemView.findViewById(R.id.ll_comments)
-    internal val dividerComments :View = itemView.findViewById(R.id.divider_comment)
+    internal val dividerComments: View = itemView.findViewById(R.id.divider_comment)
 }
 
 class CommentsViewHolder(itemView: View) {
