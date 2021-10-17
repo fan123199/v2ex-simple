@@ -15,6 +15,7 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentPagerAdapter
 import com.google.android.material.appbar.AppBarLayout
 import im.fdx.v2ex.BuildConfig
@@ -44,6 +45,7 @@ import okhttp3.Callback
 import okhttp3.Response
 import org.jetbrains.anko.toast
 import java.io.IOException
+import kotlin.math.abs
 
 
 /**
@@ -56,17 +58,19 @@ class MemberActivity : BaseActivity() {
     private lateinit var member: Member
 
     private var username: String? = null
-    private var urlTopic: String? = null
     private var blockOfT: String? = null
     private var followOfOnce: String? = null
     private var isBlocked: Boolean = false
     private var isFollowed: Boolean = false
+    private var isOnline: Boolean = false
+
     private lateinit var binding: ActivityMemberBinding
+
+    private var isMe = false;
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMemberBinding.inflate(layoutInflater)
         setContentView(binding.root)
         run {
@@ -99,8 +103,7 @@ class MemberActivity : BaseActivity() {
         binding.alProfile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
-            val percentage = Math.abs(verticalOffset).toFloat() / maxScroll.toFloat()
-            when (percentage) {
+            when (val percentage = abs(verticalOffset).toFloat() / maxScroll.toFloat()) {
                 in 0f..1f -> binding.constraintMember.alpha = 1 - percentage
             }
         })
@@ -115,18 +118,40 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun getData() {
+        if (username == pref.getString(Keys.PREF_USERNAME, "")) {
+            isMe = true
+        }
         val urlUserInfo = "$API_USER?username=$username"  //Livid's profile
         binding.ctlProfile.title = username
-        urlTopic = "$API_TOPIC?username=$username"
-        Log.i(TAG, "$urlUserInfo: \t$urlTopic")
-        getUserInfoAPI(urlUserInfo)
-        getBlockAndFollowWeb()
+        getByAPI(urlUserInfo)
+
+        if (isMe){
+        } else {
+            getByHtml()
+         }
     }
 
-    private fun getBlockAndFollowWeb() {
-        if (username == pref.getString(Keys.PREF_USERNAME, "")) {
-            return
-        }
+    private fun getByAPI(urlUserInfo: String) {
+        vCall(urlUserInfo).start(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                dealError(this@MemberActivity)
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: okhttp3.Response) {
+                if (response.code != 200) {
+                    dealError(this@MemberActivity)
+                } else {
+                    val body = response.body!!.string()
+                    logi("body:" +body)
+                    member = myGson.fromJson(body, Member::class.java)
+                    runOnUiThread { showUser() }
+                }
+            }
+        })
+    }
+
+    private fun getByHtml() {
         val webUrl = "https://www.v2ex.com/member/$username"
         vCall(webUrl).start(object : Callback {
 
@@ -140,7 +165,8 @@ class MemberActivity : BaseActivity() {
                     val html = response.body!!.string()
                     isBlocked = isBlock(html)
                     isFollowed = isFollowed(html)
-                    logd("isBlocked: $isBlocked|isFollowed: $isFollowed")
+                    isOnline = isOnline(html)
+                    logd("isBlocked: $isBlocked|isFollowed: $isFollowed|isOnline: $isOnline")
 
 
                     runOnUiThread {
@@ -156,6 +182,8 @@ class MemberActivity : BaseActivity() {
                             mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
                         }
 
+                        binding.tvOnline.isVisible = isOnline
+
                     }
 
                     blockOfT = getOnceInBlock(html)
@@ -164,26 +192,6 @@ class MemberActivity : BaseActivity() {
                     if (blockOfT == null || followOfOnce == null) {
                         setLogin(false)
                     }
-                }
-            }
-        })
-    }
-
-    private fun getUserInfoAPI(urlUserInfo: String) {
-        vCall(urlUserInfo).start(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity)
-            }
-
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: okhttp3.Response) {
-                if (response.code != 200) {
-                    dealError(this@MemberActivity)
-                } else {
-                    val body = response.body!!.string()
-                    logi("body:" +body)
-                    member = myGson.fromJson(body, Member::class.java)
-                    runOnUiThread { showUser() }
                 }
             }
         })
@@ -256,7 +264,7 @@ class MemberActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_member, menu)
         this.mMenu = menu
-        if (username == pref.getString(Keys.KEY_USERNAME, "")) {
+        if (username == pref.getString(Keys.PREF_USERNAME, "")) {
             menu.findItem(R.id.menu_block).isVisible = false
             menu.findItem(R.id.menu_follow).isVisible = false
         }
@@ -282,7 +290,7 @@ class MemberActivity : BaseActivity() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 if (response.code == 302) {
-                    getBlockAndFollowWeb()
+                    getByHtml()
                     runOnUiThread {
                         toast("${if (isFollowed) "取消" else ""}关注成功")
                     }
@@ -301,7 +309,7 @@ class MemberActivity : BaseActivity() {
                     @Throws(IOException::class)
                     override fun onResponse(call: Call, response: Response) {
                         if (response.code == 302) {
-                            getBlockAndFollowWeb()
+                            getByHtml()
                             runOnUiThread {
                                 toast("${if (isBlocked) "取消" else ""}屏蔽成功")
                             }
@@ -326,6 +334,8 @@ class MemberActivity : BaseActivity() {
         private fun isBlock(html: String) = Regex("un(?=block/\\d{1,8}\\?t=)").containsMatchIn(html)
 
         private fun getOnceInBlock(html: String): String? = Regex("block/\\d{1,8}\\?t=\\d{1,20}").find(html)?.value
+
+        private fun isOnline(html: String) = Regex("class=\"online\"").containsMatchIn(html)
     }
 
     inner class MemberViewpagerAdapter(fm: androidx.fragment.app.FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {

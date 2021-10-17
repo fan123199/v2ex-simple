@@ -8,7 +8,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginRight="8dp"
     android:layout_marginBottom="4dp"
-    android:background="@drawable/radio_border"
+    android:background="@drawable/radius_2dp"
     android:padding="6dp">
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"

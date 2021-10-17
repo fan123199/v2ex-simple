@@ -145,7 +145,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:background="@drawable/radio_kongxin"
+        android:background="@drawable/radius_outline_4dp"
         android:text="楼主"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"

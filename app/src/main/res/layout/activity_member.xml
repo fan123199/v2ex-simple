@@ -52,51 +52,54 @@
 
                 <LinearLayout
                     android:id="@+id/ll_info"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="24dp"
-                    android:gravity="end"
+                    android:layout_marginTop="20dp"
+                    android:gravity="start"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/iv_avatar_profile"
                     app:layout_constraintTop_toBottomOf="@+id/tv_intro">
 
                     <ImageView
+                        android:padding="2dp"
                         android:id="@+id/iv_location"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_location"/>
+                        android:src="@drawable/ic_location" />
 
                     <ImageView
+                        android:padding="2dp"
                         android:id="@+id/iv_twitter"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_twitter"/>
+                        android:src="@drawable/ic_twitter" />
 
                     <ImageView
+                        android:padding="2dp"
                         android:id="@+id/iv_github"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_github"/>
+                        android:src="@drawable/ic_github" />
 
                     <ImageView
+                        android:padding="2dp"
                         android:id="@+id/iv_bitcoin"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_bitcoin"/>
+                        android:src="@drawable/ic_bitcoin" />
 
                     <ImageView
+                        android:padding="2dp"
                         android:id="@+id/tv_website"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
                         android:layout_marginRight="16dp"
-                        android:src="@drawable/ic_website"/>
+                        android:src="@drawable/ic_website" />
                 </LinearLayout>
 
 
@@ -133,18 +136,27 @@
                     android:id="@+id/tv_prefix_created"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
                     android:textColor="@color/toolbar_text"
                     android:textSize="@dimen/text_size_small"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_profile"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintLeft_toLeftOf="@+id/ll_info"
                     app:layout_constraintStart_toEndOf="@+id/iv_avatar_profile"
-                    tools:text="加入于111111111111，1111111111113132"
+                    tools:text="加入于111111111111，1111111111113132" />
+
+                <View
+                    android:id="@+id/tvOnline"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/radius_8dp"
+                    android:backgroundTint="#8BC34A"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_profile"
-                    android:layout_marginBottom="8dp"/>
+                    app:layout_constraintEnd_toEndOf="@+id/iv_avatar_profile" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
