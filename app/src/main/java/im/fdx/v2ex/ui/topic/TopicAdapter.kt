@@ -337,21 +337,21 @@ class TopicAdapter(
         this.replies.addAll(replies)
 
 
-        replies.forEachIndexed { index, it ->
+        this.replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
             it.showTime = TimeUtil.getRelativeTime(it.created)
-            it.rowNum = index + 1
+            it.rowNum = index + 1 //这个方法已经对拉黑和删除情况有效
         }
         notifyDataSetChanged()
     }
 
     fun addItems(replies: List<Reply>) {
-        replies.forEachIndexed { index, it ->
+        this.replies.addAll(replies)
+        this.replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
             it.showTime = TimeUtil.getRelativeTime(it.created)
-            it.rowNum = index + 1
+            it.rowNum = index + 1 //这个方法已经对拉黑和删除情况有效
         }
-        this.replies.addAll(replies)
         notifyDataSetChanged()
     }
 
