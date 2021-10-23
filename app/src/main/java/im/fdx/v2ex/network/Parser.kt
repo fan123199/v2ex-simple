@@ -162,28 +162,19 @@ class Parser(private val htmlStr: String) {
     fun getTotalPageInMember() = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+").find(htmlStr)?.value?.toInt() ?: 0
 
 
-    fun getOneNode(): Node {
+    fun getNodeInfo(nodeName: String): Node {
 
         val nodeModel = Node()
         //        Document html = Jsoup.parse(response);
         val body = doc.body()
-        val header = body.getElementsByClass("node_header").first()
-        val contentElement = header.getElementsByClass("node_info").first().getElementsByTag("span").last()
-        val content = contentElement.text()
-        val number = header.getElementsByTag("strong").first().text()
-        val strTitle = header.getElementsByClass("node_info").first().ownText().trim()
-
+        val header = body.getElementsByClass("node-header").first()
         if (header.getElementsByTag("img").first() != null) {
             val avatarLarge = header.getElementsByTag("img").first().attr("src")
             nodeModel.avatar_normal = avatarLarge.replace("xxlarge", "normal")
         }
-
-        val elements = doc.head().getElementsByTag("script")
-        val script = elements.last()
-        //注意，script 的tag 不含 text。
-        val strScript = script.html()
-        val nodeName = strScript.split("\"".toRegex())[1]
-
+        val number = header.getElementsByTag("strong").first().text()
+        val content = header.getElementsByClass("intro").first().text()
+        val strTitle = header.getElementsByClass("node-breadcrumb").first().ownText().trim()
         nodeModel.name = nodeName
         nodeModel.title = strTitle
         nodeModel.topics = Integer.parseInt(number)
@@ -202,7 +193,7 @@ class Parser(private val htmlStr: String) {
 
 
     fun isTopicFavored(): Boolean {
-        val p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?t=)")
+        val p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?once=)")
         val matcher = p.matcher(doc.outerHtml())
         return matcher.find()
     }
@@ -295,17 +286,6 @@ class Parser(private val htmlStr: String) {
         }
         return replyModels
 
-    }
-
-    fun getVerifyCode(): String? {
-
-        // <a href="/favorite/topic/349111?t=eghsuwetutngpadqplmlnmbndvkycaft" class="tb">加入收藏</a>
-        val p = Pattern.compile("(?<=favorite/topic/\\d{1,10}\\?t=)\\w+")
-        val matcher = p.matcher(htmlStr)
-        return if (matcher.find()) {
-            matcher.group()
-        } else
-            null
     }
 
     fun parseResponseToTopic(topicId: String): Topic {

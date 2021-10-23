@@ -33,7 +33,7 @@ class GetMoreRepliesWorker(val context: Context, workerParameters: WorkerParamet
         val topicId = inputData.getString("topic_id")
         val isToBottom = inputData.getBoolean("bottom", false)
 
-        logd(totalPage.toString() + " | " + topicId)
+        logd("$totalPage | $topicId")
         if (totalPage <= 1 || topicId == null) {
             return
         }
@@ -43,15 +43,11 @@ class GetMoreRepliesWorker(val context: Context, workerParameters: WorkerParamet
                 val response = vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$i").execute()
                 val parser = Parser(response.body!!.string())
                 val replies = parser.getReplies()
-                val token = parser.getVerifyCode()
 
                 if (replies.isEmpty()) return
                 val replyIntent = Intent()
                 replyIntent.action = Keys.ACTION_GET_MORE_REPLY
                 replyIntent.putExtra(Keys.KEY_TOPIC_ID, topicId)
-                token?.let {
-                    replyIntent.putExtra("token", token)
-                }
                 replyIntent.putParcelableArrayListExtra("replies", replies)
 
                 if (i == totalPage && isToBottom) {

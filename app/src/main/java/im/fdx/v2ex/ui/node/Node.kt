@@ -47,11 +47,11 @@ data class Node(
         @ColumnInfo(name = "node_id")
         var id: String = "",
         @ColumnInfo(name = "node_name")
-        var name: String = "",
+        var name: String = "",   //英文名称
         @ColumnInfo(name = "node_url")
         var url: String = "",
         @ColumnInfo(name = "node_title")
-        var title: String = "",
+        var title: String = "",  //展示名称
         var title_alternative: String = "",
         var topics: Int = 0,
         var stars: Int = 0,

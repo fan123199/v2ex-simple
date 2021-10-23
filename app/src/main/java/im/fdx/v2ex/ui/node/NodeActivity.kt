@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.annotation.NonNull
 import androidx.core.os.bundleOf
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.material.appbar.AppBarLayout
@@ -168,7 +167,7 @@ class NodeActivity : BaseActivity() {
 
                 val pageNum = parser.getTotalPageForTopics()
                 try {
-                    mNode = parser.getOneNode()
+                    mNode = parser.getNodeInfo(nodeName)
                 } catch (e: Exception) {
                     NetManager.dealError(this@NodeActivity, errorMsg = e.message ?: "unknown error")
                 }
@@ -192,7 +191,7 @@ class NodeActivity : BaseActivity() {
                     binding.tvNodeDetails.text = mNode?.header
                     binding.tvTopicNum.text = getString(R.string.topic_number, mNode?.topics)
                     if (isFollowed) {
-                        mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_white_24dp)
+                        mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_blue_24dp)
                     } else {
                         mMenu.findItem(R.id.menu_follow)
                             .setIcon(R.drawable.ic_favorite_border_white_24dp)

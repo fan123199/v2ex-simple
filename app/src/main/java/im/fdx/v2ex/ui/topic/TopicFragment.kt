@@ -56,7 +56,6 @@ class TopicFragment : BaseFragment() {
     /**
      * 用于后续操作的token，类似登录信息，每次刷新页面都会更新。
      */
-    private var token: String? = null
     private var once: String? = null
     private var topicHeader: Topic? = null
     private var isFavored: Boolean = false
@@ -80,7 +79,6 @@ class TopicFragment : BaseFragment() {
             } else if (intent.action == Keys.ACTION_GET_MORE_REPLY) {
                 logd("MSG_GET  LocalBroadCast")
                 if (intent.getStringExtra(Keys.KEY_TOPIC_ID) == mTopicId) {
-                    token = intent.getStringExtra("token")
                     val rm: ArrayList<Reply>? = intent.getParcelableArrayListExtra("replies")
                     rm?.let { mAdapter.addItems(it) }
                     if (intent.getBooleanExtra("bottom", false)) {
@@ -125,15 +123,15 @@ class TopicFragment : BaseFragment() {
                 activity?.finish()
             }
 
-            setOnMenuItemClickListener { it ->
+            setOnMenuItemClickListener {
                 when (it.itemId) {
 
-                    R.id.menu_favor -> token?.let { token -> favorOrNot(mTopicId, token, isFavored) }
+                    R.id.menu_favor -> once?.let { once -> favorOrNot(mTopicId, once, isFavored) }
                     R.id.menu_ignore_topic -> {
-                        once?.let {  ignoreTopicOrNot(mTopicId, it, isIgnored)  }
+                        once?.let {once ->  ignoreTopicOrNot(mTopicId, once, isIgnored)  }
                     }
                     R.id.menu_thank_topic -> {
-                        token?.let { thankTopic(mTopicId, it, isThanked) }
+                        once?.let {once -> thankTopic(mTopicId, once, isThanked) }
                     }
                     R.id.menu_item_share -> activity?.share("来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
                             " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}")
@@ -310,16 +308,6 @@ class TopicFragment : BaseFragment() {
                 }
 
                 if (myApp.isLogin) {
-                    token = parser.getVerifyCode()
-
-                    if (token == null) {
-                        activity?.runOnUiThread {
-                            toast("登录状态过期，请重新登录")
-                            activity?.finish()
-                        }
-                        return
-                    }
-                    logd("verifyCode is :" + token!!)
                     once = parser.getOnceNum()
                     mAdapter.once = once
                     isFavored = parser.isTopicFavored()
@@ -387,8 +375,9 @@ class TopicFragment : BaseFragment() {
         WorkManager.getInstance().enqueue(compressionWork)
     }
 
-    private fun favorOrNot(topicId: String, token: String, doFavor: Boolean) {
-        vCall("${NetManager.HTTPS_V2EX_BASE}/${if (doFavor) "un" else ""}favorite/topic/$topicId?t=$token")
+    //<a href="/favorite/topic/809961?once=78809" class="tb">加入收藏</a>
+    private fun favorOrNot(topicId: String, once: String, doFavor: Boolean) {
+        vCall("${NetManager.HTTPS_V2EX_BASE}/${if (doFavor) "un" else ""}favorite/topic/$topicId?once=$once")
                 .start(object : Callback {
 
                     override fun onFailure(call: Call, e: IOException) {
@@ -408,10 +397,10 @@ class TopicFragment : BaseFragment() {
                 })
     }
 
-    //    https@ //www.v2ex.com/thank/topic/529363?t=emdnsipiydbckrgywnjvwjcgkhandjud
-    private fun thankTopic(topicId: String, token: String, isThanked: Boolean) {
+    //  <a href="#;" onclick="if (confirm('你确定要向本主题创建者发送谢意？')) { thankTopic(809961, '78809'); }" class="tb">感谢</a>
+    private fun thankTopic(topicId: String, once: String, isThanked: Boolean) {
         if (isThanked) return
-        val body = FormBody.Builder().add("t", token).build()
+        val body = FormBody.Builder().add("once", once).build()
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
                 .url("https://www.v2ex.com/thank/topic/$topicId")
                 .post(body)
