@@ -52,7 +52,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/ic_edit_white_24dp"
         app:backgroundTint="@color/fab"
-        app:elevation="12dp"
+        app:elevation="8dp"
         app:fabSize="normal"
         tools:ignore="ImageContrastCheck" />
 

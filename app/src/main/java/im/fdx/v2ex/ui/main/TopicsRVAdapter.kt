@@ -67,7 +67,7 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
 
   //Done 对TextView进行赋值, 也就是操作
   override fun onBindViewHolder(holder2: RecyclerView.ViewHolder, position: Int) {
-    val currentTopic = mTopicList[holder2.adapterPosition]
+    val currentTopic = mTopicList[holder2.bindingAdapterPosition]
     val holder = holder2 as MainViewHolder
     holder.tvTitle.maxLines = 2
     holder.tvTitle.text = currentTopic.title
@@ -78,7 +78,7 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
                 putExtras(bundleOf(
                         Keys.KEY_TOPIC_MODEL to currentTopic,
                         Keys.KEY_TOPIC_LIST to mTopicList,
-                        Keys.KEY_POSITION to holder2.adapterPosition)) })
+                        Keys.KEY_POSITION to holder.bindingAdapterPosition)) })
     }
     holder.tvContent.isGone = true
 
@@ -95,6 +95,9 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     holder.tvNode.text = currentTopic.node?.title
     holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)
     holder.ivAvatar.load(currentTopic.member?.avatarNormalUrl)
+
+    holder.divider.isGone = holder.bindingAdapterPosition == itemCount - 1
+
     holder.tvNode.setOnClickListener{
       fragment.startActivity(Intent(myApp, NodeActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_NODE_NAME to currentTopic.node?.name!!)) })
     }
@@ -116,6 +119,6 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     var tvAuthor: TextView = container.findViewById(R.id.tv_author)
     var ivAvatar: CircleImageView = container.findViewById(R.id.iv_avatar_profile)
     var tvNode: TextView = container.findViewById(R.id.tv_node)
-    var view: View = container.findViewById(R.id.divider)
+    var divider: View = container.findViewById(R.id.divider)
   }
 }

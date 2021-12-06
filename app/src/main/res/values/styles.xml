@@ -9,7 +9,9 @@
         <item name="android:listDivider">@drawable/divider</item>
         <item name="android:statusBarColor">@color/status_bar_white</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-
+        <item name="android:navigationBarColor">
+            @color/status_bar_white
+        </item>
 
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
 
