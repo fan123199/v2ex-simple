@@ -10,9 +10,14 @@ The project would be less feature update, but you have any issue, I'd like to he
 
 [![Build Status](https://travis-ci.org/fan123199/v2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/v2ex-simple)
 
-## Google Play
+## Download
 
-[![Download on Google Play](http://developer.android.com/images/brand/en_generic_rgb_wo_45.png)](https://play.google.com/store/apps/details?id=im.fdx.v2ex)
+[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
+     alt="Get it on F-Droid"
+     height="80">](https://f-droid.org/packages/im.fdx.v2ex/)
+[<img src="https://play.google.com/intl/en_us/badges/images/generic/en-play-badge.png"
+     alt="Get it on Google Play"
+     height="80">](https://play.google.com/store/apps/details?id=im.fdx.v2ex)
 
 ## Main function
 
