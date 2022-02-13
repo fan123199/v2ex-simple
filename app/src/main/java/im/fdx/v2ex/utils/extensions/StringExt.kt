@@ -1,5 +1,8 @@
 package im.fdx.v2ex.utils.extensions
 
+import java.net.URLDecoder
+import java.net.URLEncoder
+
 /**
  * Created by fdx on 2017/7/3.
  * fdx will maintain it
@@ -16,11 +19,24 @@ fun String.fullUrl() = this.replace("href=\"/member/", "href=\"https://www.v2ex.
         .replace("<img src=\"//", "<img src=\"https://")
 
 
+//cloudfare email protect 反解密
+fun String.decodeEmail() :String  {
+    val first = (this.substring(0, 2)).toLong(16)
+    var e = "";
+    for (index in 2 until this.length step 2) {
+        val s = "0" + (this.substring(index, index + 2).toLong(16) xor first).toString(16)
+        e += "%" +  ( s.slice(IntRange(s.length-2, s.length-1)) )
+    }
+    val output =  URLDecoder.decode(e, "UTF-8")
+    println("output = $output")
+    return output
+}
+
 fun String.getNum(): String {
     var str2 = ""
     if (isNotBlank()) {
         (0 until length)
-                .filter { this[it].toInt() in 48..57 }
+                .filter { this[it].code in 48..57 }
                 .forEach { str2 += this[it] }
     }
     return str2

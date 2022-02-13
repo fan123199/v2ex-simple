@@ -9,6 +9,7 @@ import im.fdx.v2ex.ui.member.Member
 import im.fdx.v2ex.ui.member.MemberReplyModel
 import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.utils.extensions.decodeEmail
 import im.fdx.v2ex.utils.extensions.fullUrl
 import im.fdx.v2ex.utils.extensions.getNum
 import im.fdx.v2ex.utils.extensions.logd
@@ -275,6 +276,24 @@ class Parser(private val htmlStr: String) {
 
             val createdOriginal = item.getElementsByClass("ago").text()
             val replyContent = item.getElementsByClass("reply_content").first()
+
+
+            //<a href="/cdn-cgi/l/email-protection#b1ded7d7d8d2d49fd2d9d8c5d0dfd4c3f1d6dcd0d8dd9fd2dedc"><span class="__cf_email__"
+// data-cfemail="a8c7cecec1cbcd86cbc0c1dcc9c6cddae8cfc5c9c1c486cbc7c5">[email&#160;protected]</span></a>
+
+//<a href="mailto:office.chitaner@gmail.com">office.chitaner@gmail.com</a>
+            val cfemails = replyContent.getElementsByAttribute("data-cfemail")
+            if(cfemails != null) {
+                for (cfemail in cfemails) {
+                    val p = cfemail.parent()
+                    val secret = cfemail.attr("data-cfemail")
+
+                    p.attr("href" , secret.decodeEmail())
+                    p.child(0).remove()
+                    p.append(secret.decodeEmail())
+                }
+            }
+
             replyModel.created = TimeUtil.toUtcTime(createdOriginal)
             replyModel.member = memberModel
             replyModel.thanks = thanks
@@ -315,8 +334,19 @@ class Parser(private val htmlStr: String) {
 
         val content = contentElementOrg?.text() ?: ""
         topicModel.content = content
-        val contentRendered = contentElementOrg?.html() ?: ""
 
+        val cfemails = contentElementOrg?.getElementsByAttribute("data-cfemail")
+        if(cfemails != null) {
+            for (cfemail in cfemails) {
+                val p = cfemail.parent()
+                val secret = cfemail.attr("data-cfemail")
+
+                p.attr("href" , "mailto:" + secret.decodeEmail())
+                p.child(0).remove()
+                p.append(secret.decodeEmail())
+            }
+        }
+        val contentRendered = contentElementOrg?.html() ?: ""
         topicModel.content_rendered = contentRendered.fullUrl()
 
         val headerTopic = doc.getElementById("Main").getElementsByClass("header").first()
