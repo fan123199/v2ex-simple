@@ -167,7 +167,7 @@ class SettingsActivity : BaseActivity() {
         "pref_msg_period" -> {}
         "pref_add_row" -> {}
         PREF_NIGHT_MODE -> {
-          val mode = pref.getString(PREF_NIGHT_MODE, "1")!!
+          val mode = pref.getString(PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_NO.toString())!!
           AppCompatDelegate.setDefaultNightMode(mode.toInt())
         }
         PREF_TEXT_SIZE -> {

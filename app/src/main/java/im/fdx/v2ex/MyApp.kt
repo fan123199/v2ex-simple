@@ -53,7 +53,7 @@ class MyApp : Application() {
     })
     isLogin = pref.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
     logd("onCreate\nisLogin:$isLogin")
-//    setDefaultNightMode(if (pref.getBoolean("NIGHT_MODE", false)) MODE_NIGHT_YES else MODE_NIGHT_NO)
+    setDefaultNightMode(pref.getString(Keys.PREF_NIGHT_MODE, MODE_NIGHT_NO.toString())!!.toInt())
   }
 }
 

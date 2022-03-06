@@ -96,7 +96,6 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)
     holder.ivAvatar.load(currentTopic.member?.avatarNormalUrl)
 
-    holder.divider.isGone = holder.bindingAdapterPosition == itemCount - 1
 
     holder.tvNode.setOnClickListener{
       fragment.startActivity(Intent(myApp, NodeActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_NODE_NAME to currentTopic.node?.name!!)) })

@@ -12,9 +12,10 @@
     <color name="black">#000000</color>
     <color name="black54">#90000000</color>
     <color name="black_overlay">#66000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="transparent">#00ffffff</color>
-    <color name="base_night">#444444</color>
+    <color name="base_night">#242424</color>
+    <color name="base_night_light">#303030</color>
 
     <!--常量 end-->
 
@@ -50,8 +51,6 @@
     <color name="fab">@color/accent_orange</color>
     <color name="icon">@color/primary</color>
     <color name="bg_login">@color/primary</color>
-    <color name="light_blue_400">#FF29B6F6</color>
-    <color name="light_blue_600">#FF039BE5</color>
     <color name="gray_400">#FFBDBDBD</color>
     <color name="gray_600">#FF757575</color>
 
