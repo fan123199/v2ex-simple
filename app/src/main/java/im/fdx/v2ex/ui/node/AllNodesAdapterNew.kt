@@ -64,7 +64,9 @@ class AllNodesAdapterNew(val context: Context, val action: (Node) -> Unit) : and
         for (entry in map) {
             val value = entry.value
             val filterNodeModel = value.asSequence().filter {
-                it.name.contains(newText) || it.title.contains(newText) || it.title_alternative.contains(newText)
+                it.name.contains(newText, true)
+                        || it.title.contains(newText, true)
+                        || it.title_alternative.contains(newText, true)
             }.toMutableList()
 
             if (filterNodeModel.isNotEmpty()) {

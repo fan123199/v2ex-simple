@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -17,7 +18,7 @@ import org.jetbrains.anko.defaultSharedPreferences
 import java.net.HttpCookie
 
 val pref: SharedPreferences by lazy {
-  myApp.defaultSharedPreferences
+  PreferenceManager.getDefaultSharedPreferences(myApp)
 }
 
 @Deprecated("技术困难，下一期实现")

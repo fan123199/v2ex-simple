@@ -110,6 +110,7 @@
         <item name="android:colorAccent">@color/title_text</item>
         <item name="android:textColor">@color/title_text</item>
         <item name="android:textColorPrimary">@color/title_text</item>
+        <item name="android:windowBackground">@color/light_background</item>
     </style>
 
 

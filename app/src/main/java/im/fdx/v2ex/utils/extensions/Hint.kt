@@ -32,6 +32,7 @@ fun Context.dealError(errorCode: Int = -1, swipe: androidx.swiperefreshlayout.wi
     }
 }
 
+@Deprecated(replaceWith = ReplaceWith("showHint"), message = "sdk 31 problem" , level = DeprecationLevel.WARNING)
 fun Fragment.toast(message : CharSequence): Toast? {
     return activity?.let {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT)
@@ -69,4 +70,13 @@ fun Activity.showLoginHint(view: View,message :String ="您还未登录，请登
             .setAction("登录") {
                 startActivity<LoginActivity>()
             }.show()
+}
+
+/**
+ *  用来代替 toast方法。
+ */
+fun Activity.showHint(view: View,message : String) {
+    Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
+        .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
+        .show()
 }

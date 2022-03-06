@@ -24,10 +24,7 @@ import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.loge
-import im.fdx.v2ex.utils.extensions.setStatusBarColor
-import im.fdx.v2ex.utils.extensions.setUpToolbar
+import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -203,7 +200,7 @@ class LoginActivity : BaseActivity() {
 
           }
           200 -> runOnUiThread {
-            longToast("登录失败:\n $errorMsg")
+            showHint( binding.btnLogin,"登录失败:  $errorMsg")
             binding.pbLogin.visibility = GONE
             binding.btnLogin.visibility = VISIBLE
           }

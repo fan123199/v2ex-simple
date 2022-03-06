@@ -30,16 +30,14 @@ class SearchActivity : BaseActivity() {
 
 
     if (pref.getBoolean(Keys.KEY_WARN_SEARCH_API, true)) {
-      pref.edit().putBoolean(Keys.KEY_WARN_SEARCH_API, false).apply()
       AlertDialog.Builder(this, R.style.AppTheme_Simple)
           .setPositiveButton("知道") { _, _ ->
-
+              pref.edit().putBoolean(Keys.KEY_WARN_SEARCH_API, false).apply()
           }
           .setTitle("搜索API说明")
           .setMessage("""
                     1. 本搜索api来自开源项目https://www.sov2ex.com
                     2. 默认按时间倒序
-                    3. 后续版本提供条件筛选功能
                 """.trimIndent()).show()
     }
     fra = TopicsFragment()
