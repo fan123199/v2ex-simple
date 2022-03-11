@@ -54,6 +54,7 @@
         android:id="@+id/foot_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/item_background"
         android:orientation="vertical">
 
         <View
@@ -65,7 +66,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/item_background"
             android:orientation="horizontal">
 
             <EditText
@@ -117,8 +117,8 @@
         <View
             android:id="@+id/divider_bottom"
             android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:layout_marginBottom="2dp"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
             android:background="@color/divider_color"
             android:layout_marginStart="@dimen/md_left_margin"
             android:layout_marginEnd="@dimen/md_left_margin" />
