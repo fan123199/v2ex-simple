@@ -96,16 +96,16 @@ class Parser(private val htmlStr: String) {
 //             FROM_NODE   &nbsp;•&nbsp; 6 小时 15 分钟前 &nbsp;•&nbsp; 最后回复来自
                 val created = when (source) {
                     FROM_HOME, FROM_MEMBER -> {
-                        val smallItem = item.getElementsByClass("topic_info")?.first()?.ownText()?:""
+                        val smallItem = item.getElementsByClass("topic_info")?.first()?.getElementsByAttribute("title")
                         when {
-                            smallItem.contains("最后回复") -> TimeUtil.toUtcTime(smallItem.split("•")[2])
+                            smallItem !=null -> TimeUtil.toUtcTime(smallItem.attr("title"))
                             else -> -1L
                         }
                     }
                     FROM_NODE -> {
-                        val smallItem = item.getElementsByClass("topic_info")?.first()?.ownText()?:""
+                        val smallItem = item.getElementsByClass("topic_info")?.first()?.getElementsByAttribute("title")
                         when {
-                            smallItem.contains("最后回复") -> TimeUtil.toUtcTime(smallItem.split("•")[1])
+                            smallItem !=null -> TimeUtil.toUtcTime(smallItem.attr("title"))
                             else -> -1L
                         }
                     }
@@ -170,15 +170,15 @@ class Parser(private val htmlStr: String) {
         val body = doc.body()
         val header = body.getElementsByClass("node-header").first()
         if (header.getElementsByTag("img").first() != null) {
-            val avatarLarge = header.getElementsByTag("img").first().attr("src")
-            nodeModel.avatar_normal = avatarLarge.replace("xxlarge", "normal")
+            val avatarLarge = header.getElementsByTag("img")?.first()?.attr("src")
+            nodeModel.avatar_normal = avatarLarge?.replace("xxlarge", "normal")
         }
-        val number = header.getElementsByTag("strong").first().text()
-        val content = header.getElementsByClass("intro").first().text()
-        val strTitle = header.getElementsByClass("node-breadcrumb").first().ownText().trim()
+        val number = header.getElementsByTag("strong")?.first()?.text()
+        val content = header.getElementsByClass("intro")?.first()?.text()?:""
+        val strTitle = header.getElementsByClass("node-breadcrumb")?.first()?.ownText()?.trim()?:""
         nodeModel.name = nodeName
         nodeModel.title = strTitle
-        nodeModel.topics = Integer.parseInt(number)
+        nodeModel.topics = number?.toIntOrNull()?:0
         nodeModel.header = content
 
         return nodeModel
