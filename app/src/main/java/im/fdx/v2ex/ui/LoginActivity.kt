@@ -113,10 +113,10 @@ class LoginActivity : BaseActivity() {
       override fun onResponse(call: Call, response0: Response) {
         val htmlString = response0.body?.string()
         val body = Jsoup.parse(htmlString).body()
-        nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮箱地址").attr("name")
+        nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮件地址").attr("name")
         passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
         onceCode = body.getElementsByAttributeValue("name", "once").attr("value")
-        imageCodeKey = body.getElementsByAttributeValue("placeholder", "请输入上图中的验证码").attr("name")
+        imageCodeKey = body.getElementsByAttributeValueContaining("placeholder", "请输入上图中的验证码").attr("name")
         runOnUiThread {
           val str = "https://www.v2ex.com/_captcha?once=$onceCode"
 
