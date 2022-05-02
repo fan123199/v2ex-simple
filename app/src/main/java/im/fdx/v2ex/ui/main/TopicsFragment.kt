@@ -21,6 +21,8 @@ import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.Parser.Source.*
+import im.fdx.v2ex.ui.NODE_TYPE
+import im.fdx.v2ex.ui.TAB_TYPE
 import im.fdx.v2ex.ui.member.Member
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
@@ -88,7 +90,14 @@ class TopicsFragment : Fragment() {
       args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = URL_FOLLOWING
       args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
       args?.getString(Keys.KEY_TAB) == "heated" -> mRequestURL = API_HEATED
-      args?.getString(Keys.KEY_TAB) != null -> mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
+      args?.getString(Keys.KEY_TAB) != null -> {
+        if (args.getInt(Keys.KEY_TYPE) == NODE_TYPE) {
+          currentMode = FROM_NODE
+          mRequestURL =  "$HTTPS_V2EX_BASE/go/${args.getString(Keys.KEY_TAB)}"
+        } else {
+          mRequestURL = "$HTTPS_V2EX_BASE/?tab=${args.getString(Keys.KEY_TAB)}"
+        }
+      }
       args?.getString(Keys.KEY_USERNAME) != null -> {
         currentMode = FROM_MEMBER
         mRequestURL = "$HTTPS_V2EX_BASE/member/${args.getString(Keys.KEY_USERNAME)}/topics"
@@ -109,17 +118,15 @@ class TopicsFragment : Fragment() {
     }
 
 
+    val topicList : ArrayList<Topic>?  = args?.getParcelableArrayList(Keys.KEY_TOPIC_LIST)
     if (currentMode == FROM_SEARCH) {
       flContainer.showNoContent("请输入关键字进行搜索")
-    } else if (currentMode == FROM_NODE){
+    } else if (currentMode == FROM_NODE && topicList != null){
       // 已有数据
-      val topicList : ArrayList<Topic>?  = args?.getParcelableArrayList(Keys.KEY_TOPIC_LIST)
-      val totalPage  = args?.getInt(Keys.KEY_PAGE_NUM, 1)?:1
-      if (topicList!=null) {
-        logd(topicList)
-        mScrollListener.totalPage = totalPage
-        setUIData(topicList)
-      }
+      val totalPage  = args.getInt(Keys.KEY_PAGE_NUM, 1) ?:1
+      logd(topicList)
+      mScrollListener.totalPage = totalPage
+      setUIData(topicList)
     } else {
       flContainer.hideNoContent()
       mSwipeLayout.isRefreshing = true

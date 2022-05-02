@@ -10,6 +10,8 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.Tab
+import im.fdx.v2ex.ui.tabPaths
+import im.fdx.v2ex.ui.tabTitles
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.PREF_TAB
 import org.jetbrains.anko.collections.forEachWithIndex
@@ -39,9 +41,6 @@ internal class MyViewPagerAdapter(
 
         var jsonData = pref.getString(PREF_TAB, null)
         if (jsonData == null) {
-            val tabTitles = mContext.resources.getStringArray(R.array.v2ex_favorite_tab_titles)
-            val tabPaths = mContext.resources.getStringArray(R.array.v2ex_favorite_tab_paths)
-
             val list = MutableList(tabTitles.size) { index: Int ->
                 Tab(tabTitles[index], tabPaths[index])
             }
@@ -56,7 +55,7 @@ internal class MyViewPagerAdapter(
             if (!myApp.isLogin && it.path == "recent") {
                 continue
             }
-            mFragments.add(TopicsFragment().apply { arguments = bundleOf(Keys.KEY_TAB to it.path) })
+            mFragments.add(TopicsFragment().apply { arguments = bundleOf(Keys.KEY_TAB to it.path, Keys.KEY_TYPE to it.type) })
             tabList.add(it)
         }
     }

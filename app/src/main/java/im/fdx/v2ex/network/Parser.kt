@@ -171,7 +171,7 @@ class Parser(private val htmlStr: String) {
         val header = body.getElementsByClass("node-header").first()
         if (header.getElementsByTag("img").first() != null) {
             val avatarLarge = header.getElementsByTag("img")?.first()?.attr("src")
-            nodeModel.avatar_normal = avatarLarge?.replace("xxlarge", "normal")
+            nodeModel.avatar_normal = avatarLarge?.replace("xxxlarge", "normal")?.replace("xxlarge", "normal")
         }
         val number = header.getElementsByTag("strong")?.first()?.text()
         val content = header.getElementsByClass("intro")?.first()?.text()?:""
