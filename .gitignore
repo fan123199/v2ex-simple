@@ -6,6 +6,7 @@
 /app/build
 /.idea/misc.xml
 /.idea/gradle.xml
+/.idea/profile_settings.xml
 *.iml
 /build
 .DS_Store
