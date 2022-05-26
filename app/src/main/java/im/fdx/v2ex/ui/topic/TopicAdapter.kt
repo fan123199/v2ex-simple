@@ -286,12 +286,14 @@ class TopicAdapter(
                 if (response.code == 200) {
                     act.runOnUiThread {
                         act.toast("感谢成功")
-                        replyItem.thanks = replyItem.thanks + 1
-                        itemVH.binding.tvThanks.text = (replyItem.thanks).toString()
-                        itemVH.binding.ivThanks.imageTintList =
-                            ContextCompat.getColorStateList(act, R.color.primary)
-                        itemVH.binding.ivThanks.isClickable = false
-                        replyItem.isThanked = true
+                        if(!replyItem.isThanked) {
+                            replyItem.thanks = replyItem.thanks + 1
+                            itemVH.binding.tvThanks.text = (replyItem.thanks).toString()
+                            itemVH.binding.ivThanks.imageTintList =
+                                ContextCompat.getColorStateList(act, R.color.primary)
+                            itemVH.binding.ivThanks.isClickable = false
+                            replyItem.isThanked = true
+                        }
                     }
                 } else {
                     NetManager.dealError(act, response.code)
