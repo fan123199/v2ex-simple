@@ -18,6 +18,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.JsonParser
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ItemReplyViewBinding
@@ -268,15 +270,20 @@ class TopicAdapter(
             act.toast("请刷新后重试")
             return
         }
-        val body = FormBody.Builder().add("once", once!!).build()
 
+        if (replyItem.isThanked) { // button click but not response
+            return
+        }
+
+        replyItem.isThanked = true
         HttpHelper.OK_CLIENT.newCall(
             Request.Builder()
                 .url("https://www.v2ex.com/thank/reply/${replyItem.id}")
-                .post(body)
+                .post(FormBody.Builder().add("once", once!!).build())
                 .build()
         ).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                replyItem.isThanked = false
                 NetManager.dealError(act)
             }
 
@@ -284,18 +291,25 @@ class TopicAdapter(
             override fun onResponse(call: Call, response: Response) {
 
                 if (response.code == 200) {
-                    act.runOnUiThread {
-                        act.toast("感谢成功")
-                        if(!replyItem.isThanked) {
-                            replyItem.thanks = replyItem.thanks + 1
-                            itemVH.binding.tvThanks.text = (replyItem.thanks).toString()
-                            itemVH.binding.ivThanks.imageTintList =
-                                ContextCompat.getColorStateList(act, R.color.primary)
-                            itemVH.binding.ivThanks.isClickable = false
-                            replyItem.isThanked = true
+
+                    act.toast("感谢成功")
+                    try {
+                        val bdy = response.body?.string()
+                        val success = JsonParser.parseString(bdy).asJsonObject.get("success").asBoolean
+                        if (success) {
+                            once = JsonParser.parseString(bdy).asJsonObject.get("once").asString
+                            act.runOnUiThread {
+                                replyItem.thanks = replyItem.thanks + 1
+                                itemVH.binding.tvThanks.text = (replyItem.thanks).toString()
+                                itemVH.binding.ivThanks.imageTintList =
+                                    ContextCompat.getColorStateList(act, R.color.primary)
+                                itemVH.binding.ivThanks.isClickable = false
+                            }
                         }
+                    } catch (e: Exception) {
                     }
                 } else {
+                    replyItem.isThanked = false
                     NetManager.dealError(act, response.code)
                 }
             }
