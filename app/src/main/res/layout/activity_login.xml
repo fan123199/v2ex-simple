@@ -163,12 +163,12 @@
                 android:padding="8dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/register_tip"
-                android:textColor="@color/light_hint"
+                android:textColor="@color/toolbar_text_light"
                 android:textSize="@dimen/text_size_medium"/>
             
             <TextView
                 android:text="@string/google_login"
-                android:textColor="@color/light_hint"
+                android:textColor="@color/toolbar_text_light"
                 android:padding="8dp"
                 android:textSize="@dimen/text_size_medium"
                 android:id="@+id/tv_google_login"
