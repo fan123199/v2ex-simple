@@ -50,7 +50,7 @@ class NotificationActivity : BaseActivity() {
     private fun parseIntent(intent: Intent) {
         val numUnread = intent.getIntExtra(Keys.KEY_UNREAD_COUNT, -1)
         adapter.number = numUnread
-        findViewById<Toolbar>(R.id.toolbar).title = "${getString(R.string.notification)} " +
+        findViewById<Toolbar>(R.id.toolbar).title = "${getString(R.string.message)} " +
                 if (numUnread != -1) "($numUnread 条未读)" else ""
         mSwipe.isRefreshing = true
         fetchNotification()

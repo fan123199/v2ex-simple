@@ -5,32 +5,32 @@
 
     <PreferenceCategory
         android:order="10"
-        android:title="个性化"
+        android:title="@string/personalization"
         android:key="group_custom">
         <SwitchPreference
-            android:title="回复加入楼层"
+            android:title="@string/add_row_in_reply"
             android:key="pref_add_row"
             android:defaultValue="false"
-            android:summaryOn="格式: @user #n "
-            android:summaryOff="格式: @user " />
+            android:summaryOn="@string/format_user_n"
+            android:summaryOff="@string/format_user" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:order="20"
-        android:title="消息"
+        android:title="@string/notification"
         android:key="group_msg">
         <SwitchPreference
-            android:title="未读消息通知"
+            android:title="@string/unread_message_notification"
             android:key="pref_msg"
             android:defaultValue="true"
-            android:summaryOn="启用"
-            android:summaryOff="关闭" />
+            android:summaryOn="@string/on"
+            android:summaryOff="@string/off" />
         <SwitchPreference
             android:key="pref_background_msg"
-            android:title="后台获取未读消息"
-            android:summaryOn="启用"
-            android:summaryOff="关闭"
+            android:title="@string/get_message_background"
+            android:summaryOn="@string/on"
+            android:summaryOff="@string/off"
             android:defaultValue="false" />
         <ListPreference
             android:defaultValue="900"
@@ -38,13 +38,14 @@
             android:entryValues="@array/period_int"
             app:useSimpleSummaryProvider="true"
             android:key="pref_msg_period"
-            android:title="消息间隔" />
+            android:title="@string/notification_period" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:order="30"
         android:title="@string/user"
         android:key="group_user">
+
         <Preference
             android:key="pref_logout"
             android:title="@string/logout"/>

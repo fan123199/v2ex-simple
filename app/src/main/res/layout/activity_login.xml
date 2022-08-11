@@ -5,13 +5,14 @@
     android:background="@color/bg_login"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.Toolbar
+    <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/transparent"
         app:title=""
+        app:navigationIconTint="@color/back_icon_login"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:contentInsetStartWithNavigation="0dp"
         app:popupTheme="@style/AppTheme.PopupOverlay">
@@ -23,7 +24,7 @@
             android:text="@string/log_in_v2ex"
             android:textAppearance="@style/VText.ToolbarStyle.Light"/>
 
-    </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <ScrollView
         android:layout_width="match_parent"

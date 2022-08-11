@@ -14,5 +14,5 @@
         android:title="@string/show_user_all_reply"/>
 
     <item android:id="@+id/menu_show_user_conversation"
-        android:title="显示对话列表"/>
+        android:title="@string/show_conversation"/>
 </menu>

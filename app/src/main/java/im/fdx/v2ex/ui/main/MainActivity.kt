@@ -209,7 +209,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         binding.ivNightMode.setOnClickListener {
             BottomSheetMenu(this)
-                .addItem("夜间模式") {
+                .addItem(getString(R.string.dark_mode)) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                     pref.edit().putString(
                         Keys.PREF_NIGHT_MODE,
@@ -218,7 +218,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         .apply()
                     recreate()
                 }
-                .addItem("白天模式") {
+                .addItem(getString(R.string.light_mode)) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                     pref.edit().putString(
                         Keys.PREF_NIGHT_MODE,
@@ -227,7 +227,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         .apply()
                     recreate()
                 }
-                .addItem("跟随系统") {
+                .addItem(getString(R.string.use_device_setting)) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
                     pref.edit().putString(
                         Keys.PREF_NIGHT_MODE,

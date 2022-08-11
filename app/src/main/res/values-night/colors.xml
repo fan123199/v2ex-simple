@@ -27,4 +27,6 @@
     <color name="trans_item_background">#61000000</color>
 
     <color name="bg_login">@color/base_night</color>
+    <color name="back_icon" >@color/white</color>
+    <color name="back_icon_login" >@color/white</color>
 </resources>

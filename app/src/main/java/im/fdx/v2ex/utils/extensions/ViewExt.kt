@@ -35,34 +35,33 @@ import im.fdx.v2ex.utils.Keys
  * 在中间位置显示"没有内容"信息
  */
 fun FrameLayout.showNoContent(content: String = "没有内容") {
-  val tagName = "no"
-  var alreadyHasNoContent = false
-  this.forEach { view ->
-    when (tagName) {
-      view.tag -> alreadyHasNoContent = true
+    val tagName = "no"
+    var alreadyHasNoContent = false
+    this.forEach { view ->
+        when (tagName) {
+            view.tag -> alreadyHasNoContent = true
+        }
     }
-  }
-  if (!alreadyHasNoContent) {
-    val child = TextView(this.context)
-    child.tag = tagName
-    child.text = content
-    child.setTextColor(ContextCompat.getColor(context, R.color.hint))
-    val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-    params.gravity = Gravity.CENTER_HORIZONTAL
-    params.topMargin = 120.dp2px()
-    this.addView(child, -1, params)
-  }
+    if (!alreadyHasNoContent) {
+        val child = TextView(this.context)
+        child.tag = tagName
+        child.text = content
+        child.setTextColor(ContextCompat.getColor(context, R.color.hint))
+        val params = FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        params.gravity = Gravity.CENTER_HORIZONTAL
+        params.topMargin = 120.dp2px()
+        this.addView(child, -1, params)
+    }
 }
 
 fun FrameLayout.hideNoContent() {
-  val tagName = "no"
-  this.forEach { view ->
-    when (tagName) {
-      view.tag -> removeView(view)
+    val tagName = "no"
+    this.forEach { view ->
+        when (tagName) {
+            view.tag -> removeView(view)
+        }
     }
-  }
 }
-
 
 
 /**
@@ -70,115 +69,115 @@ fun FrameLayout.hideNoContent() {
  */
 fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
 
-  val toolbar: Toolbar = findViewById(R.id.toolbar)
-  toolbar.title = title
-  setSupportActionBar(toolbar)
-  supportActionBar?.setDisplayHomeAsUpEnabled(true)
-  toolbar.setNavigationOnClickListener { onBackPressed() }
-  return toolbar
+    val toolbar: Toolbar = findViewById(R.id.toolbar)
+    toolbar.title = title
+    setSupportActionBar(toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    toolbar.setNavigationOnClickListener { onBackPressed() }
+    return toolbar
 }
 
 /**
  * Alpha : 0，solid, 255->transparent
  */
 fun Activity.setStatusBarColor(@ColorRes colorRes: Int?, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      var flags = this.window.decorView.systemUiVisibility
-      flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-      this.window.decorView.systemUiVisibility = flags
+        var flags = this.window.decorView.systemUiVisibility
+        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        this.window.decorView.systemUiVisibility = flags
     }
     val color = colorRes?.let { ContextCompat.getColor(this, it) } ?: 0
     this.window.statusBarColor = calculateStatusColor(color, statusBarAlpha)
-  }
 }
 
 
 fun Activity.setStatusBarLight() {
 
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    var flags = window.decorView.systemUiVisibility
-    flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-    window.decorView.systemUiVisibility = flags
-    this.window.statusBarColor = Color.WHITE
-  } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-    this.window.statusBarColor = Color.BLACK
-  }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        var flags = window.decorView.systemUiVisibility
+        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+        window.decorView.systemUiVisibility = flags
+        this.window.statusBarColor = Color.WHITE
+    } else {
+        this.window.statusBarColor = Color.BLACK
+    }
 
 }
 
 fun Activity.clearLightStatusBar() {
-  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-    var flags = this.window.decorView.systemUiVisibility
-    flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-    this.window.decorView.systemUiVisibility = flags
-  }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        var flags = this.window.decorView.systemUiVisibility
+        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        this.window.decorView.systemUiVisibility = flags
+    }
 }
 
 
 private fun calculateStatusColor(@ColorInt color: Int, alpha: Int): Int {
-  if (alpha == 0) {
-    return color
-  }
-  val a = 1 - alpha / 255f
-  var red = color shr 16 and 0xff
-  var green = color shr 8 and 0xff
-  var blue = color and 0xff
-  red = (red * a + 0.5).toInt()
-  green = (green * a + 0.5).toInt()
-  blue = (blue * a + 0.5).toInt()
-  return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
+    if (alpha == 0) {
+        return color
+    }
+    val a = 1 - alpha / 255f
+    var red = color shr 16 and 0xff
+    var green = color shr 8 and 0xff
+    var blue = color and 0xff
+    red = (red * a + 0.5).toInt()
+    green = (green * a + 0.5).toInt()
+    blue = (blue * a + 0.5).toInt()
+    return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
 }
 
 fun SwipeRefreshLayout.initTheme() {
-  setColorSchemeResources(R.color.accent_orange)
-  setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
+    setColorSchemeResources(R.color.accent_orange)
+    setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
 }
 
 fun ImageView.load(url: Any?) {
-  GlideApp.with(this)
-      .load(url)
-      .into(this)
+    GlideApp.with(this)
+        .load(url)
+        .into(this)
 }
 
 
-fun handleAlphaOnTitle(view:View, divider:View ,percentage: Float) {
-  XLog.tag("collapse").d(percentage)
-  when (percentage) {
-    in 0.0..1.0 -> view.alpha = 1 - percentage
-  }
-  when (percentage) {
-    1f -> divider.alpha = 0f
-    else -> divider.alpha = 1f
-  }
+fun handleAlphaOnTitle(view: View, divider: View, percentage: Float) {
+    XLog.tag("collapse").d(percentage)
+    when (percentage) {
+        in 0.0..1.0 -> view.alpha = 1 - percentage
+    }
+    when (percentage) {
+        1f -> divider.alpha = 0f
+        else -> divider.alpha = 1f
+    }
 }
 
 
 fun openImagePicker(activity: Activity) {
 
-  if (pref.getBoolean(Keys.KEY_WARN_IMAGE_UPLOAD, true)) {
-    AlertDialog.Builder(activity, R.style.AppTheme_Simple)
-        .setPositiveButton("知道了") { _, _ ->
-          pref.edit().putBoolean(Keys.KEY_WARN_IMAGE_UPLOAD, false).apply()
-          ImagePicker.create(activity)
-              .theme(R.style.Theme_V2ex)
-              .multi()
-              .limit(10)
-              .start()
-        }
-        .setTitle("使用须知")
-        .setMessage("""
+    if (pref.getBoolean(Keys.KEY_WARN_IMAGE_UPLOAD, true)) {
+        AlertDialog.Builder(activity, R.style.AppTheme_Simple)
+            .setPositiveButton(activity.getString(R.string.iknow)) { _, _ ->
+                pref.edit().putBoolean(Keys.KEY_WARN_IMAGE_UPLOAD, false).apply()
+                ImagePicker.create(activity)
+                    .theme(R.style.Theme_V2ex)
+                    .multi()
+                    .limit(10)
+                    .start()
+            }
+            .setTitle(activity.getString(R.string.tips))
+            .setMessage(
+                """
                     1. 本app使用图床来自https://sm.ms
                     2. 上传的图片为公开图片，且暂无删除功能，请谨慎使用
                     3. 图片内容需遵守当地法律法规
                     4. 每次最多选择10张图片
-                """.trimIndent()).show()
-  } else {
-    ImagePicker.create(activity)
-        .theme(R.style.Theme_V2ex)
-        .multi()
-        .limit(10)
-        .start()
-  }
+                """.trimIndent()
+            ).show()
+    } else {
+        ImagePicker.create(activity)
+            .theme(R.style.Theme_V2ex)
+            .multi()
+            .limit(10)
+            .start()
+    }
 
 }

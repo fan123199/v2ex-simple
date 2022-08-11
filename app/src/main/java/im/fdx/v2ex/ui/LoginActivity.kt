@@ -10,11 +10,13 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.elvishew.xlog.XLog
+import com.google.android.material.appbar.MaterialToolbar
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityLoginBinding
@@ -53,7 +55,8 @@ class LoginActivity : BaseActivity() {
     binding = ActivityLoginBinding.inflate(layoutInflater)
     setContentView(binding.root)
 
-    setUpToolbar()
+    val toolbar = setUpToolbar()
+    (toolbar as MaterialToolbar).setNavigationIconTint(ContextCompat.getColor(this, R.color.back_icon_login))
     setStatusBarColor(R.color.bg_login)
     val usernamePref = pref.getString(Keys.KEY_USERNAME, "")
     binding.btnLogin.setOnClickListener {

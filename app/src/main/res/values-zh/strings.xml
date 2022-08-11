@@ -62,7 +62,7 @@
     <string name="user">用户</string>
     <string name="choose_node">请选择节点</string>
     <string name="post_reply">发表回复</string>
-    <string name="notification">提醒</string>
+    <string name="notification">通知</string>
     <string name="copy_content">复制评论</string>
     <string name="close">关闭</string>
     <string name="cancel">取消</string>
@@ -100,6 +100,14 @@
     <string name="iknow">知道</string>
     <string name="search_api_tips">搜索API说明</string>
     <string name="tips_tab_setting">提示:\n登录后会显示用户收藏过的Node节点, 长按条目可以上下调整顺序</string>
+    <string name="light_mode">浅色主题</string>
+    <string name="use_device_setting">跟随系统</string>
+    <string name="tips">使用说明</string>
+    <string name="not_login_tips">您还未登录，请登录后再试</string>
+    <string name="show_conversation">显示对话列表</string>
+    <string name="personalization">个性化</string>
+    <string name="message">消息</string>
+    <string name="unread_message_notification">未读消息通知</string>
 
 
     <string-array name="period_string">
@@ -117,8 +125,13 @@
     </string-array>
 
     <string-array name="night_mode_string">
-        <item>夜间模式</item>
-        <item>白天模式</item>
+        <item>深色主题</item>
+        <item>浅色主题</item>
         <item>跟随系统</item>
     </string-array>
+    <string name="notification_period">通知间隔</string>
+    <string name="get_message_background">后台获取未读消息</string>
+    <string name="add_row_in_reply">回复加入楼层</string>
+    <string name="format_user_n">格式: @user #n</string>
+    <string name="format_user">格式: @user</string>
 </resources>

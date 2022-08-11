@@ -64,10 +64,11 @@ fun Any.loge(msg: Any?) {
 }
 
 
-fun Activity.showLoginHint(view: View,message :String ="您还未登录，请登录后再试") {
+fun Activity.showLoginHint(view: View,message :String =getString(R.string.not_login_tips)) {
     Snackbar.make(view, message, Snackbar.LENGTH_LONG)
             .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
-            .setAction("登录") {
+        .setActionTextColor(ContextCompat.getColor(this, R.color.white))
+            .setAction(getString(R.string.login)) {
                 startActivity<LoginActivity>()
             }.show()
 }
