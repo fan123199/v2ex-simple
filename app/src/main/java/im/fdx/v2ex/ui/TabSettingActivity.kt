@@ -3,6 +3,7 @@ package im.fdx.v2ex.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -42,7 +43,7 @@ class TabSettingActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_tab_setting)
 
-        setUpToolbar("栏目设置")
+        setUpToolbar(getString(R.string.tab_setting))
         initTab()
 
     }
@@ -75,8 +76,8 @@ class TabSettingActivity : BaseActivity() {
             curList.addAll(initTabs)
             remainList.clear()
         }
-        adapter = DefaultAdapter(curList)
-        adapter2 = DefaultAdapter(remainList)
+        adapter = DefaultAdapter(curList, STATUS_SHOW)
+        adapter2 = DefaultAdapter(remainList, STATUS_HIDE)
 
         adapter.registerListener { i, tab ->
             curList.remove(tab)
@@ -183,7 +184,7 @@ class TabSettingActivity : BaseActivity() {
 
     private fun save() {
         if (curList.isEmpty()) {
-            toast("至少保留一个")
+            toast(getString(R.string.need_at_least_one))
             return
         }
         val savedList = Gson().toJson(curList)
@@ -207,9 +208,13 @@ typealias TopicType = Int
 const val TAB_TYPE: TopicType = 0
 const val NODE_TYPE: TopicType = 1
 
+typealias Status = Int
+const val STATUS_SHOW: Status = 0
+const val STATUS_HIDE: Status = 1
+
 data class Tab(var title: String, var path: String, var type: Int = TAB_TYPE)
 
-class DefaultAdapter(val list: MutableList<Tab>) : RecyclerView.Adapter<DefaultAdapter.VH>() {
+class DefaultAdapter(val list: MutableList<Tab>, val type: Status = STATUS_SHOW) : RecyclerView.Adapter<DefaultAdapter.VH>() {
 
     var listener: ((Int, Tab) -> Unit)? = null
 
@@ -229,7 +234,11 @@ class DefaultAdapter(val list: MutableList<Tab>) : RecyclerView.Adapter<DefaultA
 
     override fun onBindViewHolder(vh: VH, position: Int) {
         vh.tv.text = list[vh.bindingAdapterPosition].title
-
+        if (type == STATUS_SHOW) {
+            vh.ivDelete.setImageResource(R.drawable.ic_baseline_remove_circle_outline_24)
+        } else {
+            vh.ivDelete.setImageResource(R.drawable.ic_baseline_add_circle_outline_24)
+        }
         vh.ivDelete.setOnClickListener {
             listener?.invoke(vh.bindingAdapterPosition, list[vh.bindingAdapterPosition])
         }
@@ -237,7 +246,7 @@ class DefaultAdapter(val list: MutableList<Tab>) : RecyclerView.Adapter<DefaultA
 
     class VH(containerView: View) : RecyclerView.ViewHolder(containerView) {
         val tv = containerView.findViewById<TextView>(R.id.tv)
-        val ivDelete = containerView.findViewById<View>(R.id.ivDelete)
+        val ivDelete = containerView.findViewById<ImageView>(R.id.ivDelete)
     }
 
 }

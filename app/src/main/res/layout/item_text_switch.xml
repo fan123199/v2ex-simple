@@ -1,43 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="120dp"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginBottom="4dp"
-    android:background="@drawable/radius_2dp"
-    android:padding="6dp">
+    android:layout_width="match_parent"
+    android:padding="4dp"
+    android:layout_height="wrap_content">
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/tv"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:textColor="@color/title_text"
-        android:textSize="?text_large"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Apple">
+        android:layout_gravity="center"
+        android:background="@drawable/radius_2dp">
 
-    </TextView>
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/title_text"
+            android:textSize="?text_large"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Apple">
 
-
-    <ImageView
-        android:id="@+id/ivDelete"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginStart="8dp"
-        android:contentDescription="@string/indicator"
-        android:src="@drawable/ic_delete"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/title_text" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </TextView>
 
 
+        <ImageView
+            android:id="@+id/ivDelete"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/indicator"
+            android:padding="10dp"
+            android:src="@drawable/ic_baseline_remove_circle_outline_24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/title_text" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

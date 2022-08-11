@@ -37,7 +37,7 @@ class SettingsActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_settings)
-    setUpToolbar("设置")
+    setUpToolbar(getString(R.string.settings))
     supportFragmentManager.beginTransaction()
         .replace(R.id.container, SettingsFragment())
         .commit()
@@ -130,7 +130,7 @@ class SettingsActivity : BaseActivity() {
           intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
           startActivity(intent)
         } catch (e: Exception) {
-          activity?.toast("没有可用的应用商店，请检查后重试")
+          activity?.toast(getString(R.string.there_is_no_app_store))
         }
         true
       }

@@ -26,15 +26,15 @@ class SearchActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_search_result)
-    setUpToolbar("搜索")
+    setUpToolbar(getString(R.string.search))
 
 
     if (pref.getBoolean(Keys.KEY_WARN_SEARCH_API, true)) {
       AlertDialog.Builder(this, R.style.AppTheme_Simple)
-          .setPositiveButton("知道") { _, _ ->
+          .setPositiveButton(R.string.iknow) { _, _ ->
               pref.edit().putBoolean(Keys.KEY_WARN_SEARCH_API, false).apply()
           }
-          .setTitle("搜索API说明")
+          .setTitle(getString(R.string.search_api_tips))
           .setMessage("""
                     1. 本搜索api来自开源项目https://www.sov2ex.com
                     2. 默认按时间倒序

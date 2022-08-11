@@ -48,7 +48,7 @@ class NewTopicActivity : BaseActivity() {
         binding = ActivityCreateTopicBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        setUpToolbar(getString(R.string.new_top))
+        setUpToolbar(getString(R.string.new_topic))
 
 
         binding.searchSpinnerNode.setOnClickListener {

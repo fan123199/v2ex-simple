@@ -17,8 +17,10 @@
         android:id="@+id/tvTitleLeft"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="要显示的"
-        app:layout_constraintEnd_toStartOf="@+id/tvTitleRight"
+        android:padding="6dp"
+        android:textColor="@color/title_text"
+        android:text="@string/show_area"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include2"></TextView>
 
@@ -26,18 +28,21 @@
         android:id="@+id/tvTitleRight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="候选区"
+        android:padding="6dp"
+        android:textColor="@color/title_text"
+        android:text="@string/hide_area"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tvTitleLeft"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toBottomOf="@+id/include2"></TextView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvLeft"
-        android:background="@color/white"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingTop="4dp"
+        android:background="@color/light_background"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toStartOf="@+id/rvRight"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitleLeft" />
@@ -46,11 +51,32 @@
         android:id="@+id/rvRight"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingTop="4dp"
+        android:background="@color/light_background"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/rvLeft"
         app:layout_constraintTop_toBottomOf="@+id/tvTitleLeft"
         app:layout_constraintVertical_bias="0.0" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:padding="16dp"
+        android:layout_width="wrap_content"
+        android:textSize="?text_small"
+        android:lineSpacingExtra="2dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tips_tab_setting"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -39,7 +39,7 @@
     <string name="feature">feature</string>
     <string name="communicate">Communicate</string>
     <string name="feedback">Feedback</string>
-    <string name="rate">Rate app</string>
+    <string name="rate">Rate App</string>
     <string name="other">Other</string>
     <string name="general">General</string>
     <string name="just_now">just</string>
@@ -80,10 +80,10 @@
     </string-array>
 
     <string-array name="period_string">
-        <item>15分钟</item>
-        <item>30分钟</item>
-        <item>1小时</item>
-        <item>3小时</item>
+        <item>15 Minutes</item>
+        <item>30 Minutes</item>
+        <item>1 Hour</item>
+        <item>3 Hours</item>
     </string-array>
 
     <string-array name="period_int">
@@ -102,16 +102,16 @@
 
 
     <string-array name="text_size_string">
-        <item>小</item>
-        <item>中</item>
-        <item>大</item>
-        <item>特大</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+        <item>Super Large</item>
     </string-array>
 
     <string-array name="night_mode_string">
-        <item>夜间模式</item>
-        <item>白天模式</item>
-        <item>跟随系统</item>
+        <item>Dark Mode</item>
+        <item>Light Mode</item>
+        <item>Use Device</item>
     </string-array>
 
     <string-array name="night_mode">
@@ -128,7 +128,7 @@
     <string name="title_activity_fullscreen" translatable="false">FullscreenActivity</string>
     <string name="dummy_button" translatable="false">Dummy Button</string>
     <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
-    <string name="share_app">Share this Apps</string>
+    <string name="share_app">Share The App</string>
     <string name="share_to">Share to</string>
     <string name="feedback_hint">Please input your idea or recommendation below.
         \n</string>
@@ -159,27 +159,44 @@
     <string name="you_have_notifications">it is %d unread message</string>
     <string name="favor">Favor</string>
 
-    <string name="my_follow">My Follow</string>
-    <string name="unFavor">unfavor</string>
-    <string name="new_top">new topic</string>
+    <string name="my_follow">My Follows</string>
+    <string name="unFavor">Unfavor</string>
+    <string name="new_topic">New Topic</string>
     <string name="follow">Follow</string>
     <string name="block">Block</string>
     <string name="no_more_data">no more data</string>
     <string name="verify_code">code</string>
     <string name="indicator">indicator</string>
-    <string name="show_user_all_reply">显示该用户全部评论</string>
+    <string name="show_user_all_reply">Show user all replies</string>
     <string name="already_thank">thanked</string>
     <string name="ignore">Ignore Topic</string>
     <string name="already_ignore">cancel ignore</string>
     <string name="google_login">Google Login</string>
+    <string name="tab_setting">Tab Setting</string>
+    <string name="need_at_least_one">You need remain at least one tab</string>
+    <string name="show_area">Show Area</string>
+    <string name="hide_area">Hide Area</string>
+    <string name="menu_reset">Reset</string>
+    <string name="menu_save">Save</string>
+    <string name="search">Search</string>
+    <string name="there_is_no_app_store">No App Store found in your phone</string>
+    <string name="font_size">Font Size</string>
+    <string name="swipe_to_switch_topic">Swipe to Switch Topic</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="version">Version</string>
+    <string name="iknow">I Know</string>
+    <string name="search_api_tips">Search Api Tips</string>
+    <string name="tips_tab_setting">Tips:\nIf logged in , it will show Node that you favored. Long press to reorder</string>
 
     <string-array name="j" translatable="false">
         <item>风</item>
         <item>火</item>
         <item>雷</item>
         <item>电</item>
-        <item>张开第三只眼，好看清世界的真相</item>
-        <item>花绽放于长安的春日，温暖又幸福</item>
+        <item>Compose</item>
+        <item>chaos</item>
         <item>naive</item>
     </string-array>
 

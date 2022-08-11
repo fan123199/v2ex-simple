@@ -5,11 +5,11 @@
     <item
         android:id="@+id/menu_reset"
         app:showAsAction="ifRoom"
-        android:title="重置" />
+        android:title="@string/menu_reset" />
 
     <item
         android:id="@+id/menu_save"
         app:showAsAction="ifRoom"
-        android:title="保存" />
+        android:title="@string/menu_save" />
 
 </menu>
