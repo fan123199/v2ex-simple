@@ -83,7 +83,7 @@
     <string name="ignore">忽略</string>
     <string name="already_ignore">取消忽略</string>
     <string name="google_login">Google 登录</string>
-    <string name="tab_setting">栏目设置</string>
+    <string name="tab_setting">首页Tab设置</string>
     <string name="need_at_least_one">至少保留一个</string>
     <string name="show_area">展示区</string>
     <string name="hide_area">隐藏区</string>
