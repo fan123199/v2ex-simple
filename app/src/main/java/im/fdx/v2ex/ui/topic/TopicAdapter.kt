@@ -292,13 +292,13 @@ class TopicAdapter(
 
                 if (response.code == 200) {
 
-                    act.toast("感谢成功")
                     try {
                         val bdy = response.body?.string()
                         val success = JsonParser.parseString(bdy).asJsonObject.get("success").asBoolean
                         if (success) {
                             once = JsonParser.parseString(bdy).asJsonObject.get("once").asString
                             act.runOnUiThread {
+                                act.toast("感谢成功")
                                 replyItem.thanks = replyItem.thanks + 1
                                 itemVH.binding.tvThanks.text = (replyItem.thanks).toString()
                                 itemVH.binding.ivThanks.imageTintList =
