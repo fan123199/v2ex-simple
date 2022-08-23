@@ -162,9 +162,8 @@ class TopicAdapter(
 
                 }
 
-                itemVH.binding.ivThanks.setOnClickListener { thank(replyItem, itemVH) }
-                itemVH.binding.tvThanks.setOnClickListener { thank(replyItem, itemVH) }
-                itemVH.binding.ivReply.setOnClickListener { reply(replyItem, position) }
+                itemVH.binding.flThanks.setOnClickListener { thank(replyItem, itemVH) }
+                itemVH.binding.flReply.setOnClickListener { reply(replyItem, position) }
 
 
                 itemVH.binding.ivReplyAvatar.setOnClickListener {

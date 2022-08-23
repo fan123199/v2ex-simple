@@ -23,7 +23,7 @@
         android:textAppearance="@style/Theme.V2ex.TitleTextStyle"
         app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/tv_reply_number"
+        app:layout_constraintRight_toLeftOf="@+id/llReply"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginEnd="8dp"
         app:layout_goneMarginStart="16dp"
@@ -50,35 +50,43 @@
         android:layout_alignBottom="@+id/iv_avatar_profile"
         android:layout_marginStart="24dp"
         android:layout_marginLeft="24dp"
-        android:layout_toEndOf="@+id/tv_reply_number"
-        android:layout_toRightOf="@+id/tv_reply_number"
         android:text="@string/reply_time"
         android:textColor="@color/hint"
         android:textSize="?text_small"
         app:layout_constraintBaseline_toBaselineOf="@+id/tv_author"
         app:layout_constraintLeft_toRightOf="@+id/tv_author" />
 
-    <TextView
-        android:id="@+id/tv_reply_number"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/tv_author"
-        android:layout_alignEnd="@+id/tv_title"
-        android:layout_marginRight="16dp"
-        android:autoSizeMaxTextSize="?text_small"
-        android:autoSizeMinTextSize="8sp"
-        android:autoSizeTextType="uniform"
-        android:drawableStart="@drawable/ic_message_black_24dp"
-        android:drawablePadding="4dp"
-        android:maxLines="1"
-        android:textColor="@color/hint"
-        android:textSize="?text_small"
+    <LinearLayout
+        android:id="@+id/llReply"
         app:layout_constraintBottom_toBottomOf="@+id/tv_title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_title"
-        app:layout_constraintVertical_bias="0.14999998"
+        android:layout_width="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="?text_medium"
+            android:layout_height="?text_medium"
+            android:src="@drawable/ic_message_black_24dp" />
+
+    <TextView
+        android:id="@+id/tv_reply_number"
+        android:layout_width="28dp"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:layout_marginEnd="16dp"
+        android:paddingLeft="4dp"
+        android:autoSizeMaxTextSize="?text_medium"
+        android:autoSizeMinTextSize="8sp"
+        android:autoSizeTextType="uniform"
+        android:maxLines="1"
+        android:textColor="@color/hint"
+        android:textSize="?text_small"
         tools:targetApi="o"
-        tools:text="@string/reply" />
+        tools:text="123" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_node"

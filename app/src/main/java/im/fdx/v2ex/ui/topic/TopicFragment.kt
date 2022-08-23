@@ -31,10 +31,7 @@ import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseFragment
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.initTheme
-import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.showLoginHint
-import im.fdx.v2ex.utils.extensions.toast
+import im.fdx.v2ex.utils.extensions.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -263,7 +260,7 @@ class TopicFragment : BaseFragment() {
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
                     binding.swipeDetails?.isRefreshing = false
-                    toast("无法打开该主题")
+                    activity?.showHint(binding.etPostReply ,"无法打开该主题")
 
                 }
             }
@@ -279,7 +276,7 @@ class TopicFragment : BaseFragment() {
                         activity?.showLoginHint(binding.etPostReply)
                     } else {
                         if(this@TopicFragment.isVisible){
-                            toast("你要查看的页面可能遭遇权限问题");
+                            activity?.showHint(binding.etPostReply ,"你要查看的页面可能遭遇权限问题");
                         }
                     }
                     }
@@ -288,7 +285,7 @@ class TopicFragment : BaseFragment() {
                 if (code != 200) {
                     activity?.runOnUiThread {
                         binding.swipeDetails?.isRefreshing = false
-                        toast("无法打开该主题")
+                        activity?.showHint(binding.etPostReply ,"无法打开该主题")
                     }
                     return
                 }
