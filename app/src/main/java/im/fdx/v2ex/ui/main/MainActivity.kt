@@ -111,11 +111,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     fun reloadTab() {
         mAdapter.initFragment()
-        binding.activityMainContent.viewpagerMain.adapter = mAdapter
+        binding.activityMainContent.viewpagerMain.adapter?.notifyDataSetChanged()
 
-        TabLayoutMediator(binding.activityMainContent.slidingTabs, binding.activityMainContent.viewpagerMain) { tab, position ->
-            tab.text = mAdapter.myTabList[position].title
-        }.attach()
     }
 
     private lateinit var binding: ActivityMainNavDrawerBinding
@@ -256,8 +253,17 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         binding.activityMainContent.viewpagerMain.adapter = mAdapter
 
         TabLayoutMediator(binding.activityMainContent.slidingTabs, binding.activityMainContent.viewpagerMain) { tab, position ->
-            tab.text = mAdapter.myTabList[position].title
+
+            if (position < mAdapter.myTabList.size) {
+                tab.text = mAdapter.myTabList[position].title
+            } else {
+                tab.text = " + "
+                tab.view.setOnClickListener {
+                    startActivity(Intent(this, TabSettingActivity::class.java))
+                }
+            }
         }.attach()
+
         binding.activityMainContent.slidingTabs.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {}

@@ -58,11 +58,14 @@ internal class MyViewPagerAdapter(
     }
 
     override fun getItemCount(): Int {
-        return  myTabList.size
+        return  myTabList.size + 1
     }
 
     override fun createFragment(position: Int): Fragment {
-        return mFragments[position]
+        return if (position < itemCount -1)
+            mFragments[position]
+        else
+            Fragment()
     }
 
 }

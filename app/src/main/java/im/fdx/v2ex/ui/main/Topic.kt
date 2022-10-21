@@ -4,6 +4,7 @@ import android.os.Parcelable
 import androidx.room.*
 import im.fdx.v2ex.ui.member.Member
 import im.fdx.v2ex.ui.node.Node
+import im.fdx.v2ex.utils.TimeUtil
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -69,7 +70,12 @@ class Topic(
     @Ignore
     var comments: MutableList<Comment> = mutableListOf()) : Parcelable {
 
-  override fun toString() = "标题：$title,\n内容：$content"
+
+    fun showCreated() :String{
+        return createdOriginal.ifEmpty { TimeUtil.getRelativeTime(created * 1000) }
+    }
+
+    override fun toString() = "标题：$title,\n内容：$content"
 
   override fun equals(other: Any?): Boolean {
     return when {

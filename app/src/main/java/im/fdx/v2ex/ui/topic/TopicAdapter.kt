@@ -96,7 +96,7 @@ class TopicAdapter(
                 mainHolder.tvReplyNumber.text = topic.replies.toString()
                 mainHolder.tvAuthor.text = topic.member?.username
                 mainHolder.tvNode.text = topic.node?.title
-                mainHolder.tvCreated.text = topic.createdOriginal
+                mainHolder.tvCreated.text = topic.showCreated()
                 mainHolder.ivAvatar.load(topic.member?.avatarNormalUrl)
 
                 if (topic.comments.isNotEmpty()) {

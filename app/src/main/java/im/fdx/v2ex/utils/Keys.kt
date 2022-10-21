@@ -6,6 +6,7 @@ package im.fdx.v2ex.utils
  */
 object Keys {
 
+
     const val AUTHOR_EMAIL = "fan123199@gmail.com"
 
 
@@ -55,6 +56,7 @@ object Keys {
     const val PREF_TEXT_SIZE = "pref_text_size"
     const val PREF_NIGHT_MODE = "pref_night_mode"
     const val PREF_ALL_NODE_DATA = "pref_all_node_data"
+    const val PREF_ALL_NODE_DATA_TIME = "pref_all_node_data_time"
     //------------------------------------------------
 
 
