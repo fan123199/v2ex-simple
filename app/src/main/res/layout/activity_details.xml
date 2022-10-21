@@ -6,7 +6,7 @@
     android:fitsSystemWindows="true"
     android:layout_height="match_parent">
 
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/viewPager_detail"
         android:layout_width="match_parent"

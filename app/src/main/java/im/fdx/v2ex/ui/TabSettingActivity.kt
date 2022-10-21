@@ -32,13 +32,13 @@ import java.util.*
 class TabSettingActivity : BaseActivity() {
 
 
-    private val curList: MutableList<Tab> = mutableListOf()
-    private val remainList: MutableList<Tab> = mutableListOf()
+    private val curList: MutableList<MyTab> = mutableListOf()
+    private val remainList: MutableList<MyTab> = mutableListOf()
     private lateinit var adapter: DefaultAdapter
     private lateinit var adapter2: DefaultAdapter
 
-    private var initTabs: MutableList<Tab> = mutableListOf()
-    private var initNodes: MutableList<Tab> = mutableListOf()
+    private var initMyTabs: MutableList<MyTab> = mutableListOf()
+    private var initNodes: MutableList<MyTab> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,9 +51,9 @@ class TabSettingActivity : BaseActivity() {
 
 
     private fun initTab() {
-        initTabs.clear()
-        initTabs.addAll(tabTitles.mapIndexed { index, s ->
-            Tab(s, tabPaths[index])
+        initMyTabs.clear()
+        initMyTabs.addAll(tabTitles.mapIndexed { index, s ->
+            MyTab(s, tabPaths[index])
         })
         if (myApp.isLogin) {
             getNode()
@@ -68,15 +68,15 @@ class TabSettingActivity : BaseActivity() {
         rvLeft.layoutManager = LinearLayoutManager(this)
         rvRight.layoutManager = LinearLayoutManager(this)
         val str = pref.getString(PREF_TAB, null)
-        val turnsType = object : TypeToken<List<Tab>>() {}.type
-        val savedList = Gson().fromJson<List<Tab>>(str, turnsType)
+        val turnsType = object : TypeToken<List<MyTab>>() {}.type
+        val savedList = Gson().fromJson<List<MyTab>>(str, turnsType)
         if (savedList == null) {
-            curList.addAll(initTabs)
+            curList.addAll(initMyTabs)
             remainList.clear()
             remainList.addAll(initNodes)
         } else {
             curList.addAll(savedList)
-            remainList.addAll(initTabs + initNodes - curList)
+            remainList.addAll(initMyTabs + initNodes - curList)
         }
         adapter = DefaultAdapter(curList, STATUS_SHOW)
         adapter2 = DefaultAdapter(remainList, STATUS_HIDE)
@@ -150,7 +150,7 @@ class TabSettingActivity : BaseActivity() {
                 }
                 initNodes.clear()
                 nodeModels.forEach {
-                    initNodes.add(Tab(it.title, it.name, NODE_TYPE))
+                    initNodes.add(MyTab(it.title, it.name, NODE_TYPE))
                 }
 
                 runOnUiThread {
@@ -178,7 +178,7 @@ class TabSettingActivity : BaseActivity() {
 
     private fun reset() {
         curList.clear()
-        curList.addAll(initTabs)
+        curList.addAll(initMyTabs)
         remainList.clear()
         remainList.addAll(initNodes)
         adapter.notifyDataSetChanged()
@@ -216,11 +216,11 @@ typealias Status = Int
 const val STATUS_SHOW: Status = 0
 const val STATUS_HIDE: Status = 1
 
-data class Tab(var title: String, var path: String, var type: Int = TAB_TYPE)
+data class MyTab(var title: String, var path: String, var type: Int = TAB_TYPE)
 
-class DefaultAdapter(val list: MutableList<Tab>, val type: Status = STATUS_SHOW) : RecyclerView.Adapter<DefaultAdapter.VH>() {
+class DefaultAdapter(val list: MutableList<MyTab>, val type: Status = STATUS_SHOW) : RecyclerView.Adapter<DefaultAdapter.VH>() {
 
-    var listener: ((Int, Tab) -> Unit)? = null
+    var listener: ((Int, MyTab) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int): VH {
         return VH(
@@ -232,7 +232,7 @@ class DefaultAdapter(val list: MutableList<Tab>, val type: Status = STATUS_SHOW)
         return list.size
     }
 
-    fun registerListener(listener: ((Int, Tab) -> Unit)?) {
+    fun registerListener(listener: ((Int, MyTab) -> Unit)?) {
         this.listener = listener
     }
 

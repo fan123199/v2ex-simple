@@ -12,21 +12,22 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import com.esafirm.imagepicker.features.ImagePicker
+import com.google.android.material.snackbar.Snackbar
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityCreateTopicBinding
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseActivity
-import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.ui.node.Node
+import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.KEY_TO_CHOOSE_NODE
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.openImagePicker
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.*
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.IOException
@@ -58,6 +59,7 @@ class NewTopicActivity : BaseActivity() {
     }
 
 
+    @Deprecated("Deprecated in Java")
     @SuppressLint("SetTextI18n")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
@@ -161,7 +163,7 @@ class NewTopicActivity : BaseActivity() {
 
     @SuppressLint("InflateParams")
     private fun postNew(item: MenuItem) {
-        rotate(item.actionView)
+        item.actionView?.let { rotate(it) }
 
 
         vCall("https://www.v2ex.com/new").start(object : Callback {
@@ -222,7 +224,12 @@ class NewTopicActivity : BaseActivity() {
                         } else {
                             val errorMsg = Parser(response2.body!!.string()).getErrorMsg()
                             runOnUiThread {
-                                longToast(errorMsg)
+                                Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_INDEFINITE)
+                                    .setBackgroundTint(ContextCompat.getColor(applicationContext, R.color.primary_dark))
+                                    .setActionTextColor(ContextCompat.getColor(applicationContext, R.color.toolbar_text_light))
+                                    .setAction(R.string.ok, {
+                                    })
+                                    .show()
                             }
                         }
                     }

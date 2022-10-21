@@ -30,7 +30,7 @@ class ReplyAdapter(val activity: Activity,
         val reply = list[position]
         holder.tvTitle.text = reply.topic.title
         holder.tvContent.setGoodText(reply.content, true)
-        holder.tvTime.text = TimeUtil.getRelativeTime(reply.create)
+        holder.tvTime.text = reply.createdOriginal
 
         holder.itemView.setOnClickListener {
             activity.startActivity<TopicActivity>(Keys.KEY_TOPIC_ID to reply.topic.id)

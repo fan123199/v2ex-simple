@@ -18,6 +18,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.drawable.toDrawable
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
@@ -25,6 +26,8 @@ import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.PhotoActivity
+import im.fdx.v2ex.ui.node.NodeActivity
+import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.dp2px
@@ -99,6 +102,20 @@ class GoodTextView @JvmOverloads constructor(
                     urlSpan.url.contains("v2ex.com/member/") -> {
                         popupListener?.onClick(widget, urlSpan.url)
                     }
+                    urlSpan.url.contains("v2ex.com/t/") -> {
+                        Regex("v2ex.com/t/(\\d+)").find(urlSpan.url)?.let {
+                            val (topicId) = it.destructured
+                            context.startActivity<TopicActivity>(Keys.KEY_TOPIC_ID to topicId)
+                        }
+                    }
+
+                    urlSpan.url.contains("v2ex.com/go/") -> {
+                        Regex("v2ex.com/go/(\\w+)").find(urlSpan.url)?.let {
+                            val (name) = it.destructured
+                            context.startActivity<NodeActivity>(Keys.KEY_NODE_NAME to name)
+                        }
+                    }
+
                     else -> CustomChrome(context).load(urlSpan.url)
                 }
             }
@@ -141,6 +158,7 @@ class GoodTextView @JvmOverloads constructor(
         //不设置这一句，点击图片会跑动。
         when (removeClick) {
             false -> movementMethod = LinkMovementMethod.getInstance()
+            else -> {}
         }
     }
 }

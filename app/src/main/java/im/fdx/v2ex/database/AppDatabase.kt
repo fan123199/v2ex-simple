@@ -10,7 +10,7 @@ import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.ui.node.NodeDao
 
 
-@Database(entities = [Topic::class, Node::class, MyReply::class], version = 3, exportSchema = false)
+@Database(entities = [Topic::class, Node::class, MyReply::class], version = 5, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun topicDao(): TopicDao
     abstract fun nodeDao(): NodeDao

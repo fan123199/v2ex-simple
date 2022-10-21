@@ -26,22 +26,40 @@ object TimeUtil {
             return ""
         }
 
-        val c = created * 1000
         val now = System.currentTimeMillis()
-        val difference = now - c
-        val text = if (difference >= 0 && difference <= DateUtils.MINUTE_IN_MILLIS)
-            MyApp.get().getString(R.string.just_now)
-        else
-            DateUtils.getRelativeTimeSpanString(
-                c,
-                    now,
-                    DateUtils.MINUTE_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_RELATIVE)
+        val diff = (now - created) / 1000   //second
+        val day = diff / (24 * 60 * 60)
+        val hour = diff % (24 * 60 * 60) / 3600
+        val minute = diff % (60 * 60) / 60
+        val second = diff
+        var timeStr = ""
+        if (day in 1..365) {
+            timeStr = day.toString() + "天前";
+            return timeStr
+        }
+        if (day > 365) {
+            timeStr = SimpleDateFormat.getDateTimeInstance().format(created)
+            return timeStr
+        }
 
-        return text.toString()
+        if (hour == 0L && minute == 0L) {
+            if (second < 15)
+                return "刚刚" else return "几秒前"
+        }
+
+        if (hour > 0) {
+            timeStr = hour.toString() + "小时前";
+        }
+        if (minute > 0) {
+            timeStr = timeStr.removeSuffix("前") + minute.toString() + "分钟前";
+        }
+        return timeStr
     }
 
 
+    /**
+     * created : 这个是来自于 v2ex api 的变量
+     */
     fun getAbsoluteTime(created: String): String {
         val createdNum = created.toLongOrNull() ?: return ""
         val obj = 1000 * createdNum
@@ -59,7 +77,8 @@ object TimeUtil {
      * *
      * @return long value
      */
-    fun toUtcTime(timeStr: String): Long {
+    fun toUtcTime(timeStr: String?): Long {
+        if (timeStr == null) return 0L
         var theTime = timeStr
 
         theTime = theTime.trim()
@@ -108,12 +127,25 @@ object TimeUtil {
                     val ccc = SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss", Locale.US)
                     val date = ccc.parse(theTime.trim())
                     created = date?.time?.div(1000) ?: 0
-                } catch (ignre:ParseException){
+                } catch (ignre: ParseException) {
                     XLog.tag("TimeUtil").e("time str parse error: $theTime")
                 }
             }
         }
 
         return created
+    }
+
+
+    fun toUtcTime2(timeStr: String?): Long {
+        if (timeStr == null) return 0L
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        format.timeZone = TimeZone.getDefault()
+        return try {
+            val date = format.parse(timeStr)
+            date!!.time
+        } catch (e: Exception) {
+            0L
+        }
     }
 }

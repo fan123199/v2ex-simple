@@ -96,7 +96,7 @@ class TopicAdapter(
                 mainHolder.tvReplyNumber.text = topic.replies.toString()
                 mainHolder.tvAuthor.text = topic.member?.username
                 mainHolder.tvNode.text = topic.node?.title
-                mainHolder.tvCreated.text = TimeUtil.getRelativeTime(topic.created)
+                mainHolder.tvCreated.text = topic.createdOriginal
                 mainHolder.ivAvatar.load(topic.member?.avatarNormalUrl)
 
                 if (topic.comments.isNotEmpty()) {
@@ -107,7 +107,7 @@ class TopicAdapter(
                             .inflate(R.layout.item_comments, mainHolder.ll, false)
                         val th = CommentsViewHolder(view)
                         th.tvCTitle.text = it.title
-                        th.tvCTime.text = TimeUtil.getRelativeTime(it.created)
+                        th.tvCTime.text = it.createdOriginal
                         th.tvCContent.setGoodText(it.content, type = typeComment)
                         mainHolder.ll.addView(view)
                     }
@@ -354,7 +354,7 @@ class TopicAdapter(
 
         this.replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
-            it.showTime = TimeUtil.getRelativeTime(it.created)
+            it.showTime = it.createdOriginal
             it.rowNum = index + 1 //这个方法已经对拉黑和删除情况有效
         }
         notifyDataSetChanged()
@@ -364,7 +364,7 @@ class TopicAdapter(
         this.replies.addAll(replies)
         this.replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
-            it.showTime = TimeUtil.getRelativeTime(it.created)
+            it.showTime = it.createdOriginal
             it.rowNum = index + 1 //这个方法已经对拉黑和删除情况有效
         }
         notifyDataSetChanged()

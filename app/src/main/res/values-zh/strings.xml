@@ -60,7 +60,7 @@
     <string name="logout">退出登录</string>
     <string name="all_nodes">全部节点</string>
     <string name="user">用户</string>
-    <string name="choose_node">请选择节点</string>
+    <string name="choose_node">选择节点</string>
     <string name="post_reply">发表回复</string>
     <string name="notification">通知</string>
     <string name="copy_content">复制评论</string>

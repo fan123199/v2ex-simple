@@ -43,43 +43,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <data android:scheme="http" />
+                <data android:scheme="https" />
                 <data
                     android:host="www.v2ex.com"
-                    android:pathPrefix="/t/"
-                    android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
+                    android:pathPrefix="/t/" />
                 <data
                     android:host="v2ex.com"
-                    android:pathPrefix="/t/"
-                    android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="www.v2ex.com"
-                    android:pathPrefix="/t/"
-                    android:scheme="https" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="v2ex.com"
-                    android:pathPrefix="/t/"
-                    android:scheme="https" />
+                    android:pathPrefix="/t/" />
             </intent-filter>
         </activity>
         <activity
@@ -110,21 +81,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
+                <data android:scheme="http"/>
+                <data android:scheme="https"/>
                 <data
                     android:host="www.v2ex.com"
-                    android:pathPrefix="/go/"
-                    android:scheme="http" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
+                    android:pathPrefix="/go/" />
                 <data
-                    android:host="www.v2ex.com"
-                    android:pathPrefix="/go/"
-                    android:scheme="https" />
+                    android:host="v2ex.com"
+                    android:pathPrefix="/go/" />
             </intent-filter>
         </activity>
 

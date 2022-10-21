@@ -63,6 +63,7 @@ class Topic(
     var node: Node? = null,
     @ColumnInfo(name = "topic_created")
     var created: Long = 0,
+    var createdOriginal: String = "",
     var last_modified: Long = 0,
     var last_touched: Long = 0,
     @Ignore

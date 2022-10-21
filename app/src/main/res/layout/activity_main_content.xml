@@ -33,10 +33,11 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+
     <!--if not contain layout_behavior,it shows buggy-->
-    <androidx.viewpager.widget.ViewPager
+    <androidx.viewpager2.widget.ViewPager2
         android:contentDescription="@string/content"
-        android:id="@+id/viewpager_main"
+        android:id="@+id/viewpagerMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />

@@ -30,6 +30,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
 import im.fdx.v2ex.databinding.ActivityMainNavDrawerBinding
@@ -110,9 +111,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     fun reloadTab() {
         mAdapter.initFragment()
-        mAdapter.notifyDataSetChanged()
         binding.activityMainContent.viewpagerMain.adapter = mAdapter
-        binding.activityMainContent.slidingTabs.setupWithViewPager(binding.activityMainContent.viewpagerMain)
+
+        TabLayoutMediator(binding.activityMainContent.slidingTabs, binding.activityMainContent.viewpagerMain) { tab, position ->
+            tab.text = mAdapter.myTabList[position].title
+        }.attach()
     }
 
     private lateinit var binding: ActivityMainNavDrawerBinding
@@ -249,20 +252,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             dailyCheck(true)
         }
 
-        mAdapter = MyViewPagerAdapter(supportFragmentManager, this@MainActivity)
+        mAdapter = MyViewPagerAdapter(this@MainActivity)
         binding.activityMainContent.viewpagerMain.adapter = mAdapter
 
-
-        //内部实现就是加入一堆的listener给viewpager，不用自己实现
-        binding.activityMainContent.slidingTabs.setupWithViewPager(binding.activityMainContent.viewpagerMain)
-
+        TabLayoutMediator(binding.activityMainContent.slidingTabs, binding.activityMainContent.viewpagerMain) { tab, position ->
+            tab.text = mAdapter.myTabList[position].title
+        }.attach()
         binding.activityMainContent.slidingTabs.addOnTabSelectedListener(object :
             TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {}
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-                mAdapter.getItem(tab.position).scrollToTop()
+//                binding.activityMainContent.
             }
         })
 
@@ -343,6 +345,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -494,7 +497,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onDestroy()
         logd("onDestroy")
         stopGetNotification()
-        binding.activityMainContent.viewpagerMain.clearOnPageChangeListeners()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 

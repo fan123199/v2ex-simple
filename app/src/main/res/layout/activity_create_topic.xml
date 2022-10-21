@@ -45,6 +45,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
                 android:textColor="@color/primary"
                 android:text="@string/choose_node"
                 android:layout_marginLeft="@dimen/md_left_margin"/>

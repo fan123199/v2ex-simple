@@ -16,8 +16,12 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentPagerAdapter
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityMemberBinding
@@ -98,8 +102,6 @@ class MemberActivity : BaseActivity() {
             toast("未知问题，无法访问用户信息")
             return
         }
-        binding.tlMember.setupWithViewPager(binding.viewpager)
-
         binding.alProfile.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout1, verticalOffset ->
 
             val maxScroll = appBarLayout1.totalScrollRange
@@ -236,10 +238,13 @@ class MemberActivity : BaseActivity() {
     private fun showUser() {
         if(this.isDestroyed) return
 
-        binding.viewpager.adapter = MemberViewpagerAdapter(supportFragmentManager).apply {
+        binding.viewpager.adapter = MemberViewpagerAdapter(this).apply {
             username = member.username
             avatar = member.avatar_normal
         }
+        TabLayoutMediator(binding.tlMember, binding.viewpager) { tab, position ->
+            tab.text =if(position ==0) "主题" else "评论"
+        }.attach()
         binding.ivAvatarProfile.load(member.avatarLargeUrl)
         binding.tvTagline.text = member.tagline
         binding.tvIntro.text = member.bio
@@ -338,7 +343,7 @@ class MemberActivity : BaseActivity() {
         private fun isOnline(html: String) = Regex("class=\"online\"").containsMatchIn(html)
     }
 
-    inner class MemberViewpagerAdapter(fm: androidx.fragment.app.FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    inner class MemberViewpagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
         lateinit var username: String
 
@@ -353,14 +358,12 @@ class MemberActivity : BaseActivity() {
 //                (getItem(0) as TopicsFragment).updateAvatar(_avatar)
 //            }
         private val titles = arrayOf("主题", "评论")
+        override fun getItemCount()= titles.size
 
-        override fun getItem(position: Int) = when (position) {
+        override fun createFragment(position: Int) = when (position) {
             0 -> TopicsFragment()
             else -> UserReplyFragment()
         }.apply { arguments = bundleOf(Keys.KEY_USERNAME to username, Keys.KEY_AVATAR to avatar) }
-
-        override fun getCount() = titles.size
-        override fun getPageTitle(position: Int) = titles[position]
 
     }
 }

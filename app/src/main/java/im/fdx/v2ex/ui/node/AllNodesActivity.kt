@@ -5,23 +5,30 @@ import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Menu
 import android.widget.EditText
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityAllNodesBinding
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
+import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dealError
 import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.Call
 import okhttp3.Callback
+import org.jetbrains.anko.runOnUiThread
 import org.jetbrains.anko.startActivity
 import java.io.IOException
 import kotlin.concurrent.thread
@@ -41,6 +48,7 @@ class AllNodesActivity : BaseActivity() {
     setUpToolbar(getString(R.string.all_nodes))
     //这里是后续不卡的关键，但是第一次滑动还是卡
     val linearLayoutManager = object : androidx.recyclerview.widget.LinearLayoutManager(this) {
+      @Deprecated("Deprecated in Java")
       override fun getExtraLayoutSpace(state: androidx.recyclerview.widget.RecyclerView.State?): Int {
         return 300
       }
@@ -66,11 +74,19 @@ class AllNodesActivity : BaseActivity() {
         startActivity<NodeActivity>(Keys.KEY_NODE_NAME to it.name)
       }
     }
-    binding.rvNode.adapter = mAdapter
-    binding.swipeContainer.isRefreshing = true
-    thread {
+
+
+    val cache = pref.getString(Keys.PREF_ALL_NODE_DATA, "")!!
+    if (cache.isNotEmpty()) {
+      val type = object : TypeToken<List<Node>>(){}.type
+      val nodeModels = Gson().fromJson<List<Node>>(cache, type)
+      mAdapter.setData(nodeModels)
+      binding.rvNode.adapter = mAdapter
+    } else {
+      binding.swipeContainer.isRefreshing = true
       getAllNodes()
     }
+
   }
 
   private fun getAllNodes() {
@@ -91,12 +107,18 @@ class AllNodesActivity : BaseActivity() {
 
             val htmlStr = response.body!!.string()
             val nodeModels = Parser(htmlStr).getAllNode()
+            if (nodeModels.isNotEmpty()) {
+              pref.edit {
+                putString(Keys.PREF_ALL_NODE_DATA, Gson().toJson(nodeModels))
+              }
+            }
 
-            mAdapter.setData(nodeModels)
             runOnUiThread {
-              mAdapter.notifyDataSetChanged()
+              mAdapter.setData(nodeModels)
+              binding.rvNode.adapter = mAdapter
               binding.swipeContainer.isRefreshing = false
             }
+
 
           }
         })

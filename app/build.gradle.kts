@@ -16,17 +16,17 @@ apply {
 
 android {
 
-    compileSdk = 31
+    compileSdk = 33
     defaultConfig {
         applicationId = "im.fdx.v2ex"
         minSdk = 22
-        targetSdk = 31
+        targetSdk = 33
         versionCode = 50
         versionName = "2.7.6"
     }
     lint {
-        isCheckReleaseBuilds = false
-        isAbortOnError = false
+        checkReleaseBuilds = false
+        abortOnError =   false
     }
     signingConfigs {
 
@@ -73,7 +73,8 @@ android.applicationVariants.all { variant ->
 }
 
 dependencies {
-    val roomVersion = "2.3.0"
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     //test related, use test when you really need it, or you forget always.
     testImplementation("junit:junit:4.13.2")
     //test end
@@ -81,38 +82,40 @@ dependencies {
     //kotlin start
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.anko:anko-commons:0.10.8")
-    implementation("androidx.core:core-ktx:1.7.0")
+    implementation("androidx.core:core-ktx:1.9.0")
     //kotlin end
 
     //google start
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("androidx.legacy:legacy-support-v13:1.0.0")
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+//    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+//    implementation("androidx.legacy:legacy-support-v13:1.0.0")
+    implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("com.google.android.material:material:1.6.0")
-
+    implementation("com.google.android.material:material:1.7.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
+    val roomVersion = "2.4.3"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt ("androidx.room:room-compiler:$roomVersion")
     //google end
 
-    implementation("com.google.code.gson:gson:2.8.9")
+    implementation("com.google.code.gson:gson:2.9.1")
     implementation("de.hdodenhof:circleimageview:2.2.0")
 
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.1"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
     debugImplementation("com.github.ChuckerTeam.Chucker:library:3.5.2")
     releaseImplementation("com.github.ChuckerTeam.Chucker:library-no-op:3.5.2")
     implementation("com.elvishew:xlog:1.6.1")
-    implementation("org.jsoup:jsoup:1.13.1")
+    implementation("org.jsoup:jsoup:1.15.3")
     implementation("com.github.bumptech.glide:glide:4.12.0")
     kapt ("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.github.bumptech.glide:okhttp3-integration:4.12.0")
@@ -121,7 +124,8 @@ dependencies {
     implementation("me.drakeet.multitype:multitype:3.5.0")
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
     implementation("com.github.esafirm.android-image-picker:imagepicker:2.4.5")
-    implementation(platform("com.google.firebase:firebase-bom:28.1.0"))
+
+    implementation(platform("com.google.firebase:firebase-bom:31.0.1"))
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
 }

@@ -93,7 +93,7 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     }
     holder.tvAuthor.text = currentTopic.member?.username
     holder.tvNode.text = currentTopic.node?.title
-    holder.tvCreated.text = TimeUtil.getRelativeTime(currentTopic.created)
+    holder.tvCreated.text = currentTopic.createdOriginal
     holder.ivAvatar.load(currentTopic.member?.avatarNormalUrl)
 
 

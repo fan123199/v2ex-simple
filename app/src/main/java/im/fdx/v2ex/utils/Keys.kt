@@ -54,6 +54,7 @@ object Keys {
     const val PREF_AVATAR = "pref_avatar"
     const val PREF_TEXT_SIZE = "pref_text_size"
     const val PREF_NIGHT_MODE = "pref_night_mode"
+    const val PREF_ALL_NODE_DATA = "pref_all_node_data"
     //------------------------------------------------
 
 

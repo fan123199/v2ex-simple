@@ -17,6 +17,7 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.elvishew.xlog.XLog
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityLoginBinding
@@ -94,6 +95,7 @@ class LoginActivity : BaseActivity() {
     getLoginElement()
   }
 
+  @Deprecated("Deprecated in Java")
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
     if (requestCode == 144 && resultCode == RESULT_OK) {
@@ -203,7 +205,13 @@ class LoginActivity : BaseActivity() {
 
           }
           200 -> runOnUiThread {
-            showHint( binding.btnLogin,"登录失败:  $errorMsg")
+            Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_LONG)
+              .setBackgroundTint(ContextCompat.getColor(applicationContext, R.color.primary_dark))
+              .setActionTextColor(ContextCompat.getColor(applicationContext, R.color.toolbar_text_light))
+              .setAction(R.string.ok, {
+              })
+              .show()
+            getLoginElement()
             binding.pbLogin.visibility = GONE
             binding.btnLogin.visibility = VISIBLE
           }

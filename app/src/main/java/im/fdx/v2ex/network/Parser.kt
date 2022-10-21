@@ -71,8 +71,8 @@ class Parser(private val htmlStr: String) {
                         val elements = doc.head().getElementsByTag("script")
                         val script = elements.last()
                         //注意，script 的tag 不含 text。
-                        val strScript = script.html()
-                        val nodeName = strScript.split("\"".toRegex())[1]
+                        val strScript = script?.html()
+                        val nodeName = strScript?.split("\"".toRegex())?.get(1)?:""
                         nodeModel.title = nodeTitle
                         nodeModel.name = nodeName
                     }
@@ -88,28 +88,23 @@ class Parser(private val htmlStr: String) {
 
                 val username = Regex("(?<=/member/)\\w+").find(item.html())?.value?:""
 
-                val avatarLarge = item.getElementsByClass("avatar")?.attr("src")?.replace("large", "normal")?:""
+                val avatarLarge = item.getElementsByClass("avatar")?.attr("src")?.replace("xxxlarge", "normal")?.replace("xxlarge", "normal")?:""
                 memberModel.username = username
                 memberModel.avatar_normal = avatarLarge
 
 //            FROM_HOME &nbsp;•&nbsp; <strong><a href="/member/nodwang">nodwang</a></strong> &nbsp;•&nbsp; 2 分钟前 &nbsp;•&nbsp; 最后回复来自
 //             FROM_NODE   &nbsp;•&nbsp; 6 小时 15 分钟前 &nbsp;•&nbsp; 最后回复来自
-                val created = when (source) {
-                    FROM_HOME, FROM_MEMBER -> {
+                var created: Long = 0L
+                var createdOriginal:String = ""
+                when (source) {
+                    FROM_HOME, FROM_MEMBER, FROM_NODE -> {
                         val smallItem = item.getElementsByClass("topic_info")?.first()?.getElementsByAttribute("title")
-                        when {
-                            smallItem !=null -> TimeUtil.toUtcTime(smallItem.attr("title"))
-                            else -> -1L
+                        if (smallItem !=null) {
+                            created = TimeUtil.toUtcTime2(smallItem.attr("title"))
+                            createdOriginal = smallItem.text()
                         }
                     }
-                    FROM_NODE -> {
-                        val smallItem = item.getElementsByClass("topic_info")?.first()?.getElementsByAttribute("title")
-                        when {
-                            smallItem !=null -> TimeUtil.toUtcTime(smallItem.attr("title"))
-                            else -> -1L
-                        }
-                    }
-                    else -> 0L
+                    else -> created = 0L
                 }
                 topicModel.node = nodeModel
                 topicModel.replies = replies
@@ -119,6 +114,7 @@ class Parser(private val htmlStr: String) {
                 topicModel.member = memberModel
                 topicModel.id = id
                 topicModel.created = created
+                topicModel.createdOriginal = createdOriginal
                 topics.add(topicModel)
             }
         }
@@ -129,11 +125,11 @@ class Parser(private val htmlStr: String) {
     fun getAllNode(): MutableList<Node> {
         val allNodes = mutableListOf<Node>()
         val body = doc.body()
-        val boxes: Elements? = body?.getElementsByClass("box")
+        val boxes: Elements? = body.getElementsByClass("box")
 
         boxes?.filterIndexed { index, _ -> index > 0 }?.forEach {
-            val title = it.getElementsByClass("header")?.first()?.ownText()?:""
-            val nodeElements = it.getElementsByClass("inner")?.first()?.getElementsByClass("item_node")
+            val title = it.getElementsByClass("header").first()?.ownText()?:""
+            val nodeElements = it.getElementsByClass("inner").first()?.getElementsByClass("item_node")
             if (nodeElements != null) {
                 for (item in nodeElements) {
                     val node = Node()
@@ -150,7 +146,7 @@ class Parser(private val htmlStr: String) {
 
 
     fun getMember(): Member {
-        val rightbar = doc.getElementById("Rightbar").getElementsByClass("cell").first()
+        val rightbar = doc.getElementById("Rightbar")?.getElementsByClass("cell")?.first()
         val avatarUrl = rightbar?.getElementsByTag("img")?.first()?.attr("src")?:""
         val username = rightbar?.getElementsByTag("img")?.first()?.attr("alt")?:""
         val memberModel = Member()
@@ -169,13 +165,13 @@ class Parser(private val htmlStr: String) {
         //        Document html = Jsoup.parse(response);
         val body = doc.body()
         val header = body.getElementsByClass("node-header").first()
-        if (header.getElementsByTag("img").first() != null) {
-            val avatarLarge = header.getElementsByTag("img")?.first()?.attr("src")
+        if (header?.getElementsByTag("img")?.first() != null) {
+            val avatarLarge = header.getElementsByTag("img").first()?.attr("src")
             nodeModel.avatar_normal = avatarLarge?.replace("xxxlarge", "normal")?.replace("xxlarge", "normal")
         }
-        val number = header.getElementsByTag("strong")?.first()?.text()
-        val content = header.getElementsByClass("intro")?.first()?.text()?:""
-        val strTitle = header.getElementsByClass("node-breadcrumb")?.first()?.ownText()?.trim()?:""
+        val number = header?.getElementsByTag("strong")?.first()?.text()
+        val content = header?.getElementsByClass("intro")?.first()?.text()?:""
+        val strTitle = header?.getElementsByClass("node-breadcrumb")?.first()?.ownText()?.trim()?:""
         nodeModel.name = nodeName
         nodeModel.title = strTitle
         nodeModel.topics = number?.toIntOrNull()?:0
@@ -228,14 +224,13 @@ class Parser(private val htmlStr: String) {
     fun parseToNode(): ArrayList<Node> {
 
         val nodeModels = ArrayList<Node>()
-        val items = doc.getElementById("my-nodes").children()
-
+        val items = doc.getElementById("my-nodes")?.children() ?: return nodeModels
         for (item in items) {
             val nodeModel = Node()
             val id = item.attr("id").substring(2)
             nodeModel.id = id
 
-            val title = item.getElementsByClass("fav-node-name").first().ownText().trim()
+            val title = item.getElementsByClass("fav-node-name").first()?.ownText()?.trim()?:""
             nodeModel.title = title
             val name = item.attr("href").replace("/go/", "")
             nodeModel.name = name
@@ -244,7 +239,7 @@ class Parser(private val htmlStr: String) {
 
             nodeModel.topics = Integer.parseInt(num)
 
-            val imageUrl = item.getElementsByTag("img").first().attr("src")
+            val imageUrl = item.getElementsByTag("img").first()?.attr("src")?:""
             nodeModel.avatar_normal = imageUrl
             nodeModels.add(nodeModel)
         }
@@ -265,7 +260,7 @@ class Parser(private val htmlStr: String) {
             val replyModel = Reply()
             val memberModel = Member()
             val avatar = item.getElementsByClass("avatar").attr("src")
-            val username = item.getElementsByTag("strong").first().getElementsByAttributeValueStarting("href", "/member/").first().text()
+            val username = item.getElementsByTag("strong").first()?.getElementsByAttributeValueStarting("href", "/member/")?.first()?.text()?:""
 
             memberModel.avatar_normal = avatar
             memberModel.username = username
@@ -275,6 +270,7 @@ class Parser(private val htmlStr: String) {
             replyModel.isThanked = thanked != null && "感谢已发送" == thanked.text()
 
             val createdOriginal = item.getElementsByClass("ago").text()
+            val createUtcStr = item.getElementsByClass("ago").attr("title")
             val replyContent = item.getElementsByClass("reply_content").first()
 
 
@@ -282,25 +278,26 @@ class Parser(private val htmlStr: String) {
 // data-cfemail="a8c7cecec1cbcd86cbc0c1dcc9c6cddae8cfc5c9c1c486cbc7c5">[email&#160;protected]</span></a>
 
 //<a href="mailto:office.chitaner@gmail.com">office.chitaner@gmail.com</a>
-            val cfemails = replyContent.getElementsByAttribute("data-cfemail")
+            val cfemails = replyContent?.getElementsByAttribute("data-cfemail")
             if(cfemails != null) {
                 for (cfemail in cfemails) {
                     val p = cfemail.parent()
                     val secret = cfemail.attr("data-cfemail")
 
-                    p.attr("href" , secret.decodeEmail())
-                    p.child(0).remove()
-                    p.append(secret.decodeEmail())
+                    p?.attr("href" , secret.decodeEmail())
+                    p?.child(0)?.remove()
+                    p?.append(secret.decodeEmail())
                 }
             }
 
-            replyModel.created = TimeUtil.toUtcTime(createdOriginal)
+            replyModel.created = TimeUtil.toUtcTime2(createUtcStr)
+            replyModel.createdOriginal = createdOriginal
             replyModel.member = memberModel
             replyModel.thanks = thanks
 
             replyModel.id = id
-            replyModel.content = replyContent.text()
-            replyModel.content_rendered = replyContent.html().fullUrl()
+            replyModel.content = replyContent?.text() ?: ""
+            replyModel.content_rendered = replyContent?.html()?.fullUrl()?:""
             replyModels.add(replyModel)
         }
         return replyModels
@@ -310,14 +307,16 @@ class Parser(private val htmlStr: String) {
     fun parseResponseToTopic(topicId: String): Topic {
         val topicModel = Topic(topicId)
 
-        val title = doc.getElementsByTag("h1").first().text()
+        val title = doc.getElementsByTag("h1").first()?.text()?:""
         val contentElementOrg = doc.getElementsByClass("topic_content").first()
 
         val commentsEle = doc.getElementsByClass("subtle")
         val comments = commentsEle.map {
             Comment().apply {
                 this.title = it.getElementsByClass("fade").text().split("·")[0].trim()
-                created = TimeUtil.toUtcTime(it.getElementsByClass("fade").text().split("·")[1].trim())
+                val elementsByAttribute = it.getElementsByClass("fade").first()?.getElementsByAttribute("title")
+                createdOriginal = elementsByAttribute?.text()?:""
+                created = TimeUtil.toUtcTime2(elementsByAttribute?.attr("title"))
                 content = it.getElementsByClass("topic_content").html()
             }
         }
@@ -341,21 +340,23 @@ class Parser(private val htmlStr: String) {
                 val p = cfemail.parent()
                 val secret = cfemail.attr("data-cfemail")
 
-                p.attr("href" , "mailto:" + secret.decodeEmail())
-                p.child(0).remove()
-                p.append(secret.decodeEmail())
+                p?.attr("href" , "mailto:" + secret.decodeEmail())
+                p?.child(0)?.remove()
+                p?.append(secret.decodeEmail())
             }
         }
         val contentRendered = contentElementOrg?.html() ?: ""
         topicModel.content_rendered = contentRendered.fullUrl()
 
-        val headerTopic = doc.getElementById("Main").getElementsByClass("header").first()
-        val elementsByClass = headerTopic.getElementsByClass("gray")
-        val createdUnformed = elementsByClass.first().ownText() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
+        val headerTopic = doc.getElementById("Main")?.getElementsByClass("header")?.first()
+        val elementsByClass = headerTopic?.getElementsByClass("gray")
+        val createdUnformed = elementsByClass?.first()?.getElementsByTag("span")?.first() // · 44 分钟前用 iPhone 发布 · 192 次点击 &nbsp;
 
         // · 54 天前 · 36030 次点击
         // · 9 小时 6 分钟前 via Android · 1036 次点击
-        val created = TimeUtil.toUtcTime(createdUnformed)
+        val createdOriginal = createdUnformed?.text()?:""
+        val created = TimeUtil.toUtcTime2(createdUnformed?.attr("title"))
+        topicModel.createdOriginal = createdOriginal
 
         var replyNum = ""
         val grays = doc.getElementsByClass("gray")
@@ -380,15 +381,15 @@ class Parser(private val htmlStr: String) {
 
         val member = Member()
         val username = headerTopic
-                .getElementsByAttributeValueStarting("href", "/member/").text()
+                ?.getElementsByAttributeValueStarting("href", "/member/")?.text()?:""
         member.username = username
         val largeAvatar = headerTopic
-                .getElementsByClass("avatar").attr("src")
+                ?.getElementsByClass("avatar")?.attr("src")?:""
         member.avatar_normal = largeAvatar
         val nodeElement = headerTopic
-                .getElementsByAttributeValueStarting("href", "/go/").first()
-        val nodeName = nodeElement.attr("href").replace("/go/", "")
-        val nodeTitle = nodeElement.text()
+                ?.getElementsByAttributeValueStarting("href", "/go/")?.first()
+        val nodeName = nodeElement?.attr("href")?.replace("/go/", "")?:""
+        val nodeTitle = nodeElement?.text()?:""
         val nodeModel = Node()
         nodeModel.name = nodeName
         nodeModel.title = nodeTitle
@@ -410,11 +411,11 @@ class Parser(private val htmlStr: String) {
             for (e in elements.getElementsByClass("dock_area")) {
                 val model = MemberReplyModel()
                 val titleElement = e.getElementsByAttributeValueContaining("href", "/t/").first()
-                val title = titleElement.text()
-                val fakeId = titleElement.attr("href").removePrefix("/t/")
-                val create = e.getElementsByClass("fade").first().ownText()
+                val title = titleElement?.text()?:""
+                val fakeId = titleElement?.attr("href")?.removePrefix("/t/")
+                val create = e.getElementsByClass("fade").first()?.ownText()
                 model.topic.title = title
-                model.topic.id = fakeId.split("#")[0]
+                model.topic.id = fakeId?.split("#")?.get(0) ?: ""
                 model.create = TimeUtil.toUtcTime(create)
                 val contentElement: Element? = e.nextElementSibling()
                 val content = contentElement?.getElementsByClass("reply_content")?.first()
@@ -464,14 +465,14 @@ class Parser(private val htmlStr: String) {
             }
             notification.content = content //1/6
 
-            val time = item.getElementsByClass("snow").first().text()
+            val time = item.getElementsByClass("snow").first()?.text()?:""
             notification.time = time// 2/6
 
 
             //member model
             val memberElement = item.getElementsByTag("a").first()
-            val username = memberElement.attr("href").replace("/member/", "")
-            val avatarUrl = memberElement.getElementsByClass("avatar").first().attr("src")
+            val username = memberElement?.attr("href")?.replace("/member/", "")?:""
+            val avatarUrl = memberElement?.getElementsByClass("avatar")?.first()?.attr("src")?:""
             val memberModel = Member()
             memberModel.username = username
             memberModel.avatar_normal = avatarUrl
@@ -481,9 +482,9 @@ class Parser(private val htmlStr: String) {
 
             val topicElement = item.getElementsByClass("fade").first()
             //            <a href="/t/348757#reply1">交互式《线性代数》学习资料</a>
-            val href = topicElement.getElementsByAttributeValueStarting("href", "/t/").first().attr("href")
+            val href = topicElement?.getElementsByAttributeValueStarting("href", "/t/")?.first()?.attr("href")
 
-            topicModel.title = topicElement.getElementsByAttributeValueStarting("href", "/t/").first().text()
+            topicModel.title = topicElement?.getElementsByAttributeValueStarting("href", "/t/")?.first()?.text()?:""
 
             val p = Pattern.compile("(?<=/t/)\\d+(?=#)")
             val matcher = p.matcher(href)
@@ -500,7 +501,7 @@ class Parser(private val htmlStr: String) {
             }
             notification.topic = topicModel //4/6
 
-            val originalType = topicElement.ownText()
+            val originalType = topicElement?.ownText()?:""
             notification.type =
                     when {
                         originalType.contains("感谢了你在主题") ->

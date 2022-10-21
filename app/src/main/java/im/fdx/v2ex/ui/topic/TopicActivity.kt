@@ -4,9 +4,11 @@ import android.content.*
 import android.os.Bundle
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.adapter.FragmentStateAdapter
 import im.fdx.v2ex.databinding.ActivityDetailsBinding
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
@@ -34,7 +36,7 @@ class TopicActivity : BaseActivity() {
     val view = binding.root
     setContentView(view)
 
-    vpAdapter = VpAdapter(supportFragmentManager)
+    vpAdapter = VpAdapter(this)
     parseIntent(intent)
   }
 
@@ -95,17 +97,7 @@ class TopicActivity : BaseActivity() {
     binding.viewPagerDetail.run {
       adapter = vpAdapter
       setCurrentItem(position, false)
-      setPageTransformer(true, ZoomOutPageTransform())
-      addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
-        override fun onPageScrollStateChanged(state: Int) {
-        }
-
-        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        }
-
-        override fun onPageSelected(position: Int) {
-        }
-      })
+      setPageTransformer(ZoomOutPageTransform())
     }
 
   }
@@ -117,7 +109,7 @@ class TopicActivity : BaseActivity() {
  *
  * todo 需要加入和endlessScrollListener的联动，不然这里的list没法增加。
  */
-class VpAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+class VpAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
   private val fgList : MutableList<TopicFragment> = mutableListOf()
 
@@ -130,11 +122,11 @@ class VpAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm,BEHAVIOR_RESUME_O
     fgList.addAll(list)
   }
 
-  override fun getItem(position: Int): Fragment {
+  override fun createFragment(position: Int): Fragment {
     return fgList[position]
   }
 
-  override fun getCount(): Int {
+  override fun getItemCount(): Int {
     return fgList.size
   }
 

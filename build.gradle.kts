@@ -3,7 +3,7 @@
 buildscript {
 
     var kotlin_version: String by extra
-    kotlin_version = "1.5.20"
+    kotlin_version = "1.7.20"
     repositories {
         google()
         maven("https://maven.aliyun.com/repository/public")
@@ -11,10 +11,10 @@ buildscript {
         maven("https://maven.fabric.io/public")
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.0.3")
-        classpath("com.google.gms:google-services:4.3.10")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.30")
-        classpath("com.google.firebase:firebase-crashlytics-gradle:2.7.1")
+        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.google.gms:google-services:4.3.14")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.2")
     }
 }
 
