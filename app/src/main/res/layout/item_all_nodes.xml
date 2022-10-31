@@ -41,6 +41,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="4dp"
             android:gravity="center_horizontal"
+            style="@style/VText"
             android:textStyle="normal|bold"
             android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="parent"

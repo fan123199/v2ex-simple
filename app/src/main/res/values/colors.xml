@@ -37,7 +37,7 @@
     <color name="toolbar_text">@color/black87</color>
     <color name="toolbar_text_light">@color/white</color>
     <color name="item_background">@color/white</color>
-    <color name="username">@color/hint</color>
+    <color name="username">@color/black87</color>
     <color name="nav_background">@color/white</color>
     <color name="toolbar_background">@color/white</color>
     <color name="nav_icon">@color/black54</color>

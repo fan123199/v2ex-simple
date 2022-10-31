@@ -37,7 +37,8 @@
 
     <TextView
         android:id="@+id/tv_replier"
-        style="@style/VText.Hint"
+        android:textColor="@color/username"
+        android:textSize="?text_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/iv_reply_avatar"
@@ -49,23 +50,29 @@
         app:layout_constraintLeft_toRightOf="@+id/iv_reply_avatar"
         app:layout_constraintTop_toTopOf="@+id/iv_reply_avatar"
         app:layout_constraintVertical_bias="0.444"
-        tools:text="@string/author" />
+        tools:text="aa117" />
 
     <TextView
         android:id="@+id/tv_reply_time"
         style="@style/VText.Hint"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/tv_replier"
         android:layout_alignTop="@+id/iv_reply_avatar"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="8dp"
         android:layout_toEndOf="@+id/tv_replier"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:gravity="end"
         android:text="@string/reply_time"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
         app:layout_constraintEnd_toStartOf="@+id/flThanks"
+        app:layout_constraintStart_toEndOf="@+id/tv_louzu"
         app:layout_constraintTop_toTopOf="@+id/tv_replier"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        tools:text="12小时15分钟前" />
 
     <TextView
         android:id="@+id/tv_reply_row"
@@ -120,33 +127,34 @@
             android:maxLines="1"
             android:includeFontPadding="false"
             android:layout_marginStart="4dp"
-            tools:text="4"
+            tools:text="44"
             tools:visibility="visible" />
 
     </LinearLayout>
 
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/flReply"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:padding="6dp"
+        android:gravity="center_horizontal"
         android:foreground="?selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="@+id/tv_reply_time"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_reply_time">
+        app:layout_constraintTop_toTopOf="@+id/tv_reply_time"
+        tools:ignore="UnusedAttribute">
 
         <ImageView
             android:id="@+id/ivReply"
             android:layout_width="?text_medium"
             android:layout_height="?text_medium"
-
-            android:contentDescription="thank the reply"
-            android:src="@drawable/ic_message_black_24dp"
+            android:src="@drawable/ic_comment"
+            android:contentDescription="reply the reply"
             tools:ignore="HardcodedText"
             tools:visibility="visible" />
-    </FrameLayout>
+    </LinearLayout>
 
 
     <View
@@ -170,6 +178,7 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:text="OP"
+        android:visibility="visible"
         android:textColor="@color/primary"
         android:textSize="?text_small"
         app:layout_constraintBottom_toBottomOf="@+id/tv_replier"

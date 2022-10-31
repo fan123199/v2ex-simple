@@ -317,8 +317,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_baseline_add_circle_outline_24" />
-                            <entry key="sourceFile" value="C:\f_code\androidProject\v2ex-simple" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_comment" />
+                            <entry key="sourceFile" value="C:\Users\fdx\Desktop\ic_comment.svg" />
                           </map>
                         </option>
                       </PersistentState>

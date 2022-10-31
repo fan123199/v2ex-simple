@@ -7,7 +7,7 @@
     android:layout_marginTop="4dp"
     android:layout_marginRight="6dp"
     android:layout_marginBottom="4dp"
+    style="@style/VText.ContentStyle"
     android:background="@drawable/radius_outline_4dp"
     android:padding="4dp"
-    android:textColor="@color/title_text"
     tools:text="深圳北京" />
