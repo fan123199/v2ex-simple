@@ -118,6 +118,7 @@
     </string-array>
 
     <string-array name="text_size_string">
+        <item>跟随系统</item>
         <item>小</item>
         <item>中</item>
         <item>大</item>

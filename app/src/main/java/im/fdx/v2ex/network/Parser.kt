@@ -114,7 +114,7 @@ class Parser(private val htmlStr: String) {
                 topicModel.member = memberModel
                 topicModel.id = id
                 topicModel.created = created
-                topicModel.createdOriginal = createdOriginal
+                topicModel.createdOriginal = createdOriginal.removeVia()
                 topics.add(topicModel)
             }
         }
@@ -291,7 +291,7 @@ class Parser(private val htmlStr: String) {
             }
 
             replyModel.created = TimeUtil.toUtcTime2(createUtcStr)
-            replyModel.createdOriginal = createdOriginal
+            replyModel.createdOriginal = createdOriginal.removeVia()
             replyModel.member = memberModel
             replyModel.thanks = thanks
 
@@ -356,7 +356,7 @@ class Parser(private val htmlStr: String) {
         // · 9 小时 6 分钟前 via Android · 1036 次点击
         val createdOriginal = createdUnformed?.text()?:""
         val created = TimeUtil.toUtcTime2(createdUnformed?.attr("title"))
-        topicModel.createdOriginal = createdOriginal
+        topicModel.createdOriginal = createdOriginal.removeVia()
 
         var replyNum = ""
         val grays = doc.getElementsByClass("gray")
@@ -524,6 +524,17 @@ class Parser(private val htmlStr: String) {
 
     enum class Source {
       FROM_HOME, FROM_NODE, FROM_MEMBER, FROM_SEARCH
+    }
+
+}
+
+// 1小时 23 分钟前  via iphone
+private fun String.removeVia(): String {
+
+    return if (this.contains("via")) {
+        this.substring(0, this.indexOf("via")).trim()
+    } else {
+        this
     }
 
 }

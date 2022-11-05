@@ -64,10 +64,12 @@
         <item>1</item>
         <item>2</item>
         <item>3</item>
+        <item>4</item>
     </string-array>
 
 
     <string-array name="text_size_string">
+        <item>Follow System</item>
         <item>Small</item>
         <item>Medium</item>
         <item>Large</item>

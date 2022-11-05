@@ -50,7 +50,7 @@
         app:layout_constraintLeft_toRightOf="@+id/iv_reply_avatar"
         app:layout_constraintTop_toTopOf="@+id/iv_reply_avatar"
         app:layout_constraintVertical_bias="0.444"
-        tools:text="aa117" />
+        tools:text="aa11123131317" />
 
     <TextView
         android:id="@+id/tv_reply_time"
@@ -138,20 +138,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:padding="6dp"
-        android:gravity="center_horizontal"
         android:foreground="?selectableItemBackground"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_reply_time"
+        android:gravity="center_horizontal"
+        android:padding="6dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_replier"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_reply_time"
+        app:layout_constraintTop_toTopOf="@+id/tv_replier"
         tools:ignore="UnusedAttribute">
 
         <ImageView
             android:id="@+id/ivReply"
             android:layout_width="?text_medium"
             android:layout_height="?text_medium"
-            android:src="@drawable/ic_comment"
             android:contentDescription="reply the reply"
+            android:src="@drawable/ic_comment"
             tools:ignore="HardcodedText"
             tools:visibility="visible" />
     </LinearLayout>
