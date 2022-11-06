@@ -6,8 +6,6 @@ import android.app.NotificationManager
 import android.content.*
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
-import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.Icon
 import android.net.Uri
 import android.os.Build
@@ -247,6 +245,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 updateUserInBackground()
             }
             dailyCheck(true)
+        } else {
+            setUserInfo(null, null)
         }
 
         mAdapter = MyViewPagerAdapter(this@MainActivity)
@@ -343,12 +343,18 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val tvMyName: TextView = binding.tvMyUsername
         val ivMyAvatar: CircleImageView = binding.ivMyAvatar
         tvMyName.text = username
-        ivMyAvatar.load(avatar)
-        ivMyAvatar.setOnClickListener {
-            username?.let { it2 -> startActivity<MemberActivity>(Keys.KEY_USERNAME to it2) }
+
+        if (avatar.isNullOrEmpty()) {
+            ivMyAvatar.load(R.drawable.ic_baseline_account_circle_24)
+            ivMyAvatar.setOnClickListener {
+                startActivity<LoginActivity>()
+            }
+        } else {
+            ivMyAvatar.load(avatar)
+            ivMyAvatar.setOnClickListener {
+                startActivity<MemberActivity>(Keys.KEY_USERNAME to username)
+            }
         }
-
-
     }
 
     @Deprecated("Deprecated in Java")
