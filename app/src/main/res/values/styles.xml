@@ -104,7 +104,7 @@
         <item name="tabPaddingStart">4dp</item>
         <item name="tabPaddingEnd">4dp</item>
         <item name="tabMode">scrollable</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">36sp</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
