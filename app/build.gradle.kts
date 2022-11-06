@@ -1,3 +1,5 @@
+@file:Suppress("LocalVariableName", "PropertyName")
+
 import java.util.*
 
 val kotlin_version: String by extra
@@ -98,6 +100,9 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
     implementation("androidx.work:work-runtime-ktx:2.7.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+
+    val preference_version = "1.2.0"
+    implementation("androidx.preference:preference-ktx:$preference_version")
 
     val roomVersion = "2.4.3"
     implementation("androidx.room:room-runtime:$roomVersion")

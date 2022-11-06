@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -18,7 +17,7 @@ import org.jetbrains.anko.defaultSharedPreferences
 import java.net.HttpCookie
 
 val pref: SharedPreferences by lazy {
-  PreferenceManager.getDefaultSharedPreferences(myApp)
+  androidx.preference.PreferenceManager.getDefaultSharedPreferences(myApp)
 }
 
 @Deprecated("技术困难，下一期实现")
@@ -53,6 +52,12 @@ class MyApp : Application() {
       else -> LogLevel.NONE
     })
     isLogin = pref.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
+
+
+    pref.edit {
+      putInt(Keys.PREF_APP_PREF_VERSION, BuildConfig.VERSION_CODE)
+    }
+    //后续做sp的版本判断在这里
     logd("onCreate\nisLogin:$isLogin")
     setDefaultNightMode(pref.getString(Keys.PREF_NIGHT_MODE, MODE_NIGHT_NO.toString())!!.toInt())
   }
