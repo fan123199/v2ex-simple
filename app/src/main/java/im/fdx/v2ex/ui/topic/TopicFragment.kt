@@ -250,7 +250,7 @@ class TopicFragment : BaseFragment() {
 
 
     private fun setFootView() {
-        activity?.findViewById<View>(R.id.foot_container)?.isVisible = myApp.isLogin
+        binding.footContainer.isVisible = myApp.isLogin
     }
 
 
