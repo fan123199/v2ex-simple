@@ -20,7 +20,7 @@
     <string name="reply_time">Time</string>
     <string name="row">n row</string>
 
-    <string name="reply">reply</string>
+    <string name="reply">Reply</string>
     <string name="title_activity_login">Login</string>
     <string name="account">Account</string>
     <string name="password">Password</string>
@@ -103,7 +103,7 @@
     <string name="send_email">Send feedback mail…</string>
     <string name="feedback_subject" translatable="false">Feedback for v2ex-simple</string>
     <string name="email">Email</string>
-    <string name="thanks">thanks</string>
+    <string name="thanks">Thanks</string>
     <string name="show_thanks">♥ %d</string>
     <string name="profile">profile</string>
     <string name="log_in_v2ex">Log in V2EX</string>
@@ -122,7 +122,7 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="notification">Notification</string>
-    <string name="copy_content">copy content</string>
+    <string name="copy_content">Copy content</string>
     <string name="create_topic">Create Topic</string>
     <string name="you_have_notifications">it is %d unread message</string>
     <string name="favor">Favor</string>
