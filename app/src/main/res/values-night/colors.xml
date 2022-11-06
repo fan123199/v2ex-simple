@@ -17,7 +17,7 @@
     <color name="accent_orange">#0097A7</color>
     <color name="fab">@color/primary_dark</color>
     <color name="icon">@color/white</color>
-
+    <color name="username">@color/white</color>
     <color name="toolbar_background">@color/base_night</color>
     <color name="status_bar_white">@color/toolbar_background</color>
 
