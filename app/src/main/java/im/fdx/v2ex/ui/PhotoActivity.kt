@@ -8,7 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.viewpager.widget.ViewPager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.ImageUtil
@@ -31,9 +32,9 @@ class PhotoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_photo)
         setUpToolbar()
         val toolbar: Toolbar = findViewById(R.id.toolbar)
-        val viewPager: ViewPager = findViewById(R.id.viewPager)
+        val viewPager: ViewPager2 = findViewById(R.id.viewPager)
         val list = intent.getParcelableArrayListExtra<V2Photo>(Keys.KEY_PHOTO)
-        if(list == null ) {
+        if (list == null) {
             finish()
             return
         }
@@ -44,14 +45,8 @@ class PhotoActivity : AppCompatActivity() {
 
         val adapter = MyViewPagerAdapter(thelist)
         viewPager.adapter = adapter
-        viewPager.currentItem = position
-      viewPager.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
+        viewPager.setCurrentItem(position, false)
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 toolbar.title = "${position + 1}/${thelist.size}"
             }
@@ -59,42 +54,38 @@ class PhotoActivity : AppCompatActivity() {
     }
 
 
-  inner class MyViewPagerAdapter(val list: MutableList<V2Photo>) : androidx.viewpager.widget.PagerAdapter() {
-        override fun isViewFromObject(view: View, `object`: Any): Boolean {
-            return view == `object` as ViewGroup
+    inner class MyViewPagerAdapter(val list: MutableList<V2Photo>) : RecyclerView.Adapter<VH>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+            val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pager_item, parent, false)
+            return VH(itemView)
         }
 
-        override fun getCount(): Int {
-            return list.size
-        }
+        override fun onBindViewHolder(holder: VH, position: Int) {
 
-        override fun instantiateItem(container: ViewGroup, position: Int): Any {
-            val itemView = LayoutInflater.from(container.context).inflate(R.layout.pager_item, container, false)
-            val imageView = itemView.findViewById(R.id.photo_view) as ImageView
+            val imageView = holder.itemView.findViewById(R.id.photo_view) as ImageView
             val imageUrl = list[position].url
             imageView.load(imageUrl)
-            container.addView(itemView)
-
             imageView.setOnLongClickListener {
                 BottomSheetMenu(this@PhotoActivity)
-                        .addItem("下载图片") {
-                            ImageUtil.downloadImage(this@PhotoActivity, imageUrl)
-                        }
-                        .addItem("分享图片") {
-                            ImageUtil.shareImage(this@PhotoActivity, imageUrl)
-                        }
-                        .show()
+                    .addItem("下载图片") {
+                        ImageUtil.downloadImage(this@PhotoActivity, imageUrl)
+                    }
+                    .addItem("分享图片") {
+                        ImageUtil.shareImage(this@PhotoActivity, imageUrl)
+                    }
+                    .show()
                 true
             }
-            return itemView
         }
 
-
-
-      override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-            container.removeView(`object` as ViewGroup)
+        override fun getItemCount(): Int {
+            return list.size
         }
     }
+
+
+    class VH(itemView: View) : RecyclerView.ViewHolder(itemView)
 
     @Parcelize
     data class V2Photo(var url: String, var name: String? = null) : Parcelable
