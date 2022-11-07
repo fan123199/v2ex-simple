@@ -139,7 +139,7 @@
     <string name="already_thank">thanked</string>
     <string name="ignore">Ignore Topic</string>
     <string name="already_ignore">cancel ignore</string>
-    <string name="google_login">Google Login</string>
+    <string name="google_login">Sign in With Google</string>
     <string name="tab_setting">HomePage Tab Setting</string>
     <string name="need_at_least_one">You need remain at least one tab</string>
     <string name="show_area">Show Area</string>

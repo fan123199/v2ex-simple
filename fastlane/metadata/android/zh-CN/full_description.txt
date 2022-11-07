@@ -1,7 +1,7 @@
-一款简单的 v2ex 第三方 Android 客户端。
+一款简单的 V2EX 第三方 Android 客户端。
 <h3>主要功能</h3>
 <ul>
-<li>浏览 V2ex 的内容</li>
+<li>浏览 V2EX 的内容</li>
 <li>发表文章和评论</li>
 <li>从 web 打开应用</li>
 <li>后台获取更新</li>

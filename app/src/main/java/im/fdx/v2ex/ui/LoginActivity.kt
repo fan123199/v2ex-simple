@@ -4,6 +4,11 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.URLSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View.GONE
@@ -12,6 +17,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.text.set
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -29,6 +35,7 @@ import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.CustomChrome
+import im.fdx.v2ex.view.UrlSpanNoUnderline
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jetbrains.anko.longToast
@@ -55,10 +62,7 @@ class LoginActivity : BaseActivity() {
 
     binding = ActivityLoginBinding.inflate(layoutInflater)
     setContentView(binding.root)
-
     val toolbar = setUpToolbar()
-    (toolbar as MaterialToolbar).setNavigationIconTint(ContextCompat.getColor(this, R.color.back_icon_login))
-    setStatusBarColor(R.color.bg_login)
     val usernamePref = pref.getString(Keys.KEY_USERNAME, "")
     binding.btnLogin.setOnClickListener {
       if (!isValidated()) return@setOnClickListener
@@ -75,6 +79,15 @@ class LoginActivity : BaseActivity() {
     binding.ivCode.setOnClickListener {
       getLoginElement()
     }
+
+    val span = SpannableString("点击登录或注册，表明您已了解并同意《V2EX社区规则》")
+    val url = UrlSpanNoUnderline("https://www.v2ex.com/about") {
+      CustomChrome(this@LoginActivity).load("https://www.v2ex.com/about")
+    }
+    span.setSpan(url, 18, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+    binding.tvAgreement.movementMethod = LinkMovementMethod()
+    binding.tvAgreement.text = span
 
     binding.tvGoogleLogin.setOnClickListener{
       if(onceCode == null) {

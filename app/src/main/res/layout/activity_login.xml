@@ -1,28 +1,28 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_login"
+    android:background="@color/light_background"
     android:orientation="vertical">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/transparent"
-        app:title=""
-        app:navigationIconTint="@color/back_icon_login"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:contentInsetStartWithNavigation="0dp"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
+        app:navigationIconTint="@color/primary"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:title="">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/log_in_v2ex"
-            android:textAppearance="@style/VText.ToolbarStyle.Light"/>
+            android:textAppearance="@style/VText.ToolbarStyle" />
 
     </com.google.android.material.appbar.MaterialToolbar>
 
@@ -36,68 +36,54 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:paddingLeft="24dp"
-            android:paddingRight="24dp"
-            android:paddingTop="24dp">
+            android:paddingTop="12dp"
+            android:paddingRight="24dp">
 
             <!-- Email Label -->
             <com.google.android.material.textfield.TextInputLayout
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_between_log_in_item"
-                android:layout_marginTop="@dimen/margin_between_log_in_item"
-                app:theme="@style/Theme.V2ex.Login"
-                android:textColorHint="@color/light_hint"
-                app:hintTextAppearance="@style/VText.LightHint">
+                app:hintTextAppearance="@style/VText.Login"
+                app:theme="@style/TextInputStyle">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/username"
-                    android:inputType="textPersonName"
-                    android:textColor="@color/white"/>
+                    android:inputType="textAutoComplete" />
             </com.google.android.material.textfield.TextInputLayout>
 
 
             <!-- Password Label -->
-            <com.google.android.material.textfield.TextInputLayout
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <com.google.android.material.textfield.TextInputLayout xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_between_log_in_item"
-                android:textColorHint="@color/light_hint"
-                android:layout_marginTop="@dimen/margin_between_log_in_item"
-                app:hintTextAppearance="@style/VText.LightHint"
-                app:theme="@style/Theme.V2ex.Login">
+                app:hintTextAppearance="@style/VText.Login"
+                app:theme="@style/TextInputStyle">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/input_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:textColor="@color/white"/>
+                    android:inputType="textPassword"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/margin_between_log_in_item"
-                android:layout_marginTop="@dimen/margin_between_log_in_item">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/textInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:textColorHint="@color/light_hint"
-                    app:hintTextAppearance="@style/VText.LightHint"
+                    app:hintTextAppearance="@style/VText.Login"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/guideline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:theme="@style/Theme.V2ex.Login">
+                    app:theme="@style/TextInputStyle">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etInputCode"
@@ -105,8 +91,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:hint="@string/verify_code"
-                        android:inputType="text"
-                        android:textColor="@color/white" />
+                        android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <ImageView
@@ -131,50 +116,63 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.5" />
+                    app:layout_constraintGuide_percent="0.5041322" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <TextView
+                android:layout_marginTop="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:id="@+id/tvAgreement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="~~~~我了解并遵守《V2EX社区规则》~~~" />
 
             <Button
                 android:id="@+id/btn_login"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/radius_2dp"
-                android:elevation="24dp"
-                android:textColor="@color/icon"
+                android:elevation="18dp"
                 android:text="@string/login"
-                android:textSize="@dimen/text_size_large"/>
+                android:textColor="@color/icon"
+                android:textSize="@dimen/text_size_large" />
 
             <ProgressBar
                 android:id="@+id/pb_login"
-                android:layout_marginTop="24dp"
-                android:indeterminateTint="@color/white"
-                android:visibility="gone"
                 android:layout_width="36dp"
-                android:layout_height="36dp"/>
+                android:layout_height="36dp"
+                android:layout_marginTop="16dp"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone" />
+
 
             <TextView
                 android:id="@+id/link_sign_up"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp"
                 android:padding="8dp"
-                android:layout_marginTop="16dp"
+                android:background="?selectableItemBackground"
                 android:text="@string/register_tip"
-                android:textColor="@color/toolbar_text_light"
-                android:textSize="@dimen/text_size_medium"/>
-            
+                android:textColor="@color/title_text"
+                android:textSize="@dimen/text_size_medium" />
+
             <TextView
-                android:text="@string/google_login"
-                android:textColor="@color/toolbar_text_light"
-                android:padding="8dp"
-                android:textSize="@dimen/text_size_medium"
                 android:id="@+id/tv_google_login"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:background="?selectableItemBackground"
+                android:text="@string/google_login"
+                android:textColor="@color/title_text"
+                android:textSize="@dimen/text_size_medium" />
+
+
 
         </LinearLayout>
     </ScrollView>
