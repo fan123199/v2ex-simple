@@ -97,11 +97,19 @@ class NewTopicActivity : BaseActivity() {
                 val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
                 binding.etContent.setText(sharedText)
             }
+        } else if (action == Keys.ACTION_V2EX_REPORT) {
+            val title = intent.getStringExtra(Intent.EXTRA_TITLE)
+            val sharedText = intent.getStringExtra(Intent.EXTRA_TEXT)
+            binding.etTitle.setText(title)
+            binding.etContent.setText(sharedText)
+            mNodename = "feedback"
+            binding.searchSpinnerNode.text = "feedback | 反馈"
+            binding.searchSpinnerNode.isClickable = false
         }
     }
 
 
-    fun rotate(iv: View) {
+    private fun rotate(iv: View) {
         (iv as ImageView).setImageResource(R.drawable.loading)
         val rotation = AnimationUtils.loadAnimation(this, R.anim.rotate_refresh)
         rotation.repeatCount = Animation.INFINITE
@@ -113,11 +121,14 @@ class NewTopicActivity : BaseActivity() {
         iv.setImageResource(R.drawable.ic_send_primary_24dp)
 
         menu.add(0, MENU_ID_SEND, 1, "send")
-                .setActionView(iv)
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        menu.add(0, MENU_ID_UPLOAD, 0, "upload")
+            .setActionView(iv)
+            .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+
+        if (intent.action != Keys.ACTION_V2EX_REPORT) {
+            menu.add(0, MENU_ID_UPLOAD, 0, "upload")
                 .setIcon(R.drawable.ic_image)
                 .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        }
 
         return true
     }
@@ -189,16 +200,18 @@ class NewTopicActivity : BaseActivity() {
                 }
 
                 val requestBody = FormBody.Builder()
-                        .add("title", mTitle)
-                        .add("content", mContent)
-                        .add("node_name", mNodename)
-                        .add("once", once!!)
-                        .build()
+                    .add("title", mTitle)
+                    .add("content", mContent)
+                    .add("node_name", mNodename)
+                    .add("once", once!!)
+                    .build()
 
-                HttpHelper.OK_CLIENT.newCall(Request.Builder()
+                HttpHelper.OK_CLIENT.newCall(
+                    Request.Builder()
                         .url("https://www.v2ex.com/new")
                         .post(requestBody)
-                        .build()).start(object : Callback {
+                        .build()
+                ).start(object : Callback {
                     override fun onFailure(call1: Call, e: IOException) {
                         resetIcon(item)
                         NetManager.dealError(this@NewTopicActivity)
@@ -208,6 +221,11 @@ class NewTopicActivity : BaseActivity() {
                     override fun onResponse(call1: Call, response2: Response) {
                         resetIcon(item)
                         if (response2.code == 302) {
+                            if (intent.action == Keys.ACTION_V2EX_REPORT) {
+                                toast("用户举报已提交到反馈节点")
+                                finish()
+                                return
+                            }
 
                             val location = response2.header("Location")
                             val p = Pattern.compile("(?<=/t/)(\\d+)")
@@ -221,14 +239,19 @@ class NewTopicActivity : BaseActivity() {
                                 startActivity(intent)
                             }
                             finish()
+
                         } else {
                             val errorMsg = Parser(response2.body!!.string()).getErrorMsg()
                             runOnUiThread {
                                 Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_INDEFINITE)
                                     .setBackgroundTint(ContextCompat.getColor(applicationContext, R.color.primary_dark))
-                                    .setActionTextColor(ContextCompat.getColor(applicationContext, R.color.toolbar_text_light))
-                                    .setAction(R.string.ok, {
-                                    })
+                                    .setActionTextColor(
+                                        ContextCompat.getColor(
+                                            applicationContext,
+                                            R.color.toolbar_text_light
+                                        )
+                                    )
+                                    .setAction(R.string.ok) {}
                                     .show()
                             }
                         }
@@ -248,7 +271,7 @@ class NewTopicActivity : BaseActivity() {
     companion object {
         const val REQUEST_NODE = 123
         const val MENU_ID_SEND = 123
-        const val MENU_ID_UPLOAD =124
+        const val MENU_ID_UPLOAD = 124
 
     }
 }

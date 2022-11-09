@@ -22,8 +22,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import im.fdx.v2ex.BuildConfig
-import im.fdx.v2ex.R
+import im.fdx.v2ex.*
 import im.fdx.v2ex.databinding.ActivityMemberBinding
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.NetManager.API_TOPIC
@@ -33,9 +32,8 @@ import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.pref
-import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.ui.BaseActivity
+import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -43,10 +41,13 @@ import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
+import im.fdx.v2ex.view.BottomSheetMenu
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
+import org.jetbrains.anko.act
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
 import kotlin.math.abs
@@ -98,7 +99,7 @@ class MemberActivity : BaseActivity() {
 
         username = getName(intent)
 
-        if(username.isNullOrEmpty()) {
+        if (username.isNullOrEmpty()) {
             toast("未知问题，无法访问用户信息")
             return
         }
@@ -127,10 +128,10 @@ class MemberActivity : BaseActivity() {
         binding.ctlProfile.title = username
         getByAPI(urlUserInfo)
 
-        if (isMe){
+        if (isMe) {
         } else {
             getByHtml()
-         }
+        }
     }
 
     private fun getByAPI(urlUserInfo: String) {
@@ -145,7 +146,7 @@ class MemberActivity : BaseActivity() {
                     dealError(this@MemberActivity)
                 } else {
                     val body = response.body!!.string()
-                    logi("body:" +body)
+                    logi("body:" + body)
                     member = myGson.fromJson(body, Member::class.java)
                     runOnUiThread { showUser() }
                 }
@@ -206,7 +207,7 @@ class MemberActivity : BaseActivity() {
                 if (!member.location.isNullOrEmpty()) {
                     val contentView = TextView(this@MemberActivity)
                     contentView.text = member.location
-                    val popupWindow = PopupWindow(contentView,WRAP_CONTENT,WRAP_CONTENT)
+                    val popupWindow = PopupWindow(contentView, WRAP_CONTENT, WRAP_CONTENT)
                     popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
                     popupWindow.isOutsideTouchable = true
                     popupWindow.showAsDropDown(it)
@@ -218,8 +219,10 @@ class MemberActivity : BaseActivity() {
                     val intent: Intent
                     try {
                         packageManager.getPackageInfo("com.twitter.android", 0)
-                        intent = Intent(Intent.ACTION_VIEW,
-                                Uri.parse("twitter://user?screen_name=" + member.twitter))
+                        intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("twitter://user?screen_name=" + member.twitter)
+                        )
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         startActivity(intent)
                     } catch (e: Exception) {
@@ -229,27 +232,30 @@ class MemberActivity : BaseActivity() {
             }
             R.id.tv_website -> when {
                 !(member.website).isNullOrEmpty() ->
-                    CustomChrome(this).load(if (!member.website!!.contains("http")) "http://"
-                            + member.website else member.website!!)
+                    CustomChrome(this).load(
+                        if (!member.website!!.contains("http")) "http://"
+                                + member.website else member.website!!
+                    )
             }
         }
     }
 
     @SuppressLint("SetTextI18n")
     private fun showUser() {
-        if(this.isDestroyed) return
+        if (this.isDestroyed) return
 
         binding.viewpager.adapter = MemberViewpagerAdapter(this).apply {
             username = member.username
             avatar = member.avatar_normal
         }
         TabLayoutMediator(binding.tlMember, binding.viewpager) { tab, position ->
-            tab.text =if(position ==0) "主题" else "评论"
+            tab.text = if (position == 0) "主题" else "评论"
         }.attach()
         binding.ivAvatarProfile.load(member.avatarLargeUrl)
         binding.tvTagline.text = member.tagline
         binding.tvIntro.text = member.bio
-        binding.tvPrefixCreated.text = "加入于${TimeUtil.getAbsoluteTime((member.created))},${getString(R.string.the_n_member, member.id)}"
+        binding.tvPrefixCreated.text =
+            "加入于${TimeUtil.getAbsoluteTime((member.created))},${getString(R.string.the_n_member, member.id)}"
 
         binding.ivBitcoin.isGone = member.btc.isNullOrEmpty()
         binding.ivGithub.isGone = member.github.isNullOrEmpty()
@@ -273,6 +279,7 @@ class MemberActivity : BaseActivity() {
         if (username == pref.getString(Keys.PREF_USERNAME, "")) {
             menu.findItem(R.id.menu_block).isVisible = false
             menu.findItem(R.id.menu_follow).isVisible = false
+            menu.findItem(R.id.menu_report).isVisible = false
         }
         return true
     }
@@ -281,47 +288,65 @@ class MemberActivity : BaseActivity() {
         when (item.itemId) {
             R.id.menu_follow -> followOrNot(isFollowed)
             R.id.menu_block -> blockOrNot(isBlocked)
+            R.id.menu_report -> reportAbuse()
             else -> return super.onOptionsItemSelected(item)
         }
         return true
     }
 
+    private fun reportAbuse() {
+        if (!myApp.isLogin) return
+
+        BottomSheetMenu(this)
+            .setTitle("请选择理由")
+            .addItems( listOf("大量发布广告","冒充他人","疑似机器帐号", "其他")) { _, s ->
+                startActivity(Intent(this, NewTopicActivity::class.java).apply {
+                    action = Keys.ACTION_V2EX_REPORT
+                    putExtra(Intent.EXTRA_TITLE, "举报用户 ${member.username} ")
+                    putExtra(Intent.EXTRA_TEXT, "用户首页：https://www.v2ex.com/member/$username \n 该用户涉及 $s，请站长请处理")
+                })
+            }
+            .show()
+
+
+    }
+
     private fun followOrNot(isFollowed: Boolean) {
         vCall("${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "un" else ""}$followOfOnce")
-                .start(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                dealError(this@MemberActivity)
-            }
+            .start(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    dealError(this@MemberActivity)
+                }
 
-            @Throws(IOException::class)
-            override fun onResponse(call: Call, response: Response) {
-                if (response.code == 302) {
-                    getByHtml()
-                    runOnUiThread {
-                        toast("${if (isFollowed) "取消" else ""}关注成功")
+                @Throws(IOException::class)
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.code == 302) {
+                        getByHtml()
+                        runOnUiThread {
+                            toast("${if (isFollowed) "取消" else ""}关注成功")
+                        }
                     }
                 }
-            }
-        })
+            })
     }
 
     private fun blockOrNot(isBlocked: Boolean) {
         vCall("$HTTPS_V2EX_BASE/${if (isBlocked) "un" else ""}$blockOfT")
-                .start(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        dealError(this@MemberActivity)
-                    }
+            .start(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    dealError(this@MemberActivity)
+                }
 
-                    @Throws(IOException::class)
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.code == 302) {
-                            getByHtml()
-                            runOnUiThread {
-                                toast(if (isBlocked) "你已取消屏蔽该用户" else "屏蔽成功，你将无法看到该用户的帖子和评论")
-                            }
+                @Throws(IOException::class)
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.code == 302) {
+                        getByHtml()
+                        runOnUiThread {
+                            toast(if (isBlocked) "你已取消屏蔽该用户" else "屏蔽成功，你将无法看到该用户的帖子和评论")
                         }
                     }
-                })
+                }
+            })
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -348,10 +373,11 @@ class MemberActivity : BaseActivity() {
 
         lateinit var username: String
 
-//        private var _avatar = ""
+        //        private var _avatar = ""
         //目前不好做，先留着
         lateinit var avatar: String
-//            get() {
+
+        //            get() {
 //                return _avatar
 //            }
 //            set(value) {
@@ -359,7 +385,7 @@ class MemberActivity : BaseActivity() {
 //                (getItem(0) as TopicsFragment).updateAvatar(_avatar)
 //            }
         private val titles = arrayOf("主题", "评论")
-        override fun getItemCount()= titles.size
+        override fun getItemCount() = titles.size
 
         override fun createFragment(position: Int) = when (position) {
             0 -> TopicsFragment()

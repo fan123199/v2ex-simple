@@ -7,6 +7,7 @@ package im.fdx.v2ex.utils
 object Keys {
 
 
+
     const val AUTHOR_EMAIL = "fan123199@gmail.com"
 
 
@@ -39,6 +40,7 @@ object Keys {
     const val ACTION_NIGHT_MODE_CHANGE = "im.fdx.v2ex.ACTION_NIGHT_MODE_CHANGE"
     const val ACTION_GET_MORE_REPLY = "im.fdx.v2ex.reply"
     const val ACTION_HIDE_TOPIC = "ACTION_HIDE_TOPIC"
+    const val ACTION_V2EX_REPORT = "ACTION_V2EX_REPORT"
 
     const val FAVOR_FRAGMENT_TYPE = "type"
 

@@ -12,4 +12,10 @@
         android:icon="@drawable/ic_block_white_24dp"
         android:id="@+id/menu_block"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:title="@string/report_abuse"
+        android:icon="@drawable/ic_baseline_report_24"
+        android:id="@+id/menu_report"
+        app:showAsAction="ifRoom" />
 </menu>
