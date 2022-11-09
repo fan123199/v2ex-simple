@@ -302,7 +302,7 @@ class MemberActivity : BaseActivity() {
             .addItems( listOf("大量发布广告","冒充他人","疑似机器帐号", "其他")) { _, s ->
                 startActivity(Intent(this, NewTopicActivity::class.java).apply {
                     action = Keys.ACTION_V2EX_REPORT
-                    putExtra(Intent.EXTRA_TITLE, "举报用户 ${member.username} ")
+                    putExtra(Intent.EXTRA_TITLE, "报告用户 ${member.username} ")
                     putExtra(Intent.EXTRA_TEXT, "用户首页：https://www.v2ex.com/member/$username \n 该用户涉及 $s，请站长请处理")
                 })
             }

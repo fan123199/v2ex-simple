@@ -171,7 +171,7 @@
     <string name="format_user_n">Format: @user #n</string>
     <string name="format_user">Format: @user</string>
     <string name="hide_reply">Hide</string>
-    <string name="report_abuse">report</string>
+    <string name="report_abuse">Report</string>
 
     <string-array name="j" translatable="false">
         <item>风</item>

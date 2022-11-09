@@ -136,5 +136,5 @@
     <string name="format_user_n">格式: @user #n</string>
     <string name="format_user">格式: @user</string>
     <string name="hide_reply">忽略评论</string>
-    <string name="report_abuse">举报</string>
+    <string name="report_abuse">报告问题</string>
 </resources>

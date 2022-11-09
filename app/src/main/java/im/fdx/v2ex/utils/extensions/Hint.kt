@@ -32,13 +32,13 @@ fun Context.dealError(errorCode: Int = -1, swipe: androidx.swiperefreshlayout.wi
     }
 }
 
-@Deprecated(replaceWith = ReplaceWith("showHint"), message = "sdk 31 problem" , level = DeprecationLevel.WARNING)
-fun Fragment.toast(message : CharSequence): Toast? {
+@Deprecated(replaceWith = ReplaceWith("showHint"), message = "sdk 31 problem", level = DeprecationLevel.WARNING)
+fun Fragment.toast(message: CharSequence): Toast? {
     return activity?.let {
         Toast.makeText(activity, message, Toast.LENGTH_SHORT)
-                .apply {
-                    show()
-                }
+            .apply {
+                show()
+            }
     }
 }
 
@@ -64,20 +64,22 @@ fun Any.loge(msg: Any?) {
 }
 
 
-fun Activity.showLoginHint(view: View,message :String =getString(R.string.not_login_tips)) {
+fun Activity.showLoginHint(view: View, message: String = getString(R.string.not_login_tips)) {
     Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-            .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
+        .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
         .setActionTextColor(ContextCompat.getColor(this, R.color.white))
-            .setAction(getString(R.string.login)) {
-                startActivity<LoginActivity>()
-            }.show()
+        .setAction(getString(R.string.login)) {
+            startActivity<LoginActivity>()
+        }.show()
 }
 
 /**
  *  用来代替 toast方法。
  */
-fun Activity.showHint(view: View,message : String) {
-    Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
+fun Activity.showHint(view: View, message: String, length: Int = Snackbar.LENGTH_LONG) {
+    Snackbar.make(view, message, length)
         .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
+        .setActionTextColor(ContextCompat.getColor(this, R.color.white))
+        .setAction(R.string.ok){}
         .show()
 }

@@ -258,6 +258,12 @@ class TopicAdapter(
     }
 
     private fun report(replyItem: Reply, itemVH: ItemViewHolder) {
+
+        if (!MyApp.get().isLogin) {
+            act.showLoginHint(act.findViewById(R.id.et_post_reply))
+            return
+        }
+
         BottomSheetMenu(act)
             .setTitle("请选择理由")
             .addItems(reportReasons) { _, s ->

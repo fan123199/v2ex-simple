@@ -170,10 +170,12 @@ class TopicFragment : BaseFragment() {
             mMenu?.findItem(R.id.menu_favor)?.isVisible = true
             mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = true
             mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = true
+            mMenu?.findItem(R.id.menu_report)?.isVisible = true
         } else {
             mMenu?.findItem(R.id.menu_favor)?.isVisible = false
             mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = false
             mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = false
+            mMenu?.findItem(R.id.menu_report)?.isVisible = false
         }
         //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
         val mLayoutManager = LinearLayoutManager(activity)
@@ -540,7 +542,7 @@ class TopicFragment : BaseFragment() {
                 activity?.runOnUiThread {
                     if (response.code == 302) {
                         logd("成功发布 $content")
-                        toast("已提交举报到管理员")
+                        toast("已提交报告到管理员")
                         binding.swipeDetails?.isRefreshing = true
                         getRepliesPageOne(true)
                     } else {

@@ -218,12 +218,7 @@ class LoginActivity : BaseActivity() {
 
           }
           200 -> runOnUiThread {
-            Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_LONG)
-              .setBackgroundTint(ContextCompat.getColor(applicationContext, R.color.primary_dark))
-              .setActionTextColor(ContextCompat.getColor(applicationContext, R.color.toolbar_text_light))
-              .setAction(R.string.ok, {
-              })
-              .show()
+            showHint(binding.root, errorMsg, Snackbar.LENGTH_INDEFINITE)
             getLoginElement()
             binding.pbLogin.visibility = GONE
             binding.btnLogin.visibility = VISIBLE

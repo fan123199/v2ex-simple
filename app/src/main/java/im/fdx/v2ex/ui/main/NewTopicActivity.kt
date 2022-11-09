@@ -222,7 +222,7 @@ class NewTopicActivity : BaseActivity() {
                         resetIcon(item)
                         if (response2.code == 302) {
                             if (intent.action == Keys.ACTION_V2EX_REPORT) {
-                                toast("用户举报已提交到反馈节点")
+                                toast("用户报告已提交到反馈节点")
                                 finish()
                                 return
                             }
