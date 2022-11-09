@@ -29,7 +29,7 @@ import java.io.IOException
  * A simple [Fragment] subclass.
  * Activities that contain this fragment must implement the
  */
-class NodeFavorFragment : androidx.fragment.app.Fragment() {
+class NodeFavorFragment : Fragment() {
 
   private lateinit var swipe: SwipeRefreshLayout
     private lateinit var adapter: AllNodesAdapter
@@ -43,7 +43,7 @@ class NodeFavorFragment : androidx.fragment.app.Fragment() {
         adapter = AllNodesAdapter(true)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = FlexboxLayoutManager(activity, FlexDirection.ROW).apply {
-            justifyContent = JustifyContent.FLEX_START
+            justifyContent = JustifyContent.SPACE_BETWEEN
         }
 
         swipe = view.findViewById(R.id.swipe_container)
