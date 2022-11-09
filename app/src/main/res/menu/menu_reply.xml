@@ -7,9 +7,19 @@
     <item
         android:id="@+id/menu_thank"
         android:title="@string/thanks" />
+
+    <item android:id="@+id/menu_hide"
+        android:title="@string/hide_reply"/>
+
+    <item android:id="@+id/menu_report_reply"
+        android:title="@string/report_abuse"/>
+
+
     <item
         android:id="@+id/menu_copy"
         android:title="@string/copy_content" />
+
+
     <item android:id="@+id/menu_show_user_all_reply"
         android:title="@string/show_user_all_reply"/>
 

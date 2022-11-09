@@ -89,6 +89,7 @@
                 tools:ignore="Autofill" />
 
             <FrameLayout
+                android:id="@+id/flReply"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"

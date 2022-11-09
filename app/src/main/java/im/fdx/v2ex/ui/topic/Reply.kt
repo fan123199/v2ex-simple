@@ -38,8 +38,10 @@ data class Reply(var id: String = "",
                  var member: Member? = null,
                  var isLouzu: Boolean = false,
                  var showTime: String = "",
-                 var rowNum: Int = 0,
+                 var rowNum: Int = -1,
 ) : Parcelable {
+
+    fun getRowNum(base:Int = 0) : Int = if (rowNum <= 0) base else rowNum
 
     override fun toString() = "Reply{content='$content_rendered}"
 }

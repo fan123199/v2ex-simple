@@ -27,6 +27,7 @@ object Keys {
     const val KEY_TYPE = "key_type"
     const val KEY_TO_CHOOSE_NODE = "go_for_node"
 
+
     //    -------------------------------------------------
     const val ACTION_GET_NOTIFICATION = "im.fdx.v2ex.get.notification"
     const val ACTION_LOGIN = "im.fdx.v2ex.event.login"
@@ -37,6 +38,7 @@ object Keys {
     const val ACTION_TEXT_SIZE_CHANGE = "im.fdx.v2ex.ACTION_TEXT_SIZE_CHANGE"
     const val ACTION_NIGHT_MODE_CHANGE = "im.fdx.v2ex.ACTION_NIGHT_MODE_CHANGE"
     const val ACTION_GET_MORE_REPLY = "im.fdx.v2ex.reply"
+    const val ACTION_HIDE_TOPIC = "ACTION_HIDE_TOPIC"
 
     const val FAVOR_FRAGMENT_TYPE = "type"
 
@@ -46,6 +48,7 @@ object Keys {
 
     const val PREF_KEY_IS_LOGIN = "is_login"
     const val PREF_APP_PREF_VERSION = "PREF_APP_PREF_VERSION"
+
     /* ------------------------------------------------------*/
     const val PREF_ONLY_WIFI = "only_wifi"
     const val PREF_RATES = "pref_rates"
@@ -61,7 +64,8 @@ object Keys {
     //------------------------------------------------
 
 
-
     const val TAG_WORKER = "tag_worker"
     const val KEY_NODE = "extra_node"
+
+    val reportReasons = listOf("垃圾信息", "虚假广告", "骚扰，暴力","引战 无意义", "其他不良信息")
 }

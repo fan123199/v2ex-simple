@@ -26,8 +26,7 @@ import java.io.IOException
 
 
 /**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
+ * 在主题收藏下的节点页面。 图标+文字的图标形式
  */
 class NodeFavorFragment : Fragment() {
 

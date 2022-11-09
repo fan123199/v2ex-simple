@@ -185,6 +185,7 @@ class MemberActivity : BaseActivity() {
                         }
 
                         binding.tvOnline.isVisible = isOnline
+                        binding.viewpager.isVisible = !isBlocked
 
                     }
 
@@ -316,7 +317,7 @@ class MemberActivity : BaseActivity() {
                         if (response.code == 302) {
                             getByHtml()
                             runOnUiThread {
-                                toast("${if (isBlocked) "取消" else ""}屏蔽成功")
+                                toast(if (isBlocked) "你已取消屏蔽该用户" else "屏蔽成功，你将无法看到该用户的帖子和评论")
                             }
                         }
                     }

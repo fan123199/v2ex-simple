@@ -10,12 +10,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ItemReplyViewBinding
 
-class BottomListSheet(var list: List<Reply>) : BottomSheetDialogFragment(){
+internal class BottomReplyList(var list: List<Reply>) : BottomSheetDialogFragment(){
 
 
     companion object {
-        fun newInstance(list: List<Reply>): BottomListSheet {
-            return BottomListSheet(list)
+        fun newInstance(list: List<Reply>): BottomReplyList {
+            return BottomReplyList(list)
         }
     }
 

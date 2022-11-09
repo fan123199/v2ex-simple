@@ -1,7 +1,6 @@
 package im.fdx.v2ex.utils.extensions
 
 import java.net.URLDecoder
-import java.net.URLEncoder
 
 /**
  * Created by fdx on 2017/7/3.
@@ -47,7 +46,7 @@ fun String.getNum(): String {
  * 获取 @abcd #rownum
  * return rownum
  */
-fun String.getRowNum(name: String): Int {
+fun String.findRownum(name: String): Int {
     val str = """(?<=${name}\s{1,4}#)\d+"""
     val findAll = Regex(str).findAll(this)
 

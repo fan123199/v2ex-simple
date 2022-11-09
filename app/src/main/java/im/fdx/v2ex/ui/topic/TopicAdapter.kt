@@ -1,6 +1,7 @@
 package im.fdx.v2ex.ui.topic
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -18,7 +19,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import com.google.gson.JsonParser
 import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.R
@@ -31,15 +31,12 @@ import im.fdx.v2ex.ui.main.TopicsRVAdapter
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.TimeUtil
-import im.fdx.v2ex.utils.extensions.getRowNum
+import im.fdx.v2ex.utils.Keys.reportReasons
+import im.fdx.v2ex.utils.extensions.findRownum
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.showLoginHint
-import im.fdx.v2ex.view.GoodTextView
-import im.fdx.v2ex.view.Popup
-import im.fdx.v2ex.view.typeComment
-import im.fdx.v2ex.view.typeReply
+import im.fdx.v2ex.view.*
 import okhttp3.*
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
@@ -55,6 +52,7 @@ private const val TYPE_ITEM = 1
  */
 class TopicAdapter(
     private val act: FragmentActivity,
+    private val topicFragment: TopicFragment,
     private val clickMore: (Int) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -146,6 +144,17 @@ class TopicAdapter(
                         thank(replyItem, itemVH)
                         true
                     }
+
+                    menu.findItem(R.id.menu_hide).setOnMenuItemClickListener {
+                        hide(replyItem, itemVH)
+                        true
+                    }
+
+                    menu.findItem(R.id.menu_report_reply).setOnMenuItemClickListener {
+                        report(replyItem, itemVH)
+                        true
+                    }
+
                     menu.findItem(R.id.menu_copy).setOnMenuItemClickListener {
                         copyText(replyItem.content)
                         true
@@ -186,12 +195,12 @@ class TopicAdapter(
                         //问题，index可能用户输入不准确，导致了我的这个点击会出现错误。 也有可能是黑名单能影响，导致了
                         //了这个错误，所以，我需要进行大数据排错。
                         //rowNum 是真是的楼层数， 但是在数组的index = rowNum -1
-                        var rowNum = replyItem.content.getRowNum(username)
+                        var rowNum = replyItem.content.findRownum(username)
                         //找不到，或大于，明显不可能，取最接近一个评论
                         if (rowNum == -1 || rowNum > position) {
                             replies.forEachIndexed { i, r ->
                                 if (i in 0 until position && r.member?.username == username) {
-                                    rowNum = i + 1
+                                    rowNum = r.getRowNum(i + 1)
                                 }
                             }
                         }
@@ -206,13 +215,64 @@ class TopicAdapter(
         }
     }
 
+    private fun hide(replyItem: Reply, itemVH: ItemViewHolder) {
+        logd("once: $once")
+        val editText: EditText = act.findViewById(R.id.et_post_reply)
+        if (!MyApp.get().isLogin) {
+            act.showLoginHint(editText)
+            return
+        }
+
+        if (once == null) {
+            act.toast("请刷新页面后重试")
+            return
+        }
+        HttpHelper.OK_CLIENT.newCall(
+            Request.Builder()
+                .url("https://www.v2ex.com/ignore/reply/${replyItem.id}")
+                .post(FormBody.Builder().add("once", once!!).build())
+                .build()
+        ).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                NetManager.dealError(act)
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                if (response.code == 200) {
+                    act.runOnUiThread {
+                        act.toast("忽略成功")
+                        val i = replies.indexOfFirst { it.id == replyItem.id }
+                        if (i > 0) {
+                            replies.removeAt(i)
+                            notifyItemRemoved(i + 1)
+                        }
+                    }
+                } else {
+                    NetManager.dealError(act, response.code)
+                }
+            }
+        })
+        return
+
+    }
+
+    private fun report(replyItem: Reply, itemVH: ItemViewHolder) {
+        BottomSheetMenu(act)
+            .setTitle("请选择理由")
+            .addItems(reportReasons) { _, s ->
+                topicFragment.postReplyImply("#${replyItem.getRowNum(itemVH.bindingAdapterPosition)} 该评论涉及$s @Livid" )
+            }
+            .show()
+    }
+
     private fun showUserAllReply(replyItem: Reply) {
 
         val theUserReplyList = replies.filter {
             it.member != null && it.member?.username == replyItem.member?.username
         }
 
-        val bs = BottomListSheet.newInstance(theUserReplyList)
+        val bs = BottomReplyList.newInstance(theUserReplyList)
         bs.show(act.supportFragmentManager, "list_of_user_all_reply")
     }
 
@@ -223,7 +283,7 @@ class TopicAdapter(
         var theOtherName = ""
         if (replyItem.content_rendered.contains("v2ex.com/member/")) {//说明有对话
 
-            var find = """(?<=v2ex\.com/member/)\w+""".toRegex().find(replyItem.content_rendered)
+            val find = """(?<=v2ex\.com/member/)\w+""".toRegex().find(replyItem.content_rendered)
             find?.let {
                 theOtherName = it.value
             }
@@ -237,17 +297,14 @@ class TopicAdapter(
             if (theUserReplyList.isEmpty()) {
                 return
             }
-            val bs = BottomListSheet.newInstance(theUserReplyList)
+            val bs = BottomReplyList.newInstance(theUserReplyList)
             bs.show(act.supportFragmentManager, "user_conversation")
         }
     }
 
     fun hasRelate(name: String, item: Reply): Boolean {
-        var find = """v2ex\.com/member/$name""".toRegex().find(item.content_rendered)
-        find?.let {
-            return true
-        }
-        return false
+        val find = """v2ex\.com/member/$name""".toRegex().matches(item.content_rendered)
+        return find
     }
 
     private fun copyText(content: String) {
@@ -266,7 +323,7 @@ class TopicAdapter(
         }
 
         if (once == null) {
-            act.toast("请刷新后重试")
+            act.toast("请刷新页面后重试")
             return
         }
 
@@ -325,7 +382,7 @@ class TopicAdapter(
         }
 
         val text = "@${replyItem.member!!.username} " +
-                if (pref.getBoolean("pref_add_row", false)) "#$position " else ""
+                if (pref.getBoolean("pref_add_row", false)) "#${replyItem.getRowNum(position)} " else ""
         if (!editText.text.toString().contains(text)) {
             val spanString = SpannableString(text)
             val span = ForegroundColorSpan(ContextCompat.getColor(act, R.color.primary))
@@ -355,7 +412,6 @@ class TopicAdapter(
         this.replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
             it.showTime = it.createdOriginal
-            it.rowNum = index + 1 //这个方法已经对拉黑和删除情况有效
         }
         notifyDataSetChanged()
     }
@@ -365,7 +421,6 @@ class TopicAdapter(
         this.replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
             it.showTime = it.createdOriginal
-            it.rowNum = index + 1 //这个方法已经对拉黑和删除情况有效
         }
         notifyDataSetChanged()
     }
@@ -385,7 +440,7 @@ class ItemViewHolder(var binding: ItemReplyViewBinding) : RecyclerView.ViewHolde
 
         binding.tvReplyContent.setGoodText(data.content_rendered, type = typeReply)
         binding.tvLouzu.visibility = if (data.isLouzu) View.VISIBLE else View.GONE
-        binding.tvReplyRow.text = "# ${data.rowNum}"
+        binding.tvReplyRow.text = "# ${data.getRowNum(bindingAdapterPosition)}"
         binding.tvReplier.text = data.member?.username
         binding.tvThanks.text = data.thanks.toString()
         binding.ivReplyAvatar.load(data.member?.avatarNormalUrl)

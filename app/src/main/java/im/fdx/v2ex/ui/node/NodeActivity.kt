@@ -94,9 +94,7 @@ class NodeActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_node, menu)
         mMenu = menu!!
-        if (!MyApp.get().isLogin) {
-            menu.findItem(R.id.menu_follow)?.isVisible = false
-        }
+        menu.findItem(R.id.menu_follow)?.isVisible = false
         return true
     }
 
@@ -171,9 +169,11 @@ class NodeActivity : BaseActivity() {
                 } catch (e: Exception) {
                     NetManager.dealError(this@NodeActivity, errorMsg = e.message ?: "unknown error")
                 }
+
                 isFollowed = parser.isNodeFollowed()
                 token = parser.getOnce()
                 runOnUiThread {
+
                     if (isFinishing || isDestroyed) {
                         return@runOnUiThread
                     }
@@ -190,6 +190,9 @@ class NodeActivity : BaseActivity() {
                     binding.ctlNode.title = mNode?.title
                     binding.tvNodeDetails.text = mNode?.header
                     binding.tvTopicNum.text = getString(R.string.topic_number, mNode?.topics)
+                    if (MyApp.get().isLogin) {
+                        mMenu.findItem(R.id.menu_follow)?.isVisible = true
+                    }
                     if (isFollowed) {
                         mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_blue_24dp)
                     } else {

@@ -47,6 +47,14 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     return mTopicList
   }
 
+  fun removeItem(itemId: String) {
+    val i = mTopicList.indexOfFirst { it.id == itemId }
+    if (i!=-1) {
+      mTopicList.removeAt(i)
+      notifyItemRemoved(i)
+    }
+  }
+
   fun clear() {
     mTopicList.clear()
   }

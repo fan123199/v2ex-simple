@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.topic
 
+import android.app.Activity
 import android.content.*
 import android.content.res.ColorStateList
 import android.net.Uri
@@ -29,14 +30,18 @@ import im.fdx.v2ex.databinding.ActivityDetailsContentBinding
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.BaseFragment
+import im.fdx.v2ex.ui.favor.FavorViewPagerAdapter.Companion.titles
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.Keys.reportReasons
 import im.fdx.v2ex.utils.extensions.*
+import im.fdx.v2ex.view.BottomSheetMenu
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
 import org.jetbrains.anko.share
+import org.jetbrains.anko.toast
 import java.io.IOException
 import java.lang.Exception
 
@@ -145,6 +150,15 @@ class TopicFragment : BaseFragment() {
                             //ignore who has no chrome
                         }
                     }
+                    R.id.menu_report -> {
+
+                        BottomSheetMenu(requireActivity())
+                            .setTitle("请选择理由")
+                            .addItems(reportReasons) { _, s ->
+                                postReplyImply("该帖子涉及$s @Livid")
+                            }
+                            .show()
+                    }
                 }
                 true
             }
@@ -186,7 +200,7 @@ class TopicFragment : BaseFragment() {
             }
         })
 
-        mAdapter = TopicAdapter(requireActivity()) { position: Int ->
+        mAdapter = TopicAdapter(requireActivity(), this) { position: Int ->
             binding.detailRecyclerView.smoothScrollToPosition(position)
         }
         binding.detailRecyclerView.adapter = mAdapter
@@ -201,7 +215,7 @@ class TopicFragment : BaseFragment() {
             }
         }
 
-        binding.ivSend.setOnClickListener {
+        (binding.flReply).setOnClickListener {
             postReply()
         }
 
@@ -211,10 +225,10 @@ class TopicFragment : BaseFragment() {
 
             override fun afterTextChanged(s: Editable) {
                 if (s.isEmpty()) {
-                    binding.ivSend.isClickable = false
+                    binding.flReply.isClickable = false
                     binding.ivSend.imageTintList = null
                 } else {
-                    binding.ivSend.isClickable = true
+                    binding.flReply.isClickable = true
                     binding.ivSend.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(activity!!, R.color.primary))
                 }
                 temp =  s.toString()
@@ -433,7 +447,11 @@ class TopicFragment : BaseFragment() {
                     override fun onResponse(call: Call, response: Response) {
                         if (response.code == 302) {
                             activity?.runOnUiThread {
-                                toast("${if (isIgnored) "取消" else ""}忽略成功")
+                                LocalBroadcastManager.getInstance(myApp).sendBroadcast(Intent(Keys.ACTION_HIDE_TOPIC).apply {
+                                    putExtra(Keys.KEY_TOPIC_ID, topicId)
+                                })
+                                myApp.toast("${if (isIgnored) "取消" else ""}屏蔽成功")
+                                activity?.finish()
                             }
                         } else {
                             NetManager.dealError(activity, response.code)
@@ -447,25 +465,25 @@ class TopicFragment : BaseFragment() {
         binding.etPostReply.clearFocus()
         logd("I clicked")
         if(once == null ) {
-            toast("发布失败，请刷新后重试")
+            toast("发布失败，请刷新页面后重试")
             return
         }
         val content = binding.etPostReply.text.toString()
         val requestBody = FormBody.Builder()
-                .add("content", content)
-                .add("once", once!!)
-                .build()
+            .add("content", content)
+            .add("once", once!!)
+            .build()
 
         binding.pbSend.visibility = View.VISIBLE
         binding.ivSend.visibility = View.INVISIBLE
 
         HttpHelper.OK_CLIENT.newCall(Request.Builder()
-                .header("Origin", NetManager.HTTPS_V2EX_BASE)
-                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-                .post(requestBody)
-                .build()).enqueue(object : Callback {
+            .header("Origin", NetManager.HTTPS_V2EX_BASE)
+            .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+            .post(requestBody)
+            .build()).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
@@ -488,6 +506,45 @@ class TopicFragment : BaseFragment() {
                         getRepliesPageOne(true)
                     } else {
                         toast("发表评论失败")
+                        binding.swipeDetails?.isRefreshing = true
+                        getRepliesPageOne(true)
+                    }
+                }
+            }
+        })
+    }
+
+
+    //仅仅发送评论，不包含UI处理
+    fun postReplyImply(content : String) {
+               logd("post Reply Implement")
+        val requestBody = FormBody.Builder()
+            .add("content", content)
+            .add("once", once!!)
+            .build()
+
+        HttpHelper.OK_CLIENT.newCall(Request.Builder()
+            .header("Origin", NetManager.HTTPS_V2EX_BASE)
+            .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+            .post(requestBody)
+            .build()).enqueue(object : Callback {
+
+            override fun onFailure(call: Call, e: IOException) {
+                NetManager.dealError(activity, swipe = binding.swipeDetails)
+            }
+
+            @Throws(IOException::class)
+            override fun onResponse(call: Call, response: Response) {
+                activity?.runOnUiThread {
+                    if (response.code == 302) {
+                        logd("成功发布 $content")
+                        toast("已提交举报到管理员")
+                        binding.swipeDetails?.isRefreshing = true
+                        getRepliesPageOne(true)
+                    } else {
+                        toast("发生错误，请重试")
                         binding.swipeDetails?.isRefreshing = true
                         getRepliesPageOne(true)
                     }

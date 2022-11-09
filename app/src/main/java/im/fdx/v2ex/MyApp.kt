@@ -38,7 +38,7 @@ class MyApp : Application() {
 
   companion object {
     private lateinit var INSTANCE: MyApp
-    fun get(): MyApp {
+    internal fun get(): MyApp {
       return INSTANCE
     }
   }

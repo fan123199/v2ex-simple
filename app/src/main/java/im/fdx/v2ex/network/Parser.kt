@@ -295,6 +295,10 @@ class Parser(private val htmlStr: String) {
             replyModel.member = memberModel
             replyModel.thanks = thanks
 
+
+            val i: Int = item.getElementsByClass("no").first()?.text()?.toIntOrNull()?: -1
+            replyModel.rowNum = i
+
             replyModel.id = id
             replyModel.content = replyContent?.text() ?: ""
             replyModel.content_rendered = replyContent?.html()?.fullUrl()?:""

@@ -1,12 +1,19 @@
 package im.fdx.v2ex.ui.main
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.core.app.ActivityCompat.invalidateOptionsMenu
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -14,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
+import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.API_HEATED
 import im.fdx.v2ex.ui.main.model.SearchResult
@@ -52,10 +60,34 @@ class TopicsFragment : Fragment() {
   var currentMode = FROM_HOME
   var totalPage = 0
 
+  private val receiver = object : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+
+      val action = intent.action
+      logd("getAction: $action")
+      val itemId = intent.getStringExtra(Keys.KEY_TOPIC_ID)
+      when (action) {
+        Keys.ACTION_HIDE_TOPIC -> {
+
+          itemId?.let { mAdapter.removeItem(it) }
+        }
+      }
+    }
+  }
+
+  override fun onAttach(context: Context) {
+    super.onAttach(context)
+    LocalBroadcastManager.getInstance(myApp).registerReceiver(receiver, IntentFilter(Keys.ACTION_HIDE_TOPIC))
+  }
+
+  override fun onDetach() {
+    super.onDetach()
+    LocalBroadcastManager.getInstance(myApp).registerReceiver(receiver, IntentFilter(Keys.ACTION_HIDE_TOPIC))
+  }
+
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                             savedInstanceState: Bundle?): View? {
     val layout = inflater.inflate(R.layout.fragment_tab_article, container, false)
-
     mSwipeLayout = layout.findViewById(R.id.swipe_container)
     mSwipeLayout.initTheme()
     mSwipeLayout.setOnRefreshListener { refresh() }

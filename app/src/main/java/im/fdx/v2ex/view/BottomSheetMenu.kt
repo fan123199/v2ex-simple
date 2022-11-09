@@ -7,6 +7,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import im.fdx.v2ex.R
 
@@ -20,11 +21,20 @@ class BottomSheetMenu(private val activity: Activity) {
 
     private val bottomSheet: BottomSheetDialog = BottomSheetDialog(activity, R.style.BottomSheetDialogStyle)
     private var container: LinearLayout
+    private var tvTitle: TextView
 
     init {
         val contentView = LayoutInflater.from(activity).inflate(R.layout.popwindow_bottom, null, false)
         container = contentView.findViewById(R.id.linear)
+        tvTitle = contentView.findViewById(R.id.tvTitle)
         bottomSheet.setContentView(contentView)
+    }
+
+
+    fun setTitle(title:String) :BottomSheetMenu {
+        tvTitle.text = title
+        tvTitle.isVisible = true
+        return this
     }
 
 
@@ -37,6 +47,15 @@ class BottomSheetMenu(private val activity: Activity) {
         }
         val p = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         container.addView(view, p)
+        return this
+    }
+
+    fun addItems(titles: List<String>, action: (Int,String) -> Unit): BottomSheetMenu {
+        titles.forEachIndexed { index, s ->
+            addItem(s) {
+                action(index, s)
+            }
+        }
         return this
     }
 
