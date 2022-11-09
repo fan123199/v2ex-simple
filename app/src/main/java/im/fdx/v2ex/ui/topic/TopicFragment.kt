@@ -64,7 +64,7 @@ class TopicFragment : BaseFragment() {
     private var isThanked: Boolean = false
     private var isIgnored: Boolean = false
 
-    private var temp :String = ""
+    private var temp: String = ""
     private val uiScope = CoroutineScope(Dispatchers.Main)
 
     private var receiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -106,12 +106,12 @@ class TopicFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         LocalBroadcastManager.getInstance(myApp)
-                .registerReceiver(receiver, IntentFilter()
-                        .apply {
-                            addAction(Keys.ACTION_LOGIN)
-                            addAction(Keys.ACTION_LOGOUT)
-                            addAction(Keys.ACTION_GET_MORE_REPLY)
-                        })
+            .registerReceiver(receiver, IntentFilter()
+                .apply {
+                    addAction(Keys.ACTION_LOGIN)
+                    addAction(Keys.ACTION_LOGOUT)
+                    addAction(Keys.ACTION_GET_MORE_REPLY)
+                })
         setFootView()
 
         mTopicId = (arguments?.get(Keys.KEY_TOPIC_ID) as String?) ?: ""
@@ -127,16 +127,40 @@ class TopicFragment : BaseFragment() {
 
             setOnMenuItemClickListener {
                 when (it.itemId) {
-
-                    R.id.menu_favor -> once?.let { once -> favorOrNot(mTopicId, once, isFavored) }
+                    R.id.menu_favor -> {
+                        if (!myApp.isLogin) {
+                            activity?.showLoginHint(binding.root)
+                        }
+                        once?.let { once -> favorOrNot(mTopicId, once, isFavored) }
+                    }
                     R.id.menu_ignore_topic -> {
-                        once?.let {once ->  ignoreTopicOrNot(mTopicId, once, isIgnored)  }
+                        if (!myApp.isLogin) {
+                            activity?.showLoginHint(binding.root)
+                        } else
+                            once?.let { once -> ignoreTopicOrNot(mTopicId, once, isIgnored) }
                     }
                     R.id.menu_thank_topic -> {
-                        once?.let {once -> thankTopic(mTopicId, once, isThanked) }
+                        if (!myApp.isLogin) {
+                            activity?.showLoginHint(binding.root)
+                        } else
+                            once?.let { once -> thankTopic(mTopicId, once, isThanked) }
                     }
-                    R.id.menu_item_share -> activity?.share("来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
-                            " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}")
+                    R.id.menu_report -> {
+                        if (!myApp.isLogin) {
+                            activity?.showLoginHint(binding.root)
+                        } else {
+                            BottomSheetMenu(requireActivity())
+                                .setTitle("请选择理由")
+                                .addItems(reportReasons) { _, s ->
+                                    postReplyImply("该帖子涉及$s @Livid")
+                                }
+                                .show()
+                        }
+                    }
+                    R.id.menu_item_share -> activity?.share(
+                        "来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
+                                " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}"
+                    )
                     R.id.menu_item_open_in_browser -> {
                         val topicId = mAdapter.topics[0].id
                         val url = NetManager.HTTPS_V2EX_BASE + "/t/" + topicId
@@ -150,15 +174,7 @@ class TopicFragment : BaseFragment() {
                             //ignore who has no chrome
                         }
                     }
-                    R.id.menu_report -> {
 
-                        BottomSheetMenu(requireActivity())
-                            .setTitle("请选择理由")
-                            .addItems(reportReasons) { _, s ->
-                                postReplyImply("该帖子涉及$s @Livid")
-                            }
-                            .show()
-                    }
                 }
                 true
             }
@@ -166,17 +182,17 @@ class TopicFragment : BaseFragment() {
 
 
         mMenu = binding.toolbar.menu
-        if (MyApp.get().isLogin) {
-            mMenu?.findItem(R.id.menu_favor)?.isVisible = true
-            mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = true
-            mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = true
-            mMenu?.findItem(R.id.menu_report)?.isVisible = true
-        } else {
-            mMenu?.findItem(R.id.menu_favor)?.isVisible = false
-            mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = false
-            mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = false
-            mMenu?.findItem(R.id.menu_report)?.isVisible = false
-        }
+//        if (MyApp.get().isLogin) {
+//            mMenu?.findItem(R.id.menu_favor)?.isVisible = true
+//            mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = true
+//            mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = true
+//            mMenu?.findItem(R.id.menu_report)?.isVisible = true
+//        } else {
+//            mMenu?.findItem(R.id.menu_favor)?.isVisible = false
+//            mMenu?.findItem(R.id.menu_thank_topic)?.isVisible = false
+//            mMenu?.findItem(R.id.menu_ignore_topic)?.isVisible = false
+//            mMenu?.findItem(R.id.menu_report)?.isVisible = false
+//        }
         //// 这个Scroll 到顶部的bug，是focus的原因，focus会让系统自动滚动
         val mLayoutManager = LinearLayoutManager(activity)
         binding.detailRecyclerView.layoutManager = mLayoutManager
@@ -212,7 +228,8 @@ class TopicFragment : BaseFragment() {
         binding.etPostReply.setOnFocusChangeListener { v, hasFocus ->
 
             if (!hasFocus) {
-                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val inputMethodManager =
+                    requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(v.windowToken, 0)
             }
         }
@@ -231,9 +248,10 @@ class TopicFragment : BaseFragment() {
                     binding.ivSend.imageTintList = null
                 } else {
                     binding.flReply.isClickable = true
-                    binding.ivSend.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(activity!!, R.color.primary))
+                    binding.ivSend.imageTintList =
+                        ColorStateList.valueOf(ContextCompat.getColor(activity!!, R.color.primary))
                 }
-                temp =  s.toString()
+                temp = s.toString()
             }
 
         })
@@ -243,14 +261,13 @@ class TopicFragment : BaseFragment() {
         }
 
         uiScope.launch {
-            val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content?:""
+            val text = DbHelper.db.myReplyDao().getMyReplyById(mTopicId)?.content ?: ""
             binding.etPostReply.setText(text)
         }
 
         binding.swipeDetails.isRefreshing = true
         getRepliesPageOne(false)
     }
-
 
 
     // 设置渐变的动画
@@ -276,7 +293,7 @@ class TopicFragment : BaseFragment() {
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
                     binding.swipeDetails?.isRefreshing = false
-                    activity?.showHint(binding.etPostReply ,"无法打开该主题")
+                    activity?.showHint(binding.etPostReply, "无法打开该主题")
 
                 }
             }
@@ -288,20 +305,20 @@ class TopicFragment : BaseFragment() {
                     //权限问题，需要登录
                     activity?.runOnUiThread {
                         binding.swipeDetails?.isRefreshing = false
-                    if(!myApp.isLogin) {
-                        activity?.showLoginHint(binding.etPostReply)
-                    } else {
-                        if(this@TopicFragment.isVisible){
-                            activity?.showHint(binding.etPostReply ,"你要查看的页面可能遭遇权限问题");
+                        if (!myApp.isLogin) {
+                            activity?.showLoginHint(binding.etPostReply)
+                        } else {
+                            if (this@TopicFragment.isVisible) {
+                                activity?.showHint(binding.etPostReply, "你要查看的页面可能遭遇权限问题");
+                            }
                         }
-                    }
                     }
                     return
                 }
                 if (code != 200) {
                     activity?.runOnUiThread {
                         binding.swipeDetails?.isRefreshing = false
-                        activity?.showHint(binding.etPostReply ,"无法打开该主题")
+                        activity?.showHint(binding.etPostReply, "无法打开该主题")
                     }
                     return
                 }
@@ -313,7 +330,7 @@ class TopicFragment : BaseFragment() {
                 try {
                     topicHeader = parser.parseResponseToTopic(mTopicId)
                     repliesFirstPage = parser.getReplies()
-                } catch (e: Exception){
+                } catch (e: Exception) {
                     FirebaseCrashlytics.getInstance().recordException(e)
                     activity?.runOnUiThread {
                         toast("未知内容错误")
@@ -379,61 +396,65 @@ class TopicFragment : BaseFragment() {
 
 
         val compressionWork = OneTimeWorkRequestBuilder<GetMoreRepliesWorker>()
-                .setInputData(workDataOf(
-                        "page" to totalPage,
-                        "topic_id" to mTopicId,
-                        "bottom" to scrollToBottom
-                ))
-                .build()
+            .setInputData(
+                workDataOf(
+                    "page" to totalPage,
+                    "topic_id" to mTopicId,
+                    "bottom" to scrollToBottom
+                )
+            )
+            .build()
         WorkManager.getInstance().enqueue(compressionWork)
     }
 
     //<a href="/favorite/topic/809961?once=78809" class="tb">加入收藏</a>
     private fun favorOrNot(topicId: String, once: String, doFavor: Boolean) {
         vCall("${NetManager.HTTPS_V2EX_BASE}/${if (doFavor) "un" else ""}favorite/topic/$topicId?once=$once")
-                .start(object : Callback {
+            .start(object : Callback {
 
-                    override fun onFailure(call: Call, e: IOException) {
-                        NetManager.dealError(activity, swipe = binding.swipeDetails)
-                    }
+                override fun onFailure(call: Call, e: IOException) {
+                    NetManager.dealError(activity, swipe = binding.swipeDetails)
+                }
 
-                    @Throws(IOException::class)
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.code == 302) {
-                            activity?.runOnUiThread {
-                                toast("${if (doFavor) "取消" else ""}收藏成功")
-                                binding.swipeDetails?.isRefreshing = true
-                                getRepliesPageOne(false)
-                            }
+                @Throws(IOException::class)
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.code == 302) {
+                        activity?.runOnUiThread {
+                            toast("${if (doFavor) "取消" else ""}收藏成功")
+                            binding.swipeDetails?.isRefreshing = true
+                            getRepliesPageOne(false)
                         }
                     }
-                })
+                }
+            })
     }
 
     //  <a href="#;" onclick="if (confirm('你确定要向本主题创建者发送谢意？')) { thankTopic(809961, '78809'); }" class="tb">感谢</a>
     private fun thankTopic(topicId: String, once: String, isThanked: Boolean) {
         if (isThanked) return
         val body = FormBody.Builder().add("once", once).build()
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
+        HttpHelper.OK_CLIENT.newCall(
+            Request.Builder()
                 .url("https://www.v2ex.com/thank/topic/$topicId")
                 .post(body)
-                .build())
-                .start(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        NetManager.dealError(activity)
-                    }
+                .build()
+        )
+            .start(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    NetManager.dealError(activity)
+                }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.code == 200) {
-                            activity?.runOnUiThread {
-                                toast("感谢成功")
-                                mMenu?.findItem(R.id.menu_thank_topic)?.setTitle(R.string.already_thank)
-                            }
-                        } else {
-                            NetManager.dealError(activity, response.code)
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.code == 200) {
+                        activity?.runOnUiThread {
+                            toast("感谢成功")
+                            mMenu?.findItem(R.id.menu_thank_topic)?.setTitle(R.string.already_thank)
                         }
+                    } else {
+                        NetManager.dealError(activity, response.code)
                     }
-                })
+                }
+            })
     }
 
 
@@ -441,32 +462,33 @@ class TopicFragment : BaseFragment() {
     ///ignore/topic/605954?once=10562
     private fun ignoreTopicOrNot(topicId: String, once: String, isIgnored: Boolean) {
         vCall("https://www.v2ex.com/${if (isIgnored) "un" else ""}ignore/topic/$topicId?once=$once")
-                .start(object : Callback {
-                    override fun onFailure(call: Call, e: IOException) {
-                        NetManager.dealError(activity)
-                    }
+            .start(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    NetManager.dealError(activity)
+                }
 
-                    override fun onResponse(call: Call, response: Response) {
-                        if (response.code == 302) {
-                            activity?.runOnUiThread {
-                                LocalBroadcastManager.getInstance(myApp).sendBroadcast(Intent(Keys.ACTION_HIDE_TOPIC).apply {
+                override fun onResponse(call: Call, response: Response) {
+                    if (response.code == 302) {
+                        activity?.runOnUiThread {
+                            LocalBroadcastManager.getInstance(myApp)
+                                .sendBroadcast(Intent(Keys.ACTION_HIDE_TOPIC).apply {
                                     putExtra(Keys.KEY_TOPIC_ID, topicId)
                                 })
-                                myApp.toast("${if (isIgnored) "取消" else ""}屏蔽成功")
-                                activity?.finish()
-                            }
-                        } else {
-                            NetManager.dealError(activity, response.code)
+                            myApp.toast("${if (isIgnored) "取消" else ""}屏蔽成功")
+                            activity?.finish()
                         }
+                    } else {
+                        NetManager.dealError(activity, response.code)
                     }
-                })
+                }
+            })
 
     }
 
     private fun postReply() {
         binding.etPostReply.clearFocus()
         logd("I clicked")
-        if(once == null ) {
+        if (once == null) {
             toast("发布失败，请刷新页面后重试")
             return
         }
@@ -479,13 +501,15 @@ class TopicFragment : BaseFragment() {
         binding.pbSend.visibility = View.VISIBLE
         binding.ivSend.visibility = View.INVISIBLE
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-            .header("Origin", NetManager.HTTPS_V2EX_BASE)
-            .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-            .post(requestBody)
-            .build()).enqueue(object : Callback {
+        HttpHelper.OK_CLIENT.newCall(
+            Request.Builder()
+                .header("Origin", NetManager.HTTPS_V2EX_BASE)
+                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .post(requestBody)
+                .build()
+        ).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
@@ -518,20 +542,22 @@ class TopicFragment : BaseFragment() {
 
 
     //仅仅发送评论，不包含UI处理
-    fun postReplyImply(content : String) {
-               logd("post Reply Implement")
+    fun postReplyImply(content: String) {
+        logd("post Reply Implement")
         val requestBody = FormBody.Builder()
             .add("content", content)
             .add("once", once!!)
             .build()
 
-        HttpHelper.OK_CLIENT.newCall(Request.Builder()
-            .header("Origin", NetManager.HTTPS_V2EX_BASE)
-            .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
-            .post(requestBody)
-            .build()).enqueue(object : Callback {
+        HttpHelper.OK_CLIENT.newCall(
+            Request.Builder()
+                .header("Origin", NetManager.HTTPS_V2EX_BASE)
+                .header("Referer", NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .url(NetManager.HTTPS_V2EX_BASE + "/t/" + mTopicId)
+                .post(requestBody)
+                .build()
+        ).enqueue(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 NetManager.dealError(activity, swipe = binding.swipeDetails)

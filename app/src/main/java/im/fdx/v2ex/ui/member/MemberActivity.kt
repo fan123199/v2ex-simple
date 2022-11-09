@@ -37,10 +37,7 @@ import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
-import im.fdx.v2ex.utils.extensions.load
-import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.logi
-import im.fdx.v2ex.utils.extensions.setUpToolbar
+import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.BottomSheetMenu
 import im.fdx.v2ex.view.CustomChrome
 import okhttp3.Call
@@ -295,7 +292,10 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun reportAbuse() {
-        if (!myApp.isLogin) return
+        if (!myApp.isLogin) {
+            showLoginHint(binding.root)
+            return
+        }
 
         BottomSheetMenu(this)
             .setTitle("请选择理由")
@@ -312,6 +312,10 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun followOrNot(isFollowed: Boolean) {
+        if (!myApp.isLogin) {
+            showLoginHint(binding.root)
+            return
+        }
         vCall("${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "un" else ""}$followOfOnce")
             .start(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
@@ -331,6 +335,10 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun blockOrNot(isBlocked: Boolean) {
+        if (!myApp.isLogin) {
+            showLoginHint(binding.root)
+            return
+        }
         vCall("$HTTPS_V2EX_BASE/${if (isBlocked) "un" else ""}$blockOfT")
             .start(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
