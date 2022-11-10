@@ -124,11 +124,12 @@ class NewTopicActivity : BaseActivity() {
             .setActionView(iv)
             .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
-        if (intent.action != Keys.ACTION_V2EX_REPORT) {
-            menu.add(0, MENU_ID_UPLOAD, 0, "upload")
-                .setIcon(R.drawable.ic_image)
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-        }
+        //由于sm.ms不在支持匿名上传图片，该功能废弃
+//        if (intent.action != Keys.ACTION_V2EX_REPORT) {
+//            menu.add(0, MENU_ID_UPLOAD, 0, "upload")
+//                .setIcon(R.drawable.ic_image)
+//                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+//        }
 
         return true
     }
