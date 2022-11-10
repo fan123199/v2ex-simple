@@ -118,7 +118,7 @@ class TopicsFragment : Fragment() {
 
     val args: Bundle? = arguments
     when {
-      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 0 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
+      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
       args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = URL_FOLLOWING
       args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
       args?.getString(Keys.KEY_TAB) == "heated" -> mRequestURL = API_HEATED

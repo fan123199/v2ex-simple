@@ -15,7 +15,7 @@ import im.fdx.v2ex.utils.Keys
 internal class FavorViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
     companion object {
-        val titles = arrayOf( "主题收藏", "节点收藏","特别关注")
+        val titles = arrayOf("节点收藏", "主题收藏", "特别关注")
     }
 
     override fun getItemCount(): Int {
@@ -25,11 +25,17 @@ internal class FavorViewPagerAdapter(fa: FragmentActivity) : FragmentStateAdapte
     override fun createFragment(position: Int): Fragment {
         return when (position) {
             0 -> NodeFavorFragment()
-            else -> {
+            1 -> {
                 TopicsFragment().apply {
                     arguments = bundleOf(Keys.FAVOR_FRAGMENT_TYPE to position)
                 }
             }
+            2 -> {
+                TopicsFragment().apply {
+                    arguments = bundleOf(Keys.FAVOR_FRAGMENT_TYPE to position)
+                }
+            }
+            else -> throw Exception()
         }
     }
 }

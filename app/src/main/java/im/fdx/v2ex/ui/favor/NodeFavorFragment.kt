@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.elvishew.xlog.XLog
@@ -41,9 +42,11 @@ class NodeFavorFragment : Fragment() {
       val recyclerView: RecyclerView = view.findViewById(R.id.rv_container)
         adapter = AllNodesAdapter(true)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = FlexboxLayoutManager(activity, FlexDirection.ROW).apply {
-            justifyContent = JustifyContent.SPACE_BETWEEN
-        }
+        recyclerView.layoutManager = GridLayoutManager(context, 4)
+
+//            FlexboxLayoutManager(activity, FlexDirection.ROW).apply {
+//            justifyContent = JustifyContent.SPACE_BETWEEN
+//        }
 
         swipe = view.findViewById(R.id.swipe_container)
         swipe.initTheme()
