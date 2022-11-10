@@ -16,9 +16,8 @@ import com.google.android.flexbox.JustifyContent
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.ui.node.AllNodesAdapter
-import im.fdx.v2ex.utils.extensions.hideNoContent
-import im.fdx.v2ex.utils.extensions.initTheme
-import im.fdx.v2ex.utils.extensions.showNoContent
+import im.fdx.v2ex.utils.ViewUtil
+import im.fdx.v2ex.utils.extensions.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
@@ -40,6 +39,7 @@ class NodeFavorFragment : Fragment() {
         XLog.d("NodeFavorFragment onCreateView")
         val view = inflater.inflate(R.layout.fragment_tab_article, container, false)
       val recyclerView: RecyclerView = view.findViewById(R.id.rv_container)
+        recyclerView.setPadding(8.dp2px(), 8.dp2px(), 8.dp2px(), 8.dp2px())
         adapter = AllNodesAdapter(true)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = GridLayoutManager(context, 4)
