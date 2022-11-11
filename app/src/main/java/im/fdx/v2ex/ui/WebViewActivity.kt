@@ -4,6 +4,7 @@ package im.fdx.v2ex.ui
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ProgressDialog
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -45,9 +46,13 @@ class WebViewActivity : BaseActivity() {
 
         myWebView = findViewById(R.id.webview)
         val webSettings = myWebView.settings
+        toolbar.title = "正在加载中"
+
+
         webSettings.setSupportZoom(true)
 //        webSettings.userAgentString = "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012)" +
 //                " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Mobile Safari/537.36"
+        webSettings.userAgentString = webSettings.userAgentString.replace(Regex("(?<=\\W)wv"), "")
         webSettings.javaScriptEnabled  = true
         val chromeClient = MyChromeClient()
         myWebView.webChromeClient = chromeClient
@@ -83,10 +88,21 @@ class WebViewActivity : BaseActivity() {
             super.onReceivedHttpError(view, request, errorResponse)
         }
 
-        //todo hard code for google login
         override fun onPageFinished(view: WebView?, url: String?) {
             val cookie = CookieManager.getInstance().getCookie(url)
-            Log.i("fdxcookie", "$url----$cookie")
+//            Log.i("fdxcookiePageFinished", "$url----$cookie")
+            super.onPageFinished(view, url)
+        }
+
+        override fun onPageCommitVisible(view: WebView?, url: String?) {
+            val cookie = CookieManager.getInstance().getCookie(url)
+//            Log.i("fdxcookieCommitVisible", "$url----$cookie")
+            super.onPageCommitVisible(view, url)
+        }
+
+        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+            val cookie = CookieManager.getInstance().getCookie(url)
+//            Log.i("fdxcookiePageStarted", "$url----$cookie")
             if(cookie?.contains("A2=") == true && url !=null) {
                 // "abc:efg;"
                 HttpHelper.cookiePersistor.persistAll(strtocookie(url, cookie))
@@ -95,8 +111,9 @@ class WebViewActivity : BaseActivity() {
                 finish()
             }
             noFirst = true
-            super.onPageFinished(view, url)
+            super.onPageStarted(view, url, favicon)
         }
+
 
     }
 

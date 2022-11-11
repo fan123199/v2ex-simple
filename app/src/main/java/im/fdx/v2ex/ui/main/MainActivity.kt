@@ -29,6 +29,10 @@ import androidx.work.WorkManager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
 import im.fdx.v2ex.databinding.ActivityMainNavDrawerBinding
@@ -275,6 +279,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         })
 
         startGetNotification()
+        Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
     }
 
     private fun updateUserInBackground() {

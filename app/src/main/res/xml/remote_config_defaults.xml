@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<defaults>
+    <entry>
+        <key>google_sign_in_url</key>
+        <value>https://www.v2ex.com/signin</value>
+    </entry>
+</defaults>
