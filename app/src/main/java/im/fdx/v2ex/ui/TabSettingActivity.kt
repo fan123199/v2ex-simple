@@ -55,6 +55,9 @@ class TabSettingActivity : BaseActivity() {
         initMyTabs.addAll(tabTitles.mapIndexed { index, s ->
             MyTab(s, tabPaths[index])
         })
+
+        adapter = DefaultAdapter(curList, STATUS_SHOW)
+        adapter2 = DefaultAdapter(remainList, STATUS_HIDE)
         if (myApp.isLogin) {
             getNode()
         } else {
@@ -70,7 +73,7 @@ class TabSettingActivity : BaseActivity() {
         val str = pref.getString(PREF_TAB, null)
         val turnsType = object : TypeToken<List<MyTab>>() {}.type
         val savedList = Gson().fromJson<List<MyTab>>(str, turnsType)
-        if (savedList == null) {
+        if (savedList.isNullOrEmpty()) {
             curList.addAll(initMyTabs)
             remainList.clear()
             remainList.addAll(initNodes)
@@ -78,8 +81,6 @@ class TabSettingActivity : BaseActivity() {
             curList.addAll(savedList)
             remainList.addAll(initMyTabs + initNodes - curList)
         }
-        adapter = DefaultAdapter(curList, STATUS_SHOW)
-        adapter2 = DefaultAdapter(remainList, STATUS_HIDE)
 
         adapter.registerListener { i, tab ->
             curList.remove(tab)
@@ -244,7 +245,9 @@ class DefaultAdapter(val list: MutableList<MyTab>, val type: Status = STATUS_SHO
             vh.ivDelete.setImageResource(R.drawable.ic_baseline_add_circle_outline_24)
         }
         vh.ivDelete.setOnClickListener {
-            listener?.invoke(vh.bindingAdapterPosition, list[vh.bindingAdapterPosition])
+            if (vh.bindingAdapterPosition != -1) {
+                listener?.invoke(vh.bindingAdapterPosition, list[vh.bindingAdapterPosition])
+            }
         }
     }
 

@@ -112,8 +112,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     fun reloadTab() {
-        mAdapter.initFragment()
-        binding.activityMainContent.viewpagerMain.adapter?.notifyDataSetChanged()
+        mAdapter = MyViewPagerAdapter(this@MainActivity)
+        binding.activityMainContent.viewpagerMain.adapter = mAdapter
+        TabLayoutMediator(binding.activityMainContent.slidingTabs, binding.activityMainContent.viewpagerMain) { tab, position ->
+
+            if (position < mAdapter.myTabList.size) {
+                tab.text = mAdapter.myTabList[position].title
+            } else {
+                tab.text = " + "
+                tab.view.setOnClickListener {
+                    startActivity(Intent(this, TabSettingActivity::class.java))
+                }
+            }
+        }.attach()
 
     }
 

@@ -298,7 +298,6 @@ class TopicsFragment : Fragment() {
 
             val parser = Parser(str)
             val topicList = parser.parseTopicLists(currentMode)
-
             if (totalPage == 0) {
               totalPage = parser.getTotalPageForTopics()
               mScrollListener.totalPage = totalPage

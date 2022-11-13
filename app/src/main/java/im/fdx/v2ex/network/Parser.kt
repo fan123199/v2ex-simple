@@ -62,10 +62,10 @@ class Parser(private val htmlStr: String) {
                     //            <a href="/member/wineway">
                     // <img src="//v2" class="avatar" ></a>
                     FROM_NODE -> {
-                        val strHeader = body.getElementsByClass("node_header")?.first()?.text()?:""
+                        val strHeader = body.getElementsByClass("node-header")?.first()?.text()?:""
                         var nodeTitle = ""
                         if (strHeader.contains("›")) {
-                            nodeTitle = strHeader.split("›".toRegex())[1].split(" ".toRegex())[1].trim { it <= ' ' }
+                            nodeTitle = strHeader.split("›".toRegex())[1].split(" ".toRegex())[1].trim()
                         }
 
                         val elements = doc.head().getElementsByTag("script")
