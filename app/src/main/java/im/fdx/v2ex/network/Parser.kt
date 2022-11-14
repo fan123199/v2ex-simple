@@ -191,19 +191,19 @@ class Parser(private val htmlStr: String) {
 
     fun isTopicFavored(): Boolean {
         val p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?once=)")
-        val matcher = p.matcher(doc.outerHtml())
+        val matcher = p.matcher(htmlStr)
         return matcher.find()
     }
 
     fun isTopicThanked(): Boolean {
         val p = Pattern.compile("thankTopic\\(\\d{1,10}")
-        val matcher = p.matcher(doc.outerHtml())
+        val matcher = p.matcher(htmlStr)
         return !matcher.find()
     }
 
     fun isIgnored(): Boolean {
         val p = Pattern.compile("un(?=ignore/topic/\\d{1,10})")
-        val matcher = p.matcher(doc.outerHtml())
+        val matcher = p.matcher(htmlStr)
         return matcher.find()
     }
 

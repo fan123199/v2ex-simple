@@ -124,6 +124,9 @@ class TopicFragment : BaseFragment() {
             setNavigationOnClickListener {
                 activity?.finish()
             }
+            binding.tvToolbar.setOnClickListener {
+                binding.detailRecyclerView.scrollToPosition(0)
+            }
 
             setOnMenuItemClickListener {
                 when (it.itemId) {
@@ -328,6 +331,7 @@ class TopicFragment : BaseFragment() {
                 try {
                     topicHeader = parser.parseResponseToTopic(mTopicId)
                     repliesFirstPage = parser.getReplies()
+
                 } catch (e: Exception) {
                     FirebaseCrashlytics.getInstance().recordException(e)
                     activity?.runOnUiThread {
