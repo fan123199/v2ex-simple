@@ -1,6 +1,7 @@
 package im.fdx.v2ex.network
 
 import android.util.Log
+import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import im.fdx.v2ex.MyApp
@@ -38,7 +39,13 @@ object HttpHelper {
                             }
                         }).apply { level = HttpLoggingInterceptor.Level.HEADERS }
                     )
-            .addInterceptor(ChuckerInterceptor(MyApp.get()))//好东西，查看Okhttp数据
+            .addInterceptor(
+                ChuckerInterceptor.Builder(MyApp.get())
+                    .collector(ChuckerCollector(MyApp.get()))
+                    .maxContentLength(250000L)
+                    .alwaysReadResponseBody(false)
+                    .build()
+            )//好东西，查看Okhttp数据
             .addInterceptor { chain ->
                 val request = chain.request()
                         .newBuilder()

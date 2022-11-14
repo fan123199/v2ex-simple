@@ -73,7 +73,7 @@ class TopicFragment : BaseFragment() {
             if (intent.action == Keys.ACTION_LOGIN) {
                 activity?.invalidateOptionsMenu()
                 setFootView()
-                binding.swipeDetails?.isRefreshing = true
+                binding.swipeDetails.isRefreshing = true
                 getRepliesPageOne(false)
             } else if (intent.action == Keys.ACTION_LOGOUT) {
                 activity?.invalidateOptionsMenu()
@@ -292,7 +292,7 @@ class TopicFragment : BaseFragment() {
 
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {
-                    binding.swipeDetails?.isRefreshing = false
+                    binding.swipeDetails.isRefreshing = false
                     activity?.showHint(binding.etPostReply, "无法打开该主题")
 
                 }
@@ -301,32 +301,30 @@ class TopicFragment : BaseFragment() {
             @Throws(IOException::class)
             override fun onResponse(call: Call, response: Response) {
                 val code = response.code
-                if (code == 302) {
-                    //权限问题，需要登录
-                    activity?.runOnUiThread {
-                        binding.swipeDetails?.isRefreshing = false
+                activity?.runOnUiThread {
+                    if (!isAdded) {
+                        return@runOnUiThread
+                    }
+                    if (code == 302) {
+                        //权限问题，需要登录
+                        binding.swipeDetails.isRefreshing = false
                         if (!myApp.isLogin) {
                             activity?.showLoginHint(binding.etPostReply)
                         } else {
-                            if (this@TopicFragment.isVisible) {
-                                activity?.showHint(binding.etPostReply, "你要查看的页面可能遭遇权限问题");
-                            }
+                            activity?.showHint(binding.etPostReply, "你要查看的页面可能遭遇权限问题");
                         }
+                        return@runOnUiThread
                     }
-                    return
-                }
-                if (code != 200) {
-                    activity?.runOnUiThread {
-                        binding.swipeDetails?.isRefreshing = false
+                    if (code != 200) {
+                        binding.swipeDetails.isRefreshing = false
                         activity?.showHint(binding.etPostReply, "无法打开该主题")
+                        return@runOnUiThread
                     }
-                    return
                 }
 
                 val bodyStr = response.body!!.string()
-
-                var repliesFirstPage: List<Reply> = arrayListOf()
                 val parser = Parser(bodyStr)
+                var repliesFirstPage: List<Reply> = arrayListOf()
                 try {
                     topicHeader = parser.parseResponseToTopic(mTopicId)
                     repliesFirstPage = parser.getReplies()
@@ -337,15 +335,18 @@ class TopicFragment : BaseFragment() {
                     }
                 }
 
-                if (myApp.isLogin) {
-                    once = parser.getOnceNum()
-                    mAdapter.once = once
-                    isFavored = parser.isTopicFavored()
-                    isThanked = parser.isTopicThanked()
-                    isIgnored = parser.isIgnored()
 
-                    logd("is favored: $isFavored")
-                    activity?.runOnUiThread {
+                activity?.runOnUiThread {
+                    if (!isAdded) {
+                        return@runOnUiThread
+                    }
+                    if (myApp.isLogin) {
+                        once = parser.getOnceNum()
+                        mAdapter.once = once
+                        isFavored = parser.isTopicFavored()
+                        isThanked = parser.isTopicThanked()
+                        isIgnored = parser.isIgnored()
+                        logd("is favored: $isFavored")
                         if (isFavored) {
                             mMenu?.findItem(R.id.menu_favor)?.setIcon(R.drawable.ic_favorite_white_24dp)
                             mMenu?.findItem(R.id.menu_favor)?.setTitle(R.string.unFavor)
@@ -367,27 +368,22 @@ class TopicFragment : BaseFragment() {
                             mMenu?.findItem(R.id.menu_ignore_topic)?.setTitle(R.string.ignore)
                         }
                     }
-
-                }
-
-                logd("got page 1")
-
-                val totalPage = parser.getPageValue()[1]  // [2,3]
-                activity?.runOnUiThread {
-                    binding.swipeDetails?.isRefreshing = false
+                    logd("got page 1")
+                    val totalPage = parser.getPageValue()[1]  // [2,3]
                     topicHeader?.let {
                         mAdapter.updateItems(it, repliesFirstPage)
                         if (totalPage == 1 && scrollToBottom) {
-                            binding.detailRecyclerView?.scrollToPosition(mAdapter.itemCount - 1)
+                            binding.detailRecyclerView.scrollToPosition(mAdapter.itemCount - 1)
                         }
                     }
+                    binding.swipeDetails.isRefreshing = false
 
-                }
-
-                if (totalPage > 1) {
                     logd("totalPage: $totalPage")
-                    getMoreRepliesByOrder(totalPage, scrollToBottom)
+                    if (totalPage > 1) {
+                        getMoreRepliesByOrder(totalPage, scrollToBottom)
+                    }
                 }
+
             }
         })
     }
@@ -404,7 +400,7 @@ class TopicFragment : BaseFragment() {
                 )
             )
             .build()
-        WorkManager.getInstance().enqueue(compressionWork)
+        WorkManager.getInstance(requireActivity()).enqueue(compressionWork)
     }
 
     //<a href="/favorite/topic/809961?once=78809" class="tb">加入收藏</a>
@@ -421,7 +417,7 @@ class TopicFragment : BaseFragment() {
                     if (response.code == 302) {
                         activity?.runOnUiThread {
                             toast("${if (doFavor) "取消" else ""}收藏成功")
-                            binding.swipeDetails?.isRefreshing = true
+                            binding.swipeDetails.isRefreshing = true
                             getRepliesPageOne(false)
                         }
                     }
@@ -528,11 +524,11 @@ class TopicFragment : BaseFragment() {
                         logd("成功发布")
                         toast("发表评论成功")
                         binding.etPostReply.setText("")
-                        binding.swipeDetails?.isRefreshing = true
+                        binding.swipeDetails.isRefreshing = true
                         getRepliesPageOne(true)
                     } else {
                         toast("发表评论失败")
-                        binding.swipeDetails?.isRefreshing = true
+                        binding.swipeDetails.isRefreshing = true
                         getRepliesPageOne(true)
                     }
                 }
@@ -569,11 +565,11 @@ class TopicFragment : BaseFragment() {
                     if (response.code == 302) {
                         logd("成功发布 $content")
                         toast("已提交报告到管理员")
-                        binding.swipeDetails?.isRefreshing = true
+                        binding.swipeDetails.isRefreshing = true
                         getRepliesPageOne(true)
                     } else {
                         toast("发生错误，请重试")
-                        binding.swipeDetails?.isRefreshing = true
+                        binding.swipeDetails.isRefreshing = true
                         getRepliesPageOne(true)
                     }
                 }
