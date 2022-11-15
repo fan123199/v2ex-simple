@@ -33,7 +33,7 @@ class Parser(private val htmlStr: String) {
         val body = doc.body()
 
         val items = when (source) {
-          FROM_HOME, FROM_MEMBER -> body.getElementsByClass("cell item")
+          FROM_HOME, FROM_MEMBER, FROM_FAVOR -> body.getElementsByClass("cell item")
           FROM_NODE -> body.getElementsByAttributeValueStarting("class", "cell from")
           else -> null
         }
@@ -51,7 +51,7 @@ class Parser(private val htmlStr: String) {
 
                 val nodeModel = Node()
                 when (source) {
-                    FROM_HOME, FROM_MEMBER -> {
+                    FROM_HOME, FROM_MEMBER, FROM_FAVOR -> {
                         //  <a class="node" href="/go/career">职场话题</a>
                         val nodeTitle = item.getElementsByClass("node")?.text()
                         val nodeName = item.getElementsByClass("node")?.attr("href")?.substring(4)
@@ -97,7 +97,7 @@ class Parser(private val htmlStr: String) {
                 var created: Long = 0L
                 var createdOriginal:String = ""
                 when (source) {
-                    FROM_HOME, FROM_MEMBER, FROM_NODE -> {
+                    FROM_HOME, FROM_MEMBER, FROM_NODE, FROM_FAVOR -> {
                         val smallItem = item.getElementsByClass("topic_info")?.first()?.getElementsByAttribute("title")
                         if (smallItem !=null) {
                             created = TimeUtil.toUtcTime2(smallItem.attr("title"))
@@ -527,7 +527,7 @@ class Parser(private val htmlStr: String) {
 
 
     enum class Source {
-      FROM_HOME, FROM_NODE, FROM_MEMBER, FROM_SEARCH
+      FROM_HOME, FROM_NODE, FROM_MEMBER, FROM_SEARCH, FROM_FAVOR
     }
 
 }

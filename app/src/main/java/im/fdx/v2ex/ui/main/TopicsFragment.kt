@@ -118,8 +118,14 @@ class TopicsFragment : Fragment() {
 
     val args: Bundle? = arguments
     when {
-      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
-      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> mRequestURL = URL_FOLLOWING
+      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 1 -> {
+        currentMode = FROM_FAVOR
+        mRequestURL = "$HTTPS_V2EX_BASE/my/topics"
+      }
+      args?.getInt(Keys.FAVOR_FRAGMENT_TYPE, -1) == 2 -> {
+        currentMode = FROM_FAVOR
+        mRequestURL = URL_FOLLOWING
+      }
       args?.getString(Keys.KEY_TAB) == "recent" -> mRequestURL = "$HTTPS_V2EX_BASE/recent"
       args?.getString(Keys.KEY_TAB) == "heated" -> mRequestURL = API_HEATED
       args?.getString(Keys.KEY_TAB) != null -> {
@@ -145,7 +151,7 @@ class TopicsFragment : Fragment() {
     }
 
     when (currentMode) {
-      FROM_MEMBER, FROM_NODE, FROM_SEARCH -> mRecyclerView?.addOnScrollListener(mScrollListener)
+      FROM_MEMBER, FROM_NODE, FROM_SEARCH, FROM_FAVOR -> mRecyclerView?.addOnScrollListener(mScrollListener)
       FROM_HOME -> {}
     }
 
@@ -329,7 +335,7 @@ class TopicsFragment : Fragment() {
               topicList.let { mAdapter.addAllItems(it) }
             }
           }
-          FROM_NODE ->
+          FROM_NODE, FROM_FAVOR ->
             if (mScrollListener.isRestart()) {
               topicList.let { mAdapter.updateItems(it) }
             } else {
