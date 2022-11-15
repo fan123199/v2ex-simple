@@ -2,8 +2,10 @@
 
 package im.fdx.v2ex.ui.main
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.NotificationManager
 import android.content.*
+import android.content.pm.PackageManager
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
 import android.graphics.drawable.Icon
@@ -16,6 +18,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
@@ -111,10 +115,38 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun showNotificationPermission() {
+        val requestPermissionLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { isGranted: Boolean ->
+                if (isGranted) {
+                    startGetNotification()
+                } else {
+                }
+            }
+        when {
+            ContextCompat.checkSelfPermission(this, POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED -> {
+                startGetNotification()
+            }
+            shouldShowRequestPermissionRationale("我们需要通知权限，来为你展示未读消息") -> {
+            }
+            else -> {
+                requestPermissionLauncher.launch(POST_NOTIFICATIONS)
+            }
+        }
+
+    }
+
     fun reloadTab() {
         mAdapter = MyViewPagerAdapter(this@MainActivity)
         binding.activityMainContent.viewpagerMain.adapter = mAdapter
-        TabLayoutMediator(binding.activityMainContent.slidingTabs, binding.activityMainContent.viewpagerMain) { tab, position ->
+        TabLayoutMediator(
+            binding.activityMainContent.slidingTabs,
+            binding.activityMainContent.viewpagerMain
+        ) { tab, position ->
 
             if (position < mAdapter.myTabList.size) {
                 tab.text = mAdapter.myTabList[position].title
@@ -267,7 +299,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mAdapter = MyViewPagerAdapter(this@MainActivity)
         binding.activityMainContent.viewpagerMain.adapter = mAdapter
 
-        TabLayoutMediator(binding.activityMainContent.slidingTabs, binding.activityMainContent.viewpagerMain) { tab, position ->
+        TabLayoutMediator(
+            binding.activityMainContent.slidingTabs,
+            binding.activityMainContent.viewpagerMain
+        ) { tab, position ->
 
             if (position < mAdapter.myTabList.size) {
                 tab.text = mAdapter.myTabList[position].title
@@ -289,7 +324,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         })
 
-        startGetNotification()
+        if(myApp.isLogin) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                showNotificationPermission()
+            } else {
+                startGetNotification()
+            }
+        }
         Firebase.remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
     }
 

@@ -115,6 +115,7 @@ class LoginActivity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 144 && resultCode == RESULT_OK) {
+            setLogin(true)
             finish()
         }
     }

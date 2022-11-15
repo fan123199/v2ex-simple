@@ -107,7 +107,7 @@ class WebViewActivity : BaseActivity() {
                 // "abc:efg;"
                 HttpHelper.cookiePersistor.persistAll(strtocookie(url, cookie))
                 setResult(Activity.RESULT_OK)
-                setLogin(true)
+
                 finish()
             }
             noFirst = true
