@@ -404,7 +404,7 @@ class TopicFragment : BaseFragment() {
                 )
             )
             .build()
-        WorkManager.getInstance(requireActivity()).enqueue(compressionWork)
+        activity?.let { WorkManager.getInstance(it).enqueue(compressionWork) }
     }
 
     //<a href="/favorite/topic/809961?once=78809" class="tb">加入收藏</a>

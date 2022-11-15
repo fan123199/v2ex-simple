@@ -267,7 +267,7 @@ class TopicAdapter(
         BottomSheetMenu(act)
             .setTitle("请选择理由")
             .addItems(reportReasons) { _, s ->
-                topicFragment.postReplyImply("#${replyItem.getRowNum(itemVH.bindingAdapterPosition)} 该评论涉及$s @Livid" )
+                topicFragment.postReplyImply("#${replyItem.getRowNum(itemVH.bindingAdapterPosition)} 该评论涉及$s @Livid")
             }
             .show()
     }
@@ -285,31 +285,30 @@ class TopicAdapter(
     //todo
     private fun showUserConversation(replyItem: Reply) {
 
-        val oneName = replyItem.member?.username ?: ""
-        var theOtherName = ""
+        val curUser = replyItem.member?.username ?: ""
+        var inWordUser = ""
         if (replyItem.content_rendered.contains("v2ex.com/member/")) {//说明有对话
 
             val find = """(?<=v2ex\.com/member/)\w+""".toRegex().find(replyItem.content_rendered)
             find?.let {
-                theOtherName = it.value
+                inWordUser = it.value
             }
 
             val theUserReplyList = replies.filter {
                 val username = it.member?.username
-                (username == oneName && hasRelate(theOtherName, it)) //需要是和other相关的
-                        || (username == theOtherName && hasRelate(oneName, it))  //需要是和本楼相关的
+                it.id == replyItem.id ||   //本身一定包含
+                        (username == curUser && hasRelate(inWordUser, it)) //需要是和other相关的
+                        || (username == inWordUser && hasRelate(curUser, it))  //需要是和本楼相关的
+
             }
 
-            if (theUserReplyList.isEmpty()) {
-                return
-            }
             val bs = BottomReplyList.newInstance(theUserReplyList)
             bs.show(act.supportFragmentManager, "user_conversation")
         }
     }
 
     fun hasRelate(name: String, item: Reply): Boolean {
-        val find = """v2ex\.com/member/$name""".toRegex().matches(item.content_rendered)
+        val find = "v2ex\\.com/member/$name".toRegex().containsMatchIn(item.content_rendered)
         return find
     }
 
