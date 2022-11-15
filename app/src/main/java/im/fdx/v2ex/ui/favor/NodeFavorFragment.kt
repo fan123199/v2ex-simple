@@ -30,15 +30,17 @@ import java.io.IOException
  */
 class NodeFavorFragment : Fragment() {
 
-  private lateinit var swipe: SwipeRefreshLayout
+    private lateinit var swipe: SwipeRefreshLayout
     private lateinit var adapter: AllNodesAdapter
     private lateinit var flContainer: FrameLayout
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         XLog.d("NodeFavorFragment onCreateView")
         val view = inflater.inflate(R.layout.fragment_tab_article, container, false)
-      val recyclerView: RecyclerView = view.findViewById(R.id.rv_container)
+        val recyclerView: RecyclerView = view.findViewById(R.id.rv_container)
         recyclerView.setPadding(8.dp2px(), 8.dp2px(), 8.dp2px(), 8.dp2px())
         adapter = AllNodesAdapter(true)
         recyclerView.adapter = adapter
@@ -80,7 +82,7 @@ class NodeFavorFragment : Fragment() {
                     activity?.runOnUiThread {
                         adapter.clear()
                         adapter.notifyDataSetChanged()
-                      flContainer.showNoContent()
+                        flContainer.showNoContent()
                         swipe.isRefreshing = false
                     }
                     return

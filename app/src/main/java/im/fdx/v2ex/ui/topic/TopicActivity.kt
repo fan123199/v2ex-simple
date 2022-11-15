@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui.topic
 
 import android.content.*
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -13,6 +14,7 @@ import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.view.ZoomOutPageTransform
 import org.jetbrains.anko.toast
+import kotlin.math.abs
 
 
 /**
@@ -25,6 +27,7 @@ class TopicActivity : BaseActivity() {
 
   private lateinit var mTopicId :String
 
+  val isUsePager by lazy {  pref.getBoolean("pref_viewpager", true) }
   private var position = 0
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,7 +83,8 @@ class TopicActivity : BaseActivity() {
       })
 
     val out: List<TopicFragment>
-    if (pref.getBoolean("pref_viewpager", true)) {
+
+    if (isUsePager) {
       out = out2
     } else {
       out = mutableListOf(TopicFragment().apply {
@@ -91,6 +95,9 @@ class TopicActivity : BaseActivity() {
 
 
     vpAdapter.initList(out)
+    if(!isUsePager) {
+      binding.viewPagerDetail.isUserInputEnabled = false
+    }
     binding.viewPagerDetail.run {
       adapter = vpAdapter
       setCurrentItem(position, false)
@@ -98,6 +105,34 @@ class TopicActivity : BaseActivity() {
     }
 
   }
+
+  private var initialXValue = 0f
+  private var initialYValue = 0f
+  override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+
+    if (!isUsePager) {
+      return super.dispatchTouchEvent(ev)
+    }
+
+    if (ev.action == MotionEvent.ACTION_DOWN) {
+      initialXValue = ev.x
+      initialYValue = ev.y
+    }
+    if (ev.action == MotionEvent.ACTION_MOVE) {
+        val diffX: Float = ev.x - initialXValue
+        val diffY: Float = ev.y - initialYValue
+        if (abs(diffY) > 2 * abs(diffX)) {
+          binding.viewPagerDetail.isUserInputEnabled = false
+        }
+    }
+    if (ev.action == MotionEvent.ACTION_UP) {
+      initialXValue = 0f
+      initialYValue = 0f
+      binding.viewPagerDetail.isUserInputEnabled = true
+    }
+    return super.dispatchTouchEvent(ev)
+  }
+
 }
 
 
