@@ -324,7 +324,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
         })
 
-        if(myApp.isLogin) {
+        if (myApp.isLogin && isOpenMessage) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 showNotificationPermission()
             } else {
@@ -375,19 +375,16 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     }
 
     private fun startGetNotification() {
-        if (myApp.isLogin && isOpenMessage) {
-            val timeSec = pref.getString("pref_msg_period", "900")!!.toLong()
-            val compressionWork =
-                PeriodicWorkRequestBuilder<GetMsgWorker>(timeSec, TimeUnit.SECONDS)
-                    .addTag(TAG_WORKER)
-                    .build()
-            WorkManager.getInstance().enqueueUniquePeriodicWork(
-                "getUnread",
-                ExistingPeriodicWorkPolicy.REPLACE,
-                compressionWork
-            )
-
-        }
+        val timeSec = pref.getString("pref_msg_period", "900")!!.toLong()
+        val unReadWork =
+            PeriodicWorkRequestBuilder<GetMsgWorker>(timeSec, TimeUnit.SECONDS)
+                .addTag(TAG_WORKER)
+                .build()
+        WorkManager.getInstance().enqueueUniquePeriodicWork(
+            "getUnread",
+            ExistingPeriodicWorkPolicy.REPLACE,
+            unReadWork
+        )
     }
 
     private fun stopGetNotification() {
