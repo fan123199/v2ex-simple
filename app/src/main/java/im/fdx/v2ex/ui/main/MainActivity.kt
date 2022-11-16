@@ -15,6 +15,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -62,6 +63,7 @@ import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlin.math.abs
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -465,6 +467,30 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         return true
     }
+
+    private var initialXValue = 0f
+    private var initialYValue = 0f
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            initialXValue = ev.x
+            initialYValue = ev.y
+        }
+        if (ev.action == MotionEvent.ACTION_MOVE) {
+            val diffX: Float = ev.x - initialXValue
+            val diffY: Float = ev.y - initialYValue
+            if (abs(diffY) > 1.4 * abs(diffX)) {
+                binding.activityMainContent.viewpagerMain.isUserInputEnabled = false
+            }
+        }
+        if (ev.action == MotionEvent.ACTION_UP) {
+            initialXValue = 0f
+            initialYValue = 0f
+            binding.activityMainContent.viewpagerMain.isUserInputEnabled = true
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
 
     fun sendEmail(email: String, subject: String = "", text: String = "") {
         val selectorIntent = Intent(Intent.ACTION_SENDTO)

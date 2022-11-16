@@ -121,7 +121,7 @@ class TopicActivity : BaseActivity() {
     if (ev.action == MotionEvent.ACTION_MOVE) {
         val diffX: Float = ev.x - initialXValue
         val diffY: Float = ev.y - initialYValue
-        if (abs(diffY) > 2 * abs(diffX)) {
+        if (abs(diffY) > 1.4 * abs(diffX)) {
           binding.viewPagerDetail.isUserInputEnabled = false
         }
     }
