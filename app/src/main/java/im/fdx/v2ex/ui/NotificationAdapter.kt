@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
 import im.fdx.v2ex.model.NotificationModel
@@ -34,10 +35,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
     override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
         val notiHolder = holder as NotificationViewHolder
 
-        if (position <= number - 1) {
-            notiHolder.itemView.foregroundTintMode = PorterDuff.Mode.DST_IN
-            notiHolder.itemView.foregroundTintList = ColorStateList.valueOf(ContextCompat.getColor(mContext, R.color.transparent))
-        }
+        notiHolder.dotUnread.isVisible = position <= number - 1
 
         val model = mModels[position]
 
@@ -70,6 +68,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
         var tvContent: TextView = itemView.findViewById(R.id.content_notification)
         var tvAction: TextView = itemView.findViewById(R.id.tv_action_notification)
         var ivAvatar: CircleImageView = itemView.findViewById(R.id.iv_avatar_notification)
+        var dotUnread: View = itemView.findViewById(R.id.dotUnread)
 
     }
 }

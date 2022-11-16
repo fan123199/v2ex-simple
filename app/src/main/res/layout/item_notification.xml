@@ -7,9 +7,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:foreground="@color/trans_item_background"
     android:background="?selectableItemBackground"
     >
+
+
+    <View
+        android:id="@+id/dotUnread"
+        android:layout_width="4dp"
+        android:layout_height="4dp"
+        android:layout_marginStart="8dp"
+        android:visibility="gone"
+        android:background="@drawable/ic_circle"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_avatar_notification"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_avatar_notification" />
 
 
     <de.hdodenhof.circleimageview.CircleImageView

@@ -25,7 +25,7 @@ class NotificationActivity : BaseActivity() {
 
     private var notifications: MutableList<NotificationModel> = mutableListOf()
     private lateinit var adapter: NotificationAdapter
-    private lateinit var  mSwipe: SwipeRefreshLayout
+    private lateinit var mSwipe: SwipeRefreshLayout
     private lateinit var rvNotification: RecyclerView
     private lateinit var flContainer: FrameLayout
 
@@ -38,7 +38,11 @@ class NotificationActivity : BaseActivity() {
         flContainer = findViewById(R.id.fl_container)
         mSwipe = findViewById(R.id.swipe_container)
         mSwipe.initTheme()
-        mSwipe.setOnRefreshListener { fetchNotification() }
+        mSwipe.setOnRefreshListener {
+            adapter.number = -1
+            findViewById<Toolbar>(R.id.toolbar).title = "${getString(R.string.message)} "
+            fetchNotification()
+        }
 
         rvNotification = findViewById(R.id.rv_container)
         rvNotification.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
