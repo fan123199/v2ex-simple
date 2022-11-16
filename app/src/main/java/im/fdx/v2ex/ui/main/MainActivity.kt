@@ -89,6 +89,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     invalidateOptionsMenu()
                     updateUserInBackground()
                     reloadTab()
+                    if (isOpenMessage) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            showNotificationPermission()
+                        } else {
+                            startGetNotification()
+                        }
+                    }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                         shortcutManager?.addDynamicShortcuts(listOfNotNull(createTopicInfo))
                     }
@@ -126,6 +133,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 if (isGranted) {
                     startGetNotification()
                 } else {
+                    pref.edit {
+                        putBoolean("PREF_IS_DENIED", true)
+                    }
                 }
             }
         when {
@@ -136,6 +146,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             shouldShowRequestPermissionRationale("我们需要通知权限，来为你展示未读消息") -> {
             }
             else -> {
+                val isDenied = pref.getBoolean("PREF_IS_DENIED", false)
+                if (isDenied) return
                 requestPermissionLauncher.launch(POST_NOTIFICATIONS)
             }
         }
@@ -592,7 +604,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver)
     }
 
-    private val isOpenMessage: Boolean
-        get() = pref.getBoolean("pref_msg", true)
+    private val isOpenMessage by lazy { pref.getBoolean("pref_msg", true) }
 }
 
