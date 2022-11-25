@@ -299,6 +299,7 @@ class TopicAdapter(
                 it.id == replyItem.id ||   //本身一定包含
                         (username == curUser && hasRelate(inWordUser, it)) //需要是和other相关的
                         || (username == inWordUser && hasRelate(curUser, it))  //需要是和本楼相关的
+                        ||(username == inWordUser && it.getRowNum() < replyItem.getRowNum() && !hasOnlyOther(curUser,it))
 
             }
 
@@ -307,7 +308,14 @@ class TopicAdapter(
         }
     }
 
-    fun hasRelate(name: String, item: Reply): Boolean {
+    //对话中，存在和 name 不一样的引用
+    private fun hasOnlyOther(name: String,item: Reply): Boolean {
+        val findOther = "v2ex\\.com/member/(?!$name)".toRegex().containsMatchIn(item.content_rendered)
+        val findMe = "v2ex\\.com/member/$name".toRegex().containsMatchIn(item.content_rendered)
+        return findOther && !findMe
+    }
+
+    private fun hasRelate(name: String, item: Reply): Boolean {
         val find = "v2ex\\.com/member/$name".toRegex().containsMatchIn(item.content_rendered)
         return find
     }
