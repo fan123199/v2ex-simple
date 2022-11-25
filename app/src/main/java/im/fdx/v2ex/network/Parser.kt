@@ -297,7 +297,7 @@ class Parser(private val htmlStr: String) {
 
 
             val i: Int = item.getElementsByClass("no").first()?.text()?.toIntOrNull()?: -1
-            replyModel.rowNum = i
+            replyModel.setRowNum(i)
 
             replyModel.id = id
             replyModel.content = replyContent?.text() ?: ""

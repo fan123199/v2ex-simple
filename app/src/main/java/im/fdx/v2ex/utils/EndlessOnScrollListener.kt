@@ -19,7 +19,7 @@ abstract class EndlessOnScrollListener(val rvReply: RecyclerView) : RecyclerView
 
   override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
     XLog.d("onScrolled + $dy")
-    if (dy < 0) {
+    if (dy <= 0) {
       return
     }
     val visibleItemCount = recyclerView.childCount

@@ -408,10 +408,11 @@ class TopicsFragment : Fragment() {
             activity?.runOnUiThread {
               showRefresh(false)
               if(topics == null) {
+                flContainer.showNoContent("未查询到内容，请重新查询")
                 return@runOnUiThread
               }
               if (topics.isEmpty()) {
-                flContainer.showNoContent()
+                flContainer.showNoContent("未查询到内容，请重新查询")
                 mAdapter.clearAndNotify()
               } else {
                 flContainer.hideNoContent()

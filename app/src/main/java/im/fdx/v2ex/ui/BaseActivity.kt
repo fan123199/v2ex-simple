@@ -16,7 +16,7 @@ const val MODE_BIG4 = 4
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    val isSystem by lazy { pref.getString(Keys.PREF_TEXT_SIZE, MODE_SYSTEM.toString())!!.toInt() == MODE_SYSTEM }
+    private val isSystemFont by lazy { pref.getString(Keys.PREF_TEXT_SIZE, MODE_SYSTEM.toString())!!.toInt() == MODE_SYSTEM }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val textSizeMode = pref.getString(Keys.PREF_TEXT_SIZE, MODE_SYSTEM.toString())!!.toInt()
@@ -38,7 +38,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
-        if (!isSystem) {
+        if (!isSystemFont) {
             if (newConfig.fontScale != 1f) //非默认值
                 resources
         }
@@ -47,7 +47,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun getResources(): Resources? {
         val res: Resources = super.getResources()
-        if (!isSystem) {
+        if (!isSystemFont) {
             if (res.configuration.fontScale != 1f) { //非默认值
                 val newConfig = Configuration()
                 newConfig.setToDefaults() //设置默认

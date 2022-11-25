@@ -28,6 +28,7 @@ import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -53,8 +54,10 @@ import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.TAG_WORKER
+import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.BottomSheetMenu
+import im.fdx.v2ex.view.ViewPagerHelper
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -68,6 +71,7 @@ import kotlin.math.abs
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    private var helper: ViewPagerHelper? = null
     private lateinit var mAdapter: MyViewPagerAdapter
     private val shortcutId = "create_topic"
     private var shortcutManager: ShortcutManager? = null
@@ -313,6 +317,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mAdapter = MyViewPagerAdapter(this@MainActivity)
         binding.activityMainContent.viewpagerMain.adapter = mAdapter
 
+        helper =  ViewPagerHelper(binding.activityMainContent.viewpagerMain)
         TabLayoutMediator(
             binding.activityMainContent.slidingTabs,
             binding.activityMainContent.viewpagerMain
@@ -480,26 +485,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         return true
     }
 
-    private var initialXValue = 0f
-    private var initialYValue = 0f
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-
-        if (ev.action == MotionEvent.ACTION_DOWN) {
-            initialXValue = ev.x
-            initialYValue = ev.y
-        }
-        if (ev.action == MotionEvent.ACTION_MOVE) {
-            val diffX: Float = ev.x - initialXValue
-            val diffY: Float = ev.y - initialYValue
-            if (abs(diffY) > 1.4 * abs(diffX)) {
-                binding.activityMainContent.viewpagerMain.isUserInputEnabled = false
-            }
-        }
-        if (ev.action == MotionEvent.ACTION_UP) {
-            initialXValue = 0f
-            initialYValue = 0f
-            binding.activityMainContent.viewpagerMain.isUserInputEnabled = true
-        }
+        helper?.dispatchTouchEvent(ev)
         return super.dispatchTouchEvent(ev)
     }
 

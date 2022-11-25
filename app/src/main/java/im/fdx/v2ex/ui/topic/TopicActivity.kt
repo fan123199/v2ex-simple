@@ -12,6 +12,7 @@ import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.view.ViewPagerHelper
 import im.fdx.v2ex.view.ZoomOutPageTransform
 import org.jetbrains.anko.toast
 import kotlin.math.abs
@@ -22,6 +23,7 @@ import kotlin.math.abs
  */
 class TopicActivity : BaseActivity() {
 
+  private var helper: ViewPagerHelper? = null
   private lateinit var binding: ActivityDetailsBinding
   private lateinit var vpAdapter: VpAdapter
 
@@ -103,34 +105,15 @@ class TopicActivity : BaseActivity() {
       setCurrentItem(position, false)
       setPageTransformer(ZoomOutPageTransform())
     }
-
+    helper = ViewPagerHelper(binding.viewPagerDetail)
   }
 
-  private var initialXValue = 0f
-  private var initialYValue = 0f
   override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-
-    if (!isUsePager) {
-      return super.dispatchTouchEvent(ev)
-    }
-
-    if (ev.action == MotionEvent.ACTION_DOWN) {
-      initialXValue = ev.x
-      initialYValue = ev.y
-    }
-    if (ev.action == MotionEvent.ACTION_MOVE) {
-        val diffX: Float = ev.x - initialXValue
-        val diffY: Float = ev.y - initialYValue
-        if (abs(diffY) > 1.4 * abs(diffX)) {
-          binding.viewPagerDetail.isUserInputEnabled = false
-        }
-    }
-    if (ev.action == MotionEvent.ACTION_UP) {
-      initialXValue = 0f
-      initialYValue = 0f
-      binding.viewPagerDetail.isUserInputEnabled = true
+    if (isUsePager) {
+      helper?.dispatchTouchEvent(ev)
     }
     return super.dispatchTouchEvent(ev)
+
   }
 
 }

@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.PopupWindow
@@ -40,6 +41,7 @@ import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.BottomSheetMenu
 import im.fdx.v2ex.view.CustomChrome
+import im.fdx.v2ex.view.ViewPagerHelper
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -55,6 +57,7 @@ import kotlin.math.abs
  */
 class MemberActivity : BaseActivity() {
 
+    private var helper: ViewPagerHelper? = null
     private lateinit var mMenu: Menu
 
     private lateinit var member: Member
@@ -107,7 +110,15 @@ class MemberActivity : BaseActivity() {
                 in 0f..1f -> binding.constraintMember.alpha = 1 - percentage
             }
         })
+
+        helper = ViewPagerHelper(binding.viewpager)
+
         getData()
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        helper?.dispatchTouchEvent(ev)
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun getName(intent: Intent): String? = when {
@@ -298,7 +309,7 @@ class MemberActivity : BaseActivity() {
         }
 
         BottomSheetMenu(this)
-            .setTitle("请选择理由")
+            .setTitle("请选择举报的理由")
             .addItems( listOf("大量发布广告","冒充他人","疑似机器帐号", "其他")) { _, s ->
                 startActivity(Intent(this, NewTopicActivity::class.java).apply {
                     action = Keys.ACTION_V2EX_REPORT
