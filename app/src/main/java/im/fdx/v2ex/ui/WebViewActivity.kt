@@ -128,10 +128,7 @@ class WebViewActivity : BaseActivity() {
         override fun onProgressChanged(view: WebView?, newProgress: Int) {
             if(newProgress < 100) {
                 if(view?.url.equals("https://www.v2ex.com/#")) {
-                    myWebView.visibility = View.INVISIBLE
-                    val progressDialog = ProgressDialog(this@WebViewActivity)
-                    progressDialog.setMessage("正在登录中，请稍后")
-                    progressDialog.show()
+                    toolbar.title = "正在登录中..."
                 }
             } else{
 
