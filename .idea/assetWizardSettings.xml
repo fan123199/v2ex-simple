@@ -317,8 +317,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_baseline_report_24" />
-                            <entry key="sourceFile" value="C:\Users\fdx\Desktop\ic_comment.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="themed_icon" />
+                            <entry key="sourceFile" value="C:\Users\fdx\Desktop\mono.svg" />
                           </map>
                         </option>
                       </PersistentState>
