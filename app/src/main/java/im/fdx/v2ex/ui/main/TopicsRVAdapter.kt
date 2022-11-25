@@ -106,10 +106,10 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
 
 
     holder.tvNode.setOnClickListener{
-      fragment.startActivity(Intent(myApp, NodeActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_NODE_NAME to currentTopic.node?.name!!)) })
+      fragment.startActivity(Intent(myApp, NodeActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_NODE_NAME to (currentTopic.node?.name?:""))) })
     }
     holder.ivAvatar.setOnClickListener{
-      fragment.startActivity(Intent(myApp, MemberActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_USERNAME to currentTopic.member?.username!!)) })
+      fragment.startActivity(Intent(myApp, MemberActivity::class.java).apply { putExtras(bundleOf(Keys.KEY_USERNAME to (currentTopic.member?.username?:""))) })
     }
 
   }
