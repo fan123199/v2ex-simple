@@ -67,7 +67,6 @@
     </style>
 
 
-
     <style name="VEditStyle" parent="Widget.AppCompat.EditText">
         <item name="android:paddingRight">0dp</item>
         <item name="android:paddingLeft">0dp</item>
@@ -82,7 +81,7 @@
         <item name="android:actionMenuTextAppearance">@style/VText</item>
     </style>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:itemTextAppearance">@style/VText</item>
         <item name="android:itemBackground">@color/item_background</item>
     </style>

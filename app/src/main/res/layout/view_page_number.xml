@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"
+    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:id="@+id/rv"
+        />
+
+    <EditText
+        android:id="@+id/et_num"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:digits="0123456789"
+        android:visibility="gone"
+        android:maxLines="1"
+        tools:visibility="visible"
+        android:imeOptions="actionDone"
+        tools:text="123456"
+        android:importantForAutofill="no"
+        tools:ignore="LabelFor" />
+
+</LinearLayout>

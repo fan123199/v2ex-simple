@@ -53,8 +53,8 @@
     <color name="bg_login">@color/primary</color>
     <color name="gray_400">#FFBDBDBD</color>
     <color name="gray_600">#FF757575</color>
-    <color name="back_icon" >@color/primary</color>
-    <color name="back_icon_login" >@color/white</color>
+    <color name="back_icon">@color/primary</color>
+    <color name="back_icon_login">@color/white</color>
 
     <!--end night-->
 

@@ -93,6 +93,15 @@ class MemberActivity : BaseActivity() {
             binding.ivGithub.setOnClickListener(listener)
             binding.ivTwitter.setOnClickListener(listener)
             binding.tvWebsite.setOnClickListener(listener)
+
+
+            binding.tvMore.setOnClickListener {
+                supportFragmentManager.fragments.forEach {
+                    if (it is UserReplyFragment2) {
+                        it.togglePageNum()
+                    }
+                }
+            }
         }
 
         setUpToolbar()
@@ -257,7 +266,7 @@ class MemberActivity : BaseActivity() {
             avatar = member.avatar_normal
         }
         TabLayoutMediator(binding.tlMember, binding.viewpager) { tab, position ->
-            tab.text = if (position == 0) "主题" else "评论"
+            tab.text = if (position == 0) "主题" else "回复"
         }.attach()
         binding.ivAvatarProfile.load(member.avatarLargeUrl)
         binding.tvTagline.text = member.tagline
@@ -403,12 +412,12 @@ class MemberActivity : BaseActivity() {
 //                _avatar = value
 //                (getItem(0) as TopicsFragment).updateAvatar(_avatar)
 //            }
-        private val titles = arrayOf("主题", "评论")
+        private val titles = arrayOf("主题", "回复")
         override fun getItemCount() = titles.size
 
         override fun createFragment(position: Int) = when (position) {
             0 -> TopicsFragment()
-            else -> UserReplyFragment()
+            else -> UserReplyFragment2()
         }.apply { arguments = bundleOf(Keys.KEY_USERNAME to username, Keys.KEY_AVATAR to avatar) }
 
     }

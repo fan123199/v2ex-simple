@@ -63,7 +63,7 @@
     <string name="choose_node">选择节点</string>
     <string name="post_reply">发表回复</string>
     <string name="notification">通知</string>
-    <string name="copy_content">复制评论</string>
+    <string name="copy_content">复制</string>
     <string name="close">关闭</string>
     <string name="cancel">取消</string>
     <string name="create_topic">创建主题</string>
@@ -78,7 +78,7 @@
     <string name="verify_code">验证码</string>
     <string name="no_more_data">没有更多的数据</string>
     <string name="indicator">指示</string>
-    <string name="show_user_all_reply">显示该用户全部评论</string>
+    <string name="show_user_all_reply">显示该用户全部回复</string>
     <string name="already_thank">已感谢</string>
     <string name="ignore">忽略</string>
     <string name="already_ignore">取消忽略</string>
@@ -135,6 +135,6 @@
     <string name="add_row_in_reply">回复加入楼层</string>
     <string name="format_user_n">格式: @user #n</string>
     <string name="format_user">格式: @user</string>
-    <string name="hide_reply">忽略评论</string>
+    <string name="hide_reply">隐藏回复</string>
     <string name="report_abuse">报告问题</string>
 </resources>

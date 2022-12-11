@@ -526,12 +526,12 @@ class TopicFragment : BaseFragment() {
                     binding.ivSend.visibility = View.VISIBLE
                     if (response.code == 302) {
                         logd("成功发布")
-                        toast("发表评论成功")
+                        toast("发表回复成功")
                         binding.etPostReply.setText("")
                         binding.swipeDetails.isRefreshing = true
                         getRepliesPageOne(true)
                     } else {
-                        toast("发表评论失败")
+                        toast("发表回复失败")
                         binding.swipeDetails.isRefreshing = true
                         getRepliesPageOne(true)
                     }

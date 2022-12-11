@@ -1,0 +1,7 @@
+<resources>
+    <declare-styleable name="PageNumberView">
+        <attr name="totalNum" format="integer" />
+        <attr name="currentNum" format="integer" />
+        <attr name="highlightColor" format="color" />
+    </declare-styleable>
+</resources>

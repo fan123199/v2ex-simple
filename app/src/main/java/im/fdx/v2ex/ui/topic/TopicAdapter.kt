@@ -324,7 +324,7 @@ class TopicAdapter(
         logd("I click menu copy")
         val manager = act.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         manager.setPrimaryClip(ClipData.newPlainText("item", content))
-        act.toast("评论已复制")
+        act.toast("回复已复制")
     }
 
     private fun thank(replyItem: Reply, itemVH: ItemViewHolder) {

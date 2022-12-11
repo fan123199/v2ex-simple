@@ -421,6 +421,7 @@ class Parser(private val htmlStr: String) {
                 model.topic.title = title
                 model.topic.id = fakeId?.split("#")?.get(0) ?: ""
                 model.create = TimeUtil.toUtcTime(create)
+                model.createdOriginal = create?:""
                 val contentElement: Element? = e.nextElementSibling()
                 val content = contentElement?.getElementsByClass("reply_content")?.first()
                 model.content = content?.html()

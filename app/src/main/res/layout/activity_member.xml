@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,21 +10,21 @@
         android:id="@+id/al_profile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
         android:background="@color/toolbar_background"
-        android:elevation="4dp">
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/ctl_profile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:titleEnabled="true"
+            app:collapsedTitleTextAppearance="@style/VText.ToolbarStyle"
+            app:expandedTitleGravity="top"
             app:expandedTitleMarginStart="128dp"
             app:expandedTitleMarginTop="24dp"
-            app:expandedTitleGravity="top"
-            app:collapsedTitleTextAppearance="@style/VText.ToolbarStyle"
             app:expandedTitleTextAppearance="@style/VText.ToolbarStyle"
-            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            app:titleEnabled="true">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraint_member"
@@ -47,7 +46,7 @@
                     app:civ_fill_color="@color/white"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@drawable/ic_profile"/>
+                    tools:src="@drawable/ic_profile" />
 
 
                 <LinearLayout
@@ -62,43 +61,43 @@
                     app:layout_constraintTop_toBottomOf="@+id/tv_intro">
 
                     <ImageView
-                        android:padding="2dp"
                         android:id="@+id/iv_location"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginRight="16dp"
+                        android:padding="2dp"
                         android:src="@drawable/ic_location" />
 
                     <ImageView
-                        android:padding="2dp"
                         android:id="@+id/iv_twitter"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginRight="16dp"
+                        android:padding="2dp"
                         android:src="@drawable/ic_twitter" />
 
                     <ImageView
-                        android:padding="2dp"
                         android:id="@+id/iv_github"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginRight="16dp"
+                        android:padding="2dp"
                         android:src="@drawable/ic_github" />
 
                     <ImageView
-                        android:padding="2dp"
                         android:id="@+id/iv_bitcoin"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginRight="16dp"
+                        android:padding="2dp"
                         android:src="@drawable/ic_bitcoin" />
 
                     <ImageView
-                        android:padding="2dp"
                         android:id="@+id/tv_website"
                         android:layout_width="28dp"
                         android:layout_height="28dp"
                         android:layout_marginRight="16dp"
+                        android:padding="2dp"
                         android:src="@drawable/ic_website" />
                 </LinearLayout>
 
@@ -125,8 +124,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:textStyle="bold"
                     android:textColor="@color/toolbar_text"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/iv_avatar_profile"
                     app:layout_constraintTop_toBottomOf="@+id/iv_avatar_profile"
@@ -165,24 +164,44 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?actionBarSize"
-                app:titleTextAppearance="@style/VText.ToolbarStyle"
                 android:theme="@style/AppTheme.AppBarOverlay"
-                app:layout_collapseMode="pin"/>
+                app:layout_collapseMode="pin"
+                app:titleTextAppearance="@style/VText.ToolbarStyle" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tl_member"
-            app:tabMode="scrollable"
-            app:tabMaxWidth="400dp"
-            style="@style/VTabLayout"
-            />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tl_member"
+                style="@style/VTabLayout"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                app:tabMaxWidth="400dp"
+                app:tabMode="scrollable" />
+
+            <TextView
+                android:id="@+id/tv_more"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/VText.Hint"
+                android:layout_gravity="center_vertical|end"
+                android:text="更多>">
+
+            </TextView>
+        </LinearLayout>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
