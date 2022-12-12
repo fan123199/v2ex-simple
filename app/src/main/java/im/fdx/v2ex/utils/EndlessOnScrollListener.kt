@@ -1,12 +1,11 @@
 package im.fdx.v2ex.utils
 
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.utils.extensions.logd
 
-abstract class EndlessOnScrollListener(val rvReply: RecyclerView) : RecyclerView.OnScrollListener() {
-
-  private val mLinearLayoutManager = rvReply.layoutManager as androidx.recyclerview.widget.LinearLayoutManager
+abstract class EndlessOnScrollListener(val rvReply: RecyclerView, val mLinearLayoutManager:LinearLayoutManager) : RecyclerView.OnScrollListener() {
 
   private val visibleThreshold = 2
 

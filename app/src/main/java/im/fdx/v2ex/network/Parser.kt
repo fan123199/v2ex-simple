@@ -434,6 +434,8 @@ class Parser(private val htmlStr: String) {
     //        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8"
     fun getTotalPageForTopics() = Regex("(?<=max=\")\\d{1,8}").find(htmlStr)?.value?.toInt() ?: 0
 
+    fun getContentMsg() = doc.getElementsByClass("topic_content").first()?.text()?:""
+
 
     fun getErrorMsg(): String {
         logd(htmlStr)

@@ -28,9 +28,9 @@ class ReplyAdapter(val activity: Activity,
     override fun onBindViewHolder(holder: ReplyViewHolder, position: Int) {
 
         val reply = list[position]
-        holder.tvTitle.text = reply.topic.title
+        holder.tvTitle.text =reply.createdOriginal +  " 回复了主题：\n" + reply.topic.title
         holder.tvContent.setGoodText(reply.content, true)
-        holder.tvTime.text = reply.createdOriginal
+//        holder.tvTime.text = reply.createdOriginal
 
         holder.itemView.setOnClickListener {
             activity.startActivity<TopicActivity>(Keys.KEY_TOPIC_ID to reply.topic.id)

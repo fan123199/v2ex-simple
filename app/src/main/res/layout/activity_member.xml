@@ -185,13 +185,14 @@
 
             <TextView
                 android:id="@+id/tv_more"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/VText.Hint"
+                android:visibility="gone"
                 android:layout_gravity="center_vertical|end"
-                android:text="更多>">
+                tools:text="查看更多">
 
             </TextView>
         </LinearLayout>

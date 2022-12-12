@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
+import im.fdx.v2ex.databinding.FragmentTabArticleBinding
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
@@ -30,32 +31,49 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
 
     private lateinit var swipeRefreshLayout: androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     private lateinit var adapter: ReplyAdapter //
-    private lateinit var flcontainer: FrameLayout
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View
-            = inflater.inflate(R.layout.fragment_tab_article, container, false)
-
+    private var currentPage = 1
+    private var totalPage = -1
+    private var _binding: FragmentTabArticleBinding? = null
+    private val binding get() = _binding!!
+    private var isEndlessMode = true
     private var mScrollListener: EndlessOnScrollListener? = null
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentTabArticleBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        flcontainer = view.findViewById(R.id.fl_container)
-        swipeRefreshLayout = view.findViewById(R.id.swipe_container)
-        swipeRefreshLayout.initTheme()
-        swipeRefreshLayout.setOnRefreshListener {
-            mScrollListener?.restart()
-            getRepliesByWeb(1)/* 刷新则重头开始 */
+
+    fun togglePageNum() {
+        isEndlessMode = !isEndlessMode
+
+        if (isEndlessMode) {
+            mScrollListener?.let { binding.rvContainer.addOnScrollListener(it) }
+        } else {
+            mScrollListener?.let { binding.rvContainer.removeOnScrollListener(it) }
         }
 
-        val rvReply: androidx.recyclerview.widget.RecyclerView = view.findViewById(R.id.rv_container)
+        _binding?.let {
+            binding.pageNumberView.isVisible = !isEndlessMode
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        swipeRefreshLayout = binding.swipeContainer
+        swipeRefreshLayout.initTheme()
+
+        swipeRefreshLayout.setOnRefreshListener {
+            if (isEndlessMode) {
+                mScrollListener?.restart()
+                getRepliesByWeb(1)
+            } else {
+                getRepliesByWeb(currentPage)/* 刷新则重头开始 */
+            }
+        }
+
         val layoutManager = LinearLayoutManager(requireActivity())
-
-
-        rvReply.layoutManager = layoutManager
-        rvReply.addItemDecoration(androidx.recyclerview.widget.DividerItemDecoration(activity, androidx.recyclerview.widget.DividerItemDecoration.VERTICAL))
-
-        // enable pull up for endless loading
-        mScrollListener = object : EndlessOnScrollListener(rvReply) {
+        binding.rvContainer.layoutManager = layoutManager
+        mScrollListener = object : EndlessOnScrollListener(binding.rvContainer, layoutManager) {
             override fun onCompleted() {
                 activity?.toast(getString(R.string.no_more_data))
             }
@@ -68,11 +86,27 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
             }
         }
 
-        rvReply.addOnScrollListener(mScrollListener!!)
+        if (isEndlessMode) {
+            binding.rvContainer.addOnScrollListener(mScrollListener!!)
+        }
+
+
+        binding.rvContainer.addItemDecoration(
+            androidx.recyclerview.widget.DividerItemDecoration(
+                activity,
+                androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
+            )
+        )
+
         adapter = ReplyAdapter(requireActivity())
-        rvReply.adapter = adapter
+        binding.rvContainer.adapter = adapter
+
+        binding.pageNumberView.setSelectNumListener {
+            swipeRefreshLayout.isRefreshing = true
+            getRepliesByWeb(it)
+        }
         swipeRefreshLayout.isRefreshing = true
-        getRepliesByWeb(1)
+        getRepliesByWeb(currentPage)
     }
 
 
@@ -93,31 +127,41 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                 val parser = Parser(body)
                 val replyModels = parser.getUserReplies()
 
-                if (totalPage == 0) {
+                if (totalPage == -1) {
                     totalPage = parser.getTotalPageInMember()
-                    mScrollListener?.totalPage = totalPage
+                    activity?.runOnUiThread {
+                        mScrollListener?.totalPage = totalPage
+                        binding.pageNumberView.totalNum = totalPage
+                        if (totalPage > 0) {
+                            (activity as MemberActivity?)?.showMoreBtn(1)
+                        }
+                    }
                 }
                 activity?.runOnUiThread {
                     if (replyModels.isEmpty()) {
                         if (page == 1) {
-                          flcontainer.showNoContent()
+                            binding.flContainer.showNoContent()
                         }
                     } else {
-                        if (page == 1) {
-                            adapter.updateItem(replyModels)
+                        if (isEndlessMode) {
+                            if (page == 1) {
+                                adapter.updateItem(replyModels)
+                            } else {
+                                mScrollListener?.success()
+                                adapter.addItems(replyModels)
+                            }
+                            mScrollListener?.loading = false
                         } else {
-                            mScrollListener?.success()
-                            adapter.addItems(replyModels)
+                            adapter.updateItem(replyModels)
+                            binding.rvContainer.scrollToPosition(0)
                         }
                         XLog.tag("__REPLY").i(replyModels[0].topic.title)
                     }
                     swipeRefreshLayout.isRefreshing = false
                 }
-                mScrollListener?.loading = false
             }
         })
     }
 
-    private var totalPage = 0
 }
 

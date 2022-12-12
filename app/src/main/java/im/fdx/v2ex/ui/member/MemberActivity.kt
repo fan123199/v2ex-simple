@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -17,16 +16,14 @@ import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import im.fdx.v2ex.*
 import im.fdx.v2ex.databinding.ActivityMemberBinding
 import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.NetManager.API_TOPIC
 import im.fdx.v2ex.network.NetManager.API_USER
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.dealError
@@ -45,8 +42,6 @@ import im.fdx.v2ex.view.ViewPagerHelper
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.act
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
 import kotlin.math.abs
@@ -71,7 +66,10 @@ class MemberActivity : BaseActivity() {
 
     private lateinit var binding: ActivityMemberBinding
 
-    private var isMe = false;
+    private var isMe = false
+
+    private var isHasContentPage1 = false
+    private var isHasContentPage2 = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,8 +95,12 @@ class MemberActivity : BaseActivity() {
 
             binding.tvMore.setOnClickListener {
                 supportFragmentManager.fragments.forEach {
-                    if (it is UserReplyFragment2) {
-                        it.togglePageNum()
+                    if (it.isVisible) {
+                        if (it is UserReplyFragment) {
+                            it.togglePageNum()
+                        } else if (it is TopicsFragment) {
+                            it.togglePageNum()
+                        }
                     }
                 }
             }
@@ -120,8 +122,18 @@ class MemberActivity : BaseActivity() {
             }
         })
 
-        helper = ViewPagerHelper(binding.viewpager)
 
+        helper = ViewPagerHelper(binding.viewpager)
+        binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (position == 0) {
+                    binding.tvMore.isVisible = isHasContentPage1
+                } else {
+                    binding.tvMore.isVisible = isHasContentPage2
+                }
+            }
+        })
         getData()
     }
 
@@ -202,6 +214,7 @@ class MemberActivity : BaseActivity() {
                             mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
                         }
 
+                        binding.tvMore.text = "显示页码"
                         binding.tvOnline.isVisible = isOnline
                         binding.viewpager.isVisible = !isBlocked
 
@@ -255,6 +268,15 @@ class MemberActivity : BaseActivity() {
                     )
             }
         }
+    }
+
+    fun showMoreBtn(position: Int) {
+        if (position == 0 ) {
+            isHasContentPage1 = true
+        } else {
+            isHasContentPage2 = true
+        }
+        binding.tvMore.isVisible = true
     }
 
     @SuppressLint("SetTextI18n")
@@ -319,7 +341,7 @@ class MemberActivity : BaseActivity() {
 
         BottomSheetMenu(this)
             .setTitle("请选择举报的理由")
-            .addItems( listOf("大量发布广告","冒充他人","疑似机器帐号", "其他")) { _, s ->
+            .addItems(listOf("大量发布广告", "冒充他人", "疑似机器帐号", "其他")) { _, s ->
                 startActivity(Intent(this, NewTopicActivity::class.java).apply {
                     action = Keys.ACTION_V2EX_REPORT
                     putExtra(Intent.EXTRA_TITLE, "报告用户 ${member.username} ")
@@ -417,7 +439,7 @@ class MemberActivity : BaseActivity() {
 
         override fun createFragment(position: Int) = when (position) {
             0 -> TopicsFragment()
-            else -> UserReplyFragment2()
+            else -> UserReplyFragment()
         }.apply { arguments = bundleOf(Keys.KEY_USERNAME to username, Keys.KEY_AVATAR to avatar) }
 
     }
