@@ -31,7 +31,6 @@ import okhttp3.*
 import org.jetbrains.anko.startActivityForResult
 import org.jetbrains.anko.toast
 import java.io.IOException
-import java.util.regex.Pattern
 
 
 class NewTopicActivity : BaseActivity() {
@@ -228,12 +227,11 @@ class NewTopicActivity : BaseActivity() {
                                 return
                             }
 
-                            val location = response2.header("Location")
-                            val p = Pattern.compile("(?<=/t/)(\\d+)")
-                            val matcher = p.matcher(location!!)
-                            val topic: String
-                            if (matcher.find()) {
-                                topic = matcher.group()
+                            val location = response2.header("Location")?:""
+                            val p = Regex("(?<=/t/)(\\d+)")
+                            val matcher = p.find(location)?.value
+                            matcher?.let {
+                                val topic: String = it
                                 logd(topic)
                                 val intent = Intent(this@NewTopicActivity, TopicActivity::class.java)
                                 intent.putExtra(Keys.KEY_TOPIC_ID, topic)

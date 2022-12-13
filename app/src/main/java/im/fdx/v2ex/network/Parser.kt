@@ -18,7 +18,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import java.util.*
-import java.util.regex.Pattern
 
 class Parser(private val htmlStr: String) {
 
@@ -190,21 +189,15 @@ class Parser(private val htmlStr: String) {
 
 
     fun isTopicFavored(): Boolean {
-        val p = Pattern.compile("un(?=favorite/topic/\\d{1,10}\\?once=)")
-        val matcher = p.matcher(htmlStr)
-        return matcher.find()
+       return Regex("un(?=favorite/topic/\\d{1,10}\\?once=)").containsMatchIn(htmlStr)
     }
 
     fun isTopicThanked(): Boolean {
-        val p = Pattern.compile("thankTopic\\(\\d{1,10}")
-        val matcher = p.matcher(htmlStr)
-        return !matcher.find()
+        return Regex("thankTopic\\(\\d{1,10}").containsMatchIn(htmlStr)
     }
 
     fun isIgnored(): Boolean {
-        val p = Pattern.compile("un(?=ignore/topic/\\d{1,10})")
-        val matcher = p.matcher(htmlStr)
-        return matcher.find()
+        return Regex("un(?=ignore/topic/\\d{1,10})").containsMatchIn(htmlStr)
     }
 
     fun getPageValue(): IntArray {
@@ -493,20 +486,21 @@ class Parser(private val htmlStr: String) {
 
             topicModel.title = topicElement?.getElementsByAttributeValueStarting("href", "/t/")?.first()?.text()?:""
 
-            val p = Pattern.compile("(?<=/t/)\\d+(?=#)")
-            val matcher = p.matcher(href)
-            if (matcher.find()) {
-                val topicId = matcher.group()
-                topicModel.id = topicId
+            href?.let {
+                val p = Regex("(?<=/t/)\\d+(?=#)")
+                val out = p.find(href)?.value
+                if (!out.isNullOrEmpty()) {
+                    topicModel.id = out
+                }
+
+                val p2 = Regex("(?<=reply)d+\\b")
+                val out2 = p2.find(href)?.value
+                if (! out2.isNullOrEmpty()) {
+                    notification.replyPosition = out2
+                }
+                notification.topic = topicModel //4/6
             }
 
-            val p2 = Pattern.compile("(?<=reply)d+\\b")
-            val matcher2 = p2.matcher(href)
-            if (matcher2.find()) {
-                val replies = matcher2.group()
-                notification.replyPosition = replies
-            }
-            notification.topic = topicModel //4/6
 
             val originalType = topicElement?.ownText()?:""
             notification.type =

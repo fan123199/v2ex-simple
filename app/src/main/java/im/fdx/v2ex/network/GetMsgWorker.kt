@@ -17,7 +17,6 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
-import java.util.regex.Pattern
 
 class GetMsgWorker(val context: Context, workerParameters: WorkerParameters) : Worker(context, workerParameters) {
     override fun doWork(): Result {
@@ -45,12 +44,12 @@ class GetMsgWorker(val context: Context, workerParameters: WorkerParameters) : W
 
                 val html = response.body!!.string()
                 //                <a href="/notifications" class="fade">0 条未读提醒</a>
-                val p = Pattern.compile("(?<=<a href=\"/notifications\".{0,20}>)\\d+")
-                val matcher = p.matcher(html)
-                if (matcher.find()) {
-                    val num = Integer.parseInt(matcher.group())
+                val p = Regex("(?<=<a href=\"/notifications\".{0,20}>)\\d+")
+                val matcher = p.find(html)
+                if (matcher!= null) {
+                    val num = matcher.value.toIntOrNull()
                     XLog.d("num:$num")
-                    if (num != 0) {
+                    if (num != null && num != 0) {
                         val intent = Intent(Keys.ACTION_GET_NOTIFICATION)
                         intent.putExtra(Keys.KEY_UNREAD_COUNT, num)
                         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
