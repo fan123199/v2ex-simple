@@ -161,8 +161,8 @@ class TopicsFragment : Fragment() {
         }
 
         when (currentMode) {
-            FROM_NODE, FROM_SEARCH, FROM_FAVOR -> mRecyclerView?.addOnScrollListener(mScrollListener)
-            FROM_HOME, FROM_MEMBER -> {}
+            FROM_NODE, FROM_SEARCH, FROM_FAVOR, FROM_MEMBER -> mRecyclerView?.addOnScrollListener(mScrollListener)
+            FROM_HOME -> {}
         }
 
         val topicList: ArrayList<Topic>? = args?.getParcelableArrayList(Keys.KEY_TOPIC_LIST)
@@ -362,13 +362,18 @@ class TopicsFragment : Fragment() {
                             it.member?.avatar_normal = arguments?.getString(Keys.KEY_AVATAR) ?: ""
                             logi(it.id + ":" + it.title + " -- " + it.member?.avatar_normal)
                         }
-//            if (mScrollListener.isRestart()) {
-                        topicList.let { mAdapter.updateItems(it) }
-//            } else {
-//              mScrollListener.success()
-//              topicList.let { mAdapter.addAllItems(it) }
-//            }
+                        if (isEndlessMode) {
+                            if (mScrollListener.isRestart()) {
+                                topicList.let { mAdapter.updateItems(it) }
+                            } else {
+                                mScrollListener.success()
+                                topicList.let { mAdapter.addAllItems(it) }
+                            }
+                        } else {
+                            topicList.let { mAdapter.updateItems(it) }
+                        }
                     }
+
                     FROM_NODE, FROM_FAVOR ->
                         if (mScrollListener.isRestart()) {
                             topicList.let { mAdapter.updateItems(it) }

@@ -193,7 +193,7 @@ class Parser(private val htmlStr: String) {
     }
 
     fun isTopicThanked(): Boolean {
-        return Regex("thankTopic\\(\\d{1,10}").containsMatchIn(htmlStr)
+        return !Regex("thankTopic\\(\\d{1,10}").containsMatchIn(htmlStr)
     }
 
     fun isIgnored(): Boolean {
