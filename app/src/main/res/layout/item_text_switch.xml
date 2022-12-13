@@ -9,34 +9,37 @@
     android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="120dp"
+        android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
         android:background="@drawable/radius_2dp">
 
-        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <TextView
             android:id="@+id/tv"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:includeFontPadding="false"
             android:textColor="@color/title_text"
-            android:textSize="?text_large"
+            android:textSize="?text_medium"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivDelete"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Apple">
+            tools:text="AppleApplAppleApplAppleAppl">
 
         </TextView>
 
 
         <ImageView
             android:id="@+id/ivDelete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:contentDescription="@string/indicator"
-            android:padding="10dp"
+            android:padding="8dp"
             android:src="@drawable/ic_baseline_remove_circle_outline_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
