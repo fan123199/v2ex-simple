@@ -77,7 +77,9 @@ class PageNumberView : FrameLayout {
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         rv.overScrollMode = OVER_SCROLL_NEVER
-        rv.adapter = theAdapter
+        rv.adapter = theAdapter.apply {
+            this.ctx = context
+        }
 
         et = findViewById<EditText>(R.id.et_num)
 
@@ -115,6 +117,7 @@ class TheViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 // size 必须是奇数， 不然效果很奇怪。
 class TheAdapter(val size: Int) : RecyclerView.Adapter<TheViewHolder>() {
+    lateinit var ctx : Context
     private var  act : ((Int) -> Unit)? = null
     private var currentNum = 1
 
@@ -174,9 +177,9 @@ class TheAdapter(val size: Int) : RecyclerView.Adapter<TheViewHolder>() {
         holder.tv.text = showDatas[position]
         holder.tv.isSelected = currentNum.toString() == holder.tv.text.toString()
         if (holder.tv.isSelected) {
-            holder.tv.setTextColor(ContextCompat.getColor(myApp, R.color.primary))
+            holder.tv.setTextColor(ContextCompat.getColor(ctx!!, R.color.main_color))
         } else {
-            holder.tv.setTextColor(ContextCompat.getColor(myApp, R.color.hint))
+            holder.tv.setTextColor(ContextCompat.getColor(ctx!!, R.color.hint))
         }
         holder.tv.isEnabled = "..." != holder.tv.text.toString()
     }
