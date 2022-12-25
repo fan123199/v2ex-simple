@@ -1,8 +1,9 @@
 package im.fdx.v2ex.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -14,26 +15,22 @@ import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.ImageUtil
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import im.fdx.v2ex.view.BottomSheetMenu
-import kotlinx.parcelize.Parcelize
-import java.util.*
 
 
+//todo 不用长按的方式，因为这个根本没人会用。 直接加按钮才是现在操作的王道
 class PhotoActivity : AppCompatActivity() {
 
-    private lateinit var thelist: ArrayList<V2Photo>
+    private lateinit var thelist: List<String>
     private var position: Int = 0
-
-
+    lateinit var viewPager: ViewPager2
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_photo)
         setUpToolbar()
         val toolbar: Toolbar = findViewById(R.id.toolbar)
-        val viewPager: ViewPager2 = findViewById(R.id.viewPager)
-        val list = intent.getParcelableArrayListExtra<V2Photo>(Keys.KEY_PHOTO)
+        viewPager = findViewById(R.id.viewPager)
+        val list = intent.getStringArrayListExtra(Keys.KEY_PHOTO)
         if (list == null) {
             finish()
             return
@@ -54,7 +51,19 @@ class PhotoActivity : AppCompatActivity() {
     }
 
 
-    inner class MyViewPagerAdapter(val list: MutableList<V2Photo>) : RecyclerView.Adapter<VH>() {
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+
+        if (ev.action == MotionEvent.ACTION_MOVE) {
+            viewPager.isUserInputEnabled = ev.pointerCount <= 1
+        }
+        if (ev.action == MotionEvent.ACTION_UP) {
+            viewPager.isUserInputEnabled = true
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+
+    inner class MyViewPagerAdapter(val list: List<String>) : RecyclerView.Adapter<VH>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
             val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pager_item, parent, false)
@@ -64,18 +73,16 @@ class PhotoActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: VH, position: Int) {
 
             val imageView = holder.itemView.findViewById(R.id.photo_view) as ImageView
-            val imageUrl = list[position].url
-            imageView.load(imageUrl)
-            imageView.setOnLongClickListener {
-                BottomSheetMenu(this@PhotoActivity)
-                    .addItem("下载图片") {
-                        ImageUtil.downloadImage(this@PhotoActivity, imageUrl)
-                    }
-                    .addItem("分享图片") {
-                        ImageUtil.shareImage(this@PhotoActivity, imageUrl)
-                    }
-                    .show()
-                true
+            val imageUrl = list[position]
+            GlideApp.with(imageView)
+                .load(imageUrl)
+                .fitCenter()
+                .into(imageView)
+            holder.itemView.findViewById<ImageView>(R.id.ivShare).setOnClickListener {
+                ImageUtil.shareImage(this@PhotoActivity, imageUrl)
+            }
+            holder.itemView.findViewById<ImageView>(R.id.ivSave).setOnClickListener {
+                ImageUtil.downloadImage(this@PhotoActivity, imageUrl)
             }
         }
 
@@ -87,6 +94,4 @@ class PhotoActivity : AppCompatActivity() {
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-    @Parcelize
-    data class V2Photo(var url: String, var name: String? = null) : Parcelable
 }

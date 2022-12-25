@@ -91,6 +91,7 @@ class TopicAdapter(
                 mainHolder.tvContent.isSelected = true
                 mainHolder.tvContent.setTextIsSelectable(true)
 
+                (mainHolder.itemView as ViewGroup).descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS;
                 mainHolder.tvReplyNumber.text = topic.replies.toString()
                 mainHolder.tvAuthor.text = topic.member?.username
                 mainHolder.tvNode.text = topic.node?.title

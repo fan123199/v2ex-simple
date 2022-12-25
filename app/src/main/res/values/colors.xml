@@ -25,6 +25,9 @@
     <color name="list_background">#e8e8e8</color>
     <color name="chrome_tab">@color/toolbar_background</color>
     <color name="node_background">#41000000</color>
+    <color name="main_color">#00bcd4</color>
+    <color name="gray_400">#FFBDBDBD</color>
+    <color name="gray_600">#FF757575</color>
 
     <!--在night中变化的值-->
     <color name="status_bar_white">@color/white</color>
@@ -51,8 +54,6 @@
     <color name="fab">@color/accent_orange</color>
     <color name="icon">@color/primary</color>
     <color name="bg_login">@color/primary</color>
-    <color name="gray_400">#FFBDBDBD</color>
-    <color name="gray_600">#FF757575</color>
     <color name="back_icon">@color/primary</color>
     <color name="back_icon_login">@color/white</color>
 

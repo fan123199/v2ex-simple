@@ -9,18 +9,13 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.text.*
 import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ImageSpan
-import android.text.style.QuoteSpan
-import android.text.style.URLSpan
+import android.text.style.*
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.drawable.toDrawable
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.GlideApp
@@ -32,7 +27,10 @@ import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.dp2px
 import org.jetbrains.anko.startActivity
+import org.xml.sax.Attributes
 import org.xml.sax.XMLReader
+import java.util.*
+
 
 typealias TextType = Int
 
@@ -46,6 +44,8 @@ const val typeReply: TextType = 3
  *
  *  这里非常难实现显示textView， 因为tagHandler的使用，是要对<code> <pre>等标签进行处理，但是后续没有好用的背景绘制方法。
  *  总的来说就是，在textView搞这些超纲的多样式，是不科学的。 所以请放弃念想。优化下图片显示还是可以考虑的
+ *
+ *  IMPORTANT!  除了换RN技术栈，不要再花时间去优化或替换这个view了，基本没有好方法了。
  *
  */
 class GoodTextView @JvmOverloads constructor(
@@ -126,7 +126,7 @@ class GoodTextView @JvmOverloads constructor(
         //分离 图片 span
         val imageSpans = htmlSpannable.getSpans(0, htmlSpannable.length, ImageSpan::class.java)
 
-        val photos = ArrayList(imageSpans.map { PhotoActivity.V2Photo(it.source ?: "") })
+        val photos = imageSpans.map { it.source ?: "" }
 
         imageSpans.forEachIndexed { index, imageSpan ->
             //            val imageUrl = imageSpan.source
@@ -322,3 +322,4 @@ class CodeTagHandler : Html.TagHandler {
     }
 
 }
+
