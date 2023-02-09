@@ -155,6 +155,7 @@ class MemberActivity : BaseActivity() {
         }
         val urlUserInfo = "$API_USER?username=$username"  //Livid's profile
         binding.ctlProfile.title = username
+
         getByAPI(urlUserInfo)
 
         if (isMe) {
@@ -337,6 +338,10 @@ class MemberActivity : BaseActivity() {
         if (!myApp.isLogin) {
             showLoginHint(binding.root)
             return
+        }
+        if(!this::member.isInitialized) {
+            toast("请等待用户信息获取")
+            return;
         }
 
         BottomSheetMenu(this)
