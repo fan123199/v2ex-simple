@@ -69,7 +69,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:gravity="center_horizontal"
+        android:gravity="center"
+        android:baselineAligned="true"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_title">
 
@@ -86,9 +87,8 @@
             android:autoSizeMaxTextSize="?text_medium"
             android:autoSizeMinTextSize="8sp"
             android:autoSizeTextType="uniform"
-            android:includeFontPadding="false"
             android:maxLines="1"
-            android:paddingLeft="4dp"
+            android:paddingStart="4dp"
             android:textColor="@color/hint"
             android:textSize="?text_small"
             tools:targetApi="o"

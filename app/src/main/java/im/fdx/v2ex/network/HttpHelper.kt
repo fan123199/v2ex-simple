@@ -11,7 +11,9 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.logi
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
+import java.io.EOFException
 import java.io.IOException
+import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -86,8 +88,11 @@ fun Call.start(callback: Callback) {
         override fun onResponse(call: Call, response: Response) {
             try {
                 callback.onResponse(call, response)
-            } catch (e: Exception) {
-                FirebaseCrashlytics.getInstance().recordException(e)
+            }
+            catch (e: Exception) {
+                if(e !is SocketTimeoutException && e !is EOFException) {
+                    FirebaseCrashlytics.getInstance().recordException(e)
+                }
                 e.printStackTrace()
             }
         }
@@ -111,7 +116,6 @@ fun Call.start(onResp: (Call, Response) -> Unit, onFail: (Call, IOException)-> U
             try {
                 callback.onFailure(call, e)
             } catch (e2: Exception) {
-                FirebaseCrashlytics.getInstance().recordException(e2)
                 e2.printStackTrace()
             }
         }
