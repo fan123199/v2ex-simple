@@ -6,11 +6,12 @@ buildscript {
     kotlin_version = "1.7.20"
     repositories {
         google()
-        maven("https://maven.aliyun.com/repository/public")
+        mavenCentral()
+//        maven("https://maven.aliyun.com/repository/public")
         maven("https://jitpack.io")
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.android.tools.build:gradle:7.4.1")
         classpath("com.google.gms:google-services:4.3.15")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.2")

@@ -4,7 +4,7 @@
 
 ## 现状
 
-该项目应该不会有大的功能更新了。如有问题，欢迎提出。
+该项目应该不会有大的功能更新了，仅修复bug。如有问题，欢迎提出。
 
 
 [![Build Status](https://travis-ci.org/fan123199/v2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/v2ex-simple)

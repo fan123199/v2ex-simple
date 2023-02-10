@@ -6,7 +6,7 @@ Project is first written by Java and now kotlin.
 
 ## status
 
-The project would be less feature update, but you have any issue, I'd like to help you.
+The project would will be less feature update, only bug fixed. But you have any issue, I'd like to help you.
 
 [![Build Status](https://travis-ci.org/fan123199/v2ex-simple.svg?branch=master)](https://travis-ci.org/fan123199/v2ex-simple)
 

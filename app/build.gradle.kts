@@ -24,8 +24,8 @@ android {
         applicationId = "im.fdx.v2ex"
         minSdk = 22
         targetSdk = 33
-        versionCode = 59
-        versionName = "2.8.8"
+        versionCode = 60
+        versionName = "2.8.9"
     }
     lint {
         checkReleaseBuilds = false
@@ -94,7 +94,7 @@ dependencies {
 //    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 //    implementation("androidx.legacy:legacy-support-v13:1.0.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.browser:browser:1.4.0")
+    implementation("androidx.browser:browser:1.5.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("com.google.android.material:material:1.8.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
