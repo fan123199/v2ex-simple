@@ -52,7 +52,7 @@ class SettingsActivity : BaseActivity() {
       prefTab()
       prefNightMode()
       prefRate()
-
+      prefLanguage()
       prefVersion()
 
       if (myApp.isLogin) {
@@ -61,6 +61,10 @@ class SettingsActivity : BaseActivity() {
         prefUser()
         prefMessage()
       }
+
+    }
+
+    private fun prefLanguage() {
 
     }
 
@@ -172,6 +176,10 @@ class SettingsActivity : BaseActivity() {
         }
         PREF_TEXT_SIZE -> {
           LocalBroadcastManager.getInstance(myApp).sendBroadcast(Intent(Keys.ACTION_TEXT_SIZE_CHANGE))
+          activity?.finish()
+        }
+        "pref_language" -> {
+          LocalBroadcastManager.getInstance(myApp).sendBroadcast(Intent(Keys.ACTION_LANGUAGE_CHANGE))
           activity?.finish()
         }
       }

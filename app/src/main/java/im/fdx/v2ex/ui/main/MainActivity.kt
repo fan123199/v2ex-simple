@@ -28,7 +28,6 @@ import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -36,9 +35,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
 import im.fdx.v2ex.databinding.ActivityMainNavDrawerBinding
@@ -54,7 +51,6 @@ import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.AllNodesActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.Keys.TAG_WORKER
-import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.BottomSheetMenu
 import im.fdx.v2ex.view.ViewPagerHelper
@@ -65,8 +61,8 @@ import org.jetbrains.anko.share
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 import java.io.IOException
+import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -124,8 +120,39 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 Keys.ACTION_TEXT_SIZE_CHANGE -> {
                     recreate()
                 }
+                Keys.ACTION_LANGUAGE_CHANGE -> {
+                    changeAppLanguage()
+                    recreate()
+                }
             }
         }
+    }
+
+    override fun attachBaseContext(newBase: Context?) {
+        super.attachBaseContext(newBase)
+        changeAppLanguage()
+    }
+
+    fun changeAppLanguage() {
+        val sta = pref.getString("pref_language", "")
+        // 本地语言设置
+        var myLocale: Locale? = null
+        if (sta == "zh_CN") {
+            myLocale = Locale.SIMPLIFIED_CHINESE
+        } else if (sta == "zh_TW") {
+            myLocale = Locale.TRADITIONAL_CHINESE
+        } else if (sta == "en") {
+            myLocale = Locale.ENGLISH
+        } else {
+            return;
+        }
+        resources?.let {
+            val dm = resources!!.displayMetrics
+            val conf = resources!!.configuration
+            conf.setLocale(myLocale)
+            resources!!.updateConfiguration(conf, dm)
+        }
+
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -195,6 +222,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             addAction(Keys.ACTION_GET_NOTIFICATION)
             addAction(Keys.ACTION_TAB_SETTING)
             addAction(Keys.ACTION_TEXT_SIZE_CHANGE)
+            addAction(Keys.ACTION_LANGUAGE_CHANGE)
         }
 
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, intentFilter)
@@ -317,7 +345,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         mAdapter = MyViewPagerAdapter(this@MainActivity)
         binding.activityMainContent.viewpagerMain.adapter = mAdapter
 
-        helper =  ViewPagerHelper(binding.activityMainContent.viewpagerMain)
+        helper = ViewPagerHelper(binding.activityMainContent.viewpagerMain)
         TabLayoutMediator(
             binding.activityMainContent.slidingTabs,
             binding.activityMainContent.viewpagerMain

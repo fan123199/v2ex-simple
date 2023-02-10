@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello_world">你好世界</string>
+    <string name="it_is_avatar">這是頭像</string>
+    <string name="menu_refresh">刷新</string>
+    <string name="title">標題</string>
+    <string name="content">這是內容</string>
+    <string name="menu_share">分享</string>
+    <string name="node">節點</string>
+    <string name="title_activity_details">帖子內容</string>
+    <string name="settings">設置</string>
+    <string name="author">作者</string>
+    <string name="reply">回复</string>
+    <string name="reply_time">回复時間</string>
+    <string name="row">樓</string>
+    <string name="title_activity_settings">設置</string>
+    <string name="username">用戶名</string>
+    <string name="title_activity_login">登錄</string>
+    <string name="password">密碼</string>
+    <string name="register_tip">新用戶點此註冊</string>
+    <string name="navigation_drawer_close">打開抽屜</string>
+    <string name="navigation_drawer_open">關閉抽屜</string>
+    <string name="tab_title_latest">最新</string>
+    <string name="tab_title_top10">最熱</string>
+    <string name="title_activity_nav_drawer">抽屜</string>
+    <string name="login">登錄</string>
+    <string name="feature">特性</string>
+    <string name="authenticating">驗證中</string>
+    <string name="account">賬戶</string>
+    <string name="communicate">聯繫</string>
+    <string name="feedback">反饋</string>
+    <string name="general">通用</string>
+    <string name="other">其他</string>
+    <string name="rate">評價應用</string>
+    <string name="just_now">剛剛</string>
+    <string name="menu_open_in_browser">在瀏覽器打開</string>
+    <string name="app_name">探索路V2EX</string>
+    <string name="app_simple_name">V2EX</string>
+    <string name="error_timeout">連接超時</string>
+    <string name="error_auth_failure">需要登錄查看</string>
+    <string name="error_network">網絡錯誤</string>
+    <string name="error_parser">解析錯誤</string>
+    <string name="share_app">分享應用</string>
+    <string name="share_to">分享到</string>
+    <string name="feedback_hint">請寫下你的建議或問題。
+        \n</string>
+    <string name="send_email">發送反饋郵件</string>
+    <string name="search_hint">請輸入搜索內容</string>
+    <string name="show_thanks">♥ %d</string>
+    <string name="profile">個人信息</string>
+    <string name="email">郵箱名</string>
+    <string name="title_activity_node">節點</string>
+    <string name="log_in_v2ex">登錄 V2EX</string>
+    <string name="thanks">感謝</string>
+    <string name="created_on">創建於</string>
+    <string name="introduction">個人簡介</string>
+    <string name="the_n_member">第 %s 個會員</string>
+    <string name="topic_number">主題數 %d</string>
+    <string name="daily_check">每日簽到</string>
+    <string name="logout">退出登錄</string>
+    <string name="all_nodes">全部節點</string>
+    <string name="user">用戶</string>
+    <string name="choose_node">選擇節點</string>
+    <string name="post_reply">發表回复</string>
+    <string name="notification">通知</string>
+    <string name="copy_content">複製</string>
+    <string name="close">關閉</string>
+    <string name="cancel">取消</string>
+    <string name="create_topic">創建主題</string>
+    <string name="ok">確認</string>
+    <string name="you_have_notifications">你有%d條未讀消息</string>
+    <string name="favor">收藏</string>
+    <string name="my_follow">收藏關注</string>
+    <string name="unFavor">取消收藏</string>
+    <string name="new_topic">發帖</string>
+    <string name="follow">關注</string>
+    <string name="block">屏蔽</string>
+    <string name="verify_code">驗證碼</string>
+    <string name="no_more_data">沒有更多的數據</string>
+    <string name="indicator">指示</string>
+    <string name="show_user_all_reply">顯示該用戶全部回复</string>
+    <string name="already_thank">已感謝</string>
+    <string name="ignore">忽略</string>
+    <string name="already_ignore">取消忽略</string>
+    <string name="google_login">通過 Google 登錄</string>
+    <string name="tab_setting">首頁Tab設置</string>
+    <string name="need_at_least_one">至少保留一個</string>
+    <string name="show_area">展示區</string>
+    <string name="hide_area">隱藏區</string>
+    <string name="menu_reset">重置</string>
+    <string name="menu_save">保存</string>
+    <string name="search">搜索</string>
+    <string name="there_is_no_app_store">沒有可用的應用商店，請檢查後重試</string>
+    <string name="font_size">字體大小</string>
+    <string name="swipe_to_switch_topic">左右滑動切換主題</string>
+    <string name="dark_mode">深色主題</string>
+    <string name="on">啟用</string>
+    <string name="off">關閉</string>
+    <string name="version">版本</string>
+    <string name="iknow">知道</string>
+    <string name="search_api_tips">搜索API說明</string>
+    <string name="tips_tab_setting">提示:\n登錄後會顯示用戶收藏過的Node節點, 長按條目可以上下調整順序</string>
+    <string name="light_mode">淺色主題</string>
+    <string name="use_device_setting">跟隨系統</string>
+    <string name="tips">使用說明</string>
+    <string name="not_login_tips">您還未登錄，請登錄後再試</string>
+    <string name="show_conversation">顯示對話列表</string>
+    <string name="personalization">個性化</string>
+    <string name="message">消息</string>
+    <string name="unread_message_notification">未讀消息通知</string>
+
+
+    <string-array name="period_string">
+        <item>15分鐘</item>
+        <item>30分鐘</item>
+        <item>1小時</item>
+        <item>3小時</item>
+    </string-array>
+
+    <string-array name="text_size_string">
+        <item>跟隨系統</item>
+        <item>小</item>
+        <item>中</item>
+        <item>大</item>
+        <item>特大</item>
+    </string-array>
+
+    <string-array name="night_mode_string">
+        <item>深色主題</item>
+        <item>淺色主題</item>
+        <item>跟隨系統</item>
+    </string-array>
+    <string name="notification_period">通知間隔</string>
+    <string name="get_message_background">後台獲取未讀消息</string>
+    <string name="add_row_in_reply">回復加入樓層</string>
+    <string name="format_user_n">格式: @user #n</string>
+    <string name="format_user">格式: @user</string>
+    <string name="hide_reply">隱藏回复</string>
+    <string name="report_abuse">報告問題</string>
+    <string name="language">語言</string>
+    <string name="follow_system">跟隨系統</string>
+    <string name="please_input_content">請輸入正文...</string>
+    <string name="topic_title">主題標題</string>
+    <string name="please_input_key_to_search">請輸入關鍵字進行搜索</string>
+    <string name="theme_background">主題背景</string>
+</resources>

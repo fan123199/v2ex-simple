@@ -11,6 +11,7 @@ plugins {
     id("kotlin-android")
     id("kotlin-kapt")
     id("kotlin-parcelize")
+    id("com.google.firebase.firebase-perf")
 }
 apply {
     plugin("kotlin-android")
@@ -92,19 +93,19 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.2.1")
 //    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 //    implementation("androidx.legacy:legacy-support-v13:1.0.0")
-    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.browser:browser:1.4.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("com.google.android.material:material:1.7.0")
+    implementation("com.google.android.material:material:1.8.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-    implementation("androidx.work:work-runtime-ktx:2.7.1")
+    implementation("androidx.work:work-runtime-ktx:2.8.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     val preference_version = "1.2.0"
     implementation("androidx.preference:preference-ktx:$preference_version")
 
-    val roomVersion = "2.4.3"
+    val roomVersion = "2.5.0"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     kapt ("androidx.room:room-compiler:$roomVersion")
@@ -130,10 +131,11 @@ dependencies {
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
     implementation("com.github.esafirm.android-image-picker:imagepicker:2.4.5")
 
-    implementation(platform("com.google.firebase:firebase-bom:31.0.2"))
+    implementation(platform("com.google.firebase:firebase-bom:31.2.0"))
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation ("com.google.firebase:firebase-config-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
+    implementation ("com.google.firebase:firebase-perf-ktx")
 }
 repositories {
     mavenCentral()

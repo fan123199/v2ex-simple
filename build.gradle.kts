@@ -8,13 +8,13 @@ buildscript {
         google()
         maven("https://maven.aliyun.com/repository/public")
         maven("https://jitpack.io")
-        maven("https://maven.fabric.io/public")
     }
     dependencies {
         classpath("com.android.tools.build:gradle:7.3.1")
-        classpath("com.google.gms:google-services:4.3.14")
+        classpath("com.google.gms:google-services:4.3.15")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
         classpath("com.google.firebase:firebase-crashlytics-gradle:2.9.2")
+        classpath ("com.google.firebase:perf-plugin:1.4.2")
     }
 }
 

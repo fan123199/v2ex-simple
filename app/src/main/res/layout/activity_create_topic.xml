@@ -34,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/hint"
                 android:textSize="?text_large"
-                android:hint="主题标题"
+                android:hint="@string/topic_title"
                 android:drawablePadding="2dp"
                 android:maxLines="1" />
 
@@ -56,7 +56,7 @@
                 android:id="@+id/et_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="请输入正文..."
+                android:hint="@string/please_input_content"
                 android:gravity="top"
                 android:minLines="6"
                 android:singleLine="false"

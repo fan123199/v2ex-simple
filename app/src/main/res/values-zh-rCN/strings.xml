@@ -137,4 +137,10 @@
     <string name="format_user">格式: @user</string>
     <string name="hide_reply">隐藏回复</string>
     <string name="report_abuse">报告问题</string>
+    <string name="language">语言</string>
+    <string name="follow_system">跟随系统</string>
+    <string name="please_input_content">请输入正文...</string>
+    <string name="topic_title">主题标题</string>
+    <string name="please_input_key_to_search">请输入关键字进行搜索</string>
+    <string name="theme_background">主题背景</string>
 </resources>

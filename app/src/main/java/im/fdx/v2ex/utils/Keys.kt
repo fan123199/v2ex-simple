@@ -41,6 +41,7 @@ object Keys {
     const val ACTION_GET_MORE_REPLY = "im.fdx.v2ex.reply"
     const val ACTION_HIDE_TOPIC = "ACTION_HIDE_TOPIC"
     const val ACTION_V2EX_REPORT = "ACTION_V2EX_REPORT"
+    const val ACTION_LANGUAGE_CHANGE = "ACTION_LANGUAGE_CHANGE"
 
     const val FAVOR_FRAGMENT_TYPE = "type"
 

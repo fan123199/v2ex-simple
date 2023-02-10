@@ -291,7 +291,7 @@ class TopicFragment : BaseFragment() {
 
 
     private fun getRepliesPageOne(scrollToBottom: Boolean) {
-        vCall("${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId?p=1").start(object : Callback {
+        vCall("${NetManager.HTTPS_V2EX_BASE}/t/$mTopicId" + "?p=1").start(object : Callback {
 
             override fun onFailure(call: Call, e: IOException) {
                 activity?.runOnUiThread {

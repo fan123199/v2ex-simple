@@ -167,7 +167,7 @@ class TopicsFragment : Fragment() {
 
         val topicList: ArrayList<Topic>? = args?.getParcelableArrayList(Keys.KEY_TOPIC_LIST)
         if (currentMode == FROM_SEARCH) {
-            flContainer.showNoContent("请输入关键字进行搜索")
+            flContainer.showNoContent(getString(R.string.please_input_key_to_search))
         } else if (currentMode == FROM_NODE && topicList != null) {
             // 已有数据
             val totalPage = args.getInt(Keys.KEY_PAGE_NUM, 1) ?: 1
