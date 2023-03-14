@@ -24,8 +24,8 @@ android {
         applicationId = "im.fdx.v2ex"
         minSdk = 22
         targetSdk = 33
-        versionCode = 60
-        versionName = "2.8.9"
+        versionCode = 61
+        versionName = "2.9.0"
     }
     lint {
         checkReleaseBuilds = false

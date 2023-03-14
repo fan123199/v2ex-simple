@@ -296,7 +296,7 @@ class TopicsFragment : Fragment() {
 
 
         val url = if (currentMode == FROM_HOME) requestURL else "$requestURL?p=$currentPage"
-        vCall(url)
+        vCall(url, if(currentMode == FROM_FAVOR) "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0" else null)
             .start(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
                     showRefresh(false)
