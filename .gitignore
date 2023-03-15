@@ -14,5 +14,6 @@
 /app/app-release.apk
 keystore.properties
 *.apk
+*.aab
 output.json
 /app/release/output-metadata.json
