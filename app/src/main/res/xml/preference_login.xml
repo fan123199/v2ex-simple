@@ -14,6 +14,13 @@
             android:summaryOn="@string/format_user_n"
             android:summaryOff="@string/format_user" />
 
+        <SwitchPreference
+            android:title="@string/pagenummode"
+            android:key="pref_page_num"
+            android:defaultValue="false"
+            android:summaryOn="@string/show_pagenum_on"
+            android:summaryOff="@string/show_pagenum_off" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

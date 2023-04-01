@@ -192,15 +192,17 @@
     <string name="topic_title">Topic title</string>
     <string name="please_input_key_to_search">Input keywords to search</string>
     <string name="theme_background">Theme</string>
+    <string name="pagenummode">Page number mode</string>
+    <string name="show_pagenum_on">Show Page Number in Favor and User Page</string>
+    <string name="show_pagenum_off">Hide Page Number in Favor and User Page</string>
 
     <string-array name="j" translatable="false">
-        <item>风</item>
-        <item>火</item>
-        <item>雷</item>
-        <item>电</item>
-        <item>Compose</item>
-        <item>chaos</item>
-        <item>naive</item>
+        <item>天</item>
+        <item>无</item>
+        <item>身</item>
+        <item>ChatGPT</item>
+        <item>AI</item>
+        <item>RELAX</item>
     </string-array>
 
 </resources>

@@ -143,4 +143,7 @@
     <string name="topic_title">主題標題</string>
     <string name="please_input_key_to_search">請輸入關鍵字進行搜索</string>
     <string name="theme_background">主題背景</string>
+    <string name="pagenummode">是否顯示頁碼</string>
+    <string name="show_pagenum_on">在我的收藏和用戶頁面顯示頁碼</string>
+    <string name="show_pagenum_off">在我的收藏和用戶頁面不顯示頁碼</string>
 </resources>

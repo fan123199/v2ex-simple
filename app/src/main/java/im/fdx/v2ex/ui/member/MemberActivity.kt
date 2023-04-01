@@ -93,17 +93,17 @@ class MemberActivity : BaseActivity() {
             binding.tvWebsite.setOnClickListener(listener)
 
 
-            binding.tvMore.setOnClickListener {
-                supportFragmentManager.fragments.forEach {
-                    if (it.isVisible) {
-                        if (it is UserReplyFragment) {
-                            it.togglePageNum()
-                        } else if (it is TopicsFragment) {
-                            it.togglePageNum()
-                        }
-                    }
-                }
-            }
+//            binding.tvMore.setOnClickListener {
+//                supportFragmentManager.fragments.forEach {
+//                    if (it.isVisible) {
+//                        if (it is UserReplyFragment) {
+//                            it.togglePageNum()
+//                        } else if (it is TopicsFragment) {
+//                            it.togglePageNum()
+//                        }
+//                    }
+//                }
+//            }
         }
 
         setUpToolbar()
@@ -124,16 +124,16 @@ class MemberActivity : BaseActivity() {
 
 
         helper = ViewPagerHelper(binding.viewpager)
-        binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                if (position == 0) {
-                    binding.tvMore.isVisible = isHasContentPage1
-                } else {
-                    binding.tvMore.isVisible = isHasContentPage2
-                }
-            }
-        })
+//        binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+//            override fun onPageSelected(position: Int) {
+//                super.onPageSelected(position)
+//                if (position == 0) {
+//                    binding.tvMore.isVisible = isHasContentPage1
+//                } else {
+//                    binding.tvMore.isVisible = isHasContentPage2
+//                }
+//            }
+//        })
         getData()
     }
 
@@ -215,7 +215,7 @@ class MemberActivity : BaseActivity() {
                             mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
                         }
 
-                        binding.tvMore.text = "显示页码"
+//                        binding.tvMore.text = "显示页码"
                         binding.tvOnline.isVisible = isOnline
                         binding.viewpager.isVisible = !isBlocked
 
@@ -271,14 +271,14 @@ class MemberActivity : BaseActivity() {
         }
     }
 
-    fun showMoreBtn(position: Int) {
-        if (position == 0 ) {
-            isHasContentPage1 = true
-        } else {
-            isHasContentPage2 = true
-        }
-        binding.tvMore.isVisible = true
-    }
+//    fun showMoreBtn(position: Int) {
+//        if (position == 0 ) {
+//            isHasContentPage1 = true
+//        } else {
+//            isHasContentPage2 = true
+//        }
+//        binding.tvMore.isVisible = true
+//    }
 
     @SuppressLint("SetTextI18n")
     private fun showUser() {

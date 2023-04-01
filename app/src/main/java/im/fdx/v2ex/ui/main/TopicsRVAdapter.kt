@@ -18,7 +18,6 @@ import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.ui.node.NodeActivity
 import im.fdx.v2ex.utils.Keys
-import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.utils.extensions.load
 import im.fdx.v2ex.view.GoodTextView
 
@@ -30,13 +29,7 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
 
   private var mTopicList: MutableList<Topic> = mutableListOf()
 
-  fun updateItems(newItems: List<Topic>) {
-    val callback = MyCallback(this)
-    val diffResult = DiffUtil.calculateDiff(MyDiffCallback(mTopicList, newItems))
-    mTopicList.clear()
-    mTopicList.addAll(newItems)
-    diffResult.dispatchUpdatesTo(callback)
-  }
+
 
   fun clearAndNotify() {
     mTopicList.clear()
@@ -59,11 +52,31 @@ class TopicsRVAdapter(private val fragment: Fragment) : RecyclerView.Adapter<Rec
     mTopicList.clear()
   }
 
+  /**
+   * 有个替换，并有动画效果
+   */
+  fun updateItems(newItems: List<Topic>) {
+    val callback = MyCallback(this)
+    val diffResult = DiffUtil.calculateDiff(MyDiffCallback(mTopicList, newItems))
+    mTopicList.clear()
+    mTopicList.addAll(newItems)
+    diffResult.dispatchUpdatesTo(callback)
+  }
+
+  /**
+   * 往后面追加
+   */
   fun addAllItems(newItems: List<Topic>) {
     val old = mTopicList.toList()
     mTopicList.addAll(newItems)
     val diffResult = DiffUtil.calculateDiff(MyDiffCallback(old, mTopicList))
     diffResult.dispatchUpdatesTo(this)
+  }
+
+  fun updateAllItemsWithoutDiff(newItems: List<Topic>) {
+    mTopicList.clear()
+    mTopicList.addAll(newItems)
+    notifyDataSetChanged()
   }
 
 

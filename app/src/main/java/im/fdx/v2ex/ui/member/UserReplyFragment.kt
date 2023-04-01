@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
@@ -12,6 +11,7 @@ import im.fdx.v2ex.databinding.FragmentTabArticleBinding
 import im.fdx.v2ex.network.NetManager
 import im.fdx.v2ex.network.Parser
 import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.ui.isUsePageNum
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.initTheme
@@ -38,14 +38,15 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
     private var isEndlessMode = true
     private var mScrollListener: EndlessOnScrollListener? = null
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTabArticleBinding.inflate(inflater, container, false)
         return binding.root
     }
 
 
-    fun togglePageNum() {
-        isEndlessMode = !isEndlessMode
+    fun togglePageNum(on: Boolean) {
+        isEndlessMode = !on
 
         if (isEndlessMode) {
             mScrollListener?.let { binding.rvContainer.addOnScrollListener(it) }
@@ -54,14 +55,13 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
         }
 
         _binding?.let {
-            binding.pageNumberView.isVisible = !isEndlessMode
+            binding.pageNumberView.globalVisible = !isEndlessMode
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         swipeRefreshLayout = binding.swipeContainer
         swipeRefreshLayout.initTheme()
-
         swipeRefreshLayout.setOnRefreshListener {
             if (isEndlessMode) {
                 mScrollListener?.restart()
@@ -85,10 +85,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                 getRepliesByWeb(currentPage)
             }
         }
-
-        if (isEndlessMode) {
-            binding.rvContainer.addOnScrollListener(mScrollListener!!)
-        }
+        togglePageNum(isUsePageNum)
 
 
         binding.rvContainer.addItemDecoration(
@@ -132,9 +129,9 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                     activity?.runOnUiThread {
                         mScrollListener?.totalPage = totalPage
                         binding.pageNumberView.totalNum = totalPage
-                        if (totalPage > 0) {
-                            (activity as MemberActivity?)?.showMoreBtn(1)
-                        }
+//                        if (totalPage > 0) {
+//                            (activity as MemberActivity?)?.showMoreBtn(1)
+//                        }
                     }
                 }
                 activity?.runOnUiThread {

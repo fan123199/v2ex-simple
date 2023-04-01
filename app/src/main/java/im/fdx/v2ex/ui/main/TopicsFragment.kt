@@ -27,9 +27,9 @@ import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
 import im.fdx.v2ex.network.NetManager.dealError
 import im.fdx.v2ex.network.Parser.Source.*
 import im.fdx.v2ex.ui.NODE_TYPE
+import im.fdx.v2ex.ui.isUsePageNum
 import im.fdx.v2ex.ui.main.model.SearchResult
 import im.fdx.v2ex.ui.member.Member
-import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -53,12 +53,10 @@ class TopicsFragment : Fragment() {
     private var fab: FloatingActionButton? = null //有可能为空
     private lateinit var flContainer: FrameLayout
     private var pageNumberView: PageNumberView? = null
-
     var mRequestURL: String = ""
     private lateinit var mScrollListener: EndlessOnScrollListener
     var currentMode = FROM_HOME
     var totalPage = 0
-    var mCurrentPage = 1
     var isEndlessMode = true // 模式无限滚动模式
 
     private val receiver = object : BroadcastReceiver() {
@@ -87,9 +85,15 @@ class TopicsFragment : Fragment() {
     }
 
 
-    fun togglePageNum() {
+    fun togglePageNum(on: Boolean) {
+        isEndlessMode = !on
+        if (isEndlessMode) {
+            mScrollListener?.let { mRecyclerView?.addOnScrollListener(it) }
+        } else {
+            mScrollListener?.let { mRecyclerView?.removeOnScrollListener(it) }
+        }
         pageNumberView?.let {
-            it.isVisible = !it.isVisible
+            it.globalVisible = on
         }
     }
 
@@ -114,7 +118,6 @@ class TopicsFragment : Fragment() {
             override fun onLoadMore(currentPage: Int) {
                 mScrollListener.loading = true
                 mSwipeLayout.isRefreshing = true
-                mCurrentPage = currentPage
                 loadMoreTopic(currentPage)
             }
         }
@@ -153,7 +156,6 @@ class TopicsFragment : Fragment() {
             args?.getString(Keys.KEY_NODE_NAME) != null -> {
                 currentMode = FROM_NODE
                 mRequestURL = "$HTTPS_V2EX_BASE/go/${args.getString(Keys.KEY_NODE_NAME)}"
-
             }
             args?.getBoolean("search", false) == true -> {
                 currentMode = FROM_SEARCH
@@ -163,6 +165,14 @@ class TopicsFragment : Fragment() {
         when (currentMode) {
             FROM_NODE, FROM_SEARCH, FROM_FAVOR, FROM_MEMBER -> mRecyclerView?.addOnScrollListener(mScrollListener)
             FROM_HOME -> {}
+        }
+        when(currentMode) {
+            FROM_MEMBER, FROM_FAVOR -> {
+                togglePageNum(isUsePageNum)
+            }
+            else -> {
+                togglePageNum(false)
+            }
         }
 
         val topicList: ArrayList<Topic>? = args?.getParcelableArrayList(Keys.KEY_TOPIC_LIST)
@@ -242,13 +252,8 @@ class TopicsFragment : Fragment() {
     }
 
     private fun refresh() {
-        mCurrentPage = 1
         mScrollListener.restart()
-        if (currentMode == FROM_SEARCH) {
-            makeQuery(query)
-        } else {
-            getTopics(mRequestURL, mCurrentPage)
-        }
+        loadMoreTopic(1)
     }
 
 //  fun updateAvatar(avatar: String) {
@@ -325,8 +330,10 @@ class TopicsFragment : Fragment() {
                         mScrollListener.totalPage = totalPage
                         if (currentMode == FROM_MEMBER) {
                             val msg = parser.getContentMsg()
+
                             if (msg.contains("主题列表被隐藏")) {
                                 activity?.runOnUiThread {
+                                    pageNumberView?.totalNum = 0
                                     flContainer.showNoContent(msg)
                                 }
                                 return
@@ -334,12 +341,14 @@ class TopicsFragment : Fragment() {
                         }
 
                         activity?.runOnUiThread {
-                            pageNumberView?.totalNum = totalPage
-                            if (currentMode == FROM_MEMBER) {
-                                if (totalPage > 0) {
-                                    (activity as MemberActivity?)?.showMoreBtn(0)
-                                }
+                            if(currentMode == FROM_FAVOR || currentMode == FROM_MEMBER) {
+                                pageNumberView?.totalNum = totalPage
                             }
+//                            if (currentMode == FROM_MEMBER) {
+//                                if (totalPage > 0) {
+//                                    (activity as MemberActivity?)?.showMoreBtn(0)
+//                                }
+//                            }
                         }
                     }
                     val topicList = parser.parseTopicLists(currentMode)
@@ -370,18 +379,33 @@ class TopicsFragment : Fragment() {
                                 topicList.let { mAdapter.addAllItems(it) }
                             }
                         } else {
-                            topicList.let { mAdapter.updateItems(it) }
+                            topicList.let { mAdapter.updateAllItemsWithoutDiff(it) }
                         }
                     }
 
-                    FROM_NODE, FROM_FAVOR ->
+                    FROM_NODE -> {
                         if (mScrollListener.isRestart()) {
                             topicList.let { mAdapter.updateItems(it) }
                         } else {
                             mScrollListener.success()
                             topicList.let { mAdapter.addAllItems(it) }
                         }
-                    FROM_HOME -> topicList.let { mAdapter.updateItems(it) }
+                    }
+                    FROM_FAVOR -> {
+                        if (isEndlessMode) {
+                            if (mScrollListener.isRestart()) {
+                                topicList.let { mAdapter.updateItems(it) }
+                            } else {
+                                mScrollListener.success()
+                                topicList.let { mAdapter.addAllItems(it) }
+                            }
+                        } else {
+                            topicList.let { mAdapter.updateAllItemsWithoutDiff(it) }
+                        }
+                    }
+                    FROM_HOME -> {
+                        topicList.let { mAdapter.updateAllItemsWithoutDiff(it) }
+                    }
                     FROM_SEARCH -> {
                     }
                 }

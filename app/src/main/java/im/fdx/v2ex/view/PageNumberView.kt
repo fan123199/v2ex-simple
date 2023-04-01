@@ -25,6 +25,12 @@ import kotlin.math.min
  */
 class PageNumberView : FrameLayout {
 
+    var globalVisible: Boolean = false     //最高层级的控制
+        get() = field
+        set(value) {
+            field = value
+            this.isVisible = globalVisible
+        }
     private var _totalNum: Int = 1 // TODO: use a default from R.string...
     private var _currentNum: Int = 1 // TODO: use a default from R.string...
     private var _highlightColor: Int = 1 // TODO: use a default from R.string...
@@ -38,6 +44,7 @@ class PageNumberView : FrameLayout {
         get() = _totalNum
         set(value) {
             _totalNum = value
+            this.isVisible = globalVisible && _totalNum > 1
             theAdapter.setTotalNum(_totalNum)
             if(totalNum> itemSize) {
                 et?.isVisible = true
@@ -73,7 +80,6 @@ class PageNumberView : FrameLayout {
     private fun init(attrs: AttributeSet?, defStyle: Int) {
 
         inflate(context, R.layout.view_page_number, this)
-
         val rv = findViewById<RecyclerView>(R.id.rv)
         rv.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         rv.overScrollMode = OVER_SCROLL_NEVER
@@ -185,6 +191,9 @@ class TheAdapter(val size: Int) : RecyclerView.Adapter<TheViewHolder>() {
     }
 
     override fun getItemCount(): Int {
+        if (totalNum <= 1) {
+            return 0
+        }
         return  min(totalNum,  showDatas.size)
     }
 

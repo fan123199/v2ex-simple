@@ -32,6 +32,9 @@ import im.fdx.v2ex.utils.extensions.setUpToolbar
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 
+
+val isUsePageNum by lazy {  pref.getBoolean("pref_page_num", false) }
+
 class SettingsActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,9 +67,7 @@ class SettingsActivity : BaseActivity() {
 
     }
 
-    private fun prefLanguage() {
-
-    }
+    private fun prefLanguage() {}
 
     private fun prefNightMode() {
     }

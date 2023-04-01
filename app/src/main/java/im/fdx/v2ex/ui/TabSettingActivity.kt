@@ -210,7 +210,14 @@ class TabSettingActivity : BaseActivity() {
 
 typealias TopicType = Int
 
+/**
+ * 原来首页的几个TAG
+ */
 const val TAB_TYPE: TopicType = 0
+
+/**
+ * 后面新增的来自用户收藏的TAB
+ */
 const val NODE_TYPE: TopicType = 1
 
 typealias Status = Int
