@@ -1,5 +1,5 @@
 主要功能有：
 * 使用V2EX的大部分功能，包括浏览主题、发表文章、评论，点赞等
-*  个性化设置，字体大小，深色模式等
+* 个性化设置，包括字体大小，深色主题等
 
-应用开源地址 https://github.com/fan123199/v2ex-simple， 欢迎提issue和反馈。
+Github开源地址 https://github.com/fan123199/v2ex-simple
