@@ -192,9 +192,7 @@
 <!--                style="@style/VText.Hint"-->
 <!--                android:visibility="gone"-->
 <!--                android:layout_gravity="center_vertical|end"-->
-<!--                tools:text="查看更多">-->
-
-<!--            </TextView>-->
+<!--                tools:text="查看更多" />-->
         </LinearLayout>
 
     </com.google.android.material.appbar.AppBarLayout>

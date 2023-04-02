@@ -2,8 +2,6 @@
 
 import java.util.*
 
-val kotlin_version: String by extra
-
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
@@ -90,16 +88,16 @@ dependencies {
 
     //google start
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
 //    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 //    implementation("androidx.legacy:legacy-support-v13:1.0.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.browser:browser:1.5.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
     implementation("com.google.android.material:material:1.8.0")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.5.1")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
-    implementation("androidx.work:work-runtime-ktx:2.8.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     val preference_version = "1.2.0"

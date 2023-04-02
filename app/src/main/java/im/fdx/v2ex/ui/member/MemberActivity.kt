@@ -31,6 +31,7 @@ import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
+import im.fdx.v2ex.ui.isUsePageNum
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
 import im.fdx.v2ex.utils.Keys
@@ -68,10 +69,6 @@ class MemberActivity : BaseActivity() {
 
     private var isMe = false
 
-    private var isHasContentPage1 = false
-    private var isHasContentPage2 = false
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMemberBinding.inflate(layoutInflater)
@@ -97,9 +94,9 @@ class MemberActivity : BaseActivity() {
 //                supportFragmentManager.fragments.forEach {
 //                    if (it.isVisible) {
 //                        if (it is UserReplyFragment) {
-//                            it.togglePageNum()
+//                            it.togglePageNum(it.isEndlessMode)
 //                        } else if (it is TopicsFragment) {
-//                            it.togglePageNum()
+//                            it.togglePageNum(it.isEndlessMode)
 //                        }
 //                    }
 //                }

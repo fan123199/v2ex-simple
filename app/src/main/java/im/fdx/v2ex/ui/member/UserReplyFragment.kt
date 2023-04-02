@@ -35,7 +35,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
     private var totalPage = -1
     private var _binding: FragmentTabArticleBinding? = null
     private val binding get() = _binding!!
-    private var isEndlessMode = true
+    var isEndlessMode = true
     private var mScrollListener: EndlessOnScrollListener? = null
 
 

@@ -427,7 +427,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             PeriodicWorkRequestBuilder<GetMsgWorker>(timeSec, TimeUnit.SECONDS)
                 .addTag(TAG_WORKER)
                 .build()
-        WorkManager.getInstance().enqueueUniquePeriodicWork(
+        WorkManager.getInstance(myApp).enqueueUniquePeriodicWork(
             "getUnread",
             ExistingPeriodicWorkPolicy.REPLACE,
             unReadWork
@@ -436,7 +436,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun stopGetNotification() {
         if (!myApp.isLogin || !pref.getBoolean("pref_background_msg", false)) {
-            WorkManager.getInstance().cancelAllWorkByTag(TAG_WORKER)
+            WorkManager.getInstance(myApp).cancelAllWorkByTag(TAG_WORKER)
         }
     }
 

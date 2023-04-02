@@ -163,7 +163,7 @@ class SettingsActivity : BaseActivity() {
           } else {
             val notificationManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(notifyID)
-            WorkManager.getInstance().cancelAllWorkByTag(TAG_WORKER)
+            WorkManager.getInstance(myApp).cancelAllWorkByTag(TAG_WORKER)
             findPreference<Preference>("pref_msg_period")?.isEnabled = false
             findPreference<Preference>("pref_background_msg")?.isEnabled = false
 
