@@ -146,4 +146,6 @@
     <string name="pagenummode">是否顯示頁碼</string>
     <string name="show_pagenum_on">在我的收藏和用戶頁面顯示頁碼</string>
     <string name="show_pagenum_off">在我的收藏和用戶頁面不顯示頁碼</string>
+    <string name="cancel_block">取消屏蔽</string>
+    <string name="unfollow">取消關注</string>
 </resources>

@@ -30,6 +30,7 @@ import im.fdx.v2ex.ui.NODE_TYPE
 import im.fdx.v2ex.ui.isUsePageNum
 import im.fdx.v2ex.ui.main.model.SearchResult
 import im.fdx.v2ex.ui.member.Member
+import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -330,7 +331,6 @@ class TopicsFragment : Fragment() {
                         mScrollListener.totalPage = totalPage
                         if (currentMode == FROM_MEMBER) {
                             val msg = parser.getContentMsg()
-
                             if (msg.contains("主题列表被隐藏")) {
                                 activity?.runOnUiThread {
                                     pageNumberView?.totalNum = 0
@@ -341,14 +341,13 @@ class TopicsFragment : Fragment() {
                         }
 
                         activity?.runOnUiThread {
-                            if(currentMode == FROM_FAVOR || currentMode == FROM_MEMBER) {
+                            if (currentMode == FROM_FAVOR) {
                                 pageNumberView?.totalNum = totalPage
+                            } else if (currentMode == FROM_MEMBER) {
+                                val total = parser.getTotalTopics()
+                                pageNumberView?.totalNum = totalPage
+                                (activity as MemberActivity?)?.changeTitle(0, total.toString())
                             }
-//                            if (currentMode == FROM_MEMBER) {
-//                                if (totalPage > 0) {
-//                                    (activity as MemberActivity?)?.showMoreBtn(0)
-//                                }
-//                            }
                         }
                     }
                     val topicList = parser.parseTopicLists(currentMode)

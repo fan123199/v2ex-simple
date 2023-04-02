@@ -155,7 +155,16 @@ class Parser(private val htmlStr: String) {
     }
 
 
-    fun getTotalPageInMember() = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+").find(htmlStr)?.value?.toInt() ?: 0
+    fun getTotalPageInMember(): List<Int> {
+        val input = doc.getElementById("Main")?.getElementsByClass("header")?.first()?.text()?:""
+        val pageNum = Regex("(?<=全部回复第\\s\\d\\s页 / 共 )\\d+").find(input)?.value?.toInt() ?: 0
+        val find = Regex("(?<=回复总数)\\D*(\\d+)").find(input)
+        val repliesNum = find?.let {
+            find.groupValues[1].toInt()
+        }?:0
+
+        return  listOf(pageNum,repliesNum)
+    }
 
 
     fun getNodeInfo(nodeName: String): Node {
@@ -426,6 +435,15 @@ class Parser(private val htmlStr: String) {
 
     //        <input type="number" class="page_input" autocomplete="off" value="1" min="1" max="8"
     fun getTotalPageForTopics() = Regex("(?<=max=\")\\d{1,8}").find(htmlStr)?.value?.toInt() ?: 0
+
+    fun getTotalTopics(): Int {
+        val input = doc.getElementById("Main")?.getElementsByClass("header")?.first()?.text()?:""
+        val find = Regex("(?<=主题总数)\\D*(\\d+)").find(input)
+        val repliesNum = find?.let {
+            find.groupValues[1].toInt()
+        }?:0
+        return repliesNum
+    }
 
     fun getContentMsg() = doc.getElementsByClass("topic_content").first()?.text()?:""
 

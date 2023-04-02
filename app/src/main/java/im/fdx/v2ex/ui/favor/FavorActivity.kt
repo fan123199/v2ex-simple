@@ -17,13 +17,15 @@ import kotlin.math.abs
 class FavorActivity : BaseActivity() {
     private var helper: ViewPagerHelper? = null
     lateinit var viewPager: ViewPager2
+    lateinit var tabLayout: TabLayout
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_follow_activity)
 
         setUpToolbar(getString(R.string.my_follow))
 
-        val tabLayout: TabLayout = findViewById(R.id.tl_favor)
+
+        tabLayout = findViewById(R.id.tl_favor)
         viewPager = findViewById(R.id.viewpager_follow)
         viewPager.offscreenPageLimit = titles.size
         viewPager.adapter = FavorViewPagerAdapter(this)

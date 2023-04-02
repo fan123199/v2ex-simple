@@ -31,6 +31,7 @@ import im.fdx.v2ex.network.NetManager.myGson
 import im.fdx.v2ex.network.start
 import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.ui.BaseActivity
+import im.fdx.v2ex.ui.favor.FavorViewPagerAdapter.Companion.titles
 import im.fdx.v2ex.ui.isUsePageNum
 import im.fdx.v2ex.ui.main.NewTopicActivity
 import im.fdx.v2ex.ui.main.TopicsFragment
@@ -202,14 +203,18 @@ class MemberActivity : BaseActivity() {
                     runOnUiThread {
                         if (isBlocked) {
                             mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_primary_24dp)
+                            mMenu.findItem(R.id.menu_block).setTitle(R.string.cancel_block)
                         } else {
                             mMenu.findItem(R.id.menu_block).setIcon(R.drawable.ic_block_white_24dp)
+                            mMenu.findItem(R.id.menu_block).setTitle(R.string.block)
                         }
 
                         if (isFollowed) {
                             mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_blue_24dp)
+                            mMenu.findItem(R.id.menu_follow).setTitle(R.string.unfollow)
                         } else {
                             mMenu.findItem(R.id.menu_follow).setIcon(R.drawable.ic_favorite_border_white_24dp)
+                            mMenu.findItem(R.id.menu_follow).setTitle(R.string.follow)
                         }
 
 //                        binding.tvMore.text = "显示页码"
@@ -277,10 +282,15 @@ class MemberActivity : BaseActivity() {
 //        binding.tvMore.isVisible = true
 //    }
 
+    fun changeTitle(index:Int, name:String) {
+        binding.tlMember.getTabAt(index)?.text = "${titles[index]} ($name)"
+    }
+
     @SuppressLint("SetTextI18n")
     private fun showUser() {
         if (this.isDestroyed) return
 
+        binding.viewpager.offscreenPageLimit = 2
         binding.viewpager.adapter = MemberViewpagerAdapter(this).apply {
             username = member.username
             avatar = member.avatar_normal
@@ -409,7 +419,7 @@ class MemberActivity : BaseActivity() {
 
     companion object {
         var TAG: String = MemberActivity::class.java.simpleName
-
+        val titles = arrayOf("主题", "回复")
         private fun isFollowed(html: String) = Regex("un(?=follow/\\d{1,8}\\?once=)").containsMatchIn(html)
 
         private fun getOnceInFollow(html: String): String? = Regex("follow/\\d{1,8}\\?once=\\d{1,10}").find(html)?.value
@@ -425,18 +435,7 @@ class MemberActivity : BaseActivity() {
 
         lateinit var username: String
 
-        //        private var _avatar = ""
-        //目前不好做，先留着
         lateinit var avatar: String
-
-        //            get() {
-//                return _avatar
-//            }
-//            set(value) {
-//                _avatar = value
-//                (getItem(0) as TopicsFragment).updateAvatar(_avatar)
-//            }
-        private val titles = arrayOf("主题", "回复")
         override fun getItemCount() = titles.size
 
         override fun createFragment(position: Int) = when (position) {

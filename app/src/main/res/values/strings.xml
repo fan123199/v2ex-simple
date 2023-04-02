@@ -153,7 +153,7 @@
     <string name="show_user_all_reply">Show user all replies</string>
     <string name="already_thank">thanked</string>
     <string name="ignore">Ignore Topic</string>
-    <string name="already_ignore">cancel ignore</string>
+    <string name="already_ignore">Cancel ignore</string>
     <string name="google_login">Sign in With Google</string>
     <string name="tab_setting">HomePage Tab Setting</string>
     <string name="need_at_least_one">You need remain at least one tab</string>
@@ -195,6 +195,8 @@
     <string name="pagenummode">Page number mode</string>
     <string name="show_pagenum_on">Show Page Number in Favor and User Page</string>
     <string name="show_pagenum_off">Hide Page Number in Favor and User Page</string>
+    <string name="cancel_block">Unblock</string>
+    <string name="unfollow">Unfollow</string>
 
     <string-array name="j" translatable="false">
         <item>天</item>

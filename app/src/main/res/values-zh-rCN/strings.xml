@@ -146,4 +146,6 @@
     <string name="pagenummode">是否显示页码</string>
     <string name="show_pagenum_on">在我的收藏和用户页面显示页码</string>
     <string name="show_pagenum_off">在我的收藏和用户页面不显示页码</string>
+    <string name="cancel_block">取消屏蔽</string>
+    <string name="unfollow">取消关注</string>
 </resources>

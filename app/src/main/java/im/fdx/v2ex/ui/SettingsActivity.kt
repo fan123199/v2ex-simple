@@ -33,7 +33,7 @@ import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 
 
-val isUsePageNum by lazy {  pref.getBoolean("pref_page_num", false) }
+val isUsePageNum get() = pref.getBoolean("pref_page_num", false)
 
 class SettingsActivity : BaseActivity() {
 

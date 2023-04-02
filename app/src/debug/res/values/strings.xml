@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_simple_name">v2ex-beta</string>
+    <string name="app_simple_name" translatable="false">v2ex-beta</string>
 </resources>
