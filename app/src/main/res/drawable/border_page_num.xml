@@ -25,7 +25,7 @@
 
     <item>
         <shape>
-            <corners android:radius="6dp" />
+            <corners android:radius="8dp" />
             <stroke
                 android:color="@color/hint"
                 android:width="1px"/>

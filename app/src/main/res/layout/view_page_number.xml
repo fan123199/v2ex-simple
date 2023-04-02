@@ -24,10 +24,12 @@
         android:paddingEnd="8dp"
         android:digits="0123456789"
         android:visibility="gone"
+        android:lines="1"
         android:maxLines="1"
+        android:textSize="?text_medium"
         tools:visibility="visible"
         android:imeOptions="actionDone"
-        tools:text="123456"
+        tools:text="1234"
         android:importantForAutofill="no"
         tools:ignore="LabelFor" />
 
