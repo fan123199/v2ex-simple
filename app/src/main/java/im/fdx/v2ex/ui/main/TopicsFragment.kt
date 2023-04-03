@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -310,22 +309,18 @@ class TopicsFragment : Fragment() {
 
                 @Throws(IOException::class)
                 override fun onResponse(call: Call, response: okhttp3.Response) {
-                    showRefresh(false)
-
                     if (response.code == 302) {
+                        showRefresh(false)
                         if (Objects.equals("/2fa", response.header("Location"))) {
                         }
                     } else if (response.code != 200) {
+                        showRefresh(false)
                         dealError(activity, response.code)
                         return
                     }
 
                     val str = response.body?.string()!!
-
-//            logi( "onResponse: $str")
-
                     val parser = Parser(str)
-
                     if (totalPage == 0) {
                         totalPage = parser.getTotalPageForTopics()
                         mScrollListener.totalPage = totalPage
@@ -333,6 +328,7 @@ class TopicsFragment : Fragment() {
                             val msg = parser.getContentMsg()
                             if (msg.contains("主题列表被隐藏")) {
                                 activity?.runOnUiThread {
+                                    showRefresh(false)
                                     pageNumberView?.totalNum = 0
                                     flContainer.showNoContent(msg)
                                 }
@@ -341,11 +337,8 @@ class TopicsFragment : Fragment() {
                         }
 
                         activity?.runOnUiThread {
-                            if (currentMode == FROM_FAVOR) {
-                                pageNumberView?.totalNum = totalPage
-                            } else if (currentMode == FROM_MEMBER) {
+                            if (currentMode == FROM_MEMBER) {
                                 val total = parser.getTotalTopics()
-                                pageNumberView?.totalNum = totalPage
                                 (activity as MemberActivity?)?.changeTitle(0, total.toString())
                             }
                         }
@@ -359,6 +352,8 @@ class TopicsFragment : Fragment() {
 
     private fun setUIData(topicList: List<Topic>) {
         activity?.runOnUiThread {
+            mSwipeLayout.isRefreshing = false
+            mScrollListener.loading = false
             if (topicList.isEmpty()) {
                 flContainer.showNoContent()
                 mAdapter.clearAndNotify()
@@ -366,6 +361,7 @@ class TopicsFragment : Fragment() {
                 flContainer.hideNoContent()
                 when (currentMode) {
                     FROM_MEMBER -> {
+                        pageNumberView?.totalNum = totalPage
                         topicList.forEach {
                             it.member?.avatar_normal = arguments?.getString(Keys.KEY_AVATAR) ?: ""
                             logi(it.id + ":" + it.title + " -- " + it.member?.avatar_normal)
@@ -391,6 +387,7 @@ class TopicsFragment : Fragment() {
                         }
                     }
                     FROM_FAVOR -> {
+                        pageNumberView?.totalNum = totalPage
                         if (isEndlessMode) {
                             if (mScrollListener.isRestart()) {
                                 topicList.let { mAdapter.updateItems(it) }

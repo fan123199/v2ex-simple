@@ -55,6 +55,8 @@ object NetManager {
 
     var myGson = Gson()
 
+
+    //todo 一个很丑陋的实现方式
     @JvmOverloads
     fun dealError(context: Context?,  errorCode: Int = -1, swipe: SwipeRefreshLayout? = null, errorMsg:String ?= "") {
         logd(errorMsg)

@@ -17,3 +17,4 @@ keystore.properties
 *.aab
 output.json
 /app/release/output-metadata.json
+/fastlane/report.xml
