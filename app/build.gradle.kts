@@ -52,13 +52,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
         viewBinding = true
     }
+    namespace = "im.fdx.v2ex"
 }
 
 
@@ -83,7 +84,7 @@ dependencies {
     //kotlin start
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.anko:anko-commons:0.10.8")
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.10.1")
     //kotlin end
 
     //google start
@@ -94,14 +95,13 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.browser:browser:1.5.0")
     implementation("androidx.preference:preference-ktx:1.2.0")
-    implementation("com.google.android.material:material:1.8.0")
+    implementation("com.google.android.material:material:1.9.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.6.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    val preference_version = "1.2.0"
-    implementation("androidx.preference:preference-ktx:$preference_version")
+    implementation("androidx.preference:preference-ktx:1.2.0")
 
     val roomVersion = "2.5.0"
     implementation("androidx.room:room-runtime:$roomVersion")
