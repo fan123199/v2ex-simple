@@ -18,7 +18,7 @@ import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 
 class NotificationActivity : BaseActivity() {

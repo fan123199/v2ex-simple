@@ -11,7 +11,7 @@ import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.view.GoodTextView
-import org.jetbrains.anko.startActivity
+import im.fdx.v2ex.utils.extensions.startActivity
 
 /**
  * Created by fdx on 2017/7/15.

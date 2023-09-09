@@ -16,9 +16,9 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
+import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
-import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.PhotoActivity
 import im.fdx.v2ex.ui.node.NodeActivity
@@ -26,7 +26,7 @@ import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.dp2px
-import org.jetbrains.anko.startActivity
+import im.fdx.v2ex.utils.extensions.startActivity
 import org.xml.sax.Attributes
 import org.xml.sax.XMLReader
 import java.util.*
@@ -230,7 +230,7 @@ class MyImageGetter(val tv: GoodTextView, val type: TextType) : Html.ImageGetter
                 )
             }
         }
-        GlideApp.with(tv)
+        Glide.with(tv)
                 .asBitmap()
             .placeholder(R.drawable.loading_image_4_3)
                 .load(source)

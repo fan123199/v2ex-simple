@@ -38,8 +38,8 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.showLoginHint
 import im.fdx.v2ex.view.*
 import okhttp3.*
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.startActivity
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 
 

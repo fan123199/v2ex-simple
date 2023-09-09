@@ -18,7 +18,7 @@ import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.showNoContent
 import okhttp3.Call
 import okhttp3.Callback
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 
 /**

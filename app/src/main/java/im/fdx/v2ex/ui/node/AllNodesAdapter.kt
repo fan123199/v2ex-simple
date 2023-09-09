@@ -9,7 +9,7 @@ import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.load
-import org.jetbrains.anko.startActivity
+import im.fdx.v2ex.utils.extensions.startActivity
 import java.util.*
 
 /**

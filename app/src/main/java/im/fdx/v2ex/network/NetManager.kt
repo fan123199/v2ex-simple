@@ -11,7 +11,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.utils.extensions.logd
 import okhttp3.*
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 
 /**

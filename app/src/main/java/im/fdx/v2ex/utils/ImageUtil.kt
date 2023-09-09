@@ -14,9 +14,9 @@ import java.io.IOException
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import im.fdx.v2ex.BuildConfig
-import im.fdx.v2ex.GlideApp
+import com.bumptech.glide.Glide
 import im.fdx.v2ex.myApp
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 
 
 object ImageUtil {
@@ -42,7 +42,7 @@ object ImageUtil {
 
     private fun downloadImage(url: String, ready : (Uri) ->Unit) {
 
-        GlideApp.with(myApp)
+        Glide.with(myApp)
                 .asBitmap()
                 .load(url)
                 .into(object : SimpleTarget<Bitmap>() {

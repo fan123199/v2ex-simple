@@ -14,6 +14,7 @@ import android.view.View.VISIBLE
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
@@ -21,7 +22,6 @@ import com.elvishew.xlog.XLog
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.remoteconfig.ktx.remoteConfig
-import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityLoginBinding
 import im.fdx.v2ex.network.*
@@ -35,7 +35,6 @@ import im.fdx.v2ex.view.CustomChrome
 import im.fdx.v2ex.view.UrlSpanNoUnderline
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.jetbrains.anko.toast
 import org.jsoup.Jsoup
 import java.io.IOException
 
@@ -161,7 +160,7 @@ class LoginActivity : BaseActivity() {
                         .build()
                     val url = GlideUrl(str, headers)
                     if (!this@LoginActivity.isDestroyed) {
-                        GlideApp.with(binding.ivCode)
+                        Glide.with(binding.ivCode)
                             .load(url)
                             .transition(withCrossFade())
                             .centerCrop().into(binding.ivCode)

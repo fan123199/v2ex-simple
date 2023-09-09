@@ -48,6 +48,12 @@ internal class MyViewPagerAdapter(
         val turnsType = object : TypeToken<List<MyTab>>() {}.type
         val list = Gson().fromJson<List<MyTab>>(jsonData, turnsType)
 
+        if(list.isNullOrEmpty()) { //可能的一些奇怪的问题
+            MutableList(tabTitles.size) { index: Int ->
+                MyTab(tabTitles[index], tabPaths[index])
+            }
+        }
+
         for (it in list) {
             if (!myApp.isLogin && it.path == "recent") {
                 continue

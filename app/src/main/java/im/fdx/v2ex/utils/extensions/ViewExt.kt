@@ -1,7 +1,11 @@
 package im.fdx.v2ex.utils.extensions
 
 import android.app.Activity
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.health.connect.datatypes.units.Length
 import android.os.Build
 import android.view.Gravity
 import android.view.View
@@ -9,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.IntRange
@@ -16,11 +21,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
 import com.elvishew.xlog.XLog
 import com.esafirm.imagepicker.features.ImagePicker
-import im.fdx.v2ex.GlideApp
 import im.fdx.v2ex.R
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
@@ -91,6 +97,10 @@ fun Activity.setStatusBarColor(@ColorRes colorRes: Int?, @IntRange(from = 0L, to
 }
 
 
+fun Context.toast(content:String) {
+    Toast.makeText(this, content, Toast.LENGTH_SHORT).show()
+}
+
 fun Activity.setStatusBarLight() {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -133,7 +143,7 @@ fun SwipeRefreshLayout.initTheme() {
 }
 
 fun ImageView.load(url: Any?) {
-    GlideApp.with(this)
+    Glide.with(this)
         .load(url)
         .into(this)
 }
@@ -180,4 +190,27 @@ fun openImagePicker(activity: Activity) {
             .start()
     }
 
+}
+
+inline fun <reified T: Activity> Context.startActivity(vararg params: Pair<String, Any?>) {
+            this.startActivity(Intent(this, T::class.java).apply {
+                putExtras(bundleOf(*params))
+            })
+}
+
+fun Context.shareText(
+    text: String,
+    subject: String = "",
+): Boolean {
+    return try {
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_TEXT, text)
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+        startActivity(Intent.createChooser(intent, null))
+        true
+    } catch (e: ActivityNotFoundException) {
+        e.printStackTrace()
+        false
+    }
 }

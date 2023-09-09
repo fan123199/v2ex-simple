@@ -10,8 +10,8 @@ import com.elvishew.xlog.XLog
 import com.google.android.material.snackbar.Snackbar
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.LoginActivity
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.startActivity
+import im.fdx.v2ex.utils.extensions.toast
 
 /**
  * Created by fdx on 2017/6/14.

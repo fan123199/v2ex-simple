@@ -37,7 +37,7 @@ import im.fdx.v2ex.utils.ViewUtil
 import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.PageNumberView
 import okhttp3.*
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 import java.util.*
 

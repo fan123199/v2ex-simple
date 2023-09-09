@@ -31,26 +31,10 @@ Runs all the tests
 
 Submit a new Beta Build to Crashlytics Beta
 
-### android deploybundle
+### android internal
 
 ```sh
-[bundle exec] fastlane android deploybundle
-```
-
-(bundle)Deploy a new version to the Google Play
-
-### android deploy
-
-```sh
-[bundle exec] fastlane android deploy
-```
-
-(apk)Deploy a new version to the Google Play
-
-### android release
-
-```sh
-[bundle exec] fastlane android release
+[bundle exec] fastlane android internal
 ```
 
 (bundle)Deploy a new version to the Google Play

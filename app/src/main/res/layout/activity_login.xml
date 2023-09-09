@@ -137,6 +137,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/radius_2dp"
                 android:elevation="18dp"
+                android:textAllCaps="false"
                 android:text="@string/login"
                 android:textColor="@color/icon"
                 android:textSize="@dimen/text_size_large" />

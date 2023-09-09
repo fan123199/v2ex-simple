@@ -70,6 +70,7 @@ class Topic(
     @Ignore
     var comments: MutableList<Comment> = mutableListOf()) : Parcelable {
 
+    constructor(): this("","","","","",0,null ,null,0,"",0,0)
 
     fun showCreated() :String{
         return createdOriginal.ifEmpty { TimeUtil.getRelativeTime(created * 1000) }

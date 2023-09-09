@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar
 import im.fdx.v2ex.R
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.setLogin
+import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.logi
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.Cookie
@@ -50,8 +51,8 @@ class WebViewActivity : BaseActivity() {
 
 
         webSettings.setSupportZoom(true)
-//        webSettings.userAgentString = "Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012)" +
-//                " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Mobile Safari/537.36"
+        webSettings.userAgentString = "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+//        logd("before:" + webSettings.userAgentString)
         webSettings.userAgentString = webSettings.userAgentString.replace(Regex("(?<=\\W)wv"), "")
         webSettings.javaScriptEnabled  = true
         val chromeClient = MyChromeClient()

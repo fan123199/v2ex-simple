@@ -14,7 +14,7 @@ import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.view.ViewPagerHelper
 import im.fdx.v2ex.view.ZoomOutPageTransform
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import kotlin.math.abs
 
 

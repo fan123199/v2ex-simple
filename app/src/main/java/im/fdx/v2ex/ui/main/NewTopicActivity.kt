@@ -13,6 +13,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import com.esafirm.imagepicker.features.ImagePicker
 import com.google.android.material.snackbar.Snackbar
 import im.fdx.v2ex.R
@@ -28,8 +29,7 @@ import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.openImagePicker
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.*
-import org.jetbrains.anko.startActivityForResult
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 
 
@@ -52,7 +52,11 @@ class NewTopicActivity : BaseActivity() {
 
 
         binding.searchSpinnerNode.setOnClickListener {
-            startActivityForResult<AllNodesActivity>(REQUEST_NODE, KEY_TO_CHOOSE_NODE to true)
+            startActivityForResult(Intent(this@NewTopicActivity, AllNodesActivity::class.java)
+                .apply {
+                    putExtras(bundleOf(KEY_TO_CHOOSE_NODE to true))
+                },REQUEST_NODE
+            )
         }
         parseIntent(intent)
     }
@@ -157,7 +161,7 @@ class NewTopicActivity : BaseActivity() {
                     mContent.isEmpty() -> toast("标题和内容不能为空")
                     mTitle.length > 120 -> toast("标题字数超过限制")
                     mContent.length > 20000 -> toast("主题内容不能超过 20000 个字符")
-                    mNodename.isEmpty() -> toast(R.string.choose_node)
+                    mNodename.isEmpty() -> toast(this.getString(R.string.choose_node))
                     else -> postNew(item)
                 }
             }

@@ -10,6 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.errorprone.annotations.Keep
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
@@ -24,7 +25,7 @@ import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 import java.util.*
 
@@ -224,6 +225,7 @@ typealias Status = Int
 const val STATUS_SHOW: Status = 0
 const val STATUS_HIDE: Status = 1
 
+@Keep
 data class MyTab(var title: String, var path: String, var type: Int = TAB_TYPE)
 
 class DefaultAdapter(val list: MutableList<MyTab>, val type: Status = STATUS_SHOW) : RecyclerView.Adapter<DefaultAdapter.VH>() {

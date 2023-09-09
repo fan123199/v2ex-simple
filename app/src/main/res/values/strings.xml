@@ -35,15 +35,15 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="register_tip">sign up</string>
+    <string name="register_tip">Sign up</string>
     <string name="feature">feature</string>
     <string name="communicate">Communicate</string>
     <string name="feedback">Feedback</string>
-    <string name="rate">Rate App</string>
+    <string name="rate">Rate app</string>
     <string name="other">Other</string>
     <string name="general">General</string>
     <string name="just_now">just</string>
-    <string name="menu_open_in_browser">Open In Browser</string>
+    <string name="menu_open_in_browser">Open in browser</string>
 
     <string-array name="period_string">
         <item>15 Minutes</item>
@@ -109,12 +109,9 @@
     <string name="search_hint">Search …</string>
 
     <string name="title_activity_fullscreen" translatable="false">FullscreenActivity</string>
-    <string name="dummy_button" translatable="false">Dummy Button</string>
-    <string name="dummy_content" translatable="false">DUMMY\nCONTENT</string>
-    <string name="share_app">Share The App</string>
+    <string name="share_app">Share app</string>
     <string name="share_to">Share to</string>
-    <string name="feedback_hint">Please input your idea or recommendation below.
-        \n</string>
+    <string name="feedback_hint">Please input your idea or recommendation below.\n</string>
     <string name="send_email">Send feedback mail…</string>
     <string name="feedback_subject" translatable="false">Feedback for v2ex-simple</string>
     <string name="email">Email</string>
@@ -126,10 +123,10 @@
     <string name="created_on">Created on</string>
     <string name="introduction">Introduction</string>
     <string name="the_n_member">the %s member</string>
-    <string name="topic_number">Topic Num %d</string>
-    <string name="daily_check">Daily Check</string>
+    <string name="topic_number">Topic num %d</string>
+    <string name="daily_check">Daily check</string>
     <string name="logout">Logout</string>
-    <string name="all_nodes">All Nodes</string>
+    <string name="all_nodes">All nodes</string>
     <string name="post_reply">send reply</string>
     <string name="user">User</string>
     <string name="choose_node">Please choose node</string>
@@ -138,13 +135,13 @@
     <string name="cancel">Cancel</string>
     <string name="notification">Notification</string>
     <string name="copy_content">Copy content</string>
-    <string name="create_topic">Create Topic</string>
+    <string name="create_topic">Create topic</string>
     <string name="you_have_notifications">it is %d unread message</string>
     <string name="favor">Favor</string>
 
-    <string name="my_follow">My Follows</string>
+    <string name="my_follow">My follows</string>
     <string name="unFavor">Unfavor</string>
-    <string name="new_topic">New Topic</string>
+    <string name="new_topic">New topic</string>
     <string name="follow">Follow</string>
     <string name="block">Block</string>
     <string name="no_more_data">no more data</string>
@@ -152,49 +149,49 @@
     <string name="indicator">indicator</string>
     <string name="show_user_all_reply">Show user all replies</string>
     <string name="already_thank">thanked</string>
-    <string name="ignore">Ignore Topic</string>
+    <string name="ignore">Ignore topic</string>
     <string name="already_ignore">Cancel ignore</string>
     <string name="google_login">Sign in With Google</string>
-    <string name="tab_setting">HomePage Tab Setting</string>
+    <string name="tab_setting">HomePage tab setting</string>
     <string name="need_at_least_one">You need remain at least one tab</string>
-    <string name="show_area">Show Area</string>
-    <string name="hide_area">Hide Area</string>
+    <string name="show_area">Show area</string>
+    <string name="hide_area">Hide area</string>
     <string name="menu_reset">Reset</string>
     <string name="menu_save">Save</string>
     <string name="search">Search</string>
     <string name="there_is_no_app_store">No App Store found in your phone</string>
-    <string name="font_size">Font Size</string>
-    <string name="swipe_to_switch_topic">Swipe to Switch Topic</string>
-    <string name="dark_mode">Dark Mode</string>
+    <string name="font_size">Font size</string>
+    <string name="swipe_to_switch_topic">Swipe to switch topic</string>
+    <string name="dark_mode">Dark mode</string>
     <string name="on">On</string>
     <string name="off">Off</string>
     <string name="version">Version</string>
-    <string name="iknow">I Know</string>
-    <string name="search_api_tips">Search Api Tips</string>
+    <string name="iknow">I know</string>
+    <string name="search_api_tips">Search API Tips</string>
     <string name="tips_tab_setting">Tips:\nIf logged in , it will show Node that you favored. Long press to reorder</string>
-    <string name="light_mode">Light Mode</string>
-    <string name="use_device_setting">System Default</string>
+    <string name="light_mode">Light mode</string>
+    <string name="use_device_setting">System default</string>
     <string name="tips">Tips</string>
     <string name="not_login_tips">Please log in to continue</string>
     <string name="show_conversation">Show conversations</string>
     <string name="personalization">Personalization</string>
     <string name="message">Message</string>
-    <string name="unread_message_notification">Unread Message Notification</string>
-    <string name="notification_period">Notification Period</string>
-    <string name="get_message_background">Fetch Notification when Background</string>
-    <string name="add_row_in_reply">Add Row In Reply</string>
+    <string name="unread_message_notification">Unread message notification</string>
+    <string name="notification_period">Notification period</string>
+    <string name="get_message_background">Fetch notification when background</string>
+    <string name="add_row_in_reply">Add row in reply</string>
     <string name="format_user_n">Format: @user #n</string>
     <string name="format_user">Format: @user</string>
     <string name="hide_reply">Hide</string>
     <string name="report_abuse">Report</string>
     <string name="language">Language</string>
-    <string name="please_input_content">Input topic content...</string>
+    <string name="please_input_content">Input topic content…</string>
     <string name="topic_title">Topic title</string>
     <string name="please_input_key_to_search">Input keywords to search</string>
     <string name="theme_background">Theme</string>
     <string name="pagenummode">Page number mode</string>
-    <string name="show_pagenum_on">Show Page Number in Favor and User Page</string>
-    <string name="show_pagenum_off">Hide Page Number in Favor and User Page</string>
+    <string name="show_pagenum_on">Show page number in favor and user page</string>
+    <string name="show_pagenum_off">Hide page number in favor and user page</string>
     <string name="cancel_block">Unblock</string>
     <string name="unfollow">Unfollow</string>
 

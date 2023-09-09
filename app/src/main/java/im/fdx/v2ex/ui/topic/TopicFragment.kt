@@ -40,8 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.*
-import org.jetbrains.anko.share
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 import java.lang.Exception
 
@@ -160,7 +159,7 @@ class TopicFragment : BaseFragment() {
                                 .show()
                         }
                     }
-                    R.id.menu_item_share -> activity?.share(
+                    R.id.menu_item_share -> activity?.shareText(
                         "来自V2EX的帖子：${(mAdapter.topics[0]).title} \n" +
                                 " ${NetManager.HTTPS_V2EX_BASE}/t/${mAdapter.topics[0].id}"
                     )

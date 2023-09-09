@@ -13,7 +13,6 @@ import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
-import org.jetbrains.anko.defaultSharedPreferences
 import java.net.HttpCookie
 
 val pref: SharedPreferences by lazy {

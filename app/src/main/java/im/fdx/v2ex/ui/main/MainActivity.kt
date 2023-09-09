@@ -57,9 +57,8 @@ import im.fdx.v2ex.view.ViewPagerHelper
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
-import org.jetbrains.anko.share
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.startActivity
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -198,7 +197,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             } else {
                 tab.text = " + "
                 tab.view.setOnClickListener {
-                    startActivity(Intent(this, TabSettingActivity::class.java))
+                    if(tab.text.toString() == " + ") {
+                        startActivity(Intent(this, TabSettingActivity::class.java))
+                    }
                 }
             }
         }.attach()
@@ -278,7 +279,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                     }
                 R.id.nav_testNotify -> {
                 }
-                R.id.nav_share -> share("https://play.google.com/store/apps/details?id=$packageName")
+                R.id.nav_share -> shareText("https://play.google.com/store/apps/details?id=$packageName")
                 R.id.nav_feedback -> sendEmail(
                     Keys.AUTHOR_EMAIL,
                     getString(R.string.feedback_subject),

@@ -29,8 +29,7 @@ import im.fdx.v2ex.utils.Keys.PREF_VERSION
 import im.fdx.v2ex.utils.Keys.TAG_WORKER
 import im.fdx.v2ex.utils.Keys.notifyID
 import im.fdx.v2ex.utils.extensions.setUpToolbar
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 
 
 val isUsePageNum get() = pref.getBoolean("pref_page_num", false)
@@ -120,7 +119,7 @@ class SettingsActivity : BaseActivity() {
       findPreference<Preference>(PREF_VERSION)?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
         if (count < 0) {
           count = 3
-          activity?.longToast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
+          activity?.toast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
         }
         count--
         true
@@ -152,8 +151,8 @@ class SettingsActivity : BaseActivity() {
       pref.unregisterOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-      Log.w("PREF", key)
+    override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String?) {
+      Log.w("PREF", key.toString())
       when (key) {
         "pref_msg" ->
 

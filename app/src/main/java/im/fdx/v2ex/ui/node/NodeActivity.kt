@@ -27,8 +27,8 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.startActivity
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.IOException
 import kotlin.math.abs
 

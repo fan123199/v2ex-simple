@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import im.fdx.v2ex.GlideApp
+import com.bumptech.glide.Glide
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.ImageUtil
 import im.fdx.v2ex.utils.Keys
@@ -74,7 +74,7 @@ class PhotoActivity : AppCompatActivity() {
 
             val imageView = holder.itemView.findViewById(R.id.photo_view) as ImageView
             val imageUrl = list[position]
-            GlideApp.with(imageView)
+            Glide.with(imageView)
                 .load(imageUrl)
                 .fitCenter()
                 .into(imageView)

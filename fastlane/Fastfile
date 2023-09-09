@@ -31,19 +31,7 @@ platform :android do
   end
 
   desc "(bundle)Deploy a new version to the Google Play"
-  lane :deploybundle do
-    gradle(task: "bundleRelease")
-    upload_to_play_store(track: 'internal', skip_upload_metadata: false, )
-  end
-
-  desc "(apk)Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store(track: 'internal')
-  end
-
-  desc "(bundle)Deploy a new version to the Google Play"
-  lane :release do
+  lane :internal do
     gradle(task: "clean bundleRelease")
     upload_to_play_store(track: 'internal',
      skip_upload_metadata: true,

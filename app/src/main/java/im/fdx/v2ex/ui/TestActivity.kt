@@ -6,7 +6,7 @@ import android.telephony.PhoneNumberFormattingTextWatcher
 import android.telephony.PhoneNumberUtils
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.extensions.logi
-import org.jetbrains.anko.toast
+import im.fdx.v2ex.utils.extensions.toast
 import java.util.*
 
 class TestActivity : BaseActivity() {

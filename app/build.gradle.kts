@@ -10,6 +10,7 @@ plugins {
     id("kotlin-kapt")
     id("kotlin-parcelize")
     id("com.google.firebase.firebase-perf")
+    id("com.google.devtools.ksp")
 }
 apply {
     plugin("kotlin-android")
@@ -17,13 +18,13 @@ apply {
 
 android {
 
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "im.fdx.v2ex"
         minSdk = 22
-        targetSdk = 33
-        versionCode = 62
-        versionName = "2.9.1"
+        targetSdk = 34
+        versionCode = 65
+        versionName = "2.9.2"
     }
     lint {
         checkReleaseBuilds = false
@@ -83,45 +84,45 @@ dependencies {
 
     //kotlin start
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.anko:anko-commons:0.10.8")
+//    implementation("org.jetbrains.anko:anko-commons:0.10.8")
     implementation("androidx.core:core-ktx:1.10.1")
     //kotlin end
 
     //google start
     implementation("androidx.cardview:cardview:1.0.0")
-    implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.1")
 //    implementation("androidx.legacy:legacy-support-v4:1.0.0")
 //    implementation("androidx.legacy:legacy-support-v13:1.0.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("androidx.browser:browser:1.5.0")
-    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.browser:browser:1.6.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.9.0")
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.6.1")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
     implementation("androidx.work:work-runtime-ktx:2.8.1")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
-    implementation("androidx.preference:preference-ktx:1.2.0")
+    implementation("androidx.preference:preference-ktx:1.2.1")
 
-    val roomVersion = "2.5.0"
+    val roomVersion = "2.5.2"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    kapt ("androidx.room:room-compiler:$roomVersion")
+    ksp ("androidx.room:room-compiler:$roomVersion")
     //google end
 
-    implementation("com.google.code.gson:gson:2.9.1")
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("de.hdodenhof:circleimageview:2.2.0")
 
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.10.0"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
-    debugImplementation("com.github.ChuckerTeam.Chucker:library:3.5.2")
-    releaseImplementation("com.github.ChuckerTeam.Chucker:library-no-op:3.5.2")
+    debugImplementation("com.github.chuckerteam.chucker:library:4.0.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
     implementation("com.elvishew:xlog:1.6.1")
     implementation("org.jsoup:jsoup:1.15.3")
     implementation("com.github.bumptech.glide:glide:4.14.2")
-    kapt ("com.github.bumptech.glide:compiler:4.14.2")
+    ksp ("com.github.bumptech.glide:compiler:4.14.2")
     implementation("com.github.bumptech.glide:okhttp3-integration:4.14.2")
     implementation("io.reactivex.rxjava2:rxjava:2.2.14")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
@@ -129,12 +130,9 @@ dependencies {
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
     implementation("com.github.esafirm.android-image-picker:imagepicker:2.4.5")
 
-    implementation(platform("com.google.firebase:firebase-bom:31.2.0"))
+    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
     implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation ("com.google.firebase:firebase-config-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation ("com.google.firebase:firebase-perf-ktx")
-}
-repositories {
-    mavenCentral()
 }

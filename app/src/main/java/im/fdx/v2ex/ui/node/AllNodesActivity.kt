@@ -28,10 +28,8 @@ import im.fdx.v2ex.utils.extensions.initTheme
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.Call
 import okhttp3.Callback
-import org.jetbrains.anko.runOnUiThread
-import org.jetbrains.anko.startActivity
+import im.fdx.v2ex.utils.extensions.startActivity
 import java.io.IOException
-import kotlin.concurrent.thread
 
 
 class AllNodesActivity : BaseActivity() {

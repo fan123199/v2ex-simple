@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.R
@@ -17,19 +18,21 @@ import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.Keys.KEY_TOPIC_ID
 import im.fdx.v2ex.utils.extensions.load
-import org.jetbrains.anko.startActivity
+import im.fdx.v2ex.utils.extensions.startActivity
 
 /**
  * Created by fdx on 2017/3/24.
  */
 
-class NotificationAdapter(var mContext: Context, var mModels: List<NotificationModel>) : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+class NotificationAdapter(var mContext: Context, var mModels: List<NotificationModel>) :
+    androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
 
     var number = -1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-            = NotificationViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_notification, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        NotificationViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_notification, parent, false))
 
     @SuppressLint("NewApi")
     override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
@@ -61,7 +64,7 @@ class NotificationAdapter(var mContext: Context, var mModels: List<NotificationM
 
     override fun getItemCount() = mModels.size
 
-  class NotificationViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+    class NotificationViewHolder(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
         var tvTopicTitle: TextView = itemView.findViewById(R.id.tv_topic_title)
         var tvUsername: TextView = itemView.findViewById(R.id.tv_username)
         var tvTime: TextView = itemView.findViewById(R.id.tv_comment_time)
