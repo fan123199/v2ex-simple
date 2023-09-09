@@ -30,13 +30,24 @@ platform :android do
     # You can also use other beta testing services here
   end
 
-  desc "(bundle)Deploy a new version to the Google Play"
+  desc "(bundle)Deploy a internal version to the Google Play"
   lane :internal do
     gradle(task: "clean bundleRelease")
     upload_to_play_store(track: 'internal',
      skip_upload_metadata: true,
      skip_upload_screenshots: true,
      skip_upload_images: true,
+      )
+  end
+
+  desc "(bundle)Deploy a new version to production the Google Play"
+  lane :prod do
+    gradle(task: "clean bundleRelease")
+    upload_to_play_store(track: 'production',
+     skip_upload_metadata: true,
+     skip_upload_screenshots: true,
+     skip_upload_images: true,
+     skip_upload_apk: true,
       )
   end
 

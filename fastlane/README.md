@@ -37,7 +37,15 @@ Submit a new Beta Build to Crashlytics Beta
 [bundle exec] fastlane android internal
 ```
 
-(bundle)Deploy a new version to the Google Play
+(bundle)Deploy a internal version to the Google Play
+
+### android prod
+
+```sh
+[bundle exec] fastlane android prod
+```
+
+(bundle)Deploy a new version to production the Google Play
 
 ### android promote
 
