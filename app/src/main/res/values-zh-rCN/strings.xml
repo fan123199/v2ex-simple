@@ -148,4 +148,9 @@
     <string name="show_pagenum_off">在我的收藏和用户页面不显示页码</string>
     <string name="cancel_block">取消屏蔽</string>
     <string name="unfollow">取消关注</string>
+    <string name="sort_mode">排序模式</string>
+    <string name="gte">最早发帖时间</string>
+    <string name="lte">最晚发帖时间</string>
+    <string name="newest">最新</string>
+    <string name="hot">热门</string>
 </resources>

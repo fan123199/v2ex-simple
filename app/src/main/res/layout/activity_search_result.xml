@@ -1,10 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <include layout="@layout/appbar" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        app:flexWrap="wrap">
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvSort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:lines="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/radius_outline_4dp"
+            android:textColor="@color/content_font_color"
+            android:padding="6dp"
+            android:text="@string/hot" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/search_spinner_node"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginStart="@dimen/md_left_margin"
+            android:lines="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/radius_outline_4dp"
+            android:textColor="@color/content_font_color"
+            android:padding="6dp"
+            android:text="@string/node"
+             />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvgTe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginStart="@dimen/md_left_margin"
+            android:lines="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/radius_outline_4dp"
+            android:textColor="@color/content_font_color"
+            android:padding="6dp"
+            android:text="@string/gte"
+             />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tvLte"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginStart="@dimen/md_left_margin"
+            android:lines="1"
+            android:layout_margin="4dp"
+            android:background="@drawable/radius_outline_4dp"
+            android:textColor="@color/content_font_color"
+            android:padding="6dp"
+            android:text="@string/lte"
+             />
+
+
+    </com.google.android.flexbox.FlexboxLayout>
 
     <FrameLayout
         android:id="@+id/container"

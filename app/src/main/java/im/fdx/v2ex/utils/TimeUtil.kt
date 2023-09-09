@@ -148,4 +148,15 @@ object TimeUtil {
             0L
         }
     }
+
+    fun toDisplay(timeStr: Calendar?): String {
+        if (timeStr == null) return ""
+        val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        format.timeZone = TimeZone.getDefault()
+        return try {
+           format.format(timeStr.time)
+        } catch (e: Exception) {
+            ""
+        }
+    }
 }

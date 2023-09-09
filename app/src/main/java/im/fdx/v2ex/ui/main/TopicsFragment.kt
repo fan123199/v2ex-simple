@@ -30,6 +30,7 @@ import im.fdx.v2ex.ui.isUsePageNum
 import im.fdx.v2ex.ui.main.model.SearchResult
 import im.fdx.v2ex.ui.member.Member
 import im.fdx.v2ex.ui.member.MemberActivity
+import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -227,12 +228,12 @@ class TopicsFragment : Fragment() {
         }
     }
 
-    fun startQuery(q: String) {
+    fun startQuery(q: SearchOption) {
         query = q
         makeQuery(query)
     }
 
-    var query: String = ""
+    var query: SearchOption = SearchOption("")
 
     fun showRefresh(show: Boolean) {
         activity?.runOnUiThread {
@@ -414,7 +415,7 @@ class TopicsFragment : Fragment() {
     /**
      * nextIndex, not page index, is the item offset
      */
-    private fun makeQuery(query: String, currentPage: Int = 1) {
+    private fun makeQuery(option: SearchOption, currentPage: Int = 1) {
 
 
         val nextIndex = (currentPage - 1) * NUMBER_PER_PAGE
@@ -423,11 +424,17 @@ class TopicsFragment : Fragment() {
             .scheme("https")
             .host(NetManager.API_SEARCH_HOST)
             .addEncodedPathSegments("api/search")
-            .addEncodedQueryParameter("q", query)
-            .addEncodedQueryParameter("sort", "created")
+
+            .addEncodedQueryParameter("q", option.q)
             .addEncodedQueryParameter("from", nextIndex.toString()) // 偏移量, 默认0
             .addEncodedQueryParameter("size", NUMBER_PER_PAGE.toString()) //数量，默认10
-//          .addEncodedQueryParameter("node") //节点名称
+            .addEncodedQueryParameter("sort", option.sort)
+            .addEncodedQueryParameter("order", "0")
+            .addEncodedQueryParameter("gte", option.gte)
+            .addEncodedQueryParameter("lte", option.lte)
+            .addEncodedQueryParameter("node", option.node)
+            .addEncodedQueryParameter("opterator", "or")
+            .addEncodedQueryParameter("username", option.username)
             .build()
 
         showRefresh(true)
@@ -463,6 +470,7 @@ class TopicsFragment : Fragment() {
                         topic.created = TimeUtil.toUtcTime(it.source?.created.toString())
                         topic.member = Member().apply { username = it.source?.member.toString() }
                         topic.replies = it.source?.replies
+//                        topic.node //  todo需要去做一个node id -> node obj的遍历查找，
                         topic
                     }
 
@@ -491,6 +499,14 @@ class TopicsFragment : Fragment() {
     }
 
     companion object {
-        const val NUMBER_PER_PAGE = 20
+        const val NUMBER_PER_PAGE = 10
     }
 }
+
+//0 sumup,1  created
+
+const val SUMUP = "sumup"
+const val CREATED = "created"
+
+
+data class SearchOption(val q:String, val sort: String = SUMUP, val gte : String? = null,val lte: String? = null, val node : String? = null, val username:String? =null)

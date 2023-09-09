@@ -194,6 +194,11 @@
     <string name="show_pagenum_off">Hide page number in favor and user page</string>
     <string name="cancel_block">Unblock</string>
     <string name="unfollow">Unfollow</string>
+    <string name="sort_mode">Sort mode</string>
+    <string name="gte">Earliest posting</string>
+    <string name="lte">Latest posting</string>
+    <string name="newest">Newest</string>
+    <string name="hot">Hot</string>
 
     <string-array name="j" translatable="false">
         <item>天</item>
