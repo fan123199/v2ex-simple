@@ -51,7 +51,7 @@ class TopicActivity : BaseActivity() {
     val pos = intent.getIntExtra(Keys.KEY_POSITION, 0)
     mTopicId = when {
       data != null -> {
-        data.pathSegments[1]
+        data.pathSegments.getOrNull(1)?:""
       }
       topicModel != null -> {
         topicModel.id

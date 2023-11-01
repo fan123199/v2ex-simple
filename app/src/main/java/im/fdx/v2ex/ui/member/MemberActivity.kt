@@ -141,7 +141,7 @@ class MemberActivity : BaseActivity() {
     }
 
     private fun getName(intent: Intent): String? = when {
-        intent.data != null -> intent.data!!.pathSegments[1]
+        intent.data != null -> intent.data!!.pathSegments.getOrNull(1)
         intent.extras != null -> intent.extras!!.getString(Keys.KEY_USERNAME)
         BuildConfig.DEBUG -> "Livid"
         else -> null

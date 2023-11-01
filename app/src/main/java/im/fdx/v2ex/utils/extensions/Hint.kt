@@ -77,6 +77,7 @@ fun Activity.showLoginHint(view: View, message: String = getString(R.string.not_
  *  用来代替 toast方法。
  */
 fun Activity.showHint(view: View, message: String, length: Int = Snackbar.LENGTH_LONG) {
+    if (this.isFinishing || this.isDestroyed ) return
     Snackbar.make(view, message, length)
         .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
         .setActionTextColor(ContextCompat.getColor(this, R.color.white))
