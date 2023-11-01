@@ -130,6 +130,13 @@
         <item>淺色主題</item>
         <item>跟隨系統</item>
     </string-array>
+
+    <string-array name="search_option" >
+        <item>最新</item>
+        <item>最舊</item>
+        <item>權重</item>
+    </string-array>
+
     <string name="notification_period">通知間隔</string>
     <string name="get_message_background">後台獲取未讀消息</string>
     <string name="add_row_in_reply">回復加入樓層</string>
@@ -149,8 +156,8 @@
     <string name="cancel_block">取消屏蔽</string>
     <string name="unfollow">取消關注</string>
     <string name="sort_mode">排序模式</string>
-    <string name="gte">最早發帖時間</string>
-    <string name="lte">最晚發帖時間</string>
+    <string name="gte">起始時間</string>
+    <string name="lte">結束時間</string>
     <string name="newest">最新</string>
     <string name="hot">熱門</string>
 </resources>

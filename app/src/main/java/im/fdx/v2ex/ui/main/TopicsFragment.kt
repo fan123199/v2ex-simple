@@ -429,7 +429,7 @@ class TopicsFragment : Fragment() {
             .addEncodedQueryParameter("from", nextIndex.toString()) // 偏移量, 默认0
             .addEncodedQueryParameter("size", NUMBER_PER_PAGE.toString()) //数量，默认10
             .addEncodedQueryParameter("sort", option.sort)
-            .addEncodedQueryParameter("order", "0")
+            .addEncodedQueryParameter("order", option.order)
             .addEncodedQueryParameter("gte", option.gte)
             .addEncodedQueryParameter("lte", option.lte)
             .addEncodedQueryParameter("node", option.node)
@@ -508,5 +508,16 @@ class TopicsFragment : Fragment() {
 const val SUMUP = "sumup"
 const val CREATED = "created"
 
+const val NEW_FIRST = "0"
+const val OLD_FIRST = "1"
 
-data class SearchOption(val q:String, val sort: String = SUMUP, val gte : String? = null,val lte: String? = null, val node : String? = null, val username:String? =null)
+
+data class SearchOption(
+    val q: String,
+    val sort: String = CREATED,
+    val order: String = NEW_FIRST,  //0 降序，1 升序
+    val gte: String? = null,
+    val lte: String? = null,
+    val node: String? = null,
+    val username: String? = null
+)

@@ -7,72 +7,121 @@
 
     <include layout="@layout/appbar" />
 
-    <com.google.android.flexbox.FlexboxLayout
+
+    <HorizontalScrollView
+        android:scrollbars="none"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="8dp"
-        app:flexWrap="wrap">
+        android:layout_height="wrap_content">
 
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvSort"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:lines="1"
-            android:layout_margin="4dp"
-            android:background="@drawable/radius_outline_4dp"
-            android:textColor="@color/content_font_color"
-            android:padding="6dp"
-            android:text="@string/hot" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/search_spinner_node"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginStart="@dimen/md_left_margin"
-            android:lines="1"
-            android:layout_margin="4dp"
-            android:background="@drawable/radius_outline_4dp"
-            android:textColor="@color/content_font_color"
-            android:padding="6dp"
-            android:text="@string/node"
-             />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvgTe"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginStart="@dimen/md_left_margin"
-            android:lines="1"
-            android:layout_margin="4dp"
-            android:background="@drawable/radius_outline_4dp"
-            android:textColor="@color/content_font_color"
-            android:padding="6dp"
-            android:text="@string/gte"
-             />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tvLte"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginStart="@dimen/md_left_margin"
-            android:lines="1"
-            android:layout_margin="4dp"
-            android:background="@drawable/radius_outline_4dp"
-            android:textColor="@color/content_font_color"
-            android:padding="6dp"
-            android:text="@string/lte"
-             />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:paddingBottom="8dp"
+            app:flexWrap="wrap">
 
 
-    </com.google.android.flexbox.FlexboxLayout>
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/tvSort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:background="@drawable/spinner"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="6dp" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:background="@drawable/spinner">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvGte"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md_left_margin"
+                    android:lines="1"
+                    android:padding="6dp"
+                    android:text="@string/gte"
+                    android:textColor="@color/content_font_color" />
+
+                <ImageView
+                    android:layout_marginEnd="4dp"
+                    android:id="@+id/ivGte"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/baseline_arrow_drop_down_24" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:background="@drawable/spinner">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvLte"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md_left_margin"
+                    android:lines="1"
+                    android:padding="6dp"
+                    android:text="@string/lte"
+                    android:textColor="@color/content_font_color" />
+
+                <ImageView
+                    android:layout_marginEnd="4dp"
+                    android:id="@+id/ivLte"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/baseline_arrow_drop_down_24" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:background="@drawable/spinner">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/search_spinner_node"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/md_left_margin"
+                    android:lines="1"
+                    android:padding="6dp"
+                    android:text="@string/node"
+                    android:textColor="@color/content_font_color" />
+
+                <ImageView
+                    android:layout_marginEnd="4dp"
+                    android:id="@+id/ivNode"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/baseline_arrow_drop_down_24" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </HorizontalScrollView>
 
     <FrameLayout
         android:id="@+id/container"

@@ -103,6 +103,12 @@
         <item>-1</item>
     </string-array>
 
+    <string-array name="search_option" >
+        <item>Latest</item>
+        <item>Earliest</item>
+        <item>Hottest</item>
+    </string-array>
+
 
     <string name="title_activity_node">Node</string>
     <string name="node_image" translatable="false">node image</string>

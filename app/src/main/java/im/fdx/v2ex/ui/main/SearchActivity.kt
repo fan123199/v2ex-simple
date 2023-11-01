@@ -11,6 +11,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.TextView
@@ -66,31 +68,83 @@ class SearchActivity : BaseActivity() {
                 ).show()
         }
 
-        binding.searchSpinnerNode.setOnClickListener {
+        (binding.searchSpinnerNode.parent as View).setOnClickListener {
             startActivityForResult(Intent(this, AllNodesActivity::class.java)
                 .apply {
                     putExtras(bundleOf(Keys.KEY_TO_CHOOSE_NODE to true))
                 }, NewTopicActivity.REQUEST_NODE
             )
-        }
 
-        binding.tvgTe.setOnClickListener {
-            showTimePickerDialog(it) { date ->
-                query = query.copy(gte = (date.timeInMillis/1000).toString())
-                binding.tvgTe.text = TimeUtil.toDisplay(date)
+        }
+        binding.ivNode.setOnClickListener {
+            if (binding.searchSpinnerNode.text != getString(R.string.node)) {
+                query = query.copy(node = null)
+                binding.ivNode.setImageResource(R.drawable.baseline_arrow_drop_down_24)
             }
         }
 
-        binding.tvLte.setOnClickListener {
+        (binding.tvGte.parent as View).setOnClickListener {
+            showTimePickerDialog(it) { date ->
+                query = query.copy(gte = (date.timeInMillis/1000).toString())
+                binding.tvGte.text = TimeUtil.toDisplay(date)
+                binding.ivGte.setImageResource(R.drawable.rounded_close_24)
+            }
+        }
+        (binding.tvLte.parent as View).setOnClickListener {
             showTimePickerDialog(it) { date ->
                 query = query.copy(lte = (date.timeInMillis/1000).toString())
                 binding.tvLte.text = TimeUtil.toDisplay(date)
+                binding.ivLte.setImageResource(R.drawable.rounded_close_24)
             }
         }
 
-        binding.tvSort.setOnClickListener {
-            query = query.copy(sort = if(query.sort == SUMUP) CREATED else SUMUP)
-            binding.tvSort.text = if(query.sort == CREATED) getString(R.string.newest) else getString(R.string.hot)
+        binding.ivGte.setOnClickListener {
+            if (binding.tvGte.text != getString(R.string.gte)) {
+                query = query.copy(gte =null)
+                binding.tvGte.text = getString(R.string.gte)
+                binding.ivGte.setImageResource(R.drawable.baseline_arrow_drop_down_24)
+            }
+        }
+
+        binding.ivLte.setOnClickListener {
+            if (binding.tvLte.text != getString(R.string.lte)) {
+                query = query.copy(lte = null)
+                binding.tvLte.text = getString(R.string.lte)
+                binding.ivLte.setImageResource(R.drawable.baseline_arrow_drop_down_24)
+            }
+        }
+
+
+
+
+
+
+//        binding.tvSort.setOnClickListener {
+//            query = query.copy(sort = if(query.sort == SUMUP) CREATED else SUMUP)
+//
+//        }
+
+        ArrayAdapter.createFromResource(this, R.array.search_option, R.layout.text_view_spinner).also {
+            it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.tvSort.adapter = it
+        }
+        binding.tvSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position) {
+                    0 -> {
+                        query = query.copy(sort = CREATED, order = NEW_FIRST)
+                    }
+                    1 -> {
+                        query = query.copy(sort = CREATED, order = OLD_FIRST)
+                    }
+                    2 -> {
+                        query = query.copy(sort = SUMUP)
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
         }
 
 
@@ -124,6 +178,7 @@ class SearchActivity : BaseActivity() {
             val nodeInfo = data.getParcelableExtra<Node>("extra_node")!!
             query = query.copy(node = nodeInfo.name)
             binding.searchSpinnerNode.text = "${nodeInfo.name} | ${nodeInfo.title}"
+            binding.ivNode.setImageResource(R.drawable.rounded_close_24)
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -134,6 +189,7 @@ class SearchActivity : BaseActivity() {
         val item = menu!!.findItem(R.id.action_search)
         item.expandActionView()
         val searchView = item.actionView as SearchView
+        searchView.isSubmitButtonEnabled = true
         val et = searchView.findViewById<EditText>(R.id.search_src_text)
         et.setTextColor(ContextCompat.getColor(this, R.color.toolbar_text))
         et.setHintTextColor(ContextCompat.getColor(this, R.color.hint))
