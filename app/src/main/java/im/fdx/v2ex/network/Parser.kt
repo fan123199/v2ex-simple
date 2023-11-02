@@ -323,7 +323,7 @@ class Parser(private val htmlStr: String) {
                 val elementsByAttribute = it.getElementsByClass("fade").first()?.getElementsByAttribute("title")
                 createdOriginal = elementsByAttribute?.text()?:""
                 created = TimeUtil.toUtcTime2(elementsByAttribute?.attr("title"))
-                content = it.getElementsByClass("topic_content").html()
+                content = it.getElementsByClass("topic_content").html().fullUrl()
             }
         }
 

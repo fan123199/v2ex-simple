@@ -454,7 +454,7 @@ class TopicsFragment : Fragment() {
 
                 override fun onResponse(call: Call, response: Response) {
                     val body = response.body?.string()
-                    loge(body)
+                    logd(body)
                     val result: SearchResult = Gson().fromJson(body, SearchResult::class.java)
                     if (nextIndex == 0) {
                         result.total?.let {

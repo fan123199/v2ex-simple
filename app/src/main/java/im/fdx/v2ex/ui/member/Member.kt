@@ -50,8 +50,10 @@ data class Member(
         var website: String? = ""
 ) : Parcelable {
 
-  val avatarNormalUrl: String
+  val avatarNormalUrl: String?  //为了减少在sov2ex 的页面的报错，因为他的接口不返回头像
     get() {
+        if(avatar_normal == "") return null
+
         val prefix = if (avatar_normal.startsWith("https:")) "" else "https:"
         return prefix + Regex("\\?s=\\d{1,3}").replace(avatar_normal, "?s=64")
     }

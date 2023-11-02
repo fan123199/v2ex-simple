@@ -23,7 +23,7 @@ android {
         applicationId = "im.fdx.v2ex"
         minSdk = 22
         targetSdk = 34
-        versionCode = 67
+        versionCode = 68
         versionName = "2.9.3"
     }
     lint {
@@ -120,9 +120,9 @@ dependencies {
     releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.0.0")
     implementation("com.elvishew:xlog:1.6.1")
     implementation("org.jsoup:jsoup:1.15.3")
-    implementation("com.github.bumptech.glide:glide:4.14.2")
-    ksp ("com.github.bumptech.glide:compiler:4.14.2")
-    implementation("com.github.bumptech.glide:okhttp3-integration:4.14.2")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    ksp ("com.github.bumptech.glide:compiler:4.16.0")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.16.0")
     implementation("io.reactivex.rxjava2:rxjava:2.2.14")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
     implementation("me.drakeet.multitype:multitype:3.5.0")
