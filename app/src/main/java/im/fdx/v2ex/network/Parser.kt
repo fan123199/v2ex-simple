@@ -314,7 +314,7 @@ class Parser(private val htmlStr: String) {
         val topicModel = Topic(topicId)
 
         val title = doc.getElementsByTag("h1").first()?.text()?:""
-        val contentElementOrg = doc.getElementsByClass("topic_content").first()
+        val contentElementOrg = doc.getElementById("Main")?.getElementsByClass("topic_content")?.first()
 
         val commentsEle = doc.getElementsByClass("subtle")
         val comments = commentsEle.map {
