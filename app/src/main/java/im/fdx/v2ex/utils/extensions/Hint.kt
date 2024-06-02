@@ -2,6 +2,7 @@ package im.fdx.v2ex.utils.extensions
 
 import android.app.Activity
 import android.content.Context
+import android.util.TypedValue
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -65,8 +66,13 @@ fun Any.loge(msg: Any?) {
 
 
 fun Activity.showLoginHint(view: View, message: String = getString(R.string.not_login_tips)) {
+
+    val colorAttr: Int = R.attr.toolbar_background
+    val typedValue = TypedValue()
+    this.theme.resolveAttribute(colorAttr, typedValue, true)
+    val color = typedValue.data
     Snackbar.make(view, message, Snackbar.LENGTH_LONG)
-        .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
+        .setBackgroundTint(color)
         .setActionTextColor(ContextCompat.getColor(this, R.color.white))
         .setAction(getString(R.string.login)) {
             startActivity<LoginActivity>()
@@ -78,8 +84,13 @@ fun Activity.showLoginHint(view: View, message: String = getString(R.string.not_
  */
 fun Activity.showHint(view: View, message: String, length: Int = Snackbar.LENGTH_LONG) {
     if (this.isFinishing || this.isDestroyed ) return
+
+    val colorAttr: Int = R.attr.toolbar_background
+    val typedValue = TypedValue()
+    applicationContext.theme.resolveAttribute(colorAttr, typedValue, true)
+    val color = typedValue.data
     Snackbar.make(view, message, length)
-        .setBackgroundTint(ContextCompat.getColor(this, R.color.primary_dark))
+        .setBackgroundTint(color)
         .setActionTextColor(ContextCompat.getColor(this, R.color.white))
         .setAction(R.string.ok){}
         .show()

@@ -12,4 +12,5 @@
     <attr name="nav_background" format="color" />
     <attr name="bg_refresh" format="color" />
     <attr name="bg_login" format="color" />
+    <attr name="primary_dark" format="color" />
 </resources>

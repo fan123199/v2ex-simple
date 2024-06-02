@@ -134,4 +134,6 @@ dependencies {
     implementation ("com.google.firebase:firebase-config-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation ("com.google.firebase:firebase-perf-ktx")
+
+    implementation ("androidx.core:core-splashscreen:1.0.0")
 }

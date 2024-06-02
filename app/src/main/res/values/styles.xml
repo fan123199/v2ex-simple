@@ -3,14 +3,14 @@
     <style name="Theme.V2ex" parent="Theme.AppCompat.DayNight.NoActionBar">
 
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimaryDark">?primary_dark</item>
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorLink">@color/primary</item>
         <item name="android:listDivider">@drawable/divider</item>
-        <item name="android:statusBarColor">?status_bar_white</item>
+        <item name="android:statusBarColor">@color/white</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:navigationBarColor">
-            ?status_bar_white
+            @color/white
         </item>
 
         <item name="preferenceTheme">@style/AppPreferenceTheme</item>
@@ -28,9 +28,19 @@
         <item name="bg_refresh">#FFFAFAFA</item>
         <item name="bg_login">@color/primary</item>
         <item name="android:windowBackground">@color/white</item>
+
+        <item name="android:colorBackground">@color/white</item>
+        <item name="primary_dark">@color/white</item>
+
+
+
     </style>
 
-    <style name="Theme.V2ex.amoled" />
+    <style name="Theme.V2ex.amoled" >
+        <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/white</item>
+        <item name="windowSplashScreenBackground" tools:targetApi="s">@color/white</item>
+
+    </style>
 
     <style name="AppPreferenceTheme" parent="@style/PreferenceThemeOverlay">
         <item name="android:textSize">?text_medium</item>
@@ -109,6 +119,7 @@
         <item name="colorControlNormal">@color/icon</item>
         <item name="android:actionMenuTextColor">@color/toolbar_text</item>
         <item name="android:actionMenuTextAppearance">@style/VText</item>
+        <item name="android:statusBarColor">?toolbar_background</item>
     </style>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
@@ -133,7 +144,7 @@
     <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorPrimary">@color/primary</item>
-        <item name="android:background">@color/primary_dark</item>
+        <item name="android:background">?primary_dark</item>
     </style>
 
     <style name="AppTheme.Simple" parent="Theme.AppCompat.Light.Dialog">

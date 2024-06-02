@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -246,8 +247,13 @@ class NewTopicActivity : BaseActivity() {
                         } else {
                             val errorMsg = Parser(response2.body!!.string()).getErrorMsg()
                             runOnUiThread {
+
+                                val colorAttr: Int = R.attr.toolbar_background
+                                val typedValue = TypedValue()
+                                applicationContext.theme.resolveAttribute(colorAttr, typedValue, true)
+                                val color = typedValue.data
                                 Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_INDEFINITE)
-                                    .setBackgroundTint(ContextCompat.getColor(applicationContext, R.color.primary_dark))
+                                    .setBackgroundTint(color)
                                     .setActionTextColor(
                                         ContextCompat.getColor(
                                             applicationContext,

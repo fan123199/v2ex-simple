@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="false"
     android:id="@+id/coordinator"
     >
 
@@ -21,7 +20,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?toolbar_background"
-            android:theme="@style/AppTheme.AppBarOverlay"
             app:titleTextAppearance="@style/VText.ToolbarStyle"
             android:contentDescription="@string/title"
             app:contentInsetStartWithNavigation="0dp"

@@ -33,7 +33,7 @@
 <!--    <color name="status_bar_white">@color/white</color>-->
     <color name="primary">#00bcd4</color>
     <color name="tab_select">@color/primary</color>
-    <color name="primary_dark">#0097A7</color>
+<!--    <color name="primary_dark">#0097A7</color>-->
     <color name="mode">#00bcd4</color>
     <color name="content_font_color">#2d2d2d</color>
     <color name="title_text">@color/black87</color>
@@ -41,7 +41,7 @@
     <color name="toolbar_text_light">@color/white</color>
 <!--    <color name="item_background">@color/white</color>-->
     <color name="username">@color/black87</color>
-    <color name="nav_background">@color/white</color>
+<!--    <color name="nav_background">@color/white</color>-->
 <!--    <color name="toolbar_background">@color/white</color>-->
     <color name="nav_icon">@color/black54</color>
     <color name="light_background">#FFFFFF</color>

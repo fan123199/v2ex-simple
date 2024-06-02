@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -25,6 +26,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -209,6 +211,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var binding: ActivityMainNavDrawerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         logd("onCreate")
 
@@ -237,12 +240,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.string.navigation_drawer_close
         )
         binding.drawerLayout.addDrawerListener(mDrawToggle)
-//        binding.drawerLayout.setStatusBarBackgroundColor(
-////            ContextCompat.getColor(
-////                this,
-////
-////            )
-//        )
+
+        val colorAttr: Int = R.attr.toolbar_background
+        val typedValue = TypedValue()
+        this.theme.resolveAttribute(colorAttr, typedValue, true)
+        val color = typedValue.data
+        binding.drawerLayout.setStatusBarBackgroundColor(color)
         mDrawToggle.syncState()
 
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
