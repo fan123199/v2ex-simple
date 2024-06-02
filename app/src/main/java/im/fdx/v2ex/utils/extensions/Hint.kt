@@ -87,7 +87,7 @@ fun Activity.showHint(view: View, message: String, length: Int = Snackbar.LENGTH
 
     val colorAttr: Int = R.attr.toolbar_background
     val typedValue = TypedValue()
-    applicationContext.theme.resolveAttribute(colorAttr, typedValue, true)
+    this.theme.resolveAttribute(colorAttr, typedValue, true)
     val color = typedValue.data
     Snackbar.make(view, message, length)
         .setBackgroundTint(color)

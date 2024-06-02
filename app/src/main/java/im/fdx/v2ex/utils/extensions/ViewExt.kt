@@ -97,6 +97,15 @@ fun Activity.setStatusBarColor(@ColorRes colorRes: Int?, @IntRange(from = 0L, to
     this.window.statusBarColor = calculateStatusColor(color, statusBarAlpha)
 }
 
+fun Activity.setStatusBarColorInt(@ColorInt colorInt: Int) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        var flags = this.window.decorView.systemUiVisibility
+        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        this.window.decorView.systemUiVisibility = flags
+    }
+    this.window.statusBarColor = colorInt
+}
+
 
 fun Context.toast(content:String) {
     Toast.makeText(this, content, Toast.LENGTH_SHORT).show()

@@ -215,6 +215,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         super.onCreate(savedInstanceState)
         logd("onCreate")
 
+        val colorAttr: Int = R.attr.toolbar_background
+        val typedValue = TypedValue()
+        this.theme.resolveAttribute(colorAttr, typedValue, true)
+        val color = typedValue.data
+        setStatusBarColorInt(color)
         binding = ActivityMainNavDrawerBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -240,12 +245,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.string.navigation_drawer_close
         )
         binding.drawerLayout.addDrawerListener(mDrawToggle)
-
-        val colorAttr: Int = R.attr.toolbar_background
-        val typedValue = TypedValue()
-        this.theme.resolveAttribute(colorAttr, typedValue, true)
-        val color = typedValue.data
-        binding.drawerLayout.setStatusBarBackgroundColor(color)
         mDrawToggle.syncState()
 
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {

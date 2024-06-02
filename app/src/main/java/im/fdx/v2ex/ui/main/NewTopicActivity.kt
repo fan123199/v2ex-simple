@@ -250,7 +250,7 @@ class NewTopicActivity : BaseActivity() {
 
                                 val colorAttr: Int = R.attr.toolbar_background
                                 val typedValue = TypedValue()
-                                applicationContext.theme.resolveAttribute(colorAttr, typedValue, true)
+                                binding.root.context.theme.resolveAttribute(colorAttr, typedValue, true)
                                 val color = typedValue.data
                                 Snackbar.make(binding.root, errorMsg, Snackbar.LENGTH_INDEFINITE)
                                     .setBackgroundTint(color)
