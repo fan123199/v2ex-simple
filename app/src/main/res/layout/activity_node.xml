@@ -10,7 +10,7 @@
         android:id="@+id/appbar_node"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/toolbar_background"
+        android:background="?toolbar_background"
         android:elevation="4dp"
         android:theme="@style/AppTheme.AppBarOverlay">
 

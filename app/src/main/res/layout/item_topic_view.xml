@@ -7,8 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="1px"
-    android:background="@color/item_background"
-    android:foreground="?selectableItemBackground"
+    android:background="?item_bg_color"
     tools:targetApi="m">
 
     <TextView

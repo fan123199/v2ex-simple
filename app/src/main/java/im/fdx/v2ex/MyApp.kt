@@ -58,6 +58,7 @@ class MyApp : Application() {
     }
     //后续做sp的版本判断在这里
     logd("onCreate\nisLogin:$isLogin")
+
     setDefaultNightMode(pref.getString(Keys.PREF_NIGHT_MODE, MODE_NIGHT_NO.toString())!!.toInt())
   }
 }

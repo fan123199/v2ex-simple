@@ -3,7 +3,7 @@ package im.fdx.v2ex.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.text.method.ScrollingMovementMethod
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +14,7 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ItemReplyViewBinding
 import im.fdx.v2ex.ui.topic.ItemViewHolder
 import im.fdx.v2ex.ui.topic.Reply
+
 
 /**
  * Created by fdx on 2017/7/14.
@@ -29,7 +30,11 @@ class Popup(mActivity: Context) {
         popupWindow.isOutsideTouchable = true
         popupWindow.elevation = 16f
         popupWindow.isFocusable = true
-        val colorBackground = ContextCompat.getColor(mActivity, R.color.item_background)
+        val colorAttr: Int = im.fdx.v2ex.R.attr.item_bg_color
+        val typedValue = TypedValue()
+        mActivity.theme.resolveAttribute(colorAttr, typedValue, true)
+        val color = typedValue.data
+        val colorBackground = ContextCompat.getColor(mActivity, color)
         popupWindow.setBackgroundDrawable(ColorDrawable(colorBackground))
     }
 

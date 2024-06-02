@@ -3,4 +3,13 @@
     <attr name="text_large" format="dimension"/>
     <attr name="text_medium" format="dimension"/>
     <attr name="text_small" format="dimension"/>
+
+    <attr name="item_bg_color" format="color" />
+
+    <attr name="light_background" format="color" />
+    <attr name="toolbar_background" format="color" />
+    <attr name="status_bar_white" format="color" />
+    <attr name="nav_background" format="color" />
+    <attr name="bg_refresh" format="color" />
+    <attr name="bg_login" format="color" />
 </resources>

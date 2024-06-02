@@ -7,10 +7,10 @@
         <item name="colorAccent">@color/primary</item>
         <item name="android:textColorLink">@color/primary</item>
         <item name="android:listDivider">@drawable/divider</item>
-        <item name="android:statusBarColor">@color/status_bar_white</item>
+        <item name="android:statusBarColor">?status_bar_white</item>
         <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
         <item name="android:navigationBarColor">
-            @color/status_bar_white
+            ?status_bar_white
         </item>
 
         <item name="preferenceTheme">@style/AppPreferenceTheme</item>
@@ -19,7 +19,18 @@
         <item name="text_medium">@dimen/text_size_medium</item>
         <item name="text_small">@dimen/text_size_small</item>
         <item name="text_large">@dimen/text_size_large</item>
+
+        <item name="item_bg_color">@color/white</item>
+        <item name="light_background">@color/white</item>
+        <item name="toolbar_background">@color/white</item>
+        <item name="status_bar_white">@color/white</item>
+        <item name="nav_background">@color/white</item>
+        <item name="bg_refresh">#FFFAFAFA</item>
+        <item name="bg_login">@color/primary</item>
+        <item name="android:windowBackground">@color/white</item>
     </style>
+
+    <style name="Theme.V2ex.amoled" />
 
     <style name="AppPreferenceTheme" parent="@style/PreferenceThemeOverlay">
         <item name="android:textSize">?text_medium</item>
@@ -29,6 +40,7 @@
         <item name="spinBars">true</item>
         <item name="color">@color/icon</item>
     </style>
+
 
     <style name="Theme.V2ex.big2">
         <item name="text_small">@dimen/text_size_small_2</item>
@@ -43,6 +55,24 @@
     </style>
 
     <style name="Theme.V2ex.big4">
+        <item name="text_small">@dimen/text_size_small_4</item>
+        <item name="text_medium">@dimen/text_size_medium_4</item>
+        <item name="text_large">@dimen/text_size_large_4</item>
+    </style>
+
+    <style name="Theme.V2ex.amoled.big2">
+        <item name="text_small">@dimen/text_size_small_2</item>
+        <item name="text_medium">@dimen/text_size_medium_2</item>
+        <item name="text_large">@dimen/text_size_large_2</item>
+    </style>
+
+    <style name="Theme.V2ex.amoled.big3">
+        <item name="text_small">@dimen/text_size_small_3</item>
+        <item name="text_medium">@dimen/text_size_medium_3</item>
+        <item name="text_large">@dimen/text_size_large_3</item>
+    </style>
+
+    <style name="Theme.V2ex.amoled.big4">
         <item name="text_small">@dimen/text_size_small_4</item>
         <item name="text_medium">@dimen/text_size_medium_4</item>
         <item name="text_large">@dimen/text_size_large_4</item>
@@ -83,14 +113,14 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
         <item name="android:itemTextAppearance">@style/VText</item>
-        <item name="android:itemBackground">@color/item_background</item>
+        <item name="android:itemBackground">?item_bg_color</item>
     </style>
 
     <style name="VTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabTextAppearance">@style/VText</item>
         <item name="tabSelectedTextColor">@color/tab_select</item>
         <item name="tabIndicatorColor">@color/tab_select</item>
-        <item name="tabBackground">@color/toolbar_background</item>
+        <item name="tabBackground">?toolbar_background</item>
         <item name="tabMinWidth">64dp</item>
         <item name="tabMaxWidth">72dp</item>
         <item name="tabPaddingStart">4dp</item>
@@ -110,7 +140,7 @@
         <item name="colorAccent">@color/title_text</item>
         <item name="android:textColor">@color/title_text</item>
         <item name="android:textColorPrimary">@color/title_text</item>
-        <item name="android:windowBackground">@color/light_background</item>
+        <item name="android:windowBackground">?light_background</item>
     </style>
 
 

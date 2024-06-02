@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
-        android:background="@color/toolbar_background"
+        android:background="?toolbar_background"
         android:elevation="4dp"
         tools:ignore="UnusedAttribute">
 
@@ -20,7 +20,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/toolbar_background"
+            android:background="?toolbar_background"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:titleTextAppearance="@style/VText.ToolbarStyle"
             android:contentDescription="@string/title"

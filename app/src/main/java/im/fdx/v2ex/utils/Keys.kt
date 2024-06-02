@@ -64,6 +64,8 @@ object Keys {
     const val PREF_NIGHT_MODE = "pref_night_mode"
     const val PREF_ALL_NODE_DATA = "pref_all_node_data"
     const val PREF_ALL_NODE_DATA_TIME = "pref_all_node_data_time"
+
+    const val PREF_AMOLED = "pref_amoled";   //boolean
     //------------------------------------------------
 
 

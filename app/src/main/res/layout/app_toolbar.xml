@@ -8,7 +8,7 @@
     app:title=""
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/toolbar_background"
+    android:background="?toolbar_background"
     android:theme="@style/AppTheme.AppBarOverlay"
     app:titleTextAppearance="@style/VText.ToolbarStyle"
     app:contentInsetStartWithNavigation="0dp"

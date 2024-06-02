@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.health.connect.datatypes.units.Length
 import android.os.Build
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -139,7 +140,10 @@ private fun calculateStatusColor(@ColorInt color: Int, alpha: Int): Int {
 
 fun SwipeRefreshLayout.initTheme() {
     setColorSchemeResources(R.color.accent_orange)
-    setProgressBackgroundColorSchemeResource(R.color.bg_refresh)
+//    val typedValue = TypedValue()
+//    context.theme.resolveAttribute(R.attr.bg_refresh, typedValue, true)
+//    val color = typedValue.data
+//    setProgressBackgroundColorSchemeResource(color)
 }
 
 fun ImageView.load(url: Any?) {

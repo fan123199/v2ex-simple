@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <!--<solid android:color="@color/primary" />-->
     <solid
-        android:color="@color/item_background"/>
+        android:color="?item_bg_color"/>
     <stroke
         android:width="1dp"
         android:color="@color/divider_color" />

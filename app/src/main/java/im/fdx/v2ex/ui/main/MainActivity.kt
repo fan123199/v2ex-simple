@@ -237,12 +237,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.string.navigation_drawer_close
         )
         binding.drawerLayout.addDrawerListener(mDrawToggle)
-        binding.drawerLayout.setStatusBarBackgroundColor(
-            ContextCompat.getColor(
-                this,
-                R.color.status_bar_white
-            )
-        )
+//        binding.drawerLayout.setStatusBarBackgroundColor(
+////            ContextCompat.getColor(
+////                this,
+////
+////            )
+//        )
         mDrawToggle.syncState()
 
         binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
@@ -325,6 +325,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         Keys.PREF_NIGHT_MODE,
                         AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM.toString()
                     ).apply()
+                    recreate()
+                }
+                .addDivider()
+                .addItem(getString(R.string.normal_dark)) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    setTheme(R.style.Theme_V2ex)
+                    pref.edit().putBoolean(Keys.PREF_AMOLED, false).apply()
+                    recreate()
+                }
+                .addItem(getString(R.string.super_dark)) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    setTheme(R.style.Theme_V2ex_amoled)
+                    pref.edit().putBoolean(Keys.PREF_AMOLED, true).apply()
                     recreate()
                 }
                 .show()

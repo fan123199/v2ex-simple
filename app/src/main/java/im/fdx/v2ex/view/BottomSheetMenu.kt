@@ -7,6 +7,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import im.fdx.v2ex.R
@@ -47,6 +48,15 @@ class BottomSheetMenu(private val activity: Activity) {
         }
         val p = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         container.addView(view, p)
+        return this
+    }
+
+    fun addDivider() : BottomSheetMenu {
+        val view = View(activity)
+        view.layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, 1)
+        view.setPadding(0, 6, 0, 6)
+        view.setBackgroundColor(ContextCompat.getColor(activity, R.color.divider_color))
+        container.addView(view)
         return this
     }
 

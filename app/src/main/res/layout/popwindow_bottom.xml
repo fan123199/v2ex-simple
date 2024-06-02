@@ -4,7 +4,7 @@
     android:id="@+id/linear"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/light_background"
+    android:background="?light_background"
     android:orientation="vertical">
 
     <TextView

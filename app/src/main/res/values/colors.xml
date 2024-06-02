@@ -9,7 +9,7 @@
 
     <color name="accent">#E53935</color>
     <color name="black87">#E1000000</color>
-    <color name="black">#000000</color>
+    <color name="black">#FF000000</color>
     <color name="black54">#90000000</color>
     <color name="black_overlay">#66000000</color>
     <color name="white">#FFFFFF</color>
@@ -23,14 +23,14 @@
     <color name="hint">@color/black54</color>
     <color name="primary_light">#ff4dd0e1</color>
     <color name="list_background">#e8e8e8</color>
-    <color name="chrome_tab">@color/toolbar_background</color>
+    <color name="chrome_tab">?toolbar_background</color>
     <color name="node_background">#41000000</color>
     <color name="main_color">#00bcd4</color>
     <color name="gray_400">#FFBDBDBD</color>
     <color name="gray_600">#FF757575</color>
 
     <!--在night中变化的值-->
-    <color name="status_bar_white">@color/white</color>
+<!--    <color name="status_bar_white">@color/white</color>-->
     <color name="primary">#00bcd4</color>
     <color name="tab_select">@color/primary</color>
     <color name="primary_dark">#0097A7</color>
@@ -39,10 +39,10 @@
     <color name="title_text">@color/black87</color>
     <color name="toolbar_text">@color/black87</color>
     <color name="toolbar_text_light">@color/white</color>
-    <color name="item_background">@color/white</color>
+<!--    <color name="item_background">@color/white</color>-->
     <color name="username">@color/black87</color>
     <color name="nav_background">@color/white</color>
-    <color name="toolbar_background">@color/white</color>
+<!--    <color name="toolbar_background">@color/white</color>-->
     <color name="nav_icon">@color/black54</color>
     <color name="light_background">#FFFFFF</color>
     <color name="divider_color">#d5d5d5</color>
@@ -50,10 +50,10 @@
     <color name="trans_item_background">#61ffffff</color>
     <color name="nav_fg">@color/transparent</color>
     <color name="accent_orange">#ffffd600</color>
-    <color name="bg_refresh">#FFFAFAFA</color>
+<!--    <color name="bg_refresh">#FFFAFAFA</color>-->
     <color name="fab">@color/accent_orange</color>
     <color name="icon">@color/primary</color>
-    <color name="bg_login">@color/primary</color>
+<!--    <color name="bg_login">@color/primary</color>-->
     <color name="back_icon">@color/primary</color>
     <color name="back_icon_login">@color/white</color>
 

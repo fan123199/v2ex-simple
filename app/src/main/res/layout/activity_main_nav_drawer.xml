@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/nav_background"
+        android:background="?item_bg_color"
         android:fitsSystemWindows="false"
         android:foreground="@color/nav_fg"
         app:itemIconTint="@color/nav_icon"

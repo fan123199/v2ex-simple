@@ -19,7 +19,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/toolbar_background"
+            android:background="?toolbar_background"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:contentInsetStartWithNavigation="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
@@ -54,7 +54,7 @@
         android:id="@+id/foot_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/item_background"
+        android:background="?item_bg_color"
         android:orientation="vertical">
 
         <View

@@ -20,18 +20,36 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val textSizeMode = pref.getString(Keys.PREF_TEXT_SIZE, MODE_SYSTEM.toString())!!.toInt()
+        val amoled = pref.getBoolean(Keys.PREF_AMOLED, true)
+
         when (textSizeMode) {
             MODE_SYSTEM, MODE_SMALL -> {
-                setTheme(R.style.Theme_V2ex)
+                if(amoled) {
+                    setTheme(R.style.Theme_V2ex_amoled)
+                } else {
+                    setTheme(R.style.Theme_V2ex)
+                }
             }
             MODE_BIG2 -> {
-                setTheme(R.style.Theme_V2ex_big2)
+                if(amoled) {
+                    setTheme(R.style.Theme_V2ex_amoled_big2)
+                } else {
+                    setTheme(R.style.Theme_V2ex_big2)
+                }
             }
             MODE_BIG3 -> {
-                setTheme(R.style.Theme_V2ex_big3)
+                if(amoled) {
+                    setTheme(R.style.Theme_V2ex_amoled_big3)
+                } else {
+                    setTheme(R.style.Theme_V2ex_big3)
+                }
             }
             MODE_BIG4 -> {
-                setTheme(R.style.Theme_V2ex_big4)
+                if(amoled) {
+                    setTheme(R.style.Theme_V2ex_amoled_big4)
+                } else {
+                    setTheme(R.style.Theme_V2ex_big4)
+                }
             }
         }
         super.onCreate(savedInstanceState)

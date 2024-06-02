@@ -205,6 +205,9 @@
     <string name="lte">Latest posting</string>
     <string name="newest">Newest</string>
     <string name="hot">Hot</string>
+    <string name="dark_mode_darker">More Darker Mode</string>
+    <string name="normal_dark">Normal Dark</string>
+    <string name="super_dark">Super Dark</string>
 
     <string-array name="j" translatable="false">
         <item>天</item>

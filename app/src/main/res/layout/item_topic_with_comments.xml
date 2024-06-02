@@ -3,7 +3,7 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:background="@color/item_background"
+              android:background="?item_bg_color"
               android:layout_height="wrap_content">
 
     <include layout="@layout/item_topic_view"/>
