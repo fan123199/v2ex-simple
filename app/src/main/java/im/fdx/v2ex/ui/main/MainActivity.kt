@@ -36,8 +36,8 @@ import androidx.work.WorkManager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
 import de.hdodenhof.circleimageview.CircleImageView
 import im.fdx.v2ex.*
 import im.fdx.v2ex.databinding.ActivityMainNavDrawerBinding

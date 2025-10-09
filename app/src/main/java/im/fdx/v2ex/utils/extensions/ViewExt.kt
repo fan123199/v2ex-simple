@@ -22,7 +22,9 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.os.bundleOf
+import androidx.core.view.WindowCompat
 import androidx.core.view.forEach
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
@@ -84,52 +86,22 @@ fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
     return toolbar
 }
 
-/**
- * Alpha : 0，solid, 255->transparent
- */
-fun Activity.setStatusBarColor(@ColorRes colorRes: Int?, @IntRange(from = 0L, to = 255L) statusBarAlpha: Int = 0) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = this.window.decorView.systemUiVisibility
-        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        this.window.decorView.systemUiVisibility = flags
-    }
-    val color = colorRes?.let { ContextCompat.getColor(this, it) } ?: 0
-    this.window.statusBarColor = calculateStatusColor(color, statusBarAlpha)
-}
 
-fun Activity.setStatusBarColorInt(@ColorInt colorInt: Int) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = this.window.decorView.systemUiVisibility
-        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        this.window.decorView.systemUiVisibility = flags
-    }
-    this.window.statusBarColor = colorInt
+fun Activity.setStatusBarColorInt(
+    @ColorInt colorInt: Int,
+    isLightColorThreshold: Float = 0.5f
+) {
+
+    window.statusBarColor = colorInt
+    WindowCompat.setDecorFitsSystemWindows(window, false)
+    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+    val luminance = ColorUtils.calculateLuminance(colorInt)
+    insetsController.isAppearanceLightStatusBars = luminance > isLightColorThreshold
 }
 
 
 fun Context.toast(content:String) {
     Toast.makeText(this, content, Toast.LENGTH_SHORT).show()
-}
-
-fun Activity.setStatusBarLight() {
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = window.decorView.systemUiVisibility
-        flags = flags or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        window.decorView.systemUiVisibility = flags
-        this.window.statusBarColor = Color.WHITE
-    } else {
-        this.window.statusBarColor = Color.BLACK
-    }
-
-}
-
-fun Activity.clearLightStatusBar() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        var flags = this.window.decorView.systemUiVisibility
-        flags = flags and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        this.window.decorView.systemUiVisibility = flags
-    }
 }
 
 

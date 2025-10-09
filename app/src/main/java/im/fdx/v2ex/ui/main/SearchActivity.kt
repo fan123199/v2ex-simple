@@ -163,9 +163,9 @@ class SearchActivity : BaseActivity() {
             .show(supportFragmentManager, "datePicker")
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (Intent.ACTION_SEARCH == intent?.action) {
+        if (Intent.ACTION_SEARCH == intent.action) {
             query = query.copy(q = intent.getStringExtra(SearchManager.QUERY) ?: "")
             fra.startQuery(query)
         }

@@ -20,8 +20,8 @@ import com.bumptech.glide.load.model.LazyHeaders
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.elvishew.xlog.XLog
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
 import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ActivityLoginBinding
 import im.fdx.v2ex.network.*
@@ -132,7 +132,7 @@ class LoginActivity : BaseActivity() {
 
             @Throws(IOException::class)
             override fun onResponse(call: Call, response0: Response) {
-                val htmlString = response0.body?.string()
+                val htmlString = response0.body.string()
                 val body = Jsoup.parse(htmlString).body()
                 nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮件地址").attr("name")
                 passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
