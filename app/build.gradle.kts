@@ -1,17 +1,18 @@
 @file:Suppress("LocalVariableName", "PropertyName")
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import shadow.bundletool.com.android.tools.r8.internal.jv
 import java.util.*
 
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    id("kotlin-android")
+    id("kotlin-parcelize")
+
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
-    id("kotlin-parcelize")
     id("com.google.firebase.firebase-perf")
     id("com.google.devtools.ksp")
+    id("androidx.room")
 }
 
 kotlin {
@@ -35,6 +36,10 @@ android {
         checkReleaseBuilds = false
         abortOnError =   false
     }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
     signingConfigs {
 
         create("googlePlay") {
@@ -54,6 +59,12 @@ android {
             }
         }
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
     buildTypes {
         getByName("debug") {
             applicationIdSuffix =  ".debug"
@@ -71,11 +82,11 @@ android {
     namespace = "im.fdx.v2ex"
 }
 
-configurations.all {
-    resolutionStrategy {
-        force( "org.jetbrains.kotlin:kotlin-parcelize-runtime:2.2.20")
-    }
-}
+//configurations.all {
+//    resolutionStrategy {
+//        force( "org.jetbrains.kotlin:kotlin-parcelize-runtime:2.2.20")
+//    }
+//}
 
 android.applicationVariants.all { variant ->
     variant.outputs
@@ -90,14 +101,14 @@ android.applicationVariants.all { variant ->
 
 dependencies {
 
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
     //test related, use test when you really need it, or you forget always.
     testImplementation("junit:junit:4.13.2")
     //test end
 
     //kotlin start
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("androidx.core:core-ktx:1.17.0")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+//    implementation("androidx.core:core-ktx:1.17.0")
     //kotlin end
 
     //google start
@@ -107,11 +118,13 @@ dependencies {
     implementation("androidx.browser:browser:1.9.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.13.0")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
     implementation("androidx.work:work-runtime-ktx:2.10.5")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
-
     implementation("androidx.preference:preference-ktx:1.2.1")
+    implementation("com.google.android.flexbox:flexbox:3.0.0")
+    implementation ("androidx.core:core-splashscreen:1.0.1")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
     val roomVersion = "2.8.2"
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -122,7 +135,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.2.0"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.2.1"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
@@ -134,16 +147,18 @@ dependencies {
     ksp ("com.github.bumptech.glide:compiler:5.0.5")
     implementation("com.github.bumptech.glide:okhttp3-integration:5.0.5")
     implementation("io.reactivex.rxjava2:rxjava:2.2.21")
-    implementation("com.google.android.flexbox:flexbox:3.0.0")
+
     implementation("me.drakeet.multitype:multitype:3.5.0")
     implementation("com.github.chrisbanes:PhotoView:2.3.0")
-    implementation("com.github.esafirm.android-image-picker:imagepicker:2.4.5")
+//    implementation("com.github.esafirm:android-image-picker:3.1.0")
+    implementation("com.github.esafirm.android-image-picker:imagepicker:2.4.5"){
+        exclude("org.jetbrains.kotlin", "kotlin-android-extensions-runtime")
+    }
 
-    implementation(platform("com.google.firebase:firebase-bom:34.3.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation ("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.google.firebase:firebase-perf")
 
-    implementation ("androidx.core:core-splashscreen:1.0.1")
 }

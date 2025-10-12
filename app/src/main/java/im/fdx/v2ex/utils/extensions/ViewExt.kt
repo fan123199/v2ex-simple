@@ -93,10 +93,11 @@ fun Activity.setStatusBarColorInt(
 ) {
 
     window.statusBarColor = colorInt
-    WindowCompat.setDecorFitsSystemWindows(window, false)
+    WindowCompat.setDecorFitsSystemWindows(window, true)
     val insetsController = WindowCompat.getInsetsController(window, window.decorView)
     val luminance = ColorUtils.calculateLuminance(colorInt)
     insetsController.isAppearanceLightStatusBars = luminance > isLightColorThreshold
+    insetsController.isAppearanceLightNavigationBars = luminance > isLightColorThreshold
 }
 
 
