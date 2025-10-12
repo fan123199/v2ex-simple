@@ -44,7 +44,7 @@ android {
 
         create("googlePlay") {
             // 从根目录加载 keystore.properties
-            val propertiesFile = rootProject.file("keystore.properties")
+            val propertiesFile = rootProject.file("local.properties")
             if (propertiesFile.exists()) {
                 val properties = Properties().apply {
                     load(propertiesFile.inputStream())
