@@ -43,7 +43,7 @@ class Popup(mActivity: Context) {
     fun show(v: View, data: Reply, rowNum: Int, clickListener: (Int) -> Unit) {
         val hd = ItemViewHolder(binding)
         hd.bind(data)
-        hd.binding.tvReplyContent.maxLines = 4
+        hd.binding.tvReplyContent.maxLines = 5
         hd.binding.tvReplyContent.isVerticalScrollBarEnabled = true
         hd.binding.tvReplyRow.text = "#$rowNum"
         hd.binding.ivThanks.visibility = View.GONE

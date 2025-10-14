@@ -86,7 +86,7 @@ class TopicAdapter(
                 logd(topic.content_rendered)
                 val mainHolder = holder as TopicWithCommentsViewHolder
                 mainHolder.tvTitle.text = topic.title
-                mainHolder.tvTitle.maxLines = 4
+                mainHolder.tvTitle.maxLines = 9
                 mainHolder.tvContent.setGoodText(topic.content_rendered)
                 mainHolder.tvContent.isSelected = true
                 mainHolder.tvContent.setTextIsSelectable(true)
