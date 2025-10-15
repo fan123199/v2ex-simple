@@ -353,7 +353,7 @@ class MemberActivity : BaseActivity() {
 
         BottomSheetMenu(this)
             .setTitle("请选择举报的理由")
-            .addItems(listOf("大量发布广告", "冒充他人", "疑似机器帐号", "其他")) { _, s ->
+            .addItems(listOf("大量发布广告", "冒充他人", "疑似机器帐号", "儿童安全", "其他")) { _, s ->
                 startActivity(Intent(this, NewTopicActivity::class.java).apply {
                     action = Keys.ACTION_V2EX_REPORT
                     putExtra(Intent.EXTRA_TITLE, "报告用户 ${member.username} ")
