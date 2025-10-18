@@ -13,6 +13,7 @@ import im.fdx.v2ex.utils.extensions.decodeEmail
 import im.fdx.v2ex.utils.extensions.fullUrl
 import im.fdx.v2ex.utils.extensions.getNum
 import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.logw
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -89,6 +90,7 @@ class Parser(private val htmlStr: String) {
 
                 val avatarLarge = item.getElementsByClass("avatar")?.attr("src")?.replace("xxxlarge", "normal")?.replace("xxlarge", "normal")?:""
                 memberModel.username = username
+                logw("username: $username")
                 memberModel.avatar_normal = avatarLarge
 
 //            FROM_HOME &nbsp;•&nbsp; <strong><a href="/member/nodwang">nodwang</a></strong> &nbsp;•&nbsp; 2 分钟前 &nbsp;•&nbsp; 最后回复来自
@@ -387,14 +389,16 @@ class Parser(private val htmlStr: String) {
 
         val member = Member()
         val username = headerTopic
-                ?.getElementsByAttributeValueStarting("href", "/member/")?.text()?:""
+                ?.getElementsByAttributeValueStarting("href", "/member/")?.first()
+                ?.attr("href")?.removePrefix("/member/")?:""
         member.username = username
+        logw("username in 2: $username")
         val largeAvatar = headerTopic
                 ?.getElementsByClass("avatar")?.attr("src")?:""
         member.avatar_normal = largeAvatar
         val nodeElement = headerTopic
                 ?.getElementsByAttributeValueStarting("href", "/go/")?.first()
-        val nodeName = nodeElement?.attr("href")?.replace("/go/", "")?:""
+        val nodeName = nodeElement?.attr("href")?.removePrefix("/go/")?:""
         val nodeTitle = nodeElement?.text()?:""
         val nodeModel = Node()
         nodeModel.name = nodeName
