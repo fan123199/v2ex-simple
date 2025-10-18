@@ -73,7 +73,8 @@ fun Activity.showLoginHint(view: View, message: String = getString(R.string.not_
     val color = typedValue.data
     Snackbar.make(view, message, Snackbar.LENGTH_LONG)
         .setBackgroundTint(color)
-        .setActionTextColor(ContextCompat.getColor(this, R.color.white))
+        .setTextColor(ContextCompat.getColor(this, R.color.title_text))
+        .setActionTextColor(ContextCompat.getColor(this, R.color.primary))
         .setAction(getString(R.string.login)) {
             startActivity<LoginActivity>()
         }.show()
@@ -91,7 +92,8 @@ fun Activity.showHint(view: View, message: String, length: Int = Snackbar.LENGTH
     val color = typedValue.data
     Snackbar.make(view, message, length)
         .setBackgroundTint(color)
-        .setActionTextColor(ContextCompat.getColor(this, R.color.white))
+        .setTextColor(ContextCompat.getColor(this, R.color.title_text))
+        .setActionTextColor(ContextCompat.getColor(this, R.color.primary))
         .setAction(R.string.ok){}
         .show()
 }

@@ -25,6 +25,7 @@ import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.dealError
 import im.fdx.v2ex.utils.extensions.initTheme
+import im.fdx.v2ex.utils.extensions.setStatusBarColorInt
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import okhttp3.Call
 import okhttp3.Callback

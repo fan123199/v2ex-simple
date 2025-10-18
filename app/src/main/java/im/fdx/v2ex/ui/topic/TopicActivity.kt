@@ -12,6 +12,7 @@ import im.fdx.v2ex.pref
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.utils.extensions.setStatusBarColorInt
 import im.fdx.v2ex.view.ViewPagerHelper
 import im.fdx.v2ex.view.ZoomOutPageTransform
 import im.fdx.v2ex.utils.extensions.toast

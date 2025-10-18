@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
@@ -28,6 +29,7 @@ import im.fdx.v2ex.utils.Keys.PREF_TEXT_SIZE
 import im.fdx.v2ex.utils.Keys.PREF_VERSION
 import im.fdx.v2ex.utils.Keys.TAG_WORKER
 import im.fdx.v2ex.utils.Keys.notifyID
+import im.fdx.v2ex.utils.extensions.setStatusBarColorInt
 import im.fdx.v2ex.utils.extensions.setUpToolbar
 import im.fdx.v2ex.utils.extensions.toast
 

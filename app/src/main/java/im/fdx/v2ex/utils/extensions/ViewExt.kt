@@ -77,7 +77,6 @@ fun FrameLayout.hideNoContent() {
  * 为每个Activity设置基本toolbar，简化代码
  */
 fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
-
     val toolbar: Toolbar = findViewById(R.id.toolbar)
     toolbar.title = title
     setSupportActionBar(toolbar)
@@ -93,7 +92,6 @@ fun Activity.setStatusBarColorInt(
 ) {
 
     window.statusBarColor = colorInt
-    WindowCompat.setDecorFitsSystemWindows(window, true)
     val insetsController = WindowCompat.getInsetsController(window, window.decorView)
     val luminance = ColorUtils.calculateLuminance(colorInt)
     insetsController.isAppearanceLightStatusBars = luminance > isLightColorThreshold

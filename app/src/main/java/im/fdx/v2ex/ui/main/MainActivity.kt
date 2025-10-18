@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewGroupCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -214,12 +215,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         logd("onCreate")
-
-        val colorAttr: Int = R.attr.toolbar_background
-        val typedValue = TypedValue()
-        this.theme.resolveAttribute(colorAttr, typedValue, true)
-        val color = typedValue.data
-        setStatusBarColorInt(color)
         binding = ActivityMainNavDrawerBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)

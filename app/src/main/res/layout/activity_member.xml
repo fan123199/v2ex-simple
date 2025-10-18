@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:background="?toolbar_background"
         android:elevation="4dp"
+        android:fitsSystemWindows="true"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout

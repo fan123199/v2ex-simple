@@ -314,6 +314,7 @@ class LoginActivity : BaseActivity() {
                                     if (response?.code == 302) {
                                         activity.toast("登录成功")
                                         setLogin(true)
+                                        finish()
                                     } else {
                                         activity.toast("登录失败")
                                     }
