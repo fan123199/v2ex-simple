@@ -90,7 +90,7 @@ class Parser(private val htmlStr: String) {
 
                 val avatarLarge = item.getElementsByClass("avatar")?.attr("src")?.replace("xxxlarge", "normal")?.replace("xxlarge", "normal")?:""
                 memberModel.username = username
-                logw("username: $username")
+//                logw("username: $username")
                 memberModel.avatar_normal = avatarLarge
 
 //            FROM_HOME &nbsp;•&nbsp; <strong><a href="/member/nodwang">nodwang</a></strong> &nbsp;•&nbsp; 2 分钟前 &nbsp;•&nbsp; 最后回复来自
@@ -392,7 +392,7 @@ class Parser(private val htmlStr: String) {
                 ?.getElementsByAttributeValueStarting("href", "/member/")?.first()
                 ?.attr("href")?.removePrefix("/member/")?:""
         member.username = username
-        logw("username in 2: $username")
+//        logw("username in 2: $username")
         val largeAvatar = headerTopic
                 ?.getElementsByClass("avatar")?.attr("src")?:""
         member.avatar_normal = largeAvatar

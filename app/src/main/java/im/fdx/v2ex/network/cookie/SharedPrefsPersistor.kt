@@ -82,7 +82,7 @@ class SharedPrefsPersistor : CookiePersistor {
         mapSet.forEach { (key, value) ->
             if (key.contains(url)) {
                 val strCookie = value as String
-                logv("fdx2:$strCookie")
+//                logv("fdx2:$strCookie")
                 val cookie = NetManager.myGson.fromJson(strCookie, Cookie::class.java)
                 cookies.add(cookie)
             }

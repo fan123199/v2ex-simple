@@ -426,7 +426,7 @@ class TopicAdapter(
 
         this.replies.forEachIndexed { index, it ->
             it.isLouzu = it.member?.username == topics[0].member?.username
-            logd("isLouzu, ${it.isLouzu}, '${it.member?.username}', '${topics[0].member?.username}'")
+//            logd("isLouzu, ${it.isLouzu}, '${it.member?.username}', '${topics[0].member?.username}'")
             it.showTime = it.createdOriginal
         }
         notifyDataSetChanged()

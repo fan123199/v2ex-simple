@@ -15,6 +15,7 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.annotation.IntRange
@@ -196,5 +197,34 @@ fun Context.shareText(
     } catch (e: ActivityNotFoundException) {
         e.printStackTrace()
         false
+    }
+}
+
+/**
+ * 从当前主题（Theme）中获取属性（Attribute）对应的颜色值。
+ *
+ * @param attrResId 要解析的颜色属性的ID，例如 R.attr.colorPrimary
+ * @param defaultColorResId 如果属性未定义，则使用的默认颜色资源ID
+ * @return 解析出的颜色整数值
+ */
+@ColorInt
+fun Context.getColorFromAttr(
+    @AttrRes attrResId: Int,
+    @ColorRes defaultColorResId: Int = R.color.white
+): Int {
+    val typedValue = TypedValue()
+    // 尝试解析主题属性
+    val resolved = theme.resolveAttribute(attrResId, typedValue, true)
+
+    return if (resolved) {
+        // 如果解析成功，根据值的类型获取颜色
+        if (typedValue.resourceId != 0) {
+            ContextCompat.getColor(this, typedValue.resourceId)
+        } else {
+            typedValue.data
+        }
+    } else {
+        // 如果属性未在主题中定义，返回一个安全的默认颜色
+        ContextCompat.getColor(this, defaultColorResId)
     }
 }

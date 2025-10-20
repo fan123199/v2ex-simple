@@ -14,6 +14,8 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.databinding.ItemReplyViewBinding
 import im.fdx.v2ex.ui.topic.ItemViewHolder
 import im.fdx.v2ex.ui.topic.Reply
+import androidx.core.graphics.drawable.toDrawable
+import im.fdx.v2ex.utils.extensions.getColorFromAttr
 
 
 /**
@@ -30,12 +32,7 @@ class Popup(mActivity: Context) {
         popupWindow.isOutsideTouchable = true
         popupWindow.elevation = 16f
         popupWindow.isFocusable = true
-        val colorAttr: Int = im.fdx.v2ex.R.attr.item_bg_color
-        val typedValue = TypedValue()
-        mActivity.theme.resolveAttribute(colorAttr, typedValue, true)
-        val color = typedValue.data
-        val colorBackground = ContextCompat.getColor(mActivity, color)
-        popupWindow.setBackgroundDrawable(ColorDrawable(colorBackground))
+        popupWindow.setBackgroundDrawable(mActivity.getColorFromAttr(R.attr.toolbar_background).toDrawable())
     }
 
 

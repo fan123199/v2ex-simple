@@ -38,9 +38,9 @@ object HttpHelper {
         .addNetworkInterceptor(
             HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                 override fun log(message: String) {
-                    logd("okhttp: $message")
+//                    logd("okhttp: $message")
                 }
-            }).apply { level = HttpLoggingInterceptor.Level.HEADERS }
+            }).apply { level = HttpLoggingInterceptor.Level.BODY }
         )
         .addInterceptor(
             ChuckerInterceptor.Builder(MyApp.get())
