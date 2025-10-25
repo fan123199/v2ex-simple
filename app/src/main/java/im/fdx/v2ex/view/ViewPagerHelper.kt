@@ -4,6 +4,8 @@ import android.view.MotionEvent
 import androidx.viewpager2.widget.ViewPager2
 import kotlin.math.abs
 
+
+//防止 下滑时 不小心给 左右滑了
 class ViewPagerHelper(val viewPager2: ViewPager2) {
 
     private var initialXValue = 0f

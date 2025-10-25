@@ -378,7 +378,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             override fun onTabUnselected(tab: TabLayout.Tab) {}
 
             override fun onTabReselected(tab: TabLayout.Tab) {
-//                binding.activityMainContent.
             }
         })
 
@@ -596,7 +595,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
                 @Throws(IOException::class)
                 override fun onResponse(call: Call, response: Response) {
-                    logw("daily check ok")
+//                    logw("daily check ok")
                     runOnUiThread { toast("每日登录奖励领取成功") }
                 }
             })

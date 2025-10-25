@@ -11,6 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.extensions.getColorFromAttr
+import im.fdx.v2ex.utils.extensions.logv
+import androidx.core.net.toUri
 
 
 /**
@@ -42,12 +44,13 @@ class CustomChrome(private val context: Context) {
     }
 
     fun load(url: String) {
+        logv(url)
 
         val customTabsIntent = builder.build()
         try {
-            customTabsIntent.launchUrl(context, Uri.parse(url))
+            customTabsIntent.launchUrl(context, url.toUri())
         } catch (e: ActivityNotFoundException) {
-            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
             context.startActivity(intent)
         }
     }

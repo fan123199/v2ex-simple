@@ -15,6 +15,7 @@
         android:theme="@style/Theme.V2ex"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
+        android:enableOnBackInvokedCallback="false"
         tools:targetApi="m">
         <activity
             android:name=".ui.main.MainActivity"

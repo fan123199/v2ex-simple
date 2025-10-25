@@ -77,7 +77,7 @@ object HttpHelper {
 }
 
 fun vCall(url: String, ua: String? = null): Call {
-    Log.d("fdx", "vCall: $url ")
+    Log.v("fdx", "vCall: $url ")
     return HttpHelper.OK_CLIENT.newBuilder()
         .apply {
             addInterceptor { chain ->

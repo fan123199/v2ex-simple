@@ -45,11 +45,29 @@ fun Fragment.toast(message: CharSequence): Toast? {
 
 
 fun Any.logv(msg: Any?) {
-    XLog.tag("v+" + this::class.java.simpleName).v(msg)
+    val kClass = this::class
+
+    // 1. 尝试获取 simpleName。
+    // 2. 如果是 null (匿名类), 则尝试获取 java.enclosingClass.simpleName (宿主类)。
+    // 3. 如果还是 null (例如在顶层文件定义的 object), 则回退到完整的 java.name。
+    val tag = kClass.simpleName
+        ?: kClass.java.enclosingClass?.simpleName
+        ?: kClass.java.name
+
+    XLog.tag("v+" + tag).v(msg)
 }
 
 fun Any.logd(msg: Any?) {
-    XLog.tag("v+" + this::class.java.simpleName).d(msg)
+    val kClass = this::class
+
+    // 1. 尝试获取 simpleName。
+    // 2. 如果是 null (匿名类), 则尝试获取 java.enclosingClass.simpleName (宿主类)。
+    // 3. 如果还是 null (例如在顶层文件定义的 object), 则回退到完整的 java.name。
+    val tag = kClass.simpleName
+        ?: kClass.java.enclosingClass?.simpleName
+        ?: kClass.java.name
+
+    XLog.tag("v+" + tag).d(msg)
 }
 
 fun Any.logi(msg: Any?) {

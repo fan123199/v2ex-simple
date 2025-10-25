@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +31,6 @@ import im.fdx.v2ex.ui.isUsePageNum
 import im.fdx.v2ex.ui.main.model.SearchResult
 import im.fdx.v2ex.ui.member.Member
 import im.fdx.v2ex.ui.member.MemberActivity
-import im.fdx.v2ex.ui.node.Node
 import im.fdx.v2ex.utils.EndlessOnScrollListener
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.TimeUtil
@@ -86,15 +86,15 @@ class TopicsFragment : Fragment() {
     }
 
 
-    fun togglePageNum(on: Boolean) {
-        isEndlessMode = !on
+    fun togglePageNum(usePageNum: Boolean) {
+        isEndlessMode = !usePageNum
         if (isEndlessMode) {
             mScrollListener?.let { mRecyclerView?.addOnScrollListener(it) }
         } else {
             mScrollListener?.let { mRecyclerView?.removeOnScrollListener(it) }
         }
         pageNumberView?.let {
-            it.globalVisible = on
+            it.globalVisible = usePageNum
         }
     }
 
@@ -117,13 +117,14 @@ class TopicsFragment : Fragment() {
             }
 
             override fun onLoadMore(currentPage: Int) {
+                logw("currentPage: $currentPage")
                 mScrollListener.loading = true
                 mSwipeLayout.isRefreshing = true
                 loadMoreTopic(currentPage)
             }
         }
 
-
+        Log.d("TopicFragment", "onViewCreated:")
         mAdapter = TopicsRVAdapter(this)
         mRecyclerView?.adapter = mAdapter
 
@@ -165,14 +166,23 @@ class TopicsFragment : Fragment() {
 
         when (currentMode) {
             FROM_NODE, FROM_SEARCH, FROM_FAVOR, FROM_MEMBER -> mRecyclerView?.addOnScrollListener(mScrollListener)
-            FROM_HOME -> {}
+            FROM_HOME -> {
+                if (args?.getString(Keys.KEY_TAB) == "recent") {
+                    mRecyclerView?.addOnScrollListener(mScrollListener)
+                }
+            }
+
         }
         when(currentMode) {
             FROM_MEMBER, FROM_FAVOR -> {
                 togglePageNum(isUsePageNum)
             }
             else -> {
-                togglePageNum(false)
+                if (args?.getString(Keys.KEY_TAB) == "recent") {
+                    isEndlessMode = true
+                } else {
+                    togglePageNum(false)
+                }
             }
         }
 
@@ -182,7 +192,7 @@ class TopicsFragment : Fragment() {
         } else if (currentMode == FROM_NODE && topicList != null) {
             // 已有数据
             val totalPage = args.getInt(Keys.KEY_PAGE_NUM, 1) ?: 1
-            logd(topicList)
+//            logd(topicList)
             mScrollListener.totalPage = totalPage
             setUIData(topicList)
         } else {
@@ -283,7 +293,7 @@ class TopicsFragment : Fragment() {
                         val type = object : TypeToken<List<Topic>>() {}.type
                         val topicList = Gson().fromJson<List<Topic>>(str, type)
                         topicList.forEach {
-                            logi(it.id + ":" + it.title)
+//                            logi(it.id + ":" + it.title)
                         }
 
                         activity?.runOnUiThread {
@@ -301,7 +311,15 @@ class TopicsFragment : Fragment() {
         }
 
 
-        val url = if (currentMode == FROM_HOME) requestURL else "$requestURL?p=$currentPage"
+        val url = if (currentMode == FROM_HOME) {
+            if (requestURL == "$HTTPS_V2EX_BASE/recent") {
+                "$requestURL?p=$currentPage"
+            } else {
+                requestURL
+            }
+        } else {
+            "$requestURL?p=$currentPage"
+        }
         vCall(url, if(currentMode == FROM_FAVOR) "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:90.0) Gecko/20100101 Firefox/90.0" else null)
             .start(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
@@ -345,7 +363,7 @@ class TopicsFragment : Fragment() {
                         }
                     }
                     val topicList = parser.parseTopicLists(currentMode)
-                    logd(topicList)
+//                    logd(topicList)
                     setUIData(topicList)
                 }
             })
@@ -365,7 +383,7 @@ class TopicsFragment : Fragment() {
                         pageNumberView?.totalNum = totalPage
                         topicList.forEach {
                             it.member?.avatar_normal = arguments?.getString(Keys.KEY_AVATAR) ?: ""
-                            logi(it.id + ":" + it.title + " -- " + it.member?.avatar_normal)
+//                            logi(it.id + ":" + it.title + " -- " + it.member?.avatar_normal)
                         }
                         if (isEndlessMode) {
                             if (mScrollListener.isRestart()) {
@@ -401,7 +419,16 @@ class TopicsFragment : Fragment() {
                         }
                     }
                     FROM_HOME -> {
-                        topicList.let { mAdapter.updateAllItemsWithoutDiff(it) }
+                        if (isEndlessMode) {
+                            if (mScrollListener.isRestart()) {
+                                topicList.let { mAdapter.updateItems(it) }
+                            } else {
+                                mScrollListener.success()
+                                topicList.let { mAdapter.addAllItems(it) }
+                            }
+                        } else {
+                            topicList.let { mAdapter.updateAllItemsWithoutDiff(it) }
+                        }
                     }
                     FROM_SEARCH -> {
                     }
@@ -454,7 +481,7 @@ class TopicsFragment : Fragment() {
 
                 override fun onResponse(call: Call, response: Response) {
                     val body = response.body?.string()
-                    logd(body)
+//                    logd(body)
                     val result: SearchResult = Gson().fromJson(body, SearchResult::class.java)
                     if (nextIndex == 0) {
                         result.total?.let {

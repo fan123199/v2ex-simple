@@ -268,13 +268,26 @@ class DefaultAdapter(val list: MutableList<MyTab>, val type: Status = STATUS_SHO
 }
 
 val tabTitles = listOf(
-    "最热", "全部", "热议", "最近", "技术", "创意", "好玩", "Apple", "酷工作", "交易", "城市", "问与答", "R2", "关注"
+    "最热",
+    "全部",
+    "最近",
+    "热议",
+    "技术",
+    "创意",
+    "好玩",
+    "Apple",
+    "酷工作",
+    "交易",
+    "城市",
+    "问与答",
+    "R2",
+    "关注"
 )
 val tabPaths = listOf(
     "hot",
     "all",
-    "heated",
     "recent",
+    "heated",
     "tech",
     "creative",
     "play",
