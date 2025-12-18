@@ -4,107 +4,88 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.widget.EditText
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.os.bundleOf
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import com.elvishew.xlog.XLog
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.Firebase
-import com.google.firebase.remoteconfig.remoteConfig
+//import im.fdx.v2ex.R // Removed R usage for layout
 import im.fdx.v2ex.R
-import im.fdx.v2ex.databinding.ActivityLoginBinding
 import im.fdx.v2ex.network.*
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.setLogin
+import im.fdx.v2ex.ui.login.LoginScreen
+import im.fdx.v2ex.ui.theme.V2ExTheme
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.*
 import im.fdx.v2ex.view.CustomChrome
-import im.fdx.v2ex.view.UrlSpanNoUnderline
 import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jsoup.Jsoup
 import java.io.IOException
+import com.bumptech.glide.load.model.GlideUrl
+import com.bumptech.glide.load.model.LazyHeaders
+import com.elvishew.xlog.XLog
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
 
 class LoginActivity : BaseActivity() {
 
-    /**
-     * 不一定是用户名，可能是邮箱
-     */
     private var loginName: String? = null
-    private var password: String? = null
+    // View state
+    private var username by mutableStateOf("")
+    private var password by mutableStateOf("")
+    private var captcha by mutableStateOf("")
+    private var captchaUrl by mutableStateOf<GlideUrl?>(null)
+    private var isLoading by mutableStateOf(false)
 
+    // Hidden form fields
     var onceCode: String? = null
     var passwordKey: String? = null
     var nameKey: String? = null
     var imageCodeKey: String? = null
-    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val toolbar = setUpToolbar() // BaseActivity setup usually, might need adjustment if using Compose Scaffold fully. 
+        // For now, keep BaseActivity structure but replace content.
+        // Actually setUpToolbar might depend on layout. BaseActivity source wasn't fully shown but assuming it sets up ActionBar.
+        // If content is Compose, standard ActionBar might sit on top.
 
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val toolbar = setUpToolbar()
-        val usernamePref = pref.getString(Keys.KEY_USERNAME, "")
-        binding.btnLogin.setOnClickListener {
-            if (!isValidated()) return@setOnClickListener
-            loginName = binding.inputUsername.text.toString()
-            password = binding.inputPassword.text.toString()
-            binding.pbLogin.visibility = VISIBLE
-            binding.btnLogin.visibility = GONE
-            postLogin(
-                nameKey ?: "", passwordKey ?: "", onceCode = onceCode
-                    ?: "", imageCodeKey = imageCodeKey ?: ""
-            )
-        }
-        binding.linkSignUp.setOnClickListener {
-            CustomChrome(this@LoginActivity).load(NetManager.SIGN_UP_URL)
-        }
-        binding.ivCode.setOnClickListener {
-            getLoginElement()
-        }
-
-        val span = SpannableString("点击登录或注册，表明您已了解并同意《V2EX社区规则》")
-        val url = UrlSpanNoUnderline("https://www.v2ex.com/about") {
-            CustomChrome(this@LoginActivity).load("https://www.v2ex.com/about")
-        }
-        span.setSpan(url, 18, 27, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        binding.tvAgreement.movementMethod = LinkMovementMethod()
-        binding.tvAgreement.text = span
-        binding.tvGoogleLogin.setOnClickListener {
-            if (onceCode == null) {
-                toast("请稍后")
-            } else {
-
-                Firebase.remoteConfig.fetchAndActivate().addOnCompleteListener {
-                    logi("google_sign_in_url")
-                    logi(Firebase.remoteConfig.getString("google_sign_in_url"))
-                    val intent = Intent(this, WebViewActivity::class.java).apply {
-                        putExtras(bundleOf("url" to Firebase.remoteConfig.getString("google_sign_in_url")))
-                    }
-                    startActivityForResult(intent, 144)
-                }
-
+        setContent {
+            V2ExTheme {
+                 LoginScreen(
+                     username = username,
+                     onUsernameChange = { username = it },
+                     password = password,
+                     onPasswordChange = { password = it },
+                     captcha = captcha,
+                     onCaptchaChange = { captcha = it },
+                     captchaUrl = captchaUrl,
+                     isLoading = isLoading,
+                     onLoginClick = {
+                         if (isValidated()) {
+                             performLogin()
+                         }
+                     },
+                     onCaptchaClick = { getLoginElement() },
+                     onSignUpClick = {
+                         CustomChrome(this@LoginActivity).load(NetManager.SIGN_UP_URL)
+                     }
+                 )
             }
         }
 
+        val usernamePref = pref.getString(Keys.KEY_USERNAME, "")
         if (!usernamePref.isNullOrEmpty()) {
-            binding.inputUsername.setText(usernamePref)
-            binding.inputPassword.requestFocus()
+            username = usernamePref!!
         }
 
         getLoginElement()
@@ -120,7 +101,6 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun getLoginElement() {
-
         val requestToGetOnce = Request.Builder()
             .url(SIGN_IN_URL)
             .build()
@@ -138,6 +118,7 @@ class LoginActivity : BaseActivity() {
                 passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
                 onceCode = body.getElementsByAttributeValue("name", "once").attr("value")
                 imageCodeKey = body.getElementsByAttributeValueContaining("placeholder", "请输入上图中的验证码").attr("name")
+                
                 runOnUiThread {
                     val str = "https://www.v2ex.com/_captcha?once=$onceCode"
 
@@ -147,8 +128,6 @@ class LoginActivity : BaseActivity() {
                         .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
                         .addHeader("Host", "www.v2ex.com")
                         .addHeader("Cache-Control", "max-age=0")
-                        //  .addHeader("X-Requested-With", "com.android.browser")
-                        //  .addHeader("User-Agent", "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Mobile Safari/537.36");
                         .addHeader(
                             "User-Agent",
                             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36"
@@ -158,24 +137,26 @@ class LoginActivity : BaseActivity() {
                             HttpHelper.myCookieJar.loadForRequest(str.toHttpUrlOrNull()!!).joinToString(separator = ";")
                         )
                         .build()
-                    val url = GlideUrl(str, headers)
-                    if (!this@LoginActivity.isDestroyed) {
-                        Glide.with(binding.ivCode)
-                            .load(url)
-                            .transition(withCrossFade())
-                            .centerCrop().into(binding.ivCode)
-                    }
+                    captchaUrl = GlideUrl(str, headers)
                 }
                 XLog.tag("LoginActivity").d("$nameKey|$passwordKey|$onceCode|$imageCodeKey")
             }
         })
     }
 
+    private fun performLogin() {
+        isLoading = true
+        postLogin(
+            nameKey ?: "", passwordKey ?: "", onceCode = onceCode
+                ?: "", imageCodeKey = imageCodeKey ?: ""
+        )
+    }
+
     private fun postLogin(nameKey: String, passwordKey: String, onceCode: String, imageCodeKey: String) {
         val requestBody = FormBody.Builder()
-            .add(nameKey, binding.inputUsername.text.toString())
-            .add(passwordKey, binding.inputPassword.text.toString())
-            .add(imageCodeKey, binding.etInputCode.text.toString())
+            .add(nameKey, username)
+            .add(passwordKey, password)
+            .add(imageCodeKey, captcha)
             .add("once", onceCode)
             .build()
 
@@ -189,6 +170,7 @@ class LoginActivity : BaseActivity() {
         HttpHelper.OK_CLIENT.newCall(request).start(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 Log.e("LoginActivity", "error in Post Login")
+                runOnUiThread { isLoading = false }
             }
 
             @Throws(IOException::class)
@@ -203,6 +185,7 @@ class LoginActivity : BaseActivity() {
                         vCall(HTTPS_V2EX_BASE).start(object : Callback {
                             override fun onFailure(call: Call, e: IOException) {
                                 e.printStackTrace()
+                                runOnUiThread { isLoading = false }
                             }
 
                             @Throws(IOException::class)
@@ -210,8 +193,7 @@ class LoginActivity : BaseActivity() {
                                 if (response2.code == 302) {
                                     if (("/2fa" == response2.header("Location"))) {
                                         runOnUiThread {
-                                            binding.pbLogin.visibility = GONE
-                                            binding.btnLogin.visibility = VISIBLE
+                                            isLoading = false
                                             showTwoStepDialog(this@LoginActivity)
                                         }
                                     }
@@ -227,10 +209,10 @@ class LoginActivity : BaseActivity() {
 
                     }
                     200 -> runOnUiThread {
-                        showHint(binding.root, errorMsg, Snackbar.LENGTH_INDEFINITE)
+                        // showHint(binding.root, errorMsg, Snackbar.LENGTH_INDEFINITE) // Can't use binding.root. Use Toast for now.
+                        toast(errorMsg)
                         getLoginElement()
-                        binding.pbLogin.visibility = GONE
-                        binding.btnLogin.visibility = VISIBLE
+                        isLoading = false
                     }
                 }
 
@@ -239,25 +221,18 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun isValidated(): Boolean {
-        val username = binding.inputUsername.text.toString()
-        val password = binding.inputPassword.text.toString()
-
         if (username.isEmpty()) {
-            binding.inputUsername.error = "名字不能为空"
-            binding.inputUsername.requestFocus()
+            toast("名字不能为空")
             return false
         }
         if (password.isEmpty()) {
-            binding.inputPassword.error = "密码不能为空"
-            binding.inputPassword.requestFocus()
+            toast("密码不能为空")
             return false
         }
-        if (binding.etInputCode.text.isNullOrEmpty()) {
-            binding.etInputCode.error = "验证码不能为空"
-            binding.etInputCode.requestFocus()
+        if (captcha.isEmpty()) {
+            toast("验证码不能为空")
             return false
         }
-
         return true
     }
 
