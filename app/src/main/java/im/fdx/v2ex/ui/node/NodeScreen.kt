@@ -1,0 +1,123 @@
+package im.fdx.v2ex.ui.node
+
+import android.content.Intent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import android.widget.ImageView
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bumptech.glide.Glide
+import im.fdx.v2ex.ui.main.TopicListScreen
+import im.fdx.v2ex.ui.main.TopicListViewModel
+import im.fdx.v2ex.ui.topic.TopicActivity
+import im.fdx.v2ex.utils.Keys
+import im.fdx.v2ex.ui.member.MemberActivity
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NodeScreen(
+    nodeName: String,
+    onBackClick: () -> Unit
+) {
+    val viewModel: TopicListViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(uiState.node?.title ?: nodeName) },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Box(modifier = Modifier.padding(innerPadding)) {
+            TopicListScreen(
+                nodeName = nodeName,
+                viewModel = viewModel,
+                onTopicClick = { topic ->
+                    val intent = Intent(context, TopicActivity::class.java).apply {
+                        putExtra(Keys.KEY_TOPIC_MODEL, topic)
+                    }
+                    context.startActivity(intent)
+                },
+                onMemberClick = { username ->
+                    val intent = Intent(context, MemberActivity::class.java).apply {
+                        putExtra(Keys.KEY_USERNAME, username)
+                    }
+                    context.startActivity(intent)
+                },
+                onNodeClick = { /* Already on Node */ },
+                header = {
+                    uiState.node?.let { node ->
+                        NodeHeader(node)
+                    }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun NodeHeader(node: Node) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+            .padding(16.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AndroidView(
+                factory = { context ->
+                    ImageView(context).apply {
+                        scaleType = ImageView.ScaleType.CENTER_CROP
+                    }
+                },
+                update = { imageView ->
+                     Glide.with(imageView).load(node.avatarLargeUrl).into(imageView)
+                },
+                modifier = Modifier
+                    .size(64.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(
+                    text = node.title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "Topics: ${node.topics}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        if (!node.header.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = node.header ?: "",
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }
+}

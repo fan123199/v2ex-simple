@@ -21,6 +21,7 @@ import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 import im.fdx.v2ex.network.Parser.Source.*
+import im.fdx.v2ex.ui.node.Node
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.ui.main.Topic
@@ -31,7 +32,8 @@ data class TopicListUiState(
     val error: String? = null,
     val page: Int = 1,
     val totalPage: Int = 0,
-    val isEndless: Boolean = true
+    val isEndless: Boolean = true,
+    val node: im.fdx.v2ex.ui.node.Node? = null
 )
 
 class TopicListViewModel : ViewModel() {
@@ -105,6 +107,10 @@ class TopicListViewModel : ViewModel() {
     }
 
     private fun fetchTopics(page: Int, isRefresh: Boolean) {
+        if (currentMode == FROM_SEARCH) {
+            fetchSearch(page, isRefresh)
+            return
+        }
         if (requestUrl == API_HEATED) {
              fetchHeated(isRefresh)
              return
@@ -144,13 +150,22 @@ class TopicListViewModel : ViewModel() {
                     val newTopics = parser.parseTopicLists(currentMode)
                     val totalPage = parser.getTotalPageForTopics()
                     
+                    val nodeInfo = if (currentMode == FROM_NODE && nodeName != null) {
+                        try {
+                            parser.getNodeInfo(nodeName!!)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    } else null
+                    
                     _uiState.update { currentState ->
                         val combinedList = if (isRefresh) newTopics else currentState.topics + newTopics
                         currentState.copy(
                             topics = combinedList,
                             isLoading = false,
-                            page = page, // Confirm page update
-                            totalPage = if(totalPage > 0) totalPage else currentState.totalPage
+                            page = page,
+                            totalPage = if(totalPage > 0) totalPage else currentState.totalPage,
+                            node = nodeInfo ?: currentState.node
                         )
                     }
                 } catch (e: Exception) {
@@ -172,10 +187,79 @@ class TopicListViewModel : ViewModel() {
                  val topicList = Gson().fromJson<List<Topic>>(str, type)
                  
                  _uiState.update { 
-                     // Heated is usually a single list, no paging
                      it.copy(topics = topicList, isLoading = false, page = 1) 
                  }
             }
          })
     }
+
+    // Search Logic
+    private var searchOption: SearchOption? = null
+
+    fun search(query: String) {
+        currentMode = FROM_SEARCH
+        searchOption = SearchOption(q = query)
+        refresh()
+    }
+
+    private fun fetchSearch(page: Int, isRefresh: Boolean) {
+        val option = searchOption ?: return
+        val nextIndex = (page - 1) * 10
+        val url = okhttp3.HttpUrl.Builder()
+            .scheme("https")
+            .host(NetManager.API_SEARCH_HOST)
+            .addEncodedPathSegments("api/search")
+            .addEncodedQueryParameter("q", option.q)
+            .addEncodedQueryParameter("from", nextIndex.toString())
+            .addEncodedQueryParameter("size", "10")
+            .addEncodedQueryParameter("sort", option.sort)
+            .addEncodedQueryParameter("order", option.order)
+            .build()
+            .toString()
+
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                 _uiState.update { it.copy(isLoading = false, error = e.message) }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                 val body = response.body?.string()
+                 try {
+                     // Need SearchResult model. using generic parsing for now if model is not easily accessible or use existing model
+                     val result = Gson().fromJson(body, im.fdx.v2ex.ui.main.model.SearchResult::class.java)
+                     val topics = result.hits?.map { hit ->
+                         Topic().apply {
+                             id = hit.id.toString()
+                             title = hit.source?.title.toString()
+                             content = hit.source?.content ?: ""
+                             created = im.fdx.v2ex.utils.TimeUtil.toUtcTime(hit.source?.created.toString())
+                             member = im.fdx.v2ex.ui.member.Member().apply { username = hit.source?.member.toString() }
+                             replies = hit.source?.replies ?: 0
+                         }
+                     } ?: emptyList()
+
+                     var totalPage = _uiState.value.totalPage
+                     if (page == 1) {
+                         result.total?.let {
+                             totalPage = (it / 10 + 1)
+                         }
+                     }
+
+                     _uiState.update { currentState ->
+                        val combinedList = if (isRefresh) topics else currentState.topics + topics
+                        currentState.copy(
+                            topics = combinedList,
+                            isLoading = false,
+                            page = page,
+                            totalPage = totalPage
+                        )
+                    }
+                 } catch (e: Exception) {
+                     _uiState.update { it.copy(isLoading = false, error = "Search Parse Error: ${e.message}") }
+                 }
+            }
+        })
+    }
 }
+
+

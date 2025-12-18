@@ -128,7 +128,7 @@ class UserReplyFragment : androidx.fragment.app.Fragment() {
                    val  (pageNum ,repliesNum)= parser.getTotalPageInMember()
                     totalPage = pageNum
                     activity?.runOnUiThread {
-                        (activity as MemberActivity?)?.changeTitle(1, repliesNum.toString())
+//                        (activity as MemberActivity?)?.changeTitle(1, repliesNum.toString())
                         mScrollListener?.totalPage = totalPage
                         binding.pageNumberView.totalNum = totalPage
 //                        if (totalPage > 0) {

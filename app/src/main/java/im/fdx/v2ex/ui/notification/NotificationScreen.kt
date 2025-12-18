@@ -1,0 +1,134 @@
+package im.fdx.v2ex.ui.notification
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.viewinterop.AndroidView
+import android.widget.ImageView
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.bumptech.glide.Glide
+import im.fdx.v2ex.model.NotificationModel
+import im.fdx.v2ex.ui.main.TopicListScreen
+import im.fdx.v2ex.utils.extensions.startActivity
+import im.fdx.v2ex.ui.member.MemberActivity
+import im.fdx.v2ex.ui.topic.TopicActivity
+import im.fdx.v2ex.utils.Keys
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NotificationScreen(
+    onBackClick: () -> Unit
+) {
+    val viewModel: NotificationViewModel = viewModel()
+    val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Notifications") },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        if (uiState.isLoading) {
+            Box(Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.padding(innerPadding).fillMaxSize(),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+               items(uiState.notifications) { notification ->
+                   NotificationItem(notification) {
+                       // Handle click
+                        if (notification.topic?.id?.isNotEmpty() == true) {
+                            val intent = android.content.Intent(context, TopicActivity::class.java)
+                            intent.putExtra(Keys.KEY_TOPIC_ID, notification.topic?.id)
+                            context.startActivity(intent)
+                        } else if (notification.member?.username?.isNotEmpty() == true) {
+                            val intent = android.content.Intent(context, MemberActivity::class.java)
+                            intent.putExtra(Keys.KEY_USERNAME, notification.member?.username)
+                            context.startActivity(intent)
+                        }
+                   }
+                   HorizontalDivider()
+               }
+            }
+        }
+    }
+}
+
+@Composable
+fun NotificationItem(
+    notification: NotificationModel,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .padding(8.dp)
+    ) {
+         AndroidView(
+            factory = { context ->
+                ImageView(context).apply {
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                }
+            },
+            update = { imageView ->
+                 notification.member?.avatar_normal?.let {
+                     Glide.with(imageView).load(it).into(imageView)
+                 }
+            },
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .clickable {
+                    notification.member?.username?.let {
+                        val intent = android.content.Intent(context, MemberActivity::class.java)
+                        intent.putExtra(Keys.KEY_USERNAME, it)
+                        context.startActivity(intent)
+                    }
+                }
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column {
+             Row {
+                 Text(text = notification.member?.username ?: "", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
+                 Spacer(modifier = Modifier.width(4.dp))
+                 Text(text = notification.time ?: "", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+             }
+             Spacer(modifier = Modifier.height(4.dp))
+             Text(text = "${notification.type ?: ""} ${notification.topic?.title ?: ""}", style = MaterialTheme.typography.bodyMedium)
+             if(notification.content?.isNotEmpty() == true) {
+                 Spacer(modifier = Modifier.height(4.dp))
+                 Text(text = notification.content!!, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
+             }
+        }
+    }
+}

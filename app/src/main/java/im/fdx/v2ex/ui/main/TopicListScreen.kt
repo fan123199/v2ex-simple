@@ -33,8 +33,9 @@ fun TopicListScreen(
     nodeName: String? = null,
     viewModel: TopicListViewModel = viewModel(),
     onTopicClick: (Topic) -> Unit,
-    onMemberClick: (String?) -> Unit,
-    onNodeClick: (String?) -> Unit
+                onMemberClick: (String?) -> Unit,
+    onNodeClick: (String?) -> Unit,
+    header: (@Composable () -> Unit)? = null
 ) {
     LaunchedEffect(Unit) {
         viewModel.init(tab, type, username, nodeName)
@@ -58,7 +59,7 @@ fun TopicListScreen(
         isRefreshing = uiState.isLoading && uiState.page == 1,
         onRefresh = { viewModel.refresh() }
     ) {
-        if (uiState.topics.isEmpty() && !uiState.isLoading) {
+        if (uiState.topics.isEmpty() && !uiState.isLoading && header == null) {
              Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                  Text("暂无内容")
              }
@@ -68,6 +69,9 @@ fun TopicListScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
+                if (header != null) {
+                    item { header() }
+                }
                 items(uiState.topics, key = { it.id }) { topic ->
                     TopicItem(
                         topic = topic,
