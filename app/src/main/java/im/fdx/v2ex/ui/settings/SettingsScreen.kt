@@ -28,7 +28,6 @@ import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.pref
-import im.fdx.v2ex.ui.TabSettingActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.toast
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -176,7 +175,7 @@ fun SettingsScreen(
             
             SettingsItem(
                 title = "Tab Settings",
-                onClick = onTabSettingClick
+                onClick = null // Disabled: onTabSettingClick
             )
             
             // Night Mode Logic - simplifed dialog or dropdown

@@ -11,7 +11,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
-import im.fdx.v2ex.ui.NotificationActivity
+
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
 import okhttp3.Call

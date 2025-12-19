@@ -146,6 +146,6 @@ fun ReplyItem(
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Divider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
     }
 }

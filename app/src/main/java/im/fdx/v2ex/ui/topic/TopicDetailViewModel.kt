@@ -71,7 +71,7 @@ class TopicDetailViewModel : ViewModel() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                 val body = response.body?.string() ?: ""
+                 val body = response.body.string() ?: ""
                  if (!response.isSuccessful) {
                      _uiState.update { it.copy(isLoading = false, error = "Error: ${response.code}") }
                      return
@@ -87,7 +87,7 @@ class TopicDetailViewModel : ViewModel() {
                      _uiState.update { currentState ->
                          val combinedReplies = if (isRefresh) replies else currentState.replies + replies
                          currentState.copy(
-                             topic = topicHeader ?: currentState.topic, // Update header if parsed
+                             topic = topicHeader, // Update header if parsed
                              replies = combinedReplies,
                              isLoading = false,
                              page = page,

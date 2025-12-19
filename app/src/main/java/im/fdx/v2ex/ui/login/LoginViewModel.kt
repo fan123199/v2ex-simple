@@ -194,7 +194,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
          // For the purpose of migration, I will implement the success path.
          // If 2FA is needed, we should emit a specific state.
          
-         getApplication<Application>().setLogin(true)
+         setLogin(true)
          _loginResult.value = LoginResult.Success
     }
     

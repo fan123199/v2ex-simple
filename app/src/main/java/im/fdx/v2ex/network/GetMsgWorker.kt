@@ -11,7 +11,6 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.elvishew.xlog.XLog
 import im.fdx.v2ex.R
-import im.fdx.v2ex.ui.NotificationActivity
 import im.fdx.v2ex.utils.Keys
 import okhttp3.Call
 import okhttp3.Callback
@@ -63,7 +62,7 @@ class GetMsgWorker(val context: Context, workerParameters: WorkerParameters) : W
     }
 
     private fun putNotification(context: Context, number: Int) {
-        val resultIntent = Intent(context, NotificationActivity::class.java)
+        val resultIntent = Intent(context, im.fdx.v2ex.ui.main.MainActivity::class.java)
         resultIntent.putExtra(Keys.KEY_UNREAD_COUNT, number)
         val stackBuilder = TaskStackBuilder.create(context)
 

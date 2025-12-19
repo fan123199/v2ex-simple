@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -26,9 +26,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.Glide
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.ui.main.TopicListScreen
-import im.fdx.v2ex.utils.extensions.startActivity
-import im.fdx.v2ex.ui.member.MemberActivity
-import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.utils.Keys
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +62,10 @@ fun NotificationScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                items(uiState.notifications) { notification ->
-                   NotificationItem(notification) {
+                   NotificationItem(
+                       notification, 
+                       onMemberClick = onMemberClick
+                   ) {
                        // Handle click
                         if (notification.topic?.id?.isNotEmpty() == true) {
                             onTopicClick(notification.topic!!.id)
@@ -83,6 +83,7 @@ fun NotificationScreen(
 @Composable
 fun NotificationItem(
     notification: NotificationModel,
+    onMemberClick: (String) -> Unit,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -108,9 +109,7 @@ fun NotificationItem(
                 .clip(CircleShape)
                 .clickable {
                     notification.member?.username?.let {
-                        val intent = android.content.Intent(context, MemberActivity::class.java)
-                        intent.putExtra(Keys.KEY_USERNAME, it)
-                        context.startActivity(intent)
+                        onMemberClick(it)
                     }
                 }
         )

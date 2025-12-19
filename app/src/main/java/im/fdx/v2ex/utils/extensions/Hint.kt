@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.elvishew.xlog.XLog
 import com.google.android.material.snackbar.Snackbar
 import im.fdx.v2ex.R
-import im.fdx.v2ex.ui.LoginActivity
+
 import im.fdx.v2ex.utils.extensions.startActivity
 import im.fdx.v2ex.utils.extensions.toast
 
@@ -94,7 +94,8 @@ fun Activity.showLoginHint(view: View, message: String = getString(R.string.not_
         .setTextColor(ContextCompat.getColor(this, R.color.title_text))
         .setActionTextColor(ContextCompat.getColor(this, R.color.primary))
         .setAction(getString(R.string.login)) {
-            startActivity<LoginActivity>()
+            // startActivity<LoginActivity>() // LoginActivity removed
+            Toast.makeText(this, "请前往侧边栏登录", Toast.LENGTH_SHORT).show()
         }.show()
 }
 

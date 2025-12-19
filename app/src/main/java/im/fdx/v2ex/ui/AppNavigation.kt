@@ -31,6 +31,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import im.fdx.v2ex.ui.node.Node
+import androidx.navigation.NavHostController
+import androidx.navigation.navDeepLink
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -50,7 +52,7 @@ sealed class Screen(val route: String) {
     object Favorites : Screen("favorites")
     object Notifications : Screen("notifications")
     object Login : Screen("login")
-    object Photo : Screen("photo") {
+    object Photo : Screen("photo?url={url}") {
         fun createRoute(url: String) = "photo?url=${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}"
     }
     object WebView : Screen("webview?url={url}") {
@@ -74,13 +76,26 @@ sealed class Screen(val route: String) {
     }
 }
 
-import androidx.navigation.NavHostController
-
 @Composable
 fun AppNavigation(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    intent: android.content.Intent? = null
 ) {
-    // val navController = rememberNavController() // Removed local creation
+    val context = LocalContext.current
+
+    LaunchedEffect(intent) {
+        intent?.let {
+            if (it.action == android.content.Intent.ACTION_SEND && it.type == "text/plain") {
+                val sharedText = it.getStringExtra(android.content.Intent.EXTRA_TEXT)
+                val title = it.getStringExtra(android.content.Intent.EXTRA_TITLE)
+                if (sharedText != null) {
+                    navController.navigate(Screen.NewTopic.createRoute(title = title, content = sharedText))
+                }
+            } else {
+                navController.handleDeepLink(it)
+            }
+        }
+    }
     
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         
@@ -101,8 +116,8 @@ fun AppNavigation(
                         "daily" -> {
                              // Legacy activity support
                              try {
-                                 val intent = android.content.Intent(navController.context, Class.forName("im.fdx.v2ex.ui.daily.DailyActivity"))
-                                 navController.context.startActivity(intent)
+                                 val intent = android.content.Intent(context, Class.forName("im.fdx.v2ex.ui.daily.DailyActivity"))
+                                 context.startActivity(intent)
                              } catch (e: Exception) {
                                  e.printStackTrace()
                              }
@@ -116,10 +131,10 @@ fun AppNavigation(
             route = Screen.Topic.route,
             arguments = listOf(navArgument("id") { type = NavType.StringType }),
             deepLinks = listOf(
-                androidx.navigation.navDeepLink { uriPattern = "https://www.v2ex.com/t/{id}" },
-                androidx.navigation.navDeepLink { uriPattern = "https://v2ex.com/t/{id}" },
-                androidx.navigation.navDeepLink { uriPattern = "http://www.v2ex.com/t/{id}" },
-                androidx.navigation.navDeepLink { uriPattern = "http://v2ex.com/t/{id}" }
+                navDeepLink { uriPattern = "https://www.v2ex.com/t/{id}" },
+                navDeepLink { uriPattern = "https://v2ex.com/t/{id}" },
+                navDeepLink { uriPattern = "http://www.v2ex.com/t/{id}" },
+                navDeepLink { uriPattern = "http://v2ex.com/t/{id}" }
             )
         ) { backStackEntry ->
             val topicId = backStackEntry.arguments?.getString("id") ?: return@composable
@@ -135,10 +150,10 @@ fun AppNavigation(
             route = Screen.Member.route,
             arguments = listOf(navArgument("username") { type = NavType.StringType }),
             deepLinks = listOf(
-                androidx.navigation.navDeepLink { uriPattern = "https://www.v2ex.com/member/{username}" },
-                androidx.navigation.navDeepLink { uriPattern = "https://v2ex.com/member/{username}" },
-                androidx.navigation.navDeepLink { uriPattern = "http://www.v2ex.com/member/{username}" },
-                androidx.navigation.navDeepLink { uriPattern = "http://v2ex.com/member/{username}" }
+                navDeepLink { uriPattern = "https://www.v2ex.com/member/{username}" },
+                navDeepLink { uriPattern = "https://v2ex.com/member/{username}" },
+                navDeepLink { uriPattern = "http://www.v2ex.com/member/{username}" },
+                navDeepLink { uriPattern = "http://v2ex.com/member/{username}" }
             )
         ) { backStackEntry ->
             val username = backStackEntry.arguments?.getString("username") ?: return@composable
@@ -155,10 +170,10 @@ fun AppNavigation(
             route = Screen.Node.route,
             arguments = listOf(navArgument("name") { type = NavType.StringType }),
             deepLinks = listOf(
-                androidx.navigation.navDeepLink { uriPattern = "https://www.v2ex.com/go/{name}" },
-                androidx.navigation.navDeepLink { uriPattern = "https://v2ex.com/go/{name}" },
-                androidx.navigation.navDeepLink { uriPattern = "http://www.v2ex.com/go/{name}" },
-                androidx.navigation.navDeepLink { uriPattern = "http://v2ex.com/go/{name}" }
+                navDeepLink { uriPattern = "https://www.v2ex.com/go/{name}" },
+                navDeepLink { uriPattern = "https://v2ex.com/go/{name}" },
+                navDeepLink { uriPattern = "http://www.v2ex.com/go/{name}" },
+                navDeepLink { uriPattern = "http://v2ex.com/go/{name}" }
             )
         ) { backStackEntry ->
              val nodeName = backStackEntry.arguments?.getString("name") ?: return@composable
@@ -276,7 +291,7 @@ fun AppNavigation(
         }
 
         composable(
-            route = "photo?url={url}",
+            route = Screen.Photo.route,
             arguments = listOf(navArgument("url") { type = NavType.StringType })
         ) { backStackEntry ->
             val url = backStackEntry.arguments?.getString("url")
@@ -362,7 +377,7 @@ fun AppNavigation(
                  content = mContent,
                  onContentChange = viewModel::onContentChange,
                  nodeName = mNodeName,
-                 nodeTitle = null, // Can fetch details if needed
+                 nodeTitle = mNodeName, // Temporary mapper or can be extracted from a map/DB if needed
                  onNodeClick = { 
                       navController.navigate(Screen.AllNodes.route)
                  },
