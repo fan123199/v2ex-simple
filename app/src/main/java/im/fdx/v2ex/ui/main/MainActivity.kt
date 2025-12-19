@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.main
 
+import androidx.activity.enableEdgeToEdge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
@@ -9,6 +10,7 @@ import im.fdx.v2ex.ui.theme.V2ExTheme
 class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         
         setContent {

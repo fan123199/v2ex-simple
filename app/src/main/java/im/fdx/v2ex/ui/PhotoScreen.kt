@@ -78,9 +78,7 @@ fun PhotoScreen(
     ) { innerPadding ->
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
+            modifier = Modifier.fillMaxSize()
         ) { page ->
             Box(modifier = Modifier.fillMaxSize()) {
                 val imageUrl = photos[page]
@@ -93,6 +91,7 @@ fun PhotoScreen(
                 androidx.compose.foundation.layout.Column(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
+                        .padding(innerPadding)
                         .padding(16.dp)
                 ) {
                     IconButton(

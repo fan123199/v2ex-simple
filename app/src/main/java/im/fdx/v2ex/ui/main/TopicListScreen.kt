@@ -35,6 +35,7 @@ fun TopicListScreen(
     onTopicClick: (Topic) -> Unit,
                 onMemberClick: (String?) -> Unit,
     onNodeClick: (String?) -> Unit,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     header: (@Composable () -> Unit)? = null
 ) {
     LaunchedEffect(Unit) {
@@ -67,7 +68,7 @@ fun TopicListScreen(
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(bottom = 16.dp)
+                contentPadding = contentPadding
             ) {
                 if (header != null) {
                     item { header() }

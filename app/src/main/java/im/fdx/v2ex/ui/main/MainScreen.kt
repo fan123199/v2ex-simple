@@ -2,6 +2,7 @@ package im.fdx.v2ex.ui.main
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -69,7 +70,7 @@ fun MainScreen(
                 )
             }
         ) { innerPadding ->
-            Column(modifier = Modifier.padding(innerPadding)) {
+            Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
                  ScrollableTabRow(
                     selectedTabIndex = pagerState.currentPage,
                     edgePadding = 0.dp
@@ -96,7 +97,8 @@ fun MainScreen(
                          tab = tabPath,
                          onTopicClick = onTopicClick,
                          onMemberClick = { u -> if(u != null) onMemberClick(u) },
-                         onNodeClick = { n -> if(n != null) onNodeClick(n) }
+                         onNodeClick = { n -> if(n != null) onNodeClick(n) },
+                         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
                      )
                 }
             }

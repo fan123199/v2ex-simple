@@ -68,7 +68,7 @@ fun MemberScreen(
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
             // Member Header
             uiState.member?.let { member ->
                 MemberHeader(member)
@@ -107,12 +107,14 @@ fun MemberScreen(
                         username = username,
                         onTopicClick = onTopicClick,
                         onMemberClick = onMemberClick,
-                        onNodeClick = onNodeClick
+                        onNodeClick = onNodeClick,
+                        contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
                     )
                     1 -> MemberRepliesList(
                         replies = uiState.replies,
                         onLoadMore = { viewModel.loadMoreReplies() },
-                        isLoading = uiState.isRepliesLoading
+                        isLoading = uiState.isRepliesLoading,
+                        contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
                     )
                 }
             }
@@ -162,7 +164,8 @@ fun MemberHeader(member: Member) {
 fun MemberRepliesList(
     replies: List<MemberReplyModel>,
     onLoadMore: () -> Unit,
-    isLoading: Boolean
+    isLoading: Boolean,
+    contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
      val listState = rememberLazyListState()
      
@@ -177,7 +180,7 @@ fun MemberRepliesList(
             }
     }
 
-    LazyColumn(state = listState, modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+    LazyColumn(state = listState, modifier = Modifier.fillMaxSize(), contentPadding = contentPadding) {
         items(replies) { reply ->
             Card(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),

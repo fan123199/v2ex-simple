@@ -60,7 +60,7 @@ fun TopicDetailScreen(
         PullToRefreshBox(
             isRefreshing = uiState.isLoading,
             onRefresh = { viewModel.refresh() },
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(top = innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding())
         ) {
               LazyColumn(
                 state = listState,
@@ -127,7 +127,9 @@ fun BottomReplyInput(onSend: (String) -> Unit) {
     
     Surface(
         tonalElevation = 2.dp,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .windowInsetsPadding(WindowInsets.navigationBars)
     ) {
         Row(
             modifier = Modifier
