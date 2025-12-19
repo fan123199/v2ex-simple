@@ -7,6 +7,9 @@ import im.fdx.v2ex.ui.theme.V2ExTheme
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.ui.main.Topic
 
+import im.fdx.v2ex.ui.member.MemberActivity
+import im.fdx.v2ex.utils.extensions.startActivity
+
 class TopicActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,7 +28,8 @@ class TopicActivity : BaseActivity() {
                 TopicDetailScreen(
                     topicId = topicId,
                     initialTopic = topicModel,
-                    onBackClick = { finish() }
+                    onBackClick = { finish() },
+                    onMemberClick = { username -> startActivity<MemberActivity>(Keys.KEY_USERNAME to username) }
                 )
             }
         }

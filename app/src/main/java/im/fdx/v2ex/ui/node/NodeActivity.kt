@@ -7,6 +7,9 @@ import im.fdx.v2ex.ui.theme.V2ExTheme
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.toast
 
+import im.fdx.v2ex.ui.topic.TopicActivity
+import im.fdx.v2ex.utils.extensions.startActivity
+
 class NodeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +31,8 @@ class NodeActivity : BaseActivity() {
             V2ExTheme {
                 NodeScreen(
                     nodeName = nodeName,
-                    onBackClick = { finish() }
+                    onBackClick = { finish() },
+                    onTopicClick = { topicId -> startActivity<TopicActivity>(Keys.KEY_TOPIC_ID to topicId) }
                 )
             }
         }

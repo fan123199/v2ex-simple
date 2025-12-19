@@ -10,8 +10,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import im.fdx.v2ex.ui.tabPaths
-import im.fdx.v2ex.ui.tabTitles
+import im.fdx.v2ex.ui.settings.tabPaths
+import im.fdx.v2ex.ui.settings.tabTitles
 import kotlinx.coroutines.launch
 import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.ui.member.MemberActivity
@@ -20,23 +20,30 @@ import im.fdx.v2ex.utils.Keys
 import androidx.core.os.bundleOf
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Search
 // import im.fdx.v2ex.ui.main.TopicsFragment keys logic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onTopicClick: (Topic) -> Unit,
+    onMemberClick: (String) -> Unit,
+    onNodeClick: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    onMenuClick: (String) -> Unit // Route string ?? Or separate callbacks
+) {
     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val context = LocalContext.current
+    // val context = LocalContext.current // Context no longer needed for navigation (ideally)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            MainDrawer(onItemClick = { 
-                // Handle complex interactions or close drawer
+            MainDrawer(onItemClick = { route ->
                 coroutineScope.launch { drawerState.close() }
+                onMenuClick(route) // MainDrawer should return a generic identifier or route
             })
         }
     ) {
@@ -47,6 +54,17 @@ fun MainScreen() {
                     navigationIcon = {
                         IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.Menu, contentDescription = "Menu")
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = onSearchClick) {
+                             Icon(im.fdx.v2ex.ui.main.TopicListScreenDefaults.SearchIcon, contentDescription = "Search")
+                             // Assuming SearchIcon is available or standard icon. 
+                             // Wait, search icon was not in original MainScreen topBar actions (it was empty).
+                             // But AppNavigation expects onSearchClick.
+                             // Let's add it if desired, or keep it empty. 
+                             // Legacy 'TopicsFragment' had search in options menu.
+                             // Compose AppBar usually puts search icon here.
                         }
                     },
                     scrollBehavior = scrollBehavior
@@ -76,35 +94,19 @@ fun MainScreen() {
                     modifier = Modifier.weight(1f)
                 ) { page ->
                      val tabPath = tabPaths[page]
-                     // logic for type is missing from global variable but we can assume mostly simple tabs
-                     // In MyViewPagerAdapter: MyTab(tabTitles[index], tabPaths[index])
-                     // MyTab also has 'type'.
-                     // We need to access that data. 
-                     // For now assume standard tabs.
-                     
                      TopicListScreen(
                          tab = tabPath,
-                         onTopicClick = { topic ->
-                             val intent = Intent(context, TopicActivity::class.java).apply {
-                                putExtra(Keys.KEY_TOPIC_MODEL, topic)
-                             }
-                             context.startActivity(intent)
-                         },
-                         onMemberClick = { username ->
-                              val intent = Intent(context, MemberActivity::class.java).apply {
-                                putExtra(Keys.KEY_USERNAME, username)
-                             }
-                             context.startActivity(intent)
-                         },
-                         onNodeClick = { nodeName ->
-                              val intent = Intent(context, NodeActivity::class.java).apply {
-                                putExtra(Keys.KEY_NODE_NAME, nodeName)
-                             }
-                             context.startActivity(intent)
-                         }
+                         onTopicClick = onTopicClick,
+                         onMemberClick = { u -> if(u != null) onMemberClick(u) },
+                         onNodeClick = { n -> if(n != null) onNodeClick(n) }
                      )
                 }
             }
         }
     }
 }
+
+object TopicListScreenDefaults {
+     val SearchIcon = Icons.Default.Search
+}
+

@@ -94,18 +94,25 @@ fun MainDrawer(
             label = { Text("All Nodes") },
             icon = { Icon(painterResource(id = R.drawable.ic_all_node), contentDescription = null) },
             selected = false,
-            onClick = { 
-                context.startActivity(Intent(context, AllNodesActivity::class.java))
-            }
+            onClick = { onItemClick("all_nodes") }
         )
-        // ... more items
-         NavigationDrawerItem(
+        NavigationDrawerItem(
+            label = { Text("Favorites") },
+            icon = { Icon(Icons.Default.Favorite, contentDescription = null) },
+            selected = false,
+            onClick = { onItemClick("favorites") }
+        )
+        NavigationDrawerItem(
+            label = { Text("Notifications") },
+            icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
+            selected = false,
+            onClick = { onItemClick("notifications") }
+        )
+        NavigationDrawerItem(
             label = { Text("Settings") },
             icon = { Icon(Icons.Default.Settings, contentDescription = null) },
             selected = false,
-            onClick = { 
-               context.startActivity(Intent(context, SettingsActivity::class.java))
-            }
+            onClick = { onItemClick("settings") }
         )
     }
 }

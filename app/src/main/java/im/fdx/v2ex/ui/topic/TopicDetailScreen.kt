@@ -27,7 +27,8 @@ fun TopicDetailScreen(
     topicId: String,
     initialTopic: Topic?,
     viewModel: TopicDetailViewModel = viewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onMemberClick: (String) -> Unit // Non-nullable usually, or nullable if replies have null user?
 ) {
     LaunchedEffect(topicId) {
         viewModel.init(topicId, initialTopic)

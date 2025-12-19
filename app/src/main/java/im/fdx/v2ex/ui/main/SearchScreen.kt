@@ -33,9 +33,12 @@ import im.fdx.v2ex.ui.theme.V2ExTheme
 @Composable
 fun SearchScreen(
     initialQuery: String? = null,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onTopicClick: (Topic) -> Unit,
+    onMemberClick: (String?) -> Unit,
+    onNodeClick: (String?) -> Unit
 ) {
-    val context = LocalContext.current
+    // val context = LocalContext.current // Context unused
     val viewModel: TopicListViewModel = viewModel()
     var query by remember { mutableStateOf(initialQuery ?: "") }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -86,25 +89,9 @@ fun SearchScreen(
         Box(modifier = Modifier.padding(innerPadding)) {
             TopicListScreen(
                 viewModel = viewModel,
-                onTopicClick = { topic ->
-                    val intent = Intent(context, TopicActivity::class.java)
-                    intent.putExtra(Keys.KEY_TOPIC_ID, topic.id)
-                    context.startActivity(intent)
-                },
-                onMemberClick = { username ->
-                     if (username != null) {
-                        val intent = Intent(context, MemberActivity::class.java)
-                        intent.putExtra(Keys.KEY_USERNAME, username)
-                        context.startActivity(intent)
-                     }
-                },
-                onNodeClick = { nodeName ->
-                    if (nodeName != null) {
-                         val intent = Intent(context, NodeActivity::class.java)
-                         intent.putExtra(Keys.KEY_NODE_NAME, nodeName)
-                         context.startActivity(intent)
-                    }
-                }
+                onTopicClick = onTopicClick,
+                onMemberClick = onMemberClick,
+                onNodeClick = onNodeClick
             )
         }
     }

@@ -8,7 +8,7 @@ import im.fdx.v2ex.network.vCall
 import im.fdx.v2ex.network.NetManager.API_HEATED
 import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
 import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
-import im.fdx.v2ex.ui.NODE_TYPE
+import im.fdx.v2ex.ui.settings.NODE_TYPE
 import im.fdx.v2ex.utils.Keys
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

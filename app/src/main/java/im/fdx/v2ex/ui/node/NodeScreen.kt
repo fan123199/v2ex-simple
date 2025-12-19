@@ -26,16 +26,18 @@ import im.fdx.v2ex.ui.main.TopicListViewModel
 import im.fdx.v2ex.ui.topic.TopicActivity
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.ui.member.MemberActivity
+import im.fdx.v2ex.ui.main.Topic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NodeScreen(
     nodeName: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onTopicClick: (Topic) -> Unit
 ) {
     val viewModel: TopicListViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
+    // val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -53,18 +55,8 @@ fun NodeScreen(
             TopicListScreen(
                 nodeName = nodeName,
                 viewModel = viewModel,
-                onTopicClick = { topic ->
-                    val intent = Intent(context, TopicActivity::class.java).apply {
-                        putExtra(Keys.KEY_TOPIC_MODEL, topic)
-                    }
-                    context.startActivity(intent)
-                },
-                onMemberClick = { username ->
-                    val intent = Intent(context, MemberActivity::class.java).apply {
-                        putExtra(Keys.KEY_USERNAME, username)
-                    }
-                    context.startActivity(intent)
-                },
+                onTopicClick = onTopicClick,
+                onMemberClick = { /* Add onMemberClick if needed, or ignore for Node view */ }, 
                 onNodeClick = { /* Already on Node */ },
                 header = {
                     uiState.node?.let { node ->

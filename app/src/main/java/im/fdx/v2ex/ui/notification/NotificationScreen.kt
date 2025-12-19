@@ -34,11 +34,13 @@ import im.fdx.v2ex.utils.Keys
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationScreen(
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onTopicClick: (String) -> Unit,
+    onMemberClick: (String) -> Unit
 ) {
     val viewModel: NotificationViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
+    // val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -66,13 +68,9 @@ fun NotificationScreen(
                    NotificationItem(notification) {
                        // Handle click
                         if (notification.topic?.id?.isNotEmpty() == true) {
-                            val intent = android.content.Intent(context, TopicActivity::class.java)
-                            intent.putExtra(Keys.KEY_TOPIC_ID, notification.topic?.id)
-                            context.startActivity(intent)
+                            onTopicClick(notification.topic!!.id)
                         } else if (notification.member?.username?.isNotEmpty() == true) {
-                            val intent = android.content.Intent(context, MemberActivity::class.java)
-                            intent.putExtra(Keys.KEY_USERNAME, notification.member?.username)
-                            context.startActivity(intent)
+                            onMemberClick(notification.member!!.username)
                         }
                    }
                    HorizontalDivider()

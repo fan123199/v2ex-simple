@@ -16,7 +16,7 @@ class MainActivity : BaseActivity() {
         
         setContent {
             V2ExTheme {
-                MainScreen()
+                im.fdx.v2ex.ui.AppNavigation()
             }
         }
     }

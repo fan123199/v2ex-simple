@@ -29,6 +29,7 @@ import androidx.core.text.HtmlCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.Glide
 import im.fdx.v2ex.ui.main.TopicListScreen
+import im.fdx.v2ex.ui.main.Topic
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -39,7 +40,10 @@ import androidx.compose.runtime.snapshotFlow
 @Composable
 fun MemberScreen(
     username: String,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onTopicClick: (Topic) -> Unit,
+    onMemberClick: (String?) -> Unit = {},
+    onNodeClick: (String?) -> Unit = {}
 ) {
     val viewModel: MemberViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -99,7 +103,12 @@ fun MemberScreen(
                 modifier = Modifier.fillMaxSize()
             ) { page ->
                 when (page) {
-                    0 -> TopicListScreen(username = username, onTopicClick = {}, onMemberClick = {}, onNodeClick = {})
+                    0 -> TopicListScreen(
+                        username = username,
+                        onTopicClick = onTopicClick,
+                        onMemberClick = onMemberClick,
+                        onNodeClick = onNodeClick
+                    )
                     1 -> MemberRepliesList(
                         replies = uiState.replies,
                         onLoadMore = { viewModel.loadMoreReplies() },
