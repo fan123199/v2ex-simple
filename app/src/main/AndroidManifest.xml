@@ -31,98 +31,45 @@
             <meta-data
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
-        </activity>
-        <activity
-            android:name=".ui.topic.TopicActivity"
-            android:label="@string/title_activity_details"
-            android:exported="true"
-            >
+
+            <!-- Topic Deep Links -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="http" />
                 <data android:scheme="https" />
-                <data
-                    android:host="www.v2ex.com"
-                    android:pathPrefix="/t/" />
-                <data
-                    android:host="v2ex.com"
-                    android:pathPrefix="/t/" />
+                <data android:host="www.v2ex.com" android:pathPrefix="/t/" />
+                <data android:host="v2ex.com" android:pathPrefix="/t/" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.SettingsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_settings">
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".ui.LoginActivity"
-            android:label="@string/title_activity_login"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.node.NodeActivity"
-            android:exported="true"
-            android:label="@string/title_activity_node">
-            <intent-filter>
-                <action android:name="im.fdx.v2ex.intent.node" />
 
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            <!-- Node Deep Links -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="http"/>
                 <data android:scheme="https"/>
-                <data
-                    android:host="www.v2ex.com"
-                    android:pathPrefix="/go/" />
-                <data
-                    android:host="v2ex.com"
-                    android:pathPrefix="/go/" />
+                <data android:host="www.v2ex.com" android:pathPrefix="/go/" />
+                <data android:host="v2ex.com" android:pathPrefix="/go/" />
             </intent-filter>
-        </activity>
 
-        <activity
-            android:name=".ui.member.MemberActivity"
-            android:exported="true"
-            android:launchMode="singleTop">
-
-            <intent-filter>
-                <action android:name="im.fdx.v2ex.intent.profile" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
+            <!-- Member Deep Links -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="www.v2ex.com"
-                    android:pathPrefix="/member/"
-                    android:scheme="http" />
+                <data android:host="www.v2ex.com" android:pathPrefix="/member/" android:scheme="http" />
+                <data android:host="www.v2ex.com" android:pathPrefix="/member/" android:scheme="https" />
             </intent-filter>
+
+            <!-- Share (Send) Intent -->
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="www.v2ex.com"
-                    android:pathPrefix="/member/"
-                    android:scheme="https" />
+                <action android:name="android.intent.action.SEND"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="text/plain"/>
             </intent-filter>
+
         </activity>
         <activity
             android:name=".ui.node.AllNodesActivity"
@@ -136,35 +83,9 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity
-            android:name=".ui.main.NewTopicActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:mimeType="text/plain"/>
-            </intent-filter>
-        </activity>
+        <!-- NewTopicActivity Removed -->
 
-        <activity android:name=".ui.WebViewActivity" />
-
-        <activity
-            android:name=".ui.NotificationActivity"
-            android:exported="true"
-            android:parentActivityName=".ui.main.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".ui.favor.FavorActivity"
-            android:exported="true"/>
-        <activity android:name=".ui.PhotoActivity" />
+        <!-- Photo and WebView Activity Removed -->
         <activity
             android:name=".ui.TestActivity"
             android:exported="true" />

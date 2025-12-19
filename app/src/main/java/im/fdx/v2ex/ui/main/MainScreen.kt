@@ -13,9 +13,7 @@ import androidx.compose.ui.unit.dp
 import im.fdx.v2ex.ui.settings.tabPaths
 import im.fdx.v2ex.ui.settings.tabTitles
 import kotlinx.coroutines.launch
-import im.fdx.v2ex.ui.topic.TopicActivity
-import im.fdx.v2ex.ui.member.MemberActivity
-import im.fdx.v2ex.ui.node.NodeActivity
+
 import im.fdx.v2ex.utils.Keys
 import androidx.core.os.bundleOf
 import androidx.compose.material.icons.Icons

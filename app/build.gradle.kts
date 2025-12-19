@@ -104,16 +104,7 @@ android.applicationVariants.all { variant ->
 }
 
 dependencies {
-
-
-    //test related, use test when you really need it, or you forget always.
     testImplementation("junit:junit:4.13.2")
-    //test end
-
-    //kotlin start
-//    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-//    implementation("androidx.core:core-ktx:1.17.0")
-    //kotlin end
 
     //google start
     implementation("androidx.cardview:cardview:1.0.0")
@@ -122,29 +113,30 @@ dependencies {
     implementation("androidx.browser:browser:1.9.0")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4")
+
     implementation("androidx.work:work-runtime-ktx:2.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
-    implementation ("androidx.core:core-splashscreen:1.0.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation ("androidx.core:core-splashscreen:1.2.0")
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.2.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.10.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
 
-    val composeBom = platform("androidx.compose:compose-bom:2024.11.00")
+    val composeBom = platform("androidx.compose:compose-bom:2025.12.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.activity:activity-compose:1.9.3")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
+    implementation("androidx.activity:activity-compose:1.12.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.navigation:navigation-compose:2.8.3")
+    implementation("androidx.navigation:navigation-compose:2.9.6")
     implementation("io.coil-kt:coil-compose:2.7.0")
 
-    val roomVersion = "2.8.3"
+    val roomVersion = "2.8.4"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp ("androidx.room:room-compiler:$roomVersion")
@@ -153,7 +145,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.2.1"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.3.2"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
@@ -173,7 +165,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-android-extensions-runtime")
     }
 
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation ("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-analytics")

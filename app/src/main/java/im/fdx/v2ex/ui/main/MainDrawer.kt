@@ -25,9 +25,7 @@ import com.bumptech.glide.Glide
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 // import im.fdx.v2ex.ui.daily.DailyActivity
-import im.fdx.v2ex.ui.node.AllNodesActivity
-import im.fdx.v2ex.ui.SettingsActivity
-import im.fdx.v2ex.ui.member.MemberActivity
+
 import im.fdx.v2ex.utils.Keys
 import androidx.core.content.ContextCompat.startActivity
 
