@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -123,6 +124,8 @@ fun SettingsScreen(
     val context = LocalContext.current
     val viewModel: SettingsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
+    var showNightModeSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
     
     Scaffold(
         topBar = {
@@ -176,24 +179,20 @@ fun SettingsScreen(
             
             SettingsItem(
                 title = "Tab Settings",
-                onClick = null // Disabled: onTabSettingClick
+                onClick = onTabSettingClick
             )
             
             // Night Mode Logic - simplifed dialog or dropdown
              SettingsItem(
                 title = "Night Mode",
-                subtitle = "Follow System / Yes / No", // Simplified display
+                subtitle = when (uiState.nightMode.toInt()) {
+                    -1 -> "Follow System"
+                    1 -> "Always Off"
+                    2 -> "Always On"
+                    else -> "Follow System"
+                },
                 onClick = {
-                     // Toggle for now or show dialog.
-                     // Original was ListPreference.
-                     // Let's cycle: -1 (Follow), 1 (No), 2 (Yes)
-                     val current = uiState.nightMode.toInt()
-                     val next = when(current) {
-                         -1 -> 2
-                         2 -> 1
-                         else -> -1
-                     }
-                      viewModel.setNightMode(next.toString())
+                     showNightModeSheet = true
                 }
             )
 
@@ -203,7 +202,7 @@ fun SettingsScreen(
                 title = "Version",
                 subtitle = BuildConfig.VERSION_NAME
             )
-             SettingsItem(
+            SettingsItem(
                 title = "Rate App",
                 onClick = {
                     try {
@@ -217,6 +216,42 @@ fun SettingsScreen(
                 }
             )
             
+        }
+
+        if (showNightModeSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showNightModeSheet = false },
+                sheetState = sheetState
+            ) {
+                Column(modifier = Modifier.padding(bottom = 32.dp)) {
+                    val currentMode = uiState.nightMode.toInt()
+                    
+                    ListItem(
+                        headlineContent = { Text("Follow System") },
+                        trailingContent = if (currentMode == -1) { { Icon(Icons.Default.Check, null) } } else null,
+                        modifier = Modifier.clickable {
+                            viewModel.setNightMode("-1")
+                            showNightModeSheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text("Always Off") },
+                        trailingContent = if (currentMode == 1) { { Icon(Icons.Default.Check, null) } } else null,
+                        modifier = Modifier.clickable {
+                            viewModel.setNightMode("1")
+                            showNightModeSheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text("Always On") },
+                        trailingContent = if (currentMode == 2) { { Icon(Icons.Default.Check, null) } } else null,
+                        modifier = Modifier.clickable {
+                            viewModel.setNightMode("2")
+                            showNightModeSheet = false
+                        }
+                    )
+                }
+            }
         }
     }
 }

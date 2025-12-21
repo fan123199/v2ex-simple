@@ -16,6 +16,10 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+import okhttp3.FormBody
+import okhttp3.Request
+import im.fdx.v2ex.data.network.HttpHelper
+import org.json.JSONObject
 
 data class TopicDetailUiState(
     val topic: Topic? = null,
@@ -23,7 +27,8 @@ data class TopicDetailUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val page: Int = 1,
-    val totalPage: Int = 1
+    val totalPage: Int = 1,
+    val token: String? = null
 )
 
 class TopicDetailViewModel : ViewModel() {
@@ -45,23 +50,69 @@ class TopicDetailViewModel : ViewModel() {
         _uiState.update { it.copy(isLoading = true, page = 1) }
         fetchReplies(1, isRefresh = true)
     }
-    
+
     fun loadMore() {
         if (_uiState.value.isLoading) return
         val nextPage = _uiState.value.page + 1
         if (nextPage > _uiState.value.totalPage) return
-         _uiState.update { it.copy(isLoading = true, page = nextPage) }
+        _uiState.update { it.copy(isLoading = true, page = nextPage) }
         fetchReplies(nextPage, isRefresh = false)
     }
 
     fun postReply(content: String) {
-        // Pseudo logic for now, as we need 'once' token and full network implementation
-        // similar to fetchReplies but using POST
-        // For migration safety, we should implement the full network call using NetManager
-        // But for this phase, we ensure the UI hook exists.
-        
-    fun thankReply(reply: Reply) {
-        // TODO: Implement actual thank call
+        val token = _uiState.value.token
+        if (token == null) {
+            _uiState.update { it.copy(error = "No token found, please refresh") }
+            return
+        }
+        val requestBody = FormBody.Builder()
+            .add("content", content)
+            .add("once", token)
+            .build()
+
+        val url = "${NetManager.HTTPS_V2EX_BASE}/t/$topicId"
+        HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).post(requestBody).build()).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                 _uiState.update { it.copy(error = "Failed to post reply: ${e.message}") }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                 if (response.isSuccessful) {
+                     // Refresh to show new reply
+                     refresh()
+                 } else {
+                     _uiState.update { it.copy(error = "Failed to post reply: ${response.code}") }
+                 }
+            }
+        })
+    }
+
+    fun thankReply(replyId: String) {
+        val token = _uiState.value.token
+        if (token == null) {
+             _uiState.update { it.copy(error = "No token found, please refresh") }
+            return
+        }
+         val url = "${NetManager.HTTPS_V2EX_BASE}/thank/reply/$replyId?once=$token"
+         HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).post(FormBody.Builder().build()).build()).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                 _uiState.update { it.copy(error = "Failed to thank: ${e.message}") }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                 if (response.isSuccessful) {
+                     // Ideally update the specific reply item's local state to "thanked"
+                     // For now, maybe just refresh or let user know
+                     val body = response.body.string()
+                     val json = JSONObject(body)
+                     if(json.optBoolean("success")) {
+                         refresh()
+                     }
+                 } else {
+                     _uiState.update { it.copy(error = "Failed to thank: ${response.code}") }
+                 }
+            }
+         })
     }
 
     private fun fetchReplies(page: Int, isRefresh: Boolean) {
@@ -85,6 +136,7 @@ class TopicDetailViewModel : ViewModel() {
                      val replies = parser.getReplies()
                      val totalPageArr = parser.getPageValue()
                      val totalPage = if(totalPageArr.size >= 2) totalPageArr[1] else 1
+                     val token = parser.getOnceNum()
 
                      _uiState.update { currentState ->
                          val combinedReplies = if (isRefresh) replies else currentState.replies + replies
@@ -93,7 +145,8 @@ class TopicDetailViewModel : ViewModel() {
                              replies = combinedReplies,
                              isLoading = false,
                              page = page,
-                             totalPage = totalPage
+                             totalPage = totalPage,
+                             token = token
                          )
                      }
                  } catch (e: Exception) {
@@ -103,7 +156,6 @@ class TopicDetailViewModel : ViewModel() {
         })
     }
 }
-
 
 
 

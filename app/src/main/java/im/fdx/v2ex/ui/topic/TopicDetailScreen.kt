@@ -107,7 +107,8 @@ fun TopicDetailScreen(
                         reply = reply,
                         onMemberClick = { onMemberClick(it ?: "") },
                         onReplyClick = {
-                            replyText = "@${it.member?.username} "
+                            selectedReply = it
+                            showReplySheet = true
                         },
                         onThankClick = { /* TODO */ },
                         onLongClick = {
