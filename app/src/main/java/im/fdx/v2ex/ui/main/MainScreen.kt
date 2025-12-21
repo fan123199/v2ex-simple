@@ -57,13 +57,7 @@ fun MainScreen(
                     },
                     actions = {
                         IconButton(onClick = onSearchClick) {
-                             Icon(im.fdx.v2ex.ui.main.TopicListScreenDefaults.SearchIcon, contentDescription = "Search")
-                             // Assuming SearchIcon is available or standard icon. 
-                             // Wait, search icon was not in original MainScreen topBar actions (it was empty).
-                             // But AppNavigation expects onSearchClick.
-                             // Let's add it if desired, or keep it empty. 
-                             // Legacy 'TopicsFragment' had search in options menu.
-                             // Compose AppBar usually puts search icon here.
+                             Icon(TopicListScreenDefaults.SearchIcon, contentDescription = "Search")
                         }
                     },
                     scrollBehavior = scrollBehavior

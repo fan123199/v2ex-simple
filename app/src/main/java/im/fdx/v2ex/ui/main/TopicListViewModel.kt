@@ -25,6 +25,10 @@ import im.fdx.v2ex.ui.node.Node
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.ui.main.Topic
+import okhttp3.HttpUrl
+import im.fdx.v2ex.ui.main.model.SearchResult
+import im.fdx.v2ex.utils.TimeUtil
+import im.fdx.v2ex.ui.member.Member
 
 data class TopicListUiState(
     val topics: List<Topic> = emptyList(),
@@ -33,7 +37,7 @@ data class TopicListUiState(
     val page: Int = 1,
     val totalPage: Int = 0,
     val isEndless: Boolean = true,
-    val node: im.fdx.v2ex.ui.node.Node? = null
+    val node: Node? = null
 )
 
 class TopicListViewModel : ViewModel() {
@@ -146,7 +150,7 @@ class TopicListViewModel : ViewModel() {
                 }
 
                 try {
-                    val parser =  im.fdx.v2ex.network.Parser(body)
+                    val parser = Parser(body)
                     val newTopics = parser.parseTopicLists(currentMode)
                     val totalPage = parser.getTotalPageForTopics()
                     
@@ -205,7 +209,7 @@ class TopicListViewModel : ViewModel() {
     private fun fetchSearch(page: Int, isRefresh: Boolean) {
         val option = searchOption ?: return
         val nextIndex = (page - 1) * 10
-        val url = okhttp3.HttpUrl.Builder()
+        val url = HttpUrl.Builder()
             .scheme("https")
             .host(NetManager.API_SEARCH_HOST)
             .addEncodedPathSegments("api/search")
@@ -226,14 +230,14 @@ class TopicListViewModel : ViewModel() {
                  val body = response.body?.string()
                  try {
                      // Need SearchResult model. using generic parsing for now if model is not easily accessible or use existing model
-                     val result = Gson().fromJson(body, im.fdx.v2ex.ui.main.model.SearchResult::class.java)
+                     val result = Gson().fromJson(body, SearchResult::class.java)
                      val topics = result.hits?.map { hit ->
                          Topic().apply {
                              id = hit.id.toString()
                              title = hit.source?.title.toString()
                              content = hit.source?.content ?: ""
-                             created = im.fdx.v2ex.utils.TimeUtil.toUtcTime(hit.source?.created.toString())
-                             member = im.fdx.v2ex.ui.member.Member().apply { username = hit.source?.member.toString() }
+                             created = TimeUtil.toUtcTime(hit.source?.created.toString())
+                             member = Member().apply { username = hit.source?.member.toString() }
                              replies = hit.source?.replies ?: 0
                          }
                      } ?: emptyList()

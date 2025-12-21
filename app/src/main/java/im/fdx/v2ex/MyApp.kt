@@ -9,6 +9,7 @@ import androidx.core.content.edit
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import im.fdx.v2ex.network.HttpHelper
 import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
 import im.fdx.v2ex.utils.Keys
@@ -51,8 +52,7 @@ class MyApp : Application() {
       else -> LogLevel.NONE
     })
     isLogin = pref.getBoolean(Keys.PREF_KEY_IS_LOGIN, false)
-
-
+    FirebaseCrashlytics.getInstance().isCrashlyticsCollectionEnabled = !BuildConfig.DEBUG;
     pref.edit {
       putInt(Keys.PREF_APP_PREF_VERSION, BuildConfig.VERSION_CODE)
     }

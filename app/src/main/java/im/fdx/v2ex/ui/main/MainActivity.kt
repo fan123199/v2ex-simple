@@ -4,8 +4,19 @@ import androidx.activity.enableEdgeToEdge
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.LaunchedEffect
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.theme.V2ExTheme
+
+import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.DisposableEffect
+import androidx.core.util.Consumer
+import android.content.Intent
+import im.fdx.v2ex.ui.AppNavigation
 
 class MainActivity : BaseActivity() {
 
@@ -14,11 +25,11 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         
         setContent {
-            val navController = androidx.navigation.compose.rememberNavController()
-            val intentState = androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(intent) }
+            val navController = rememberNavController()
+            val intentState = remember { mutableStateOf(intent) }
 
-            androidx.compose.runtime.DisposableEffect(Unit) {
-                val listener = androidx.core.util.Consumer<android.content.Intent> { newIntent ->
+            DisposableEffect(Unit) {
+                val listener = Consumer<Intent> { newIntent ->
                     intentState.value = newIntent
                 }
                 addOnNewIntentListener(listener)
@@ -26,7 +37,7 @@ class MainActivity : BaseActivity() {
             }
 
             V2ExTheme {
-                im.fdx.v2ex.ui.AppNavigation(navController, intentState.value)
+                AppNavigation(navController, intentState.value)
             }
         }
     }

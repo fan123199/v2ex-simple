@@ -43,6 +43,8 @@ import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
+import im.fdx.v2ex.network.HttpHelper
+import android.app.Activity
 
 const val TAB_TYPE = 0
 const val NODE_TYPE = 1
@@ -123,7 +125,7 @@ class TabSettingViewModel : ViewModel() {
 
     private fun fetchNodes() {
         val request = Request.Builder().url("https://www.v2ex.com/my/nodes").build()
-        im.fdx.v2ex.network.HttpHelper.OK_CLIENT.newCall(request).enqueue(object : Callback {
+        HttpHelper.OK_CLIENT.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 // Ignore
             }
@@ -207,7 +209,7 @@ class TabSettingViewModel : ViewModel() {
         val savedList = Gson().toJson(current)
         pref.edit { putString(Keys.PREF_TAB, savedList) }
         LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Keys.ACTION_TAB_SETTING))
-        (context as? android.app.Activity)?.finish()
+        (context as? Activity)?.finish()
     }
 }
 

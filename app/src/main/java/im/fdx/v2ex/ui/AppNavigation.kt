@@ -33,6 +33,9 @@ import androidx.compose.ui.platform.LocalContext
 import im.fdx.v2ex.ui.node.Node
 import androidx.navigation.NavHostController
 import androidx.navigation.navDeepLink
+import android.content.Intent
+import im.fdx.v2ex.ui.login.LoginScreen
+import im.fdx.v2ex.ui.main.NewTopicScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -79,15 +82,15 @@ sealed class Screen(val route: String) {
 @Composable
 fun AppNavigation(
     navController: NavHostController = rememberNavController(),
-    intent: android.content.Intent? = null
+    intent: Intent? = null
 ) {
     val context = LocalContext.current
 
     LaunchedEffect(intent) {
         intent?.let {
-            if (it.action == android.content.Intent.ACTION_SEND && it.type == "text/plain") {
-                val sharedText = it.getStringExtra(android.content.Intent.EXTRA_TEXT)
-                val title = it.getStringExtra(android.content.Intent.EXTRA_TITLE)
+            if (it.action == Intent.ACTION_SEND && it.type == "text/plain") {
+                val sharedText = it.getStringExtra(Intent.EXTRA_TEXT)
+                val title = it.getStringExtra(Intent.EXTRA_TITLE)
                 if (sharedText != null) {
                     navController.navigate(Screen.NewTopic.createRoute(title = title, content = sharedText))
                 }
@@ -116,7 +119,7 @@ fun AppNavigation(
                         "daily" -> {
                              // Legacy activity support
                              try {
-                                 val intent = android.content.Intent(context, Class.forName("im.fdx.v2ex.ui.daily.DailyActivity"))
+                                 val intent = Intent(context, Class.forName("im.fdx.v2ex.ui.daily.DailyActivity"))
                                  context.startActivity(intent)
                              } catch (e: Exception) {
                                  e.printStackTrace()
@@ -273,7 +276,7 @@ fun AppNavigation(
                 }
             }
 
-             im.fdx.v2ex.ui.login.LoginScreen(
+             LoginScreen(
                  username = username,
                  onUsernameChange = loginViewModel::onUsernameChange,
                  password = password,
@@ -296,7 +299,7 @@ fun AppNavigation(
         ) { backStackEntry ->
             val url = backStackEntry.arguments?.getString("url")
             if (url != null) {
-                im.fdx.v2ex.ui.PhotoScreen(
+                PhotoScreen(
                     photos = listOf(url),
                     initialPage = 0,
                     onBackClick = { navController.popBackStack() }
@@ -310,7 +313,7 @@ fun AppNavigation(
         ) { backStackEntry ->
              val url = backStackEntry.arguments?.getString("url")
              if (url != null) {
-                  im.fdx.v2ex.ui.WebViewScreen(
+                  WebViewScreen(
                       url = url,
                       onBackClick = { navController.popBackStack() },
                       onLoginSuccess = { 
@@ -371,7 +374,7 @@ fun AppNavigation(
                 }
             }
             
-            im.fdx.v2ex.ui.main.NewTopicScreen(
+            NewTopicScreen(
                  title = mTitle,
                  onTitleChange = viewModel::onTitleChange,
                  content = mContent,

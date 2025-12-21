@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -88,7 +89,7 @@ fun PhotoScreen(
                 )
 
                 // Buttons
-                androidx.compose.foundation.layout.Column(
+                Column(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(innerPadding)
