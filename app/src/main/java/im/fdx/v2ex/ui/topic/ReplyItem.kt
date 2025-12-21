@@ -15,11 +15,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.text.HtmlCompat
-import com.bumptech.glide.Glide
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.foundation.text.selection.SelectionContainer
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.R
 // import im.fdx.v2ex.view.GoodTextView // Assuming we might use AndroidView for content for now
 
@@ -41,20 +41,15 @@ fun ReplyItem(
             verticalAlignment = Alignment.Top
         ) {
             // Avatar
-             AndroidView(
-                factory = { context ->
-                    ImageView(context).apply {
-                        scaleType = ImageView.ScaleType.CENTER_CROP
-                    }
-                },
-                update = { imageView ->
-                    Glide.with(imageView)
-                        .load(reply.member?.avatarNormalUrl)
-                        .into(imageView)
-                },
+            // Avatar using Coil AsyncImage
+             AsyncImage(
+                model = reply.member?.avatarNormalUrl,
+                contentDescription = "Avatar",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(32.dp)
                     .clip(CircleShape)
+                    .clickable { onMemberClick(reply.member?.username) }
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -100,19 +95,13 @@ fun ReplyItem(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Content - Using AndroidView for HTML support for now as a safe bet
-                AndroidView(
-                    factory = { context ->
-                        TextView(context).apply {
-                           setTextIsSelectable(true)
-                           textSize = 15f
-                           setTextColor(android.graphics.Color.BLACK) // Theme adaptation needed
-                        }
-                    },
-                    update = { textView ->
-                         textView.text = HtmlCompat.fromHtml(reply.content_rendered, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                    }
-                )
+                // Content - Using native Text with HTML support
+                SelectionContainer {
+                    Text(
+                        text = AnnotatedString.fromHtml(reply.content_rendered ?: ""),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
                 
                  Spacer(modifier = Modifier.height(8.dp))
                  

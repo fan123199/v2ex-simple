@@ -17,10 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.ImageView
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bumptech.glide.Glide
+import coil.compose.AsyncImage
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.ui.main.TopicListViewModel
 import im.fdx.v2ex.ui.main.Topic
@@ -74,15 +71,10 @@ fun NodeHeader(node: Node) {
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AndroidView(
-                factory = { context ->
-                    ImageView(context).apply {
-                        scaleType = ImageView.ScaleType.CENTER_CROP
-                    }
-                },
-                update = { imageView ->
-                     Glide.with(imageView).load(node.avatarLargeUrl).into(imageView)
-                },
+            AsyncImage(
+                model = node.avatarLargeUrl,
+                contentDescription = "Node Avatar",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(64.dp)
                     .clip(RoundedCornerShape(8.dp))

@@ -19,9 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.ImageView
-import com.bumptech.glide.Glide
+import coil.compose.AsyncImage
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 // import im.fdx.v2ex.ui.daily.DailyActivity
@@ -49,17 +47,10 @@ fun MainDrawer(
              // Background Image if needed
              
              Column(modifier = Modifier.padding(16.dp)) {
-                 AndroidView(
-                    factory = { context ->
-                        ImageView(context).apply {
-                            scaleType = ImageView.ScaleType.CENTER_CROP
-                        }
-                    },
-                    update = { imageView ->
-                        // Typically load avatar here if logged in
-                        // Glide.with(imageView).load(avatarUrl).into(imageView)
-                        imageView.setImageResource(R.drawable.ic_profile) 
-                    },
+                 AsyncImage(
+                    model = R.drawable.ic_profile, // Or actual avatar URL if available
+                    contentDescription = "Profile",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(64.dp)
                         .clip(CircleShape)

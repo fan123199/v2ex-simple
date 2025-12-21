@@ -11,8 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.bumptech.glide.Glide
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
 import im.fdx.v2ex.ui.theme.V2ExTheme
@@ -87,17 +88,10 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.width(8.dp))
 
                 if (captchaUrl != null) {
-                    AndroidView(
-                        factory = { context ->
-                            ImageView(context).apply {
-                                scaleType = ImageView.ScaleType.CENTER_CROP
-                            }
-                        },
-                        update = { imageView ->
-                            Glide.with(imageView)
-                                .load(captchaUrl)
-                                .into(imageView)
-                        },
+                     AsyncImage(
+                        model = captchaUrl,
+                        contentDescription = "Captcha",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .height(56.dp)
                             .width(100.dp)

@@ -20,10 +20,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.ImageView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bumptech.glide.Glide
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.model.NotificationModel
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.utils.Keys
@@ -93,17 +92,10 @@ fun NotificationItem(
             .clickable(onClick = onClick)
             .padding(8.dp)
     ) {
-         AndroidView(
-            factory = { context ->
-                ImageView(context).apply {
-                    scaleType = ImageView.ScaleType.CENTER_CROP
-                }
-            },
-            update = { imageView ->
-                 notification.member?.avatar_normal?.let {
-                     Glide.with(imageView).load(it).into(imageView)
-                 }
-            },
+         AsyncImage(
+            model = notification.member?.avatar_normal,
+            contentDescription = "Avatar",
+            contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)

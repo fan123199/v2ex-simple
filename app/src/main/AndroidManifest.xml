@@ -32,36 +32,6 @@
                 android:name="android.app.shortcuts"
                 android:resource="@xml/shortcuts" />
 
-            <!-- Topic Deep Links -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http" />
-                <data android:scheme="https" />
-                <data android:host="www.v2ex.com" android:pathPrefix="/t/" />
-                <data android:host="v2ex.com" android:pathPrefix="/t/" />
-            </intent-filter>
-
-            <!-- Node Deep Links -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="http"/>
-                <data android:scheme="https"/>
-                <data android:host="www.v2ex.com" android:pathPrefix="/go/" />
-                <data android:host="v2ex.com" android:pathPrefix="/go/" />
-            </intent-filter>
-
-            <!-- Member Deep Links -->
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="www.v2ex.com" android:pathPrefix="/member/" android:scheme="http" />
-                <data android:host="www.v2ex.com" android:pathPrefix="/member/" android:scheme="https" />
-            </intent-filter>
 
             <!-- Share (Send) Intent -->
             <intent-filter>
@@ -71,11 +41,6 @@
             </intent-filter>
 
         </activity>
-
-        <activity
-            android:name=".ui.TestActivity"
-            android:exported="true" />
-
 
         <provider
             android:name="androidx.core.content.FileProvider"

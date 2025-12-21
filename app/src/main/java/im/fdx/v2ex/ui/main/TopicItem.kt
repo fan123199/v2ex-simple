@@ -12,18 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.ImageView
-import com.bumptech.glide.Glide
+import coil.compose.AsyncImage
 import im.fdx.v2ex.R
-import im.fdx.v2ex.utils.TimeUtil
 
 @Composable
 fun TopicItem(
@@ -45,7 +39,7 @@ fun TopicItem(
             verticalAlignment = Alignment.Top
         ) {
             Text(
-                text = topic.title ?: "",
+                text = topic.title,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 2,
@@ -80,18 +74,11 @@ fun TopicItem(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Avatar using AndroidView for Glide
-            AndroidView(
-                factory = { context ->
-                    ImageView(context).apply {
-                        scaleType = ImageView.ScaleType.CENTER_CROP
-                    }
-                },
-                update = { imageView ->
-                    Glide.with(imageView)
-                        .load(topic.member?.avatarNormalUrl)
-                        .into(imageView)
-                },
+            // Avatar using Coil AsyncImage
+            AsyncImage(
+                model = topic.member?.avatarNormalUrl,
+                contentDescription = "Avatar",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(24.dp)
                     .clip(CircleShape)

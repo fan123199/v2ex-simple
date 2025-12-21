@@ -17,10 +17,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.ImageView
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bumptech.glide.Glide
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.ui.main.Topic
 import im.fdx.v2ex.ui.node.Node
@@ -133,15 +132,10 @@ fun FavoriteNodeList(
                         },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                     AndroidView(
-                        factory = { context ->
-                            ImageView(context).apply {
-                                scaleType = ImageView.ScaleType.CENTER_CROP
-                            }
-                        },
-                        update = { imageView ->
-                             Glide.with(imageView).load(node.avatarLargeUrl).into(imageView)
-                        },
+                     AsyncImage(
+                        model = node.avatarLargeUrl,
+                        contentDescription = "Node Avatar",
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier.size(48.dp)
                     )
                     Spacer(modifier = Modifier.height(4.dp))

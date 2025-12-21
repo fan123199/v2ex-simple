@@ -22,12 +22,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.bumptech.glide.Glide
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.foundation.text.selection.SelectionContainer
+import coil.compose.AsyncImage
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.ui.main.Topic
 import kotlinx.coroutines.flow.filter
@@ -130,15 +129,10 @@ fun MemberHeader(member: Member) {
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-             AndroidView(
-                factory = { context ->
-                    ImageView(context).apply {
-                        scaleType = ImageView.ScaleType.CENTER_CROP
-                    }
-                },
-                update = { imageView ->
-                     Glide.with(imageView).load(member.avatarLargeUrl).into(imageView)
-                },
+             AsyncImage(
+                model = member.avatarLargeUrl,
+                contentDescription = "Member Avatar",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(72.dp)
                     .clip(CircleShape)
@@ -190,20 +184,12 @@ fun MemberRepliesList(
                      Text(text = "Replied to: ${reply.topic.title}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                      Spacer(modifier = Modifier.height(4.dp))
                      
-                      AndroidView(
-                        factory = { context ->
-                            TextView(context).apply {
-                               setTextIsSelectable(true)
-                               textSize = 14f
-                               setTextColor(android.graphics.Color.BLACK) 
-                            }
-                        },
-                        update = { textView ->
-                             reply.content?.let {
-                                 textView.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                             }
-                        }
-                    )
+                      SelectionContainer {
+                          Text(
+                              text = AnnotatedString.fromHtml(reply.content ?: ""),
+                              style = MaterialTheme.typography.bodySmall
+                          )
+                      }
                      
                      Spacer(modifier = Modifier.height(4.dp))
                      Text(text = reply.createdOriginal, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.outline)

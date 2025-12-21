@@ -10,9 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import android.widget.TextView
-import androidx.core.text.HtmlCompat
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import im.fdx.v2ex.ui.main.Topic
 import androidx.compose.material.icons.Icons
@@ -77,20 +77,12 @@ fun TopicDetailScreen(
                              Spacer(modifier = Modifier.height(16.dp))
                              
                              // Topic Content
-                             AndroidView(
-                                factory = { context ->
-                                    TextView(context).apply {
-                                       setTextIsSelectable(true)
-                                       textSize = 16f
-                                       setTextColor(android.graphics.Color.BLACK) 
-                                    }
-                                },
-                                update = { textView ->
-                                     topic.content_rendered?.let {
-                                         textView.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-                                     }
-                                }
-                            )
+                             SelectionContainer {
+                                 Text(
+                                     text = AnnotatedString.fromHtml(topic.content_rendered ?: ""),
+                                     style = MaterialTheme.typography.bodyLarge
+                                 )
+                             }
                             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                          }
                     }

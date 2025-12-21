@@ -67,6 +67,7 @@ fun WebViewScreen(
         }
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
+            // TODO: Replace with native Compose WebView when available or use a third-party library
             AndroidView(
                 factory = { context ->
                     WebView(context).apply {
