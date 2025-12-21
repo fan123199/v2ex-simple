@@ -16,7 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.DisposableEffect
 import androidx.core.util.Consumer
 import android.content.Intent
-import im.fdx.v2ex.ui.AppNavigation
+import im.fdx.v2ex.ui.navigation.AppNavigation
 
 class MainActivity : BaseActivity() {
 
@@ -42,3 +42,5 @@ class MainActivity : BaseActivity() {
         }
     }
 }
+
+

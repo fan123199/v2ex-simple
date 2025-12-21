@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.main
 
+import im.fdx.v2ex.data.model.Topic
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
@@ -89,3 +90,6 @@ fun SearchScreen(
         }
     }
 }
+
+
+

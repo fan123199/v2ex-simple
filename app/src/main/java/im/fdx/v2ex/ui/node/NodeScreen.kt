@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.node
 
+import im.fdx.v2ex.data.model.Node
 import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -21,7 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.ui.main.TopicListViewModel
-import im.fdx.v2ex.ui.main.Topic
+import im.fdx.v2ex.data.model.Topic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,3 +104,9 @@ fun NodeHeader(node: Node) {
         }
     }
 }
+
+
+
+
+
+

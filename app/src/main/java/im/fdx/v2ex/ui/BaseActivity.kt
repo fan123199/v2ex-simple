@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui
 
+import im.fdx.v2ex.data.model.Res
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
@@ -86,3 +87,6 @@ abstract class BaseActivity : AppCompatActivity() {
         return res
     }
 }
+
+
+

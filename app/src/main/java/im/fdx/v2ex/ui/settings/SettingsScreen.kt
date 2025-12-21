@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.settings
 
+import im.fdx.v2ex.data.model.Data
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
@@ -26,7 +27,7 @@ import androidx.work.WorkManager
 import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
-import im.fdx.v2ex.network.HttpHelper
+import im.fdx.v2ex.data.network.HttpHelper
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.toast
@@ -267,3 +268,7 @@ fun SwitchSettingsItem(
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
+
+
+
+

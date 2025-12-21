@@ -24,3 +24,4 @@ object ViewUtil {
         return Resources.getSystem().displayMetrics.widthPixels
     }
 }
+

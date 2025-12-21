@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.favor
 
+import im.fdx.v2ex.data.model.Data
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,8 +22,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.ui.main.TopicListScreen
-import im.fdx.v2ex.ui.main.Topic
-import im.fdx.v2ex.ui.node.Node
+import im.fdx.v2ex.data.model.Topic
+import im.fdx.v2ex.data.model.Node
 
 import kotlinx.coroutines.launch
 
@@ -150,3 +151,8 @@ fun FavoriteNodeList(
         }
     }
 }
+
+
+
+
+

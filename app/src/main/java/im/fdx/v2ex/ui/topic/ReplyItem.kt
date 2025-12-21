@@ -1,11 +1,14 @@
 package im.fdx.v2ex.ui.topic
 
+import im.fdx.v2ex.data.model.Topic
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,19 +25,27 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.R
-// import im.fdx.v2ex.view.GoodTextView // Assuming we might use AndroidView for content for now
+import im.fdx.v2ex.data.model.Reply
 
+// import im.fdx.v2ex.ui.helper.GoodTextView // Assuming we might use AndroidView for content for now
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ReplyItem(
     reply: Reply,
     onMemberClick: (String?) -> Unit,
     onReplyClick: (Reply) -> Unit,
-    onThankClick: (Reply) -> Unit
+    onThankClick: (Reply) -> Unit,
+    onLongClick: (Reply) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
+            .combinedClickable(
+                onClick = { onReplyClick(reply) },
+                onLongClick = { onLongClick(reply) }
+            )
             .padding(12.dp)
     ) {
         Row(
@@ -139,3 +150,7 @@ fun ReplyItem(
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant, thickness = 0.5.dp)
     }
 }
+
+
+
+

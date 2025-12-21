@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.main
 
+import im.fdx.v2ex.data.model.Res
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -105,3 +106,6 @@ fun MainDrawer(
         )
     }
 }
+
+
+

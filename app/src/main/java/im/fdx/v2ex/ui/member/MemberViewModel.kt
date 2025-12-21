@@ -1,12 +1,14 @@
 package im.fdx.v2ex.ui.member
 
+import im.fdx.v2ex.data.model.Member
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.NetManager.API_USER
-import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.ui.topic.Reply
+import im.fdx.v2ex.data.model.MemberReplyModel
+import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.Parser
+import im.fdx.v2ex.data.network.NetManager.API_USER
+import im.fdx.v2ex.data.network.vCall
+import im.fdx.v2ex.data.model.Reply
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -103,3 +105,7 @@ class MemberViewModel : ViewModel() {
          })
     }
 }
+
+
+
+

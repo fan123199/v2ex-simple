@@ -1,12 +1,13 @@
 package im.fdx.v2ex.ui.node
 
+import im.fdx.v2ex.data.model.Node
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.Parser
+import im.fdx.v2ex.data.network.vCall
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import kotlinx.coroutines.Dispatchers
@@ -96,3 +97,7 @@ class AllNodesViewModel : ViewModel() {
         }
     }
 }
+
+
+
+

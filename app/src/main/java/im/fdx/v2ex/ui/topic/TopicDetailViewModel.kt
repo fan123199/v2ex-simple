@@ -1,11 +1,12 @@
 package im.fdx.v2ex.ui.topic
 
+import im.fdx.v2ex.data.model.Reply
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.ui.main.Topic
+import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.Parser
+import im.fdx.v2ex.data.network.vCall
+import im.fdx.v2ex.data.model.Topic
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -59,7 +60,8 @@ class TopicDetailViewModel : ViewModel() {
         // For migration safety, we should implement the full network call using NetManager
         // But for this phase, we ensure the UI hook exists.
         
-        // TODO: Implement actual POST call
+    fun thankReply(reply: Reply) {
+        // TODO: Implement actual thank call
     }
 
     private fun fetchReplies(page: Int, isRefresh: Boolean) {
@@ -101,3 +103,7 @@ class TopicDetailViewModel : ViewModel() {
         })
     }
 }
+
+
+
+

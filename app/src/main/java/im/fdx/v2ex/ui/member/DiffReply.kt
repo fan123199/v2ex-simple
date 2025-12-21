@@ -1,6 +1,8 @@
 package im.fdx.v2ex.ui.member
 
+import im.fdx.v2ex.data.model.Member
 import androidx.recyclerview.widget.DiffUtil
+import im.fdx.v2ex.data.model.MemberReplyModel
 
 /**
  * Created by fdx on 2017/7/31.
@@ -21,3 +23,5 @@ class DiffReply(val oldList: List<MemberReplyModel>, val newList: List<MemberRep
             = oldList[oldItemPosition].content == newList[newItemPosition].content
 
 }
+
+

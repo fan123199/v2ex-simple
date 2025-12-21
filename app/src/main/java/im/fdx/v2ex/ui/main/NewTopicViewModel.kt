@@ -1,12 +1,13 @@
 package im.fdx.v2ex.ui.main
 
+import im.fdx.v2ex.data.model.Data
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.data.network.HttpHelper
+import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.Parser
+import im.fdx.v2ex.data.network.vCall
 import im.fdx.v2ex.utils.extensions.logd
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -124,3 +125,7 @@ sealed class SendResult {
     object Success : SendResult()
     data class Error(val msg: String) : SendResult()
 }
+
+
+
+

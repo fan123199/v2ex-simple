@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.main
 
+import im.fdx.v2ex.data.model.Topic
 import androidx.recyclerview.widget.DiffUtil
 
 /**
@@ -24,3 +25,5 @@ class MyDiffCallback(private val oldList: List<Topic>, private val newList: List
     }
 
 }
+
+

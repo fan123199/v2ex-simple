@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.settings
 
+import im.fdx.v2ex.data.model.Data
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.Keep
@@ -30,7 +31,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
-import im.fdx.v2ex.network.Parser
+import im.fdx.v2ex.data.network.Parser
 import im.fdx.v2ex.pref
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.toast
@@ -43,7 +44,7 @@ import okhttp3.Callback
 import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
-import im.fdx.v2ex.network.HttpHelper
+import im.fdx.v2ex.data.network.HttpHelper
 import android.app.Activity
 
 const val TAB_TYPE = 0
@@ -302,3 +303,7 @@ fun TabSettingScreen(
         }
     }
 }
+
+
+
+

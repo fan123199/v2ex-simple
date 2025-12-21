@@ -1,4 +1,4 @@
-package im.fdx.v2ex.network
+package im.fdx.v2ex.data.network
 
 import org.junit.Test
 

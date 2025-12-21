@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.member
 
+import im.fdx.v2ex.data.model.Reply
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -28,12 +29,14 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.foundation.text.selection.SelectionContainer
 import coil.compose.AsyncImage
 import im.fdx.v2ex.ui.main.TopicListScreen
-import im.fdx.v2ex.ui.main.Topic
+import im.fdx.v2ex.data.model.Topic
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import im.fdx.v2ex.utils.TimeUtil
 import androidx.compose.runtime.snapshotFlow
+import im.fdx.v2ex.data.model.Member
+import im.fdx.v2ex.data.model.MemberReplyModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -202,3 +205,8 @@ fun MemberRepliesList(
         }
     }
 }
+
+
+
+
+

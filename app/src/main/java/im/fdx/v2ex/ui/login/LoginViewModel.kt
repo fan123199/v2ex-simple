@@ -1,17 +1,18 @@
 package im.fdx.v2ex.ui.login
 
+import im.fdx.v2ex.data.model.Data
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.elvishew.xlog.XLog
 import com.bumptech.glide.load.model.GlideUrl
 import com.bumptech.glide.load.model.LazyHeaders
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
-import im.fdx.v2ex.network.NetManager.SIGN_IN_URL
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.vCall
+import im.fdx.v2ex.data.network.HttpHelper
+import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.data.network.NetManager.SIGN_IN_URL
+import im.fdx.v2ex.data.network.Parser
+import im.fdx.v2ex.data.network.vCall
 import im.fdx.v2ex.setLogin
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.loge
@@ -208,3 +209,7 @@ sealed class LoginResult {
     object TwoStep : LoginResult() // Placeholder
     data class Error(val msg: String) : LoginResult()
 }
+
+
+
+

@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.notification
 
+import im.fdx.v2ex.data.model.Topic
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,7 +24,7 @@ import androidx.compose.ui.util.fastForEach
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
-import im.fdx.v2ex.model.NotificationModel
+import im.fdx.v2ex.data.model.NotificationModel
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.utils.Keys
 
@@ -121,3 +122,8 @@ fun NotificationItem(
         }
     }
 }
+
+
+
+
+

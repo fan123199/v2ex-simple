@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.main
 
+import im.fdx.v2ex.data.model.Topic
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,7 +21,7 @@ import androidx.core.os.bundleOf
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-// import im.fdx.v2ex.ui.main.TopicsFragment keys logic
+// import im.fdx.v2ex.data.model.TopicsFragment keys logic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -103,4 +104,8 @@ fun MainScreen(
 object TopicListScreenDefaults {
      val SearchIcon = Icons.Default.Search
 }
+
+
+
+
 

@@ -1,13 +1,14 @@
 package im.fdx.v2ex.ui.main
 
+import im.fdx.v2ex.data.model.SearchOption
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.network.NetManager.API_HEATED
-import im.fdx.v2ex.network.NetManager.HTTPS_V2EX_BASE
-import im.fdx.v2ex.network.NetManager.URL_FOLLOWING
+import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.Parser
+import im.fdx.v2ex.data.network.vCall
+import im.fdx.v2ex.data.network.NetManager.API_HEATED
+import im.fdx.v2ex.data.network.NetManager.HTTPS_V2EX_BASE
+import im.fdx.v2ex.data.network.NetManager.URL_FOLLOWING
 import im.fdx.v2ex.ui.settings.NODE_TYPE
 import im.fdx.v2ex.utils.Keys
 import kotlinx.coroutines.Dispatchers
@@ -20,15 +21,15 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
-import im.fdx.v2ex.network.Parser.Source.*
-import im.fdx.v2ex.ui.node.Node
+import im.fdx.v2ex.data.network.Parser.Source.*
+import im.fdx.v2ex.data.model.Node
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import im.fdx.v2ex.ui.main.Topic
+import im.fdx.v2ex.data.model.Topic
 import okhttp3.HttpUrl
-import im.fdx.v2ex.ui.main.model.SearchResult
+import im.fdx.v2ex.data.model.SearchResult
 import im.fdx.v2ex.utils.TimeUtil
-import im.fdx.v2ex.ui.member.Member
+import im.fdx.v2ex.data.model.Member
 
 data class TopicListUiState(
     val topics: List<Topic> = emptyList(),
@@ -265,5 +266,9 @@ class TopicListViewModel : ViewModel() {
         })
     }
 }
+
+
+
+
 
 

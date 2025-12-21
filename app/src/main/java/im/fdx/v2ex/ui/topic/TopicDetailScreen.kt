@@ -1,5 +1,7 @@
 package im.fdx.v2ex.ui.topic
 
+import androidx.compose.foundation.clickable
+import im.fdx.v2ex.data.model.Reply
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,16 +12,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.fromHtml
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.lifecycle.viewmodel.compose.viewModel
-import im.fdx.v2ex.ui.main.Topic
+import im.fdx.v2ex.data.model.Topic
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
-import im.fdx.v2ex.ui.main.TopicItem
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.fromHtml
+import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.main.TopicItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,8 +34,13 @@ fun TopicDetailScreen(
     initialTopic: Topic?,
     viewModel: TopicDetailViewModel = viewModel(),
     onBackClick: () -> Unit,
-    onMemberClick: (String) -> Unit // Non-nullable usually, or nullable if replies have null user?
+    onMemberClick: (String) -> Unit
 ) {
+    var replyText by remember { mutableStateOf("") }
+    var selectedReply by remember { mutableStateOf<Reply?>(null) }
+    var showReplySheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    val clipboardManager = LocalClipboardManager.current
     LaunchedEffect(topicId) {
         viewModel.init(topicId, initialTopic)
     }
@@ -50,8 +61,10 @@ fun TopicDetailScreen(
         },
         bottomBar = {
             BottomReplyInput(
+                text = replyText,
+                onTextChange = { replyText = it },
                 onSend = { content ->
-                     viewModel.postReply(content)
+                    viewModel.postReply(content)
                 }
             )
         }
@@ -92,9 +105,15 @@ fun TopicDetailScreen(
                 items(uiState.replies) { reply ->
                     ReplyItem(
                         reply = reply,
-                        onMemberClick = {},
-                        onReplyClick = {},
-                        onThankClick = {}
+                        onMemberClick = { onMemberClick(it ?: "") },
+                        onReplyClick = {
+                            replyText = "@${it.member?.username} "
+                        },
+                        onThankClick = { /* TODO */ },
+                        onLongClick = {
+                            selectedReply = it
+                            showReplySheet = true
+                        }
                     )
                 }
                 
@@ -110,13 +129,59 @@ fun TopicDetailScreen(
                 }
             }
         }
+
+        if (showReplySheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showReplySheet = false },
+                sheetState = sheetState
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 32.dp)
+                ) {
+                    ListItem(
+                        headlineContent = { Text("Reply") },
+                        leadingContent = { Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null) },
+                        modifier = Modifier.clickable {
+                            selectedReply?.let {
+                                 replyText = "@${it.member?.username} "
+                            }
+                            showReplySheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text("Copy") },
+                        leadingContent = { Icon(Icons.Default.Info, contentDescription = null) },
+                        modifier = Modifier.clickable {
+                            selectedReply?.let {
+                                clipboardManager.setText(AnnotatedString(it.content))
+                            }
+                            showReplySheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text("Thank") },
+                        leadingContent = { Icon(painterResource(id = R.drawable.ic_thank), contentDescription = null) },
+                        modifier = Modifier.clickable {
+                            selectedReply?.let { it ->
+                                viewModel.thankReply(it.id)
+                            }
+                            showReplySheet = false
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun BottomReplyInput(onSend: (String) -> Unit) {
-    var text by remember { mutableStateOf("") }
-    
+fun BottomReplyInput(
+    text: String,
+    onTextChange: (String) -> Unit,
+    onSend: (String) -> Unit
+) {
     Surface(
         tonalElevation = 2.dp,
         modifier = Modifier
@@ -131,7 +196,7 @@ fun BottomReplyInput(onSend: (String) -> Unit) {
         ) {
              TextField(
                 value = text,
-                onValueChange = { text = it },
+                onValueChange = onTextChange,
                 modifier = Modifier.weight(1f),
                 placeholder = { Text("Post a reply...") },
                 maxLines = 3
@@ -141,7 +206,7 @@ fun BottomReplyInput(onSend: (String) -> Unit) {
                 onClick = { 
                     if (text.isNotBlank()) {
                         onSend(text)
-                        text = ""
+                        onTextChange("")
                     }
                 },
                 enabled = text.isNotBlank()
@@ -151,3 +216,8 @@ fun BottomReplyInput(onSend: (String) -> Unit) {
         }
     }
 }
+
+
+
+
+

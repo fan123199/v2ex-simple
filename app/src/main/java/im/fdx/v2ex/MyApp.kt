@@ -10,8 +10,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.elvishew.xlog.LogLevel
 import com.elvishew.xlog.XLog
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import im.fdx.v2ex.network.HttpHelper
-import im.fdx.v2ex.network.cookie.SharedPrefsPersistor
+import im.fdx.v2ex.data.network.HttpHelper
+import im.fdx.v2ex.data.network.cookie.SharedPrefsPersistor
 import im.fdx.v2ex.utils.Keys
 import im.fdx.v2ex.utils.extensions.logd
 import java.net.HttpCookie
@@ -78,3 +78,4 @@ fun setLogin(login: Boolean) {
             Intent(Keys.ACTION_LOGOUT)
           })
 }
+

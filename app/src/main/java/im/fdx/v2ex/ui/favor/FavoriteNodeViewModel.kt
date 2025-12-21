@@ -1,11 +1,12 @@
 package im.fdx.v2ex.ui.favor
 
+import im.fdx.v2ex.data.model.Data
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import im.fdx.v2ex.network.NetManager
-import im.fdx.v2ex.network.Parser
-import im.fdx.v2ex.network.vCall
-import im.fdx.v2ex.ui.node.Node
+import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.Parser
+import im.fdx.v2ex.data.network.vCall
+import im.fdx.v2ex.data.model.Node
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -50,3 +51,7 @@ class FavoriteNodeViewModel : ViewModel() {
         })
     }
 }
+
+
+
+
