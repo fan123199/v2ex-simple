@@ -5,8 +5,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.elvishew.xlog.XLog
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
 import im.fdx.v2ex.data.network.HttpHelper
 import im.fdx.v2ex.data.network.NetManager
 import im.fdx.v2ex.data.network.NetManager.HTTPS_V2EX_BASE
@@ -25,6 +23,8 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jsoup.Jsoup
 import java.io.IOException
 
+data class CaptchaInfo(val url: String, val headers: Map<String, String>)
+
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _username = MutableStateFlow("")
@@ -36,8 +36,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     private val _captcha = MutableStateFlow("")
     val captcha = _captcha.asStateFlow()
 
-    private val _captchaUrl = MutableStateFlow<GlideUrl?>(null)
-    val captchaUrl = _captchaUrl.asStateFlow()
+    private val _captchaInfo = MutableStateFlow<CaptchaInfo?>(null)
+    val captchaInfo = _captchaInfo.asStateFlow()
 
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
@@ -75,23 +75,17 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                     onceCode = body.getElementsByAttributeValue("name", "once").attr("value")
                     imageCodeKey = body.getElementsByAttributeValueContaining("placeholder", "请输入上图中的验证码").attr("name")
 
-                    val str = "https://www.v2ex.com/_captcha?once=$onceCode"
-                    val headers: LazyHeaders = LazyHeaders.Builder()
-                        .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                        .addHeader("Accept-Charset", "utf-8, iso-8859-1, utf-16, *;q=0.7")
-                        .addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6")
-                        .addHeader("Host", "www.v2ex.com")
-                        .addHeader("Cache-Control", "max-age=0")
-                        .addHeader(
-                            "User-Agent",
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" + " (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36"
-                        )
-                        .addHeader(
-                            "cookie",
-                            HttpHelper.myCookieJar.loadForRequest(str.toHttpUrlOrNull()!!).joinToString(separator = ";")
-                        )
-                        .build()
-                    _captchaUrl.value = GlideUrl(str, headers)
+                    val captchaUrl = "https://www.v2ex.com/_captcha?once=$onceCode"
+                    val headersMap = mapOf(
+                        "Accept" to "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                        "Accept-Charset" to "utf-8, iso-8859-1, utf-16, *;q=0.7",
+                        "Accept-Language" to "zh-CN,zh;q=0.8,en;q=0.6",
+                        "Host" to "www.v2ex.com",
+                        "Cache-Control" to "max-age=0",
+                        "User-Agent" to "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3013.3 Safari/537.36",
+                        "Cookie" to HttpHelper.myCookieJar.loadForRequest(captchaUrl.toHttpUrlOrNull()!!).joinToString(separator = ";")
+                    )
+                    _captchaInfo.value = CaptchaInfo(captchaUrl, headersMap)
                     XLog.tag("LoginViewModel").d("$nameKey|$passwordKey|$onceCode|$imageCodeKey")
                 }
             } catch (e: IOException) {

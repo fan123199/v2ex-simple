@@ -58,8 +58,10 @@ fun MainDrawer(
                         .clickable { 
                             if (isLoggedIn) {
                                 // Navigate to profile
+                                onItemClick("profile")
                             } else {
                                 // Navigate to Login
+                                onItemClick("login")
                             }
                         }
                 )

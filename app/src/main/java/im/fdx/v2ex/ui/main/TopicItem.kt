@@ -32,7 +32,7 @@ fun TopicItem(
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 0.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 0.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

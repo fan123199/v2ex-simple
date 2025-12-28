@@ -1,22 +1,17 @@
 package im.fdx.v2ex.ui.login
 
-import android.widget.ImageView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import androidx.compose.ui.layout.ContentScale
-import com.bumptech.glide.load.model.GlideUrl
-import com.bumptech.glide.load.model.LazyHeaders
-import im.fdx.v2ex.ui.theme.V2ExTheme
+import coil.request.ImageRequest
 
 @Composable
 fun LoginScreen(
@@ -26,12 +21,13 @@ fun LoginScreen(
     onPasswordChange: (String) -> Unit,
     captcha: String,
     onCaptchaChange: (String) -> Unit,
-    captchaUrl: GlideUrl?,
+    captchaInfo: CaptchaInfo?,
     isLoading: Boolean,
     onLoginClick: () -> Unit,
     onCaptchaClick: () -> Unit,
     onSignUpClick: () -> Unit
 ) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
         }
@@ -87,21 +83,31 @@ fun LoginScreen(
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                if (captchaUrl != null) {
+                if (captchaInfo != null) {
+                     val imageRequest = remember(captchaInfo) {
+                         ImageRequest.Builder(context)
+                             .data(captchaInfo.url)
+                             .apply {
+                                 captchaInfo.headers.forEach { (key, value) ->
+                                     addHeader(key, value)
+                                 }
+                             }
+                             .build()
+                     }
                      AsyncImage(
-                        model = captchaUrl,
+                        model = imageRequest,
                         contentDescription = "Captcha",
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.FillBounds,
                         modifier = Modifier
+                            .weight(1f)
                             .height(56.dp)
-                            .width(100.dp)
                             .clickable { onCaptchaClick() }
                     )
                 } else {
                      Box(
                          modifier = Modifier
+                             .weight(1f)
                              .height(56.dp)
-                             .width(100.dp)
                              .clickable { onCaptchaClick() },
                          contentAlignment = Alignment.Center
                      ) {

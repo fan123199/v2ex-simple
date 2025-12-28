@@ -119,6 +119,7 @@ fun AppNavigation(
                         "all_nodes" -> navController.navigate(Screen.AllNodes.route)
                         "favorites" -> navController.navigate(Screen.Favorites.route)
                         "notifications" -> navController.navigate(Screen.Notifications.route)
+                        "login" -> navController.navigate(Screen.Login.route)
                         "daily" -> {
                              // Legacy activity support
                              try {
@@ -262,7 +263,7 @@ fun AppNavigation(
             val username by loginViewModel.username.collectAsState()
             val password by loginViewModel.password.collectAsState()
             val captcha by loginViewModel.captcha.collectAsState()
-            val captchaUrl by loginViewModel.captchaUrl.collectAsState()
+            val captchaInfo by loginViewModel.captchaInfo.collectAsState()
             val isLoading by loginViewModel.isLoading.collectAsState()
 
             LaunchedEffect(uiState) {
@@ -286,7 +287,7 @@ fun AppNavigation(
                  onPasswordChange = loginViewModel::onPasswordChange,
                  captcha = captcha,
                  onCaptchaChange = loginViewModel::onCaptchaChange,
-                 captchaUrl = captchaUrl,
+                 captchaInfo = captchaInfo,
                  isLoading = isLoading,
                  onLoginClick = loginViewModel::login,
                  onCaptchaClick = loginViewModel::getLoginElement,

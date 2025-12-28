@@ -21,6 +21,8 @@ import androidx.core.os.bundleOf
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.SecondaryScrollableTabRow
+
 // import im.fdx.v2ex.data.model.TopicsFragment keys logic
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,7 +68,7 @@ fun MainScreen(
             }
         ) { innerPadding ->
             Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
-                 ScrollableTabRow(
+                SecondaryScrollableTabRow(
                     selectedTabIndex = pagerState.currentPage,
                     edgePadding = 0.dp
                 ) {
