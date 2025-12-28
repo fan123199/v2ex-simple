@@ -22,6 +22,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
+import im.fdx.v2ex.utils.extensions.findRownum
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.R
@@ -36,7 +40,8 @@ fun ReplyItem(
     onMemberClick: (String?) -> Unit,
     onReplyClick: (Reply) -> Unit,
     onThankClick: (Reply) -> Unit,
-    onLongClick: (Reply) -> Unit
+    onLongClick: (Reply) -> Unit,
+    onQuoteClick: (String, Int) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = Modifier
@@ -107,13 +112,40 @@ fun ReplyItem(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Content - Using native Text with HTML support
-                SelectionContainer {
-                    Text(
-                        text = AnnotatedString.fromHtml(reply.content_rendered ?: ""),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+                // Content - Using ClickableText to support link clicks
+                val annotatedString = AnnotatedString.fromHtml(reply.content_rendered ?: "")
+                
+                ClickableText(
+                    text = annotatedString,
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        color = MaterialTheme.colorScheme.onSurface
+                    ),
+                    onClick = { offset ->
+                        // Find if clicked position is on a link
+                        annotatedString.getStringAnnotations(
+                            tag = "URL",
+                            start = offset,
+                            end = offset
+                        ).firstOrNull()?.let { annotation ->
+                            val url = annotation.item
+                            // Check if it's a V2EX topic URL (e.g., https://www.v2ex.com/t/12345#reply123)
+                            if (url.contains("/t/")) {
+                                // Try to find username and reply number from the content
+                                val content = reply.content ?: ""
+                                // Look for @username pattern in the content
+                                val usernameRegex = """@([\w\-]+)\s*#(\d+)""".toRegex()
+                                val match = usernameRegex.find(content)
+                                match?.let {
+                                    val username = it.groupValues[1]
+                                    val replyNum = it.groupValues[2].toIntOrNull() ?: -1
+                                    if (replyNum > 0) {
+                                        onQuoteClick(username, replyNum)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
                 
                  Spacer(modifier = Modifier.height(8.dp))
                  

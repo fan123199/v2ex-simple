@@ -39,6 +39,8 @@ fun TopicDetailScreen(
     var replyText by remember { mutableStateOf("") }
     var selectedReply by remember { mutableStateOf<Reply?>(null) }
     var showReplySheet by remember { mutableStateOf(false) }
+    var quotedReply by remember { mutableStateOf<Reply?>(null) }
+    var showQuoteDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val clipboardManager = LocalClipboardManager.current
     LaunchedEffect(topicId) {
@@ -114,6 +116,16 @@ fun TopicDetailScreen(
                         onLongClick = {
                             selectedReply = it
                             showReplySheet = true
+                        },
+                        onQuoteClick = { username, replyNum ->
+                            // Find the quoted reply by username and reply number
+                            val foundReply = uiState.replies.find { r ->
+                                r.member?.username == username && r.getRowNum() == replyNum
+                            }
+                            if (foundReply != null) {
+                                quotedReply = foundReply
+                                showQuoteDialog = true
+                            }
                         }
                     )
                 }
@@ -174,6 +186,29 @@ fun TopicDetailScreen(
                 }
             }
         }
+        
+        // Quote Dialog to show referenced reply
+        if (showQuoteDialog && quotedReply != null) {
+            AlertDialog(
+                onDismissRequest = { showQuoteDialog = false },
+                title = {
+                    Text(text = "@${ quotedReply?.member?.username} #${quotedReply?.getRowNum()}")
+                },
+                text = {
+                    SelectionContainer {
+                        Text(
+                            text = AnnotatedString.fromHtml(quotedReply?.content_rendered ?: ""),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                },
+                confirmButton = {
+                    TextButton(onClick = { showQuoteDialog = false }) {
+                        Text("关闭")
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -217,6 +252,7 @@ fun BottomReplyInput(
         }
     }
 }
+
 
 
 

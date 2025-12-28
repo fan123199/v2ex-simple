@@ -110,7 +110,6 @@ class SettingsViewModel : ViewModel() {
             remove(Keys.PREF_TEXT_SIZE)
             remove(Keys.PREF_TAB)
           }
-          activity.finish()
           context.toast("已退出登录")
     }
 }
