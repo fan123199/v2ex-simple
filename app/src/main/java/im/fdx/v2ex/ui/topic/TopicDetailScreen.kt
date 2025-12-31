@@ -23,6 +23,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -69,6 +73,7 @@ fun TopicDetailScreen(
     var selectedReply by remember { mutableStateOf<Reply?>(null) }
     var showReplySheet by remember { mutableStateOf(false) }
     var quotedReply by remember { mutableStateOf<Reply?>(null) }
+    var clickOffset by remember { mutableStateOf(Offset.Zero) }
     var showQuoteDialog by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val clipboardManager = LocalClipboard.current
@@ -92,6 +97,7 @@ fun TopicDetailScreen(
     var isInputFocused by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
 
     // Infinite Scroll
     LaunchedEffect(listState) {
@@ -354,14 +360,29 @@ fun TopicDetailScreen(
                                 selectedReply = it
                                 showReplySheet = true
                             },
-                            onQuoteClick = { username, replyNum ->
+                            onQuoteClick = { username, replyNum, offset ->
                                 // Find the quoted reply by username and reply number
-                                val foundReply = uiState.replies.find { r ->
-                                    r.member?.username == username && r.getRowNum() == replyNum
+                                var foundReply = viewModel.findReplyByFloor(username, replyNum)
+                                if (foundReply == null) {
+                                    foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
                                 }
+                                
                                 if (foundReply != null) {
                                     quotedReply = foundReply
+                                    clickOffset = offset
                                     showQuoteDialog = true
+                                } else {
+                                    onMemberClick(username)
+                                }
+                            },
+                            onMentionClick = { username, offset ->
+                                val foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
+                                if (foundReply != null) {
+                                    quotedReply = foundReply
+                                    clickOffset = offset
+                                    showQuoteDialog = true
+                                } else {
+                                    onMemberClick(username)
                                 }
                             }
                         )
@@ -456,25 +477,51 @@ fun TopicDetailScreen(
         
         // Quote Dialog to show referenced reply
         if (showQuoteDialog && quotedReply != null) {
-            AlertDialog(
+            Popup(
                 onDismissRequest = { showQuoteDialog = false },
-                title = {
-                    Text(text = "@${ quotedReply?.member?.username} #${quotedReply?.getRowNum()}")
-                },
-                text = {
-                    SelectionContainer {
+                offset = IntOffset(
+                    clickOffset.x.toInt(),
+                    clickOffset.y.toInt()
+                ),
+                properties = PopupProperties(
+                    focusable = true,
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true
+                )
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .padding(16.dp)
+                        .clickable {
+                            val targetReply = quotedReply
+                            showQuoteDialog = false
+                            if (targetReply != null) {
+                                val index = uiState.replies.indexOf(targetReply)
+                                if (index != -1) {
+                                    scope.launch {
+                                        listState.animateScrollToItem(index + 1)
+                                    }
+                                }
+                            }
+                        },
+                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = if (quotedReply?.getRowNum() ?: 0 > 0) "@${quotedReply?.member?.username} #${quotedReply?.getRowNum()}" else "@${quotedReply?.member?.username}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             text = AnnotatedString.fromHtml(quotedReply?.content_rendered ?: ""),
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
-                },
-                confirmButton = {
-                    TextButton(onClick = { showQuoteDialog = false }) {
-                        Text("关闭")
-                    }
                 }
-            )
+            }
         }
     }
 }

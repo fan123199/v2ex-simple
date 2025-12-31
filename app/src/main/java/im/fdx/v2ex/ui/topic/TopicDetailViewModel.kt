@@ -225,6 +225,32 @@ class TopicDetailViewModel : ViewModel() {
             }
         })
     }
+
+    fun findReplyByFloor(username: String, floor: Int): Reply? {
+        logd("Searching for floor $floor by user $username")
+        val found = _uiState.value.replies.find { r ->
+            r.member?.username?.equals(username, ignoreCase = true) == true && r.getRowNum() == floor
+        }
+        logd("Found floor reply: ${found?.id}")
+        return found
+    }
+
+    fun findRecentReplyByUsername(username: String, beforeReplyId: String? = null): Reply? {
+        logd("Searching for recent reply by $username before $beforeReplyId")
+        val replies = _uiState.value.replies
+        val found = if (beforeReplyId == null) {
+            replies.findLast { it.member?.username?.equals(username, ignoreCase = true) == true }
+        } else {
+            val index = replies.indexOfFirst { it.id == beforeReplyId }
+            if (index == -1) {
+                replies.findLast { it.member?.username?.equals(username, ignoreCase = true) == true }
+            } else {
+                replies.take(index).findLast { it.member?.username?.equals(username, ignoreCase = true) == true }
+            }
+        }
+        logd("Found recent reply: ${found?.id}")
+        return found
+    }
 }
 
 

@@ -23,13 +23,24 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.TextLayoutResult
 import im.fdx.v2ex.utils.extensions.findRownum
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.R
 import im.fdx.v2ex.data.model.Reply
+import im.fdx.v2ex.utils.extensions.logd
 
 // import im.fdx.v2ex.ui.helper.GoodTextView // Assuming we might use AndroidView for content for now
 
@@ -41,7 +52,8 @@ fun ReplyItem(
     onReplyClick: (Reply) -> Unit,
     onThankClick: (Reply) -> Unit,
     onLongClick: (Reply) -> Unit,
-    onQuoteClick: (String, Int) -> Unit = { _, _ -> }
+    onQuoteClick: (String, Int, Offset) -> Unit,
+    onMentionClick: (String, Offset) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -112,39 +124,56 @@ fun ReplyItem(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // Content - Using ClickableText to support link clicks
-                val annotatedString = AnnotatedString.fromHtml(reply.content_rendered ?: "")
+                // Content - Using Text with modern LinkAnnotation support
+                val contentRendered = reply.content_rendered ?: ""
+                var lastTapOffset by remember { mutableStateOf(Offset.Zero) }
+                var textCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
                 
-                ClickableText(
+                val annotatedString =
+                     AnnotatedString.fromHtml(htmlString = contentRendered,
+                        linkStyles = TextLinkStyles(
+                            style = SpanStyle(color = MaterialTheme.colorScheme.primary)
+                        ),
+                        linkInteractionListener = { annotation ->
+                            if (annotation is androidx.compose.ui.text.LinkAnnotation.Url) {
+                                val url = annotation.url
+                                val globalOffset = textCoordinates?.let { it.localToWindow(lastTapOffset) } ?: lastTapOffset
+                                logd("LinkInteractionListener Clicked: $url at $globalOffset")
+                                if (url.contains("/member/")) {
+                                    var username = url.substringAfterLast("/")
+                                    if (username.isEmpty() || username.contains("?")) {
+                                        username = url.removeSuffix("/").substringAfterLast("/")
+                                    }
+                                    logd("Extracted username: $username")
+                                    
+                                    val content = reply.content ?: ""
+                                    val floorRegex = """@$username\s*#(\d+)""".toRegex()
+                                    val floorMatch = floorRegex.find(content)
+                                    if (floorMatch != null) {
+                                        val replyNum = floorMatch.groupValues[1].toIntOrNull() ?: -1
+                                        if (replyNum > 0) {
+                                            onQuoteClick(username, replyNum, globalOffset)
+                                            return@fromHtml
+                                        }
+                                    }
+                                    onMentionClick(username, globalOffset)
+                                }
+                            }
+                        }
+                    )
+                
+                Text(
                     text = annotatedString,
                     style = MaterialTheme.typography.bodyMedium.copy(
                         color = MaterialTheme.colorScheme.onSurface
                     ),
-                    onClick = { offset ->
-                        // Find if clicked position is on a link
-                        annotatedString.getStringAnnotations(
-                            tag = "URL",
-                            start = offset,
-                            end = offset
-                        ).firstOrNull()?.let { annotation ->
-                            val url = annotation.item
-                            // Check if it's a V2EX topic URL (e.g., https://www.v2ex.com/t/12345#reply123)
-                            if (url.contains("/t/")) {
-                                // Try to find username and reply number from the content
-                                val content = reply.content ?: ""
-                                // Look for @username pattern in the content
-                                val usernameRegex = """@([\w\-]+)\s*#(\d+)""".toRegex()
-                                val match = usernameRegex.find(content)
-                                match?.let {
-                                    val username = it.groupValues[1]
-                                    val replyNum = it.groupValues[2].toIntOrNull() ?: -1
-                                    if (replyNum > 0) {
-                                        onQuoteClick(username, replyNum)
-                                    }
-                                }
+                    modifier = Modifier
+                        .onGloballyPositioned { textCoordinates = it }
+                        .pointerInput(Unit) {
+                            detectTapGestures { offset ->
+                                lastTapOffset = offset
                             }
                         }
-                    }
                 )
                 
                  Spacer(modifier = Modifier.height(8.dp))
