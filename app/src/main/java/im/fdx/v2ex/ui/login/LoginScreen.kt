@@ -25,9 +25,56 @@ fun LoginScreen(
     isLoading: Boolean,
     onLoginClick: () -> Unit,
     onCaptchaClick: () -> Unit,
-    onSignUpClick: () -> Unit
+    onSignUpClick: () -> Unit,
+    showTwoStepDialog: Boolean = false,
+    twoStepCode: String = "",
+    onTwoStepCodeChange: (String) -> Unit = {},
+    onTwoStepSubmit: () -> Unit = {},
+    onTwoStepDismiss: () -> Unit = {}
 ) {
     val context = LocalContext.current
+    
+    // 2FA Dialog
+    if (showTwoStepDialog) {
+        AlertDialog(
+            onDismissRequest = onTwoStepDismiss,
+            title = { Text("两步验证") },
+            text = {
+                Column {
+                    Text("请输入您的两步验证码")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = twoStepCode,
+                        onValueChange = onTwoStepCodeChange,
+                        label = { Text("验证码") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = onTwoStepSubmit,
+                    enabled = twoStepCode.isNotBlank() && !isLoading
+                ) {
+                    if (isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text("验证")
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = onTwoStepDismiss) {
+                    Text("取消")
+                }
+            }
+        )
+    }
+    
     Scaffold(
         topBar = {
         }
@@ -141,4 +188,3 @@ fun LoginScreen(
         }
     }
 }
-

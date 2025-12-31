@@ -35,6 +35,7 @@ import im.fdx.v2ex.data.model.Node
 import androidx.navigation.NavHostController
 import androidx.navigation.navDeepLink
 import android.content.Intent
+import androidx.compose.runtime.setValue
 import im.fdx.v2ex.ui.common.PhotoScreen
 import im.fdx.v2ex.ui.common.WebViewScreen
 import im.fdx.v2ex.ui.login.LoginScreen
@@ -265,12 +266,20 @@ fun AppNavigation(
             val captcha by loginViewModel.captcha.collectAsState()
             val captchaInfo by loginViewModel.captchaInfo.collectAsState()
             val isLoading by loginViewModel.isLoading.collectAsState()
+            
+            // 2FA dialog state
+            var showTwoStepDialog by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+            var twoStepCode by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
 
             LaunchedEffect(uiState) {
                 when (val result = uiState) {
                     is LoginResult.Success -> {
+                        showTwoStepDialog = false
                         Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
+                    }
+                    is LoginResult.TwoStep -> {
+                        showTwoStepDialog = true
                     }
                     is LoginResult.Error -> {
                          Toast.makeText(context, result.msg, Toast.LENGTH_SHORT).show()
@@ -293,6 +302,15 @@ fun AppNavigation(
                  onCaptchaClick = loginViewModel::getLoginElement,
                  onSignUpClick = {
                       navController.navigate(Screen.WebView.createRoute("https://www.v2ex.com/signup"))
+                 },
+                 showTwoStepDialog = showTwoStepDialog,
+                 twoStepCode = twoStepCode,
+                 onTwoStepCodeChange = { twoStepCode = it },
+                 onTwoStepSubmit = { loginViewModel.submitTwoStepCode(twoStepCode) },
+                 onTwoStepDismiss = { 
+                     showTwoStepDialog = false
+                     twoStepCode = ""
+                     loginViewModel.resetResult()
                  }
              )
         }

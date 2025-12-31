@@ -19,6 +19,8 @@ import java.io.IOException
 import okhttp3.FormBody
 import okhttp3.Request
 import im.fdx.v2ex.data.network.HttpHelper
+import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.loge
 import org.json.JSONObject
 
 data class TopicDetailUiState(
@@ -117,14 +119,17 @@ class TopicDetailViewModel : ViewModel() {
 
     private fun fetchReplies(page: Int, isRefresh: Boolean) {
         val url = "${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$page"
+        logd("fetchReplies: $url")
         
         vCall(url).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                loge("fetchReplies onFailure: ${e.message}")
                 _uiState.update { it.copy(isLoading = false, error = e.message) }
             }
 
             override fun onResponse(call: Call, response: Response) {
                  val body = response.body.string() ?: ""
+                 logd("fetchReplies onResponse: code=${response.code}, bodyLength=${body.length}")
                  if (!response.isSuccessful) {
                      _uiState.update { it.copy(isLoading = false, error = "Error: ${response.code}") }
                      return
@@ -133,6 +138,8 @@ class TopicDetailViewModel : ViewModel() {
                  try {
                      val parser = Parser(body)
                      val topicHeader = parser.parseResponseToTopic(topicId)
+                     logd("fetchReplies parsed: title=${topicHeader.title}, contentLen=${topicHeader.content?.length}, replies=${topicHeader.replies}")
+                     
                      val replies = parser.getReplies()
                      val totalPageArr = parser.getPageValue()
                      val totalPage = if(totalPageArr.size >= 2) totalPageArr[1] else 1
@@ -150,6 +157,8 @@ class TopicDetailViewModel : ViewModel() {
                          )
                      }
                  } catch (e: Exception) {
+                      loge("fetchReplies parse error: ${e.message}")
+                      e.printStackTrace()
                       _uiState.update { it.copy(isLoading = false, error = "Parse Error: ${e.message}") }
                  }
             }

@@ -1,6 +1,5 @@
 package im.fdx.v2ex.data.network
 
-import android.content.ContentProviderOperation.newCall
 import android.util.Log
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
@@ -9,15 +8,12 @@ import im.fdx.v2ex.MyApp
 import im.fdx.v2ex.data.network.cookie.MyCookieJar
 import im.fdx.v2ex.data.network.cookie.SharedPrefsPersistor
 import im.fdx.v2ex.utils.extensions.logd
-import im.fdx.v2ex.utils.extensions.logi
 import okhttp3.*
 import okhttp3.logging.HttpLoggingInterceptor
 import java.io.EOFException
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.util.concurrent.TimeUnit
-import java.util.logging.Level
-import java.util.logging.Logger
 
 /**
  * Created by fdx on 2016/11/20.
@@ -38,7 +34,7 @@ object HttpHelper {
         .addNetworkInterceptor(
             HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                 override fun log(message: String) {
-//                    logd("okhttp: $message")
+                    logd("okhttp: $message")
                 }
             }).apply { level = HttpLoggingInterceptor.Level.BODY }
         )
@@ -77,13 +73,12 @@ object HttpHelper {
 }
 
 fun vCall(url: String, ua: String? = null): Call {
-    Log.v("fdx", "vCall: $url ")
+    Log.v("fdx", "vCall: $url")
     return HttpHelper.OK_CLIENT.newBuilder()
         .apply {
             addInterceptor { chain ->
                 if (ua != null) {
-                    val request = chain.request().newBuilder().header("User-Agent", ua).build()
-                    chain.proceed(request)
+                    chain.proceed(chain.request().newBuilder().header("User-Agent", ua).build())
                 } else {
                     chain.proceed(chain.request())
                 }

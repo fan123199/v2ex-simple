@@ -317,7 +317,8 @@ class Parser(private val htmlStr: String) {
 
         val title = doc.getElementsByTag("h1").first()?.text()?:""
         val contentElementOrg = doc.getElementById("Main")?.getElementsByClass("topic_content")?.first()
-
+        logd("parseResponseToTopic: title='$title', hasContent=${contentElementOrg != null}")
+        
         val commentsEle = doc.getElementsByClass("subtle")
         val comments = commentsEle.map {
             Comment().apply {
@@ -403,6 +404,8 @@ class Parser(private val htmlStr: String) {
         val nodeModel = Node()
         nodeModel.name = nodeName
         nodeModel.title = nodeTitle
+        
+        logd("parseResponseToTopic result: member=$username, node=$nodeName, replies=$replies")
 
         topicModel.member = member //done
         topicModel.replies = replies //done

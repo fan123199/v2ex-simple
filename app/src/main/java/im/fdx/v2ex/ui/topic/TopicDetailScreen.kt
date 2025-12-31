@@ -1,15 +1,20 @@
 package im.fdx.v2ex.ui.topic
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import im.fdx.v2ex.data.model.Reply
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -24,8 +29,10 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.fromHtml
+import coil.compose.AsyncImage
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.main.TopicItem
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,14 +88,97 @@ fun TopicDetailScreen(
                 state = listState,
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Header (Topic Content)
+                // Header (Topic Content) - styled like TopicItem
                 item {
                     uiState.topic?.let { topic ->
-                         Column(modifier = Modifier.padding(16.dp)) {
-                             Text(text = topic.title, style = MaterialTheme.typography.titleLarge)
+                         Column(
+                             modifier = Modifier
+                                 .fillMaxWidth()
+                                 .padding(start = 16.dp, end = 16.dp, top = 12.dp)
+                         ) {
+                             // Title row with reply count (unlimited lines)
+                             Row(
+                                 modifier = Modifier.fillMaxWidth(),
+                                 horizontalArrangement = Arrangement.SpaceBetween,
+                                 verticalAlignment = Alignment.Top
+                             ) {
+                                 Text(
+                                     text = topic.title,
+                                     style = MaterialTheme.typography.titleMedium,
+                                     color = MaterialTheme.colorScheme.onSurface,
+                                     modifier = Modifier.weight(1f).padding(end = 8.dp)
+                                 )
+
+                                 if ((topic.replies ?: 0) > 0) {
+                                     Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(start = 4.dp)
+                                     ) {
+                                         Icon(
+                                             painter = painterResource(id = R.drawable.ic_message_black_24dp),
+                                             contentDescription = null,
+                                             modifier = Modifier.size(14.dp),
+                                             tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                         )
+                                         Spacer(modifier = Modifier.width(2.dp))
+                                         Text(
+                                             text = topic.replies.toString(),
+                                             style = MaterialTheme.typography.labelSmall,
+                                             color = MaterialTheme.colorScheme.onSurfaceVariant
+                                         )
+                                     }
+                                 }
+                             }
+
                              Spacer(modifier = Modifier.height(8.dp))
-                             // Author info row ... (Can reuse parts of TopicItem or make new Header Composable)
-                             Text(text = "By ${topic.member?.username} at ${topic.showCreated()}", style = MaterialTheme.typography.labelMedium)
+
+                             // Author info row (avatar, username, time, node)
+                             Row(
+                                 modifier = Modifier.fillMaxWidth(),
+                                 verticalAlignment = Alignment.CenterVertically
+                             ) {
+                                 // Avatar
+                                 AsyncImage(
+                                     model = topic.member?.avatarNormalUrl,
+                                     contentDescription = "Avatar",
+                                     contentScale = ContentScale.Crop,
+                                     modifier = Modifier
+                                         .size(24.dp)
+                                         .clip(CircleShape)
+                                         .clickable { onMemberClick(topic.member?.username ?: "") }
+                                 )
+
+                                 Spacer(modifier = Modifier.width(8.dp))
+
+                                 Text(
+                                     text = topic.member?.username ?: "",
+                                     style = MaterialTheme.typography.labelSmall,
+                                     color = MaterialTheme.colorScheme.secondary,
+                                     modifier = Modifier.clickable { onMemberClick(topic.member?.username ?: "") }
+                                 )
+
+                                 Spacer(modifier = Modifier.width(8.dp))
+
+                                 Text(
+                                     text = topic.showCreated(),
+                                     style = MaterialTheme.typography.labelSmall,
+                                     color = MaterialTheme.colorScheme.onSurfaceVariant
+                                 )
+
+                                 Spacer(modifier = Modifier.weight(1f))
+
+                                 if (!topic.node?.title.isNullOrEmpty()) {
+                                     Text(
+                                         text = topic.node?.title ?: "",
+                                         style = MaterialTheme.typography.labelSmall,
+                                         color = MaterialTheme.colorScheme.tertiary,
+                                         modifier = Modifier
+                                             .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
+                                             .padding(horizontal = 4.dp, vertical = 2.dp)
+                                     )
+                                 }
+                             }
+
                              Spacer(modifier = Modifier.height(16.dp))
                              
                              // Topic Content
@@ -98,7 +188,8 @@ fun TopicDetailScreen(
                                      style = MaterialTheme.typography.bodyLarge
                                  )
                              }
-                            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+                             
+                             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                          }
                     }
                 }

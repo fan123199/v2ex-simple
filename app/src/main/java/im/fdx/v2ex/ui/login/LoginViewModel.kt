@@ -182,15 +182,88 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     }
     
     private fun handleLoginSuccessOr2FA(response: Response) {
-         // This logic is a bit complex in original activity because of okhttp async callbacks
-         // Simplified:
-         _isLoading.value = false
-         // We assume success for now, but 2FA is tricky without UI dialog in VM
-         // For the purpose of migration, I will implement the success path.
-         // If 2FA is needed, we should emit a specific state.
-         
-         setLogin(true)
-         _loginResult.value = LoginResult.Success
+        // After login POST 302, check if we need 2FA
+        // Make a request to base URL and check if it redirects to /2fa
+        try {
+            val checkRequest = Request.Builder()
+                .url(HTTPS_V2EX_BASE)
+                .build()
+            
+            // Use a client that doesn't follow redirects to detect /2fa
+            val noRedirectClient = HttpHelper.OK_CLIENT.newBuilder()
+                .followRedirects(false)
+                .followSslRedirects(false)
+                .build()
+            
+            val checkResponse = noRedirectClient.newCall(checkRequest).execute()
+            
+            if (checkResponse.code == 302 && checkResponse.header("Location") == "/2fa") {
+                logd("2FA required, redirecting to 2FA page")
+                _isLoading.value = false
+                _loginResult.value = LoginResult.TwoStep
+            } else {
+                // Login successful
+                setLogin(true)
+                _isLoading.value = false
+                _loginResult.value = LoginResult.Success
+            }
+        } catch (e: Exception) {
+            loge("Error checking 2FA: ${e.message}")
+            _isLoading.value = false
+            _loginResult.value = LoginResult.Error("Error checking login status")
+        }
+    }
+    
+    fun submitTwoStepCode(code: String) {
+        _isLoading.value = true
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val twoStepUrl = "https://www.v2ex.com/2fa"
+                
+                // First, get the once token from the 2FA page
+                val getResponse = HttpHelper.OK_CLIENT.newCall(
+                    Request.Builder().url(twoStepUrl).build()
+                ).execute()
+                
+                if (getResponse.code == 200) {
+                    val bodyStr = getResponse.body?.string() ?: ""
+                    val once = Parser(bodyStr).getOnceNum()
+                    
+                    val postBody = FormBody.Builder()
+                        .add("code", code)
+                        .add("once", once)
+                        .build()
+                    
+                    // Use no-redirect client to detect 302 success
+                    val noRedirectClient = HttpHelper.OK_CLIENT.newBuilder()
+                        .followRedirects(false)
+                        .followSslRedirects(false)
+                        .build()
+                    
+                    val postResponse = noRedirectClient.newCall(
+                        Request.Builder()
+                            .post(postBody)
+                            .url(twoStepUrl)
+                            .build()
+                    ).execute()
+                    
+                    _isLoading.value = false
+                    if (postResponse.code == 302) {
+                        setLogin(true)
+                        _loginResult.value = LoginResult.Success
+                    } else {
+                        _loginResult.value = LoginResult.Error("两步验证失败")
+                    }
+                } else {
+                    _isLoading.value = false
+                    _loginResult.value = LoginResult.Error("无法获取验证页面")
+                }
+            } catch (e: Exception) {
+                loge("Error in 2FA: ${e.message}")
+                _isLoading.value = false
+                _loginResult.value = LoginResult.Error("网络错误")
+            }
+        }
     }
     
     fun resetResult() {
@@ -200,10 +273,6 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
 sealed class LoginResult {
     object Success : LoginResult()
-    object TwoStep : LoginResult() // Placeholder
+    object TwoStep : LoginResult()
     data class Error(val msg: String) : LoginResult()
 }
-
-
-
-
