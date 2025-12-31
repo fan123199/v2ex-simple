@@ -69,10 +69,11 @@ fun AllNodesScreen(
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier.padding(innerPadding)) {
             if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            } else {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            if (!uiState.isLoading) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     uiState.displayedNodes.forEach { (category, nodes) ->
                         item {

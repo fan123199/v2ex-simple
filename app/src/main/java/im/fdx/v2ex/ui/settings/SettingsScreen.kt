@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import androidx.core.net.toUri
 
 data class SettingsUiState(
     val isLogin: Boolean = false,
@@ -45,7 +46,7 @@ data class SettingsUiState(
     val receiveMsg: Boolean = false,
     val backgroundMsg: Boolean = false,
     val msgPeriod: String = "15",
-    val textSize: String = "normal" // simplified for now
+    val textSize: String = "0"
 )
 
 class SettingsViewModel : ViewModel() {
@@ -73,9 +74,15 @@ class SettingsViewModel : ViewModel() {
                 showPageNum = showPageNum,
                 receiveMsg = receiveMsg,
                 backgroundMsg = backgroundMsg,
-                msgPeriod = msgPeriod
+                msgPeriod = msgPeriod,
+                textSize = pref.getString(Keys.PREF_TEXT_SIZE, "0") ?: "0"
             )
         }
+    }
+
+    fun setTextSize(size: String) {
+        pref.edit { putString(Keys.PREF_TEXT_SIZE, size) }
+        _uiState.update { it.copy(textSize = size) }
     }
     
     fun setNightMode(mode: String) {
@@ -124,7 +131,9 @@ fun SettingsScreen(
     val viewModel: SettingsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
     var showNightModeSheet by remember { mutableStateOf(false) }
+    var showTextSizeSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    val textSizeSheetState = rememberModalBottomSheetState()
     
     Scaffold(
         topBar = {
@@ -144,13 +153,13 @@ fun SettingsScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             if (uiState.isLogin) {
-                SettingsCategory("User Info")
+                SettingsCategory(stringResource(R.string.user))
                 SettingsItem(
-                    title = "Current User",
+                    title = stringResource(R.string.username),
                     subtitle = uiState.username
                 )
                  SettingsItem(
-                    title = "Logout",
+                    title = stringResource(R.string.logout),
                     onClick = {
                          // Show dialog
                          viewModel.logout(context, context as android.app.Activity)
@@ -158,15 +167,15 @@ fun SettingsScreen(
                 )
                 
                  HorizontalDivider()
-                 SettingsCategory("Message")
+                 SettingsCategory(stringResource(R.string.message))
                  SwitchSettingsItem(
-                     title = "Receive Notifications",
+                     title = stringResource(R.string.unread_message_notification),
                      checked = uiState.receiveMsg,
                      onCheckedChange = { viewModel.setReceiveMsg(it, context) }
                  )
                  if (uiState.receiveMsg) {
                       SwitchSettingsItem(
-                         title = "Background Check",
+                         title = stringResource(R.string.get_message_background),
                          checked = uiState.backgroundMsg,
                          onCheckedChange = { viewModel.setBackgroundMsg(it) }
                      )
@@ -174,21 +183,29 @@ fun SettingsScreen(
             }
             
             HorizontalDivider()
-            SettingsCategory("General")
+            SettingsCategory(stringResource(R.string.general))
             
             SettingsItem(
                 title = "Tab Settings",
                 onClick = onTabSettingClick
             )
+
+            SettingsItem(
+                title = stringResource(R.string.font_size),
+                subtitle = context.resources.getStringArray(R.array.text_size_string).getOrElse(uiState.textSize.toInt()) { "Follow System" },
+                onClick = {
+                    showTextSizeSheet = true
+                }
+            )
             
             // Night Mode Logic - simplifed dialog or dropdown
              SettingsItem(
-                title = "Night Mode",
+                title = stringResource(R.string.theme_background),
                 subtitle = when (uiState.nightMode.toInt()) {
-                    -1 -> "Follow System"
-                    1 -> "Always Off"
-                    2 -> "Always On"
-                    else -> "Follow System"
+                    -1 -> stringResource(R.string.follow_system)
+                    1 -> stringResource(R.string.light_mode)
+                    2 -> stringResource(R.string.dark_mode)
+                    else -> stringResource(R.string.follow_system)
                 },
                 onClick = {
                      showNightModeSheet = true
@@ -196,21 +213,22 @@ fun SettingsScreen(
             )
 
             HorizontalDivider()
-            SettingsCategory("About")
+            SettingsCategory(stringResource(R.string.other))
              SettingsItem(
-                title = "Version",
+                title = stringResource(R.string.version),
                 subtitle = BuildConfig.VERSION_NAME
             )
+            val noappstore = stringResource(R.string.there_is_no_app_store)
             SettingsItem(
-                title = "Rate App",
+                title = stringResource(R.string.rate),
                 onClick = {
                     try {
-                      val uri = Uri.parse("market://details?id=im.fdx.v2ex")
+                      val uri = "market://details?id=im.fdx.v2ex".toUri()
                       val intent = Intent(Intent.ACTION_VIEW, uri)
                       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                       context.startActivity(intent)
                     } catch (e: Exception) {
-                      context.toast("No App Store found")
+                        context.toast(noappstore)
                     }
                 }
             )
@@ -222,11 +240,17 @@ fun SettingsScreen(
                 onDismissRequest = { showNightModeSheet = false },
                 sheetState = sheetState
             ) {
-                Column(modifier = Modifier.padding(bottom = 32.dp)) {
+                Column(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(bottom = 16.dp)
+                ) {
                     val currentMode = uiState.nightMode.toInt()
+                    val nightModeLabels = context.resources.getStringArray(R.array.night_mode_string)
+                    // night_mode array maps to: 2 (Dark), 1 (Light), -1 (System)
                     
                     ListItem(
-                        headlineContent = { Text("Follow System") },
+                        headlineContent = { Text(stringResource(R.string.follow_system)) },
                         trailingContent = if (currentMode == -1) { { Icon(Icons.Default.Check, null) } } else null,
                         modifier = Modifier.clickable {
                             viewModel.setNightMode("-1")
@@ -234,7 +258,7 @@ fun SettingsScreen(
                         }
                     )
                     ListItem(
-                        headlineContent = { Text("Always Off") },
+                        headlineContent = { Text(stringResource(R.string.light_mode)) },
                         trailingContent = if (currentMode == 1) { { Icon(Icons.Default.Check, null) } } else null,
                         modifier = Modifier.clickable {
                             viewModel.setNightMode("1")
@@ -242,13 +266,40 @@ fun SettingsScreen(
                         }
                     )
                     ListItem(
-                        headlineContent = { Text("Always On") },
+                        headlineContent = { Text(stringResource(R.string.dark_mode)) },
                         trailingContent = if (currentMode == 2) { { Icon(Icons.Default.Check, null) } } else null,
                         modifier = Modifier.clickable {
                             viewModel.setNightMode("2")
                             showNightModeSheet = false
                         }
                     )
+                }
+            }
+        }
+
+        if (showTextSizeSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showTextSizeSheet = false },
+                sheetState = textSizeSheetState
+            ) {
+                Column(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(bottom = 16.dp)
+                ) {
+                    val fontLabels = context.resources.getStringArray(R.array.text_size_string)
+                    val fontValues = listOf("0", "1", "2", "3", "4")
+                    
+                    fontValues.forEachIndexed { index, value ->
+                        ListItem(
+                            headlineContent = { Text(fontLabels[index]) },
+                            trailingContent = if (uiState.textSize == value) { { Icon(Icons.Default.Check, null) } } else null,
+                            modifier = Modifier.clickable {
+                                viewModel.setTextSize(value)
+                                showTextSizeSheet = false
+                            }
+                        )
+                    }
                 }
             }
         }

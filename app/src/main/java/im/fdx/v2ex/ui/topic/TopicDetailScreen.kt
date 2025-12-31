@@ -78,12 +78,17 @@ fun TopicDetailScreen(
             )
         }
     ) { innerPadding ->
-        
-        PullToRefreshBox(
-            isRefreshing = uiState.isLoading,
-            onRefresh = { viewModel.refresh() },
+        Column(
             modifier = Modifier.padding(top = innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding())
         ) {
+            if (uiState.isLoading && uiState.page == 1) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            PullToRefreshBox(
+                isRefreshing = false,
+                onRefresh = { viewModel.refresh() },
+                modifier = Modifier.fillMaxSize()
+            ) {
               LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize()
@@ -232,6 +237,7 @@ fun TopicDetailScreen(
                     }
                 }
             }
+        }
         }
 
         if (showReplySheet) {

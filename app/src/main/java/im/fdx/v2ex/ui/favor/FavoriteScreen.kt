@@ -107,52 +107,48 @@ fun FavoriteNodeList(
 ) {
     val viewModel: FavoriteNodeViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    // val context = LocalContext.current // unused
 
-    if (uiState.isLoading) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (uiState.isLoading) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
-    } else if (uiState.nodes.isEmpty()) {
-         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("No favorite nodes")
-        }
-    } else {
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(minSize = 80.dp),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(uiState.nodes) { node ->
-                Column(
-                    modifier = Modifier
-                        .clickable {
-                            onNodeClick(node)
-                        },
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                     AsyncImage(
-                        model = node.avatarLargeUrl,
-                        contentDescription = "Node Avatar",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = node.title,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+        if (!uiState.isLoading && uiState.nodes.isEmpty()) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text("No favorite nodes")
+            }
+        } else if (!uiState.isLoading) {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 80.dp),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                items(uiState.nodes) { node ->
+                    Column(
+                        modifier = Modifier
+                            .clickable { onNodeClick(node) },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AsyncImage(
+                            model = node.avatarLargeUrl,
+                            contentDescription = "Node Avatar",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.size(48.dp)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = node.title,
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }
     }
 }
-
-
 
 
 

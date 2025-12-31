@@ -24,7 +24,7 @@ const val MODE_BIG4 = 4
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    private val isSystemFont by lazy { pref.getString(Keys.PREF_TEXT_SIZE, MODE_SYSTEM.toString())!!.toInt() == MODE_SYSTEM }
+    private val isSystemFont get() = pref.getString(Keys.PREF_TEXT_SIZE, MODE_SYSTEM.toString())!!.toInt() == MODE_SYSTEM
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val textSizeMode = pref.getString(Keys.PREF_TEXT_SIZE, MODE_SYSTEM.toString())!!.toInt()
@@ -62,7 +62,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         val window = this.window
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.setNavigationBarContrastEnforced(false)
+            window.isNavigationBarContrastEnforced = false
         }
         super.onCreate(savedInstanceState)
     }

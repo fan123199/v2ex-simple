@@ -12,7 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,18 +64,8 @@ fun NewTopicScreen(
                              )
                          }
                     }
-                    if (isLoading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(16.dp)
-                                .size(24.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        IconButton(onClick = onSendClick) {
-                            Icon(Icons.Default.Send, contentDescription = "Send")
-                        }
+                    IconButton(onClick = onSendClick, enabled = !isLoading) {
+                        Icon(Icons.Default.Send, contentDescription = "Send")
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -91,8 +81,15 @@ fun NewTopicScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(16.dp)
         ) {
+            if (isLoading) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
             // Node Selector
             Box(
                 modifier = Modifier
@@ -133,6 +130,7 @@ fun NewTopicScreen(
                     disabledContainerColor = Color.Transparent,
                 )
             )
+            }
         }
     }
 }

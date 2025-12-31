@@ -80,7 +80,12 @@ fun MainScreen(
                                     pagerState.animateScrollToPage(index)
                                 }
                             },
-                            text = { Text(title) }
+                            text = { 
+                                Text(
+                                    text = title,
+                                    style = MaterialTheme.typography.labelLarge
+                                ) 
+                            }
                         )
                     }
                 }

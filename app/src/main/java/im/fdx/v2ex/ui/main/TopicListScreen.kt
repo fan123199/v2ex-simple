@@ -2,13 +2,16 @@ package im.fdx.v2ex.ui.main
 
 import im.fdx.v2ex.data.model.Topic
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,14 +62,18 @@ fun TopicListScreen(
     }
 
     PullToRefreshBox(
-        isRefreshing = uiState.isLoading && uiState.page == 1,
+        isRefreshing = false,
         onRefresh = { viewModel.refresh() }
     ) {
-        if (uiState.topics.isEmpty() && !uiState.isLoading && header == null) {
-             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                 Text("暂无内容")
-             }
-        } else {
+        Column(modifier = Modifier.fillMaxSize()) {
+            if (uiState.isLoading && uiState.page == 1) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
+            if (uiState.topics.isEmpty() && !uiState.isLoading && header == null) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text("暂无内容")
+                }
+            } else {
             LazyColumn(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
@@ -94,6 +101,7 @@ fun TopicListScreen(
                         }
                     }
                 }
+            }
             }
         }
     }
