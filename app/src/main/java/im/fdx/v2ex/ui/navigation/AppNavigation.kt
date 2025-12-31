@@ -188,7 +188,8 @@ fun AppNavigation(
              NodeScreen(
                  nodeName = nodeName,
                  onBackClick = { navController.popBackStack() },
-                 onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) }
+                 onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
+                 onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) }
              )
         }
         

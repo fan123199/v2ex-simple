@@ -26,6 +26,7 @@ data class MemberUiState(
     // For Replies Tab
     val replies: List<MemberReplyModel> = emptyList(),
     val isRepliesLoading: Boolean = false,
+    val isRepliesEnd: Boolean = false,
     val repliesPage: Int = 1,
     val repliesTotalPage: Int = 1
 )
@@ -72,9 +73,12 @@ class MemberViewModel : ViewModel() {
     }
     
     fun loadMoreReplies() {
-        if (_uiState.value.isRepliesLoading) return
+        if (_uiState.value.isRepliesLoading || _uiState.value.isRepliesEnd) return
         val nextPage = _uiState.value.repliesPage + 1
-        if(nextPage > _uiState.value.repliesTotalPage) return
+        if(nextPage > _uiState.value.repliesTotalPage) {
+            _uiState.update { it.copy(isRepliesEnd = true) }
+            return
+        }
          getMemberReplies(nextPage)
     }
 
@@ -97,6 +101,7 @@ class MemberViewModel : ViewModel() {
                      state.copy(
                          replies = newReplies,
                          isRepliesLoading = false,
+                         isRepliesEnd = page >= totalPage,
                          repliesPage = page,
                          repliesTotalPage = totalPage
                      )

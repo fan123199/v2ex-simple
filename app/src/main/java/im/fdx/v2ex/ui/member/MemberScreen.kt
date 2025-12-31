@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import im.fdx.v2ex.utils.TimeUtil
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Modifier.Companion
 import im.fdx.v2ex.data.model.Member
 import im.fdx.v2ex.data.model.MemberReplyModel
 
@@ -81,13 +82,13 @@ fun MemberScreen(
             }
 
             // Tabs
-            TabRow(
+            SecondaryTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.primary,
-                indicator = { tabPositions ->
+                indicator = {
                     TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                        Modifier.tabIndicatorOffset(pagerState.currentPage)
                     )
                 }
             ) {
@@ -118,8 +119,10 @@ fun MemberScreen(
                     )
                     1 -> MemberRepliesList(
                         replies = uiState.replies,
+                        onTopicClick = onTopicClick,
                         onLoadMore = { viewModel.loadMoreReplies() },
                         isLoading = uiState.isRepliesLoading,
+                        isEnd = uiState.isRepliesEnd,
                         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
                     )
                 }
@@ -164,8 +167,10 @@ fun MemberHeader(member: Member) {
 @Composable
 fun MemberRepliesList(
     replies: List<MemberReplyModel>,
+    onTopicClick: (Topic) -> Unit,
     onLoadMore: () -> Unit,
     isLoading: Boolean,
+    isEnd: Boolean,
     contentPadding: PaddingValues = PaddingValues(16.dp)
 ) {
      val listState = rememberLazyListState()
@@ -174,7 +179,7 @@ fun MemberRepliesList(
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .filter { index ->
-                index != null && index >= replies.size - 2 && !isLoading && replies.isNotEmpty()
+                index != null && index >= replies.size - 2 && !isLoading && !isEnd && replies.isNotEmpty()
             }
             .collect {
                 onLoadMore()
@@ -184,6 +189,7 @@ fun MemberRepliesList(
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize(), contentPadding = contentPadding) {
         items(replies) { reply ->
             Card(
+                onClick = { onTopicClick(reply.topic) },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                  colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {

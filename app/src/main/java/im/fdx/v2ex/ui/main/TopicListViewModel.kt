@@ -38,6 +38,7 @@ data class TopicListUiState(
     val page: Int = 1,
     val totalPage: Int = 0,
     val isEndless: Boolean = true,
+    val isEnd: Boolean = false,
     val node: Node? = null
 )
 
@@ -97,15 +98,17 @@ class TopicListViewModel : ViewModel() {
     }
 
     fun refresh() {
-        _uiState.update { it.copy(isLoading = true, page = 1) }
+        _uiState.update { it.copy(isLoading = true, page = 1, isEnd = false) }
         fetchTopics(1, isRefresh = true)
     }
 
     fun loadMore() {
-        if (_uiState.value.isLoading) return
+        if (_uiState.value.isLoading || _uiState.value.isEnd) return
         val nextPage = _uiState.value.page + 1
-        // Basic check to stop endless if we know total page
-         if (_uiState.value.totalPage > 0 && nextPage > _uiState.value.totalPage) return
+        if (_uiState.value.totalPage > 0 && nextPage > _uiState.value.totalPage) {
+             _uiState.update { it.copy(isEnd = true) }
+             return
+        }
 
         _uiState.update { it.copy(isLoading = true, page = nextPage) }
         fetchTopics(nextPage, isRefresh = false)
@@ -164,12 +167,13 @@ class TopicListViewModel : ViewModel() {
                     } else null
                     
                     _uiState.update { currentState ->
-                        val combinedList = if (isRefresh) newTopics else currentState.topics + newTopics
+                        val combinedList = if (isRefresh) newTopics else (currentState.topics + newTopics).distinctBy { it.id }
                         currentState.copy(
                             topics = combinedList,
                             isLoading = false,
                             page = page,
                             totalPage = if(totalPage > 0) totalPage else currentState.totalPage,
+                            isEnd = (totalPage > 0 && page >= totalPage) || (newTopics.isEmpty() && !isRefresh),
                             node = nodeInfo ?: currentState.node
                         )
                     }
@@ -251,12 +255,13 @@ class TopicListViewModel : ViewModel() {
                      }
 
                      _uiState.update { currentState ->
-                        val combinedList = if (isRefresh) topics else currentState.topics + topics
+                        val combinedList = if (isRefresh) topics else (currentState.topics + topics).distinctBy { it.id }
                         currentState.copy(
                             topics = combinedList,
                             isLoading = false,
                             page = page,
-                            totalPage = totalPage
+                            totalPage = totalPage,
+                            isEnd = (totalPage > 0 && page >= totalPage) || (topics.isEmpty() && !isRefresh)
                         )
                     }
                  } catch (e: Exception) {

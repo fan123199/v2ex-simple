@@ -54,7 +54,7 @@ fun TopicListScreen(
     LaunchedEffect(listState) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .filter { index ->
-                index != null && index >= uiState.topics.size - 2 && !uiState.isLoading && uiState.topics.isNotEmpty()
+                index != null && index >= uiState.topics.size - 2 && !uiState.isLoading && !uiState.isEnd && uiState.topics.isNotEmpty()
             }
             .collect {
                 viewModel.loadMore()

@@ -86,21 +86,11 @@ fun AllNodesScreen(
                                     .padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                         }
-                        // Use flow layout logic or simplified grid?
-                        // For simplicity, using a wrapped flow row is hard in LazyColumn item.
-                        // Let's use simple list items for now, or grouped?
-                        // Original used Flexbox. Compose allows FlowRow (experimental).
-                        // Since FlowRow is experimental and potentially expensive in LazyColumn if not careful.
-                        // We will just list them simply or use staggered grid?
-                        // StaggeredGrid is complicated for section headers.
-                        // Let's just render them as simple chips in a FlowRow-like manner manually or just listed.
-                        // Actually, 'OptIn(ExperimentalLayoutApi::class)' FlowRow is available.
-                        
+
                         item {
                             FlowRow(
                                 modifier = Modifier.padding(horizontal = 16.dp),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
                                 nodes.forEach { node ->
                                     SuggestionChip(

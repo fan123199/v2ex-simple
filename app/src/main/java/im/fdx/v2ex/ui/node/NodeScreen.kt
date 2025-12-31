@@ -29,7 +29,8 @@ import im.fdx.v2ex.data.model.Topic
 fun NodeScreen(
     nodeName: String,
     onBackClick: () -> Unit,
-    onTopicClick: (Topic) -> Unit
+    onTopicClick: (Topic) -> Unit,
+    onMemberClick: (String?) -> Unit
 ) {
     val viewModel: TopicListViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -56,7 +57,7 @@ fun NodeScreen(
                 nodeName = nodeName,
                 viewModel = viewModel,
                 onTopicClick = onTopicClick,
-                onMemberClick = { /* Add onMemberClick if needed, or ignore for Node view */ }, 
+                onMemberClick = onMemberClick, 
                 onNodeClick = { /* Already on Node */ },
                 header = {
                     uiState.node?.let { node ->
