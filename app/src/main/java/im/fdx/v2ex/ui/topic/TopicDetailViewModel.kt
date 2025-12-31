@@ -33,7 +33,8 @@ data class TopicDetailUiState(
     val token: String? = null,
     val isFavored: Boolean = false,
     val isThanked: Boolean = false,
-    val isIgnored: Boolean = false
+    val isIgnored: Boolean = false,
+    val isEnd: Boolean = false
 )
 
 class TopicDetailViewModel : ViewModel() {
@@ -57,9 +58,12 @@ class TopicDetailViewModel : ViewModel() {
     }
 
     fun loadMore() {
-        if (_uiState.value.isLoading) return
+        if (_uiState.value.isLoading || _uiState.value.isEnd) return
         val nextPage = _uiState.value.page + 1
-        if (nextPage > _uiState.value.totalPage) return
+        if (nextPage > _uiState.value.totalPage) {
+            _uiState.update { it.copy(isEnd = true) }
+            return
+        }
         _uiState.update { it.copy(isLoading = true, page = nextPage) }
         fetchReplies(nextPage, isRefresh = false)
     }
@@ -209,7 +213,8 @@ class TopicDetailViewModel : ViewModel() {
                              token = token,
                              isFavored = isFavored,
                              isThanked = isThanked,
-                             isIgnored = isIgnored
+                             isIgnored = isIgnored,
+                             isEnd = page >= totalPage || (replies.isEmpty() && !isRefresh)
                          )
                      }
                  } catch (e: Exception) {

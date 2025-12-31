@@ -34,10 +34,15 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import im.fdx.v2ex.utils.TimeUtil
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier.Companion
 import im.fdx.v2ex.data.model.Member
 import im.fdx.v2ex.data.model.MemberReplyModel
+import im.fdx.v2ex.R
+import androidx.compose.ui.res.painterResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,6 +74,22 @@ fun MemberScreen(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { viewModel.toggleFollow() }) {
+                        Icon(
+                            painter = painterResource(id = if (uiState.isFollowed) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp),
+                            contentDescription = if (uiState.isFollowed) "Unfollow" else "Follow",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    IconButton(onClick = { viewModel.toggleBlock() }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_block_primary_24dp),
+                            contentDescription = if (uiState.isBlocked) "Unblock" else "Block",
+                            tint = if (uiState.isBlocked) Color.Red else MaterialTheme.colorScheme.primary
                         )
                     }
                 }
@@ -139,7 +160,7 @@ fun MemberHeader(member: Member) {
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-             AsyncImage(
+            AsyncImage(
                 model = member.avatarLargeUrl,
                 contentDescription = "Member Avatar",
                 contentScale = ContentScale.Crop,
@@ -149,17 +170,84 @@ fun MemberHeader(member: Member) {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text(text = member.username, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text(
+                    text = member.username,
+                    style = MaterialTheme.typography.headlineSmall,
+                    fontWeight = FontWeight.Bold
+                )
                 if (!member.tagline.isNullOrEmpty()) {
-                    Text(text = member.tagline!!, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(
+                        text = member.tagline!!,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
                 Spacer(modifier = Modifier.height(4.dp))
-                // Text(text = "Joined ${TimeUtil.getAbsoluteTime(member.created.toLongOrNull()?:0L)}", style = MaterialTheme.typography.labelSmall)
+                if (member.id.isNotEmpty()) {
+                    Text(
+                        text = "V2EX 第 ${member.id} 号会员",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
+                if (member.created.isNotEmpty()) {
+                    Text(
+                        text = "加入于 ${member.created}",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                }
             }
         }
+
         if (!member.bio.isNullOrEmpty()) {
-             Spacer(modifier = Modifier.height(12.dp))
-             Text(text = member.bio!!, style = MaterialTheme.typography.bodyMedium)
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = member.bio!!, style = MaterialTheme.typography.bodyMedium)
+        }
+
+        // Social Links
+        Row(
+            modifier = Modifier
+                .padding(vertical = 12.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            member.website?.let {
+                SocialIcon(iconId = R.drawable.ic_website, url = it)
+            }
+            member.twitter?.let {
+                SocialIcon(iconId = R.drawable.ic_twitter, url = it)
+            }
+            member.github?.let {
+                SocialIcon(iconId = R.drawable.ic_github, url = it)
+            }
+            member.location?.let {
+                SocialIcon(iconId = R.drawable.ic_location, label = it)
+            }
+        }
+    }
+}
+
+@Composable
+fun SocialIcon(iconId: Int, url: String? = null, label: String? = null) {
+    val context = LocalContext.current
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
+        url?.let {
+             try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                context.startActivity(intent)
+            } catch (e: Exception) {}
+        }
+    }.padding(4.dp)) {
+        Icon(
+            painter = painterResource(id = iconId),
+            contentDescription = null,
+            modifier = Modifier.size(18.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+        if (!label.isNullOrEmpty()) {
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = label, style = MaterialTheme.typography.labelSmall)
         }
     }
 }

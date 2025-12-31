@@ -156,6 +156,57 @@ class Parser(private val htmlStr: String) {
         return memberModel
     }
 
+    fun parseMemberProfile(username: String): Member {
+        val member = Member(username = username)
+        val main = doc.getElementById("Main") ?: return member
+        val box = main.getElementsByClass("box").first() ?: return member
+        
+        // Avatar and Username
+        val avatar = box.getElementsByClass("avatar").first()?.attr("src") ?: ""
+        member.avatar_normal = avatar
+
+        // Social Links from rightbar or main box
+        val buttons = box.getElementsByClass("inner").first()?.getElementsByClass("social_button")
+        buttons?.forEach { btn ->
+            val href = btn.attr("href")
+            when {
+                href.contains("github.com") -> member.github = href
+                href.contains("twitter.com") -> member.twitter = href
+                href.contains("location") -> member.location = btn.text()
+                else -> {
+                    val img = btn.getElementsByTag("img").first()?.attr("src") ?: ""
+                    if (img.contains("home")) member.website = href
+                }
+            }
+        }
+        
+        // Metadata: Member number and Join date
+        val gray = box.getElementsByClass("gray").first()?.text() ?: ""
+        // V2EX 第 12345 号会员，加入于 2012-01-01 12:00:00 +08:00
+        val memberId = Regex("第 (\\d+) 号会员").find(gray)?.groupValues?.get(1) ?: ""
+        val joinDate = Regex("加入于 (.*)").find(gray)?.groupValues?.get(1)?.trim() ?: ""
+        
+        member.id = memberId
+        member.created = joinDate
+        
+        // Tagline and Bio
+        val tagline = box.getElementsByClass("tagline").first()?.text()
+        val bio = box.getElementsByClass("bio").first()?.text()
+        member.tagline = tagline
+        member.bio = bio
+        
+        return member
+    }
+
+    fun getMemberStatus(): Triple<Boolean, Boolean, String> {
+        val main = doc.getElementById("Main")
+        val html = main?.html() ?: ""
+        val isFollowed = html.contains("unfollow")
+        val isBlocked = html.contains("unblock")
+        val once = Regex("once=(\\d+)").find(html)?.groupValues?.get(1) ?: ""
+        return Triple(isFollowed, isBlocked, once)
+    }
+
 
     fun getTotalPageInMember(): List<Int> {
         val input = doc.getElementById("Main")?.getElementsByClass("header")?.first()?.text()?:""

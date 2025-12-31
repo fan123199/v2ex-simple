@@ -28,7 +28,10 @@ data class MemberUiState(
     val isRepliesLoading: Boolean = false,
     val isRepliesEnd: Boolean = false,
     val repliesPage: Int = 1,
-    val repliesTotalPage: Int = 1
+    val repliesTotalPage: Int = 1,
+    val onceToken: String? = null,
+    val isFollowed: Boolean = false,
+    val isBlocked: Boolean = false
 )
 
 class MemberViewModel : ViewModel() {
@@ -57,17 +60,91 @@ class MemberViewModel : ViewModel() {
                      val body = response.body?.string() ?: ""
                      try {
                          val member = NetManager.myGson.fromJson(body, Member::class.java)
-                         // Fetch detailed info via HTML for block/follow status if needed, 
-                         // but for now API covers basic info. 
-                         // MemberActivity did getByHtml as fallback or for extra tokens.
-                         // For Phase 4, we stick to API where possible for profile.
-                         _uiState.update { it.copy(member = member, isLoadingProfile = false) }
+                         _uiState.update { it.copy(member = member) }
+                         getMemberInfoHtml()
                      } catch (e: Exception) {
                           _uiState.update { it.copy(isLoadingProfile = false, error = "Parse Error") }
                      }
                  } else {
                      _uiState.update { it.copy(isLoadingProfile = false, error = "Error ${response.code}") }
                  }
+            }
+        })
+    }
+
+    private fun getMemberInfoHtml() {
+        val url = "${NetManager.HTTPS_V2EX_BASE}/member/$username"
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                _uiState.update { it.copy(isLoadingProfile = false) }
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    val body = response.body?.string() ?: ""
+                    val parser = Parser(body)
+                    val enrichedMember = parser.parseMemberProfile(username)
+                    val (isFollowed, isBlocked, once) = parser.getMemberStatus()
+                    
+                    _uiState.update { currentState ->
+                        val finalMember = currentState.member?.copy(
+                            id = if (enrichedMember.id.isNotEmpty()) enrichedMember.id else currentState.member.id,
+                            created = if (enrichedMember.created.isNotEmpty()) enrichedMember.created else currentState.member.created,
+                            github = enrichedMember.github ?: currentState.member.github,
+                            twitter = enrichedMember.twitter ?: currentState.member.twitter,
+                            website = enrichedMember.website ?: currentState.member.website,
+                            location = enrichedMember.location ?: currentState.member.location,
+                            bio = enrichedMember.bio ?: currentState.member.bio,
+                            tagline = enrichedMember.tagline ?: currentState.member.tagline,
+                            avatar_normal = if (enrichedMember.avatar_normal.isNotEmpty()) enrichedMember.avatar_normal else currentState.member.avatar_normal
+                        )
+                        currentState.copy(
+                            member = finalMember,
+                            isLoadingProfile = false,
+                            isFollowed = isFollowed,
+                            isBlocked = isBlocked,
+                            onceToken = once
+                        )
+                    }
+                } else {
+                    _uiState.update { it.copy(isLoadingProfile = false) }
+                }
+            }
+        })
+    }
+    
+    fun toggleFollow() {
+        val once = _uiState.value.onceToken ?: return
+        val id = _uiState.value.member?.id ?: return
+        if (id.isEmpty()) return
+        
+        val isFollowed = _uiState.value.isFollowed
+        val url = "${NetManager.HTTPS_V2EX_BASE}/${if (isFollowed) "unfollow" else "follow"}/$id?once=$once"
+        
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    getMemberInfoHtml() // Refresh status
+                }
+            }
+        })
+    }
+
+    fun toggleBlock() {
+        val once = _uiState.value.onceToken ?: return
+        val id = _uiState.value.member?.id ?: return
+        if (id.isEmpty()) return
+
+        val isBlocked = _uiState.value.isBlocked
+        val url = "${NetManager.HTTPS_V2EX_BASE}/${if (isBlocked) "unblock" else "block"}/$id?once=$once"
+
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    getMemberInfoHtml() // Refresh status
+                }
             }
         })
     }
