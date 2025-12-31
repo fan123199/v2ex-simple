@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import im.fdx.v2ex.data.model.Topic
 import androidx.compose.material.icons.Icons
@@ -32,6 +33,13 @@ import androidx.compose.ui.text.fromHtml
 import coil.compose.AsyncImage
 import im.fdx.v2ex.R
 import im.fdx.v2ex.ui.main.TopicItem
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
+import im.fdx.v2ex.data.network.NetManager
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,14 +64,102 @@ fun TopicDetailScreen(
     
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
+    val context = LocalContext.current
+    var showMoreActions by remember { mutableStateOf(false) }
+
+    val topicUrl = "${NetManager.HTTPS_V2EX_BASE}/t/$topicId"
+
+    val showTitleInBar by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex > 0 || (listState.firstVisibleItemScrollOffset > 100)
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Topic Details") },
+                title = {
+                    if (showTitleInBar) {
+                        Text(
+                            text = uiState.topic?.title ?: "",
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { showMoreActions = true }) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    
+                    DropdownMenu(
+                        expanded = showMoreActions,
+                        onDismissRequest = { showMoreActions = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text(if (uiState.isFavored) "取消收藏" else "收藏") },
+                            leadingIcon = {
+                                Icon(
+                                    if (uiState.isFavored) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                viewModel.favorTopic()
+                                showMoreActions = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("感谢") },
+                            leadingIcon = { Icon(painterResource(id = R.drawable.ic_thank), contentDescription = null, modifier = Modifier.size(18.dp)) },
+                            onClick = {
+                                viewModel.thankTopic()
+                                showMoreActions = false
+                            },
+                            enabled = !uiState.isThanked
+                        )
+                        DropdownMenuItem(
+                            text = { Text("忽略") },
+                            leadingIcon = { Icon(Icons.Default.Info, contentDescription = null) },
+                            onClick = {
+                                viewModel.ignoreTopic()
+                                showMoreActions = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("分享") },
+                            leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                            onClick = {
+                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, topicUrl)
+                                }
+                                context.startActivity(Intent.createChooser(shareIntent, "Share topic"))
+                                showMoreActions = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("在浏览器打开") },
+                            leadingIcon = { Icon(painterResource(id = R.drawable.ic_website), contentDescription = null) },
+                            onClick = {
+                                context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(topicUrl)))
+                                showMoreActions = false
+                            }
+                        )
                     }
                 }
             )
@@ -344,7 +440,11 @@ fun BottomReplyInput(
                 },
                 enabled = text.isNotBlank()
             ) {
-                Icon(Icons.AutoMirrored.Filled.Send, contentDescription = "Send")
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    tint = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }

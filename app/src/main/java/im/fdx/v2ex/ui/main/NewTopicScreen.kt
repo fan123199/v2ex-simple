@@ -52,7 +52,11 @@ fun NewTopicScreen(
                 title = { Text(text = "R.string.new_topic") }, // We should use string resource
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 actions = {
@@ -60,19 +64,24 @@ fun NewTopicScreen(
                          IconButton(onClick = onUploadClick) {
                              Icon(
                                  painter = painterResource(id = R.drawable.ic_image),
-                                 contentDescription = "Upload Image"
+                                 contentDescription = "Upload Image",
+                                 tint = MaterialTheme.colorScheme.primary
                              )
                          }
                     }
                     IconButton(onClick = onSendClick, enabled = !isLoading) {
-                        Icon(Icons.Default.Send, contentDescription = "Send")
+                        Icon(
+                            imageVector = Icons.Default.Send,
+                            contentDescription = "Send",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    navigationIconContentColor = MaterialTheme.colorScheme.primary,
+                    actionIconContentColor = MaterialTheme.colorScheme.primary
                 )
             )
         }

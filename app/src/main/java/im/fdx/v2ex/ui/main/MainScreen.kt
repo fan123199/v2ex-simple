@@ -55,12 +55,20 @@ fun MainScreen(
                     title = { Text("V2EX") },
                     navigationIcon = {
                         IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
-                            Icon(Icons.Default.Menu, contentDescription = "Menu")
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     },
                     actions = {
                         IconButton(onClick = onSearchClick) {
-                             Icon(TopicListScreenDefaults.SearchIcon, contentDescription = "Search")
+                             Icon(
+                                 imageVector = TopicListScreenDefaults.SearchIcon,
+                                 contentDescription = "Search",
+                                 tint = MaterialTheme.colorScheme.primary
+                             )
                         }
                     },
                     scrollBehavior = scrollBehavior

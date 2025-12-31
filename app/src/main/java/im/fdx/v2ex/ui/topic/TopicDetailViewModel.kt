@@ -30,7 +30,10 @@ data class TopicDetailUiState(
     val error: String? = null,
     val page: Int = 1,
     val totalPage: Int = 1,
-    val token: String? = null
+    val token: String? = null,
+    val isFavored: Boolean = false,
+    val isThanked: Boolean = false,
+    val isIgnored: Boolean = false
 )
 
 class TopicDetailViewModel : ViewModel() {
@@ -103,8 +106,6 @@ class TopicDetailViewModel : ViewModel() {
 
             override fun onResponse(call: Call, response: Response) {
                  if (response.isSuccessful) {
-                     // Ideally update the specific reply item's local state to "thanked"
-                     // For now, maybe just refresh or let user know
                      val body = response.body.string()
                      val json = JSONObject(body)
                      if(json.optBoolean("success")) {
@@ -115,6 +116,54 @@ class TopicDetailViewModel : ViewModel() {
                  }
             }
          })
+    }
+
+    fun favorTopic() {
+        val token = _uiState.value.token
+        if (token == null) return
+        val isFavored = _uiState.value.isFavored
+        val action = if (isFavored) "unfavorite" else "favorite"
+        val url = "${NetManager.HTTPS_V2EX_BASE}/$action/topic/$topicId?once=$token"
+        
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    _uiState.update { it.copy(isFavored = !isFavored) }
+                }
+            }
+        })
+    }
+
+    fun thankTopic() {
+        if (_uiState.value.isThanked) return
+        val token = _uiState.value.token
+        if (token == null) return
+        val url = "${NetManager.HTTPS_V2EX_BASE}/thank/topic/$topicId?once=$token"
+        
+        HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url).post(FormBody.Builder().build()).build()).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    _uiState.update { it.copy(isThanked = true) }
+                }
+            }
+        })
+    }
+
+    fun ignoreTopic() {
+        val token = _uiState.value.token
+        if (token == null) return
+        val url = "${NetManager.HTTPS_V2EX_BASE}/ignore/topic/$topicId?once=$token"
+        
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    _uiState.update { it.copy(isIgnored = true) }
+                }
+            }
+        })
     }
 
     private fun fetchReplies(page: Int, isRefresh: Boolean) {
@@ -144,6 +193,10 @@ class TopicDetailViewModel : ViewModel() {
                      val totalPageArr = parser.getPageValue()
                      val totalPage = if(totalPageArr.size >= 2) totalPageArr[1] else 1
                      val token = parser.getOnceNum()
+                     
+                     val isFavored = parser.isTopicFavored()
+                     val isThanked = parser.isTopicThanked()
+                     val isIgnored = parser.isIgnored()
 
                      _uiState.update { currentState ->
                          val combinedReplies = if (isRefresh) replies else currentState.replies + replies
@@ -153,7 +206,10 @@ class TopicDetailViewModel : ViewModel() {
                              isLoading = false,
                              page = page,
                              totalPage = totalPage,
-                             token = token
+                             token = token,
+                             isFavored = isFavored,
+                             isThanked = isThanked,
+                             isIgnored = isIgnored
                          )
                      }
                  } catch (e: Exception) {
