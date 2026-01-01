@@ -67,7 +67,8 @@ fun TopicDetailScreen(
     initialTopic: Topic?,
     viewModel: TopicDetailViewModel = viewModel(),
     onBackClick: () -> Unit,
-    onMemberClick: (String) -> Unit
+    onMemberClick: (String?) -> Unit,
+    onReportClick: (String, String) -> Unit
 ) {
     var replyText by remember { mutableStateOf("") }
     var selectedReply by remember { mutableStateOf<Reply?>(null) }
@@ -75,7 +76,11 @@ fun TopicDetailScreen(
     var quotedReply by remember { mutableStateOf<Reply?>(null) }
     var clickOffset by remember { mutableStateOf(Offset.Zero) }
     var showQuoteDialog by remember { mutableStateOf(false) }
+    var showReportSheet by remember { mutableStateOf(false) }
+    var showThankDialog by remember { mutableStateOf(false) }
+    var replyToThank by remember { mutableStateOf<Reply?>(null) }
     val sheetState = rememberModalBottomSheetState()
+    val reportSheetState = rememberModalBottomSheetState()
     val clipboardManager = LocalClipboard.current
     LaunchedEffect(topicId) {
         viewModel.init(topicId, initialTopic)
@@ -206,6 +211,18 @@ fun TopicDetailScreen(
                             onClick = {
                                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(topicUrl)))
                                 showMoreActions = false
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("报告问题") },
+                            leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                            onClick = {
+                                showMoreActions = false
+                                if (!im.fdx.v2ex.myApp.isLogin) {
+                                    android.widget.Toast.makeText(context, "请先登录", android.widget.Toast.LENGTH_SHORT).show()
+                                } else {
+                                    showReportSheet = true
+                                }
                             }
                         )
                     }
@@ -355,7 +372,12 @@ fun TopicDetailScreen(
                                 selectedReply = it
                                 showReplySheet = true
                             },
-                            onThankClick = { /* TODO */ },
+                            onThankClick = {
+                                if (!it.isThanked) {
+                                    replyToThank = it
+                                    showThankDialog = true
+                                }
+                            },
                             onLongClick = {
                                 selectedReply = it
                                 showReplySheet = true
@@ -471,6 +493,32 @@ fun TopicDetailScreen(
                             showReplySheet = false
                         }
                     )
+                }
+            }
+        }
+
+        if (showReportSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showReportSheet = false },
+                sheetState = reportSheetState
+            ) {
+                Column(modifier = Modifier.padding(bottom = 32.dp)) {
+                    Text(
+                        text = "请选择举报的理由",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    listOf("大量发布广告", "恶意骚扰", "侵权内容", "不友善内容", "其他").forEach { reason ->
+                        ListItem(
+                            headlineContent = { Text(reason) },
+                            modifier = Modifier.clickable {
+                                showReportSheet = false
+                                val reportTitle = "报告主题：${uiState.topic?.title}"
+                                val reportContent = "主题链接：$topicUrl\n发布者：${uiState.topic?.member?.username}\n举报理由：$reason"
+                                onReportClick(reportTitle, reportContent)
+                            }
+                        )
+                    }
                 }
             }
         }

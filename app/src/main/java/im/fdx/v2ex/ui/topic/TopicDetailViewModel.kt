@@ -204,6 +204,9 @@ class TopicDetailViewModel : ViewModel() {
 
                      _uiState.update { currentState ->
                          val combinedReplies = if (isRefresh) replies else currentState.replies + replies
+                         combinedReplies.forEach { r ->
+                             r.isLouzu = r.member?.username == topicHeader.member?.username
+                         }
                          currentState.copy(
                              topic = topicHeader, // Update header if parsed
                              replies = combinedReplies,

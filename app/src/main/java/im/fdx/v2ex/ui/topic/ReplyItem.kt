@@ -3,6 +3,7 @@ package im.fdx.v2ex.ui.topic
 import im.fdx.v2ex.data.model.Topic
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -10,6 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.material3.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -101,8 +105,12 @@ fun ReplyItem(
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary,
                             modifier = Modifier
-                                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(4.dp))
-                                .padding(horizontal = 4.dp, vertical = 1.dp)
+                                .border(
+                                    width = 0.5.dp,
+                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                                    shape = RoundedCornerShape(2.dp)
+                                )
+                                .padding(horizontal = 4.dp, vertical = 0.dp)
                         )
                     }
 
@@ -183,26 +191,36 @@ fun ReplyItem(
                      horizontalArrangement = Arrangement.End,
                      verticalAlignment = Alignment.CenterVertically
                  ) {
-                     if (reply.thanks > 0) {
-                          Icon(
-                             painter = painterResource(id = R.drawable.ic_thank),
+                     Row(
+                        modifier = Modifier
+                            .clickable { onThankClick(reply) }
+                            .padding(4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                     ) {
+                         Icon(
+                             imageVector = if (reply.isThanked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                              contentDescription = "Thanks",
-                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                             tint = if (reply.isThanked) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
                              modifier = Modifier.size(16.dp)
                          )
-                         Text(
-                             text = reply.thanks.toString(),
-                             style = MaterialTheme.typography.labelSmall,
-                             modifier = Modifier.padding(start = 2.dp, end = 12.dp)
-                         )
+                         if (reply.thanks > 0) {
+                             Text(
+                                 text = reply.thanks.toString(),
+                                 style = MaterialTheme.typography.labelSmall,
+                                 color = if (reply.isThanked) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
+                                 modifier = Modifier.padding(start = 2.dp)
+                             )
+                         }
                      }
                      
-                     Icon(
-                         painter = painterResource(id = R.drawable.ic_comment),
-                         contentDescription = "Reply",
-                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                         modifier = Modifier.size(16.dp)
-                     )
+                     Spacer(modifier = Modifier.width(16.dp))
+                     
+                      Icon(
+                          painter = painterResource(id = R.drawable.ic_comment),
+                          contentDescription = "Reply",
+                          tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                          modifier = Modifier.size(16.dp)
+                      )
                  }
 
             }

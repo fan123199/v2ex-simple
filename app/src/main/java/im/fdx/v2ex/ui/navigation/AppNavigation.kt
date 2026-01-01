@@ -150,7 +150,10 @@ fun AppNavigation(
                 topicId = topicId,
                 initialTopic = null,
                 onBackClick = { navController.popBackStack() },
-                onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) }
+                onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) },
+                onReportClick = { title, content ->
+                    navController.navigate(Screen.NewTopic.createRoute(title = title, content = content))
+                }
             )
         }
 
