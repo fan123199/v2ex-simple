@@ -34,13 +34,21 @@ data class TopicDetailUiState(
     val isFavored: Boolean = false,
     val isThanked: Boolean = false,
     val isIgnored: Boolean = false,
-    val isEnd: Boolean = false
+    val isEnd: Boolean = false,
+    val filterType: FilterType = FilterType.None,
+    val filterTarget: String? = null
 )
+
+enum class FilterType {
+    None, User, Conversation
+}
 
 class TopicDetailViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(TopicDetailUiState())
     val uiState: StateFlow<TopicDetailUiState> = _uiState.asStateFlow()
+
+    private val allReplies = mutableListOf<Reply>()
 
     private var topicId: String = ""
 
@@ -202,14 +210,32 @@ class TopicDetailViewModel : ViewModel() {
                      val isThanked = parser.isTopicThanked()
                      val isIgnored = parser.isIgnored()
 
-                     _uiState.update { currentState ->
-                         val combinedReplies = if (isRefresh) replies else currentState.replies + replies
-                         combinedReplies.forEach { r ->
+                      _uiState.update { currentState ->
+                         if (isRefresh) {
+                             allReplies.clear()
+                         }
+                         
+                         replies.forEach { r ->
                              r.isLouzu = r.member?.username == topicHeader.member?.username
                          }
+                         
+                         // Deduplicate based on ID when adding to allReplies
+                         val existingIds = allReplies.map { it.id }.toSet()
+                         allReplies.addAll(replies.filter { it.id !in existingIds })
+
+                         val displayReplies = when (currentState.filterType) {
+                             FilterType.None -> allReplies.toList()
+                             FilterType.User -> allReplies.filter { it.member?.username == currentState.filterTarget }
+                             FilterType.Conversation -> {
+                                 // Simple conversation reconstruction would be hard here without more context,
+                                 // usually it's better to reset filter when loading more if in filtered view
+                                 allReplies.toList()
+                             }
+                         }
+
                          currentState.copy(
-                             topic = topicHeader, // Update header if parsed
-                             replies = combinedReplies,
+                             topic = topicHeader,
+                             replies = displayReplies,
                              isLoading = false,
                              page = page,
                              totalPage = totalPage,
@@ -240,7 +266,7 @@ class TopicDetailViewModel : ViewModel() {
 
     fun findRecentReplyByUsername(username: String, beforeReplyId: String? = null): Reply? {
         logd("Searching for recent reply by $username before $beforeReplyId")
-        val replies = _uiState.value.replies
+        val replies = allReplies
         val found = if (beforeReplyId == null) {
             replies.findLast { it.member?.username?.equals(username, ignoreCase = true) == true }
         } else {
@@ -253,6 +279,65 @@ class TopicDetailViewModel : ViewModel() {
         }
         logd("Found recent reply: ${found?.id}")
         return found
+    }
+
+    fun ignoreReply(replyId: String) {
+        allReplies.removeAll { it.id == replyId }
+        applyCurrentFilter()
+    }
+
+    fun filterByUser(username: String) {
+        _uiState.update { it.copy(filterType = FilterType.User, filterTarget = username) }
+        applyCurrentFilter()
+    }
+
+    fun showConversation(replyId: String) {
+        val conversationIds = mutableSetOf<String>()
+        var current: Reply? = allReplies.find { it.id == replyId }
+        
+        while (current != null) {
+            conversationIds.add(current.id)
+            val content = current.content ?: ""
+            // Simple logic: if content contains @username #floor, try to find that reply
+            val match = """@(\w+)\s*#(\d+)""".toRegex().find(content)
+            if (match != null) {
+                val username = match.groupValues[1]
+                val floor = match.groupValues[2].toIntOrNull() ?: -1
+                current = findReplyByFloor(username, floor)
+                if (current != null && conversationIds.contains(current.id)) break // Prevent loops
+            } else {
+                // If it only mentions @username, try to find the most recent reply by that user
+                val mentionMatch = """@(\w+)""".toRegex().find(content)
+                if (mentionMatch != null) {
+                    val username = mentionMatch.groupValues[1]
+                    current = findRecentReplyByUsername(username, current.id)
+                    if (current != null && conversationIds.contains(current.id)) break
+                } else {
+                    current = null
+                }
+            }
+        }
+        
+        _uiState.update { it.copy(filterType = FilterType.Conversation, filterTarget = replyId) }
+        _uiState.update { currentState ->
+            currentState.copy(replies = allReplies.filter { it.id in conversationIds }.sortedBy { it.getRowNum() })
+        }
+    }
+
+    fun clearFilter() {
+        _uiState.update { it.copy(filterType = FilterType.None, filterTarget = null) }
+        applyCurrentFilter()
+    }
+
+    private fun applyCurrentFilter() {
+        _uiState.update { currentState ->
+            val filtered = when (currentState.filterType) {
+                FilterType.None -> allReplies.toList()
+                FilterType.User -> allReplies.filter { it.member?.username == currentState.filterTarget }
+                FilterType.Conversation -> currentState.replies // Already set in showConversation
+            }
+            currentState.copy(replies = filtered)
+        }
     }
 }
 

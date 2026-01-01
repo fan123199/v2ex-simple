@@ -58,9 +58,12 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import im.fdx.v2ex.data.network.NetManager
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.TextRange
 
 
 
@@ -112,7 +115,7 @@ fun TopicDetailContent(
     onReportClick: (String, String) -> Unit
 ) {
     val viewModel: TopicDetailViewModel = viewModel(key = "topic_$topicId")
-    var replyText by remember { mutableStateOf("") }
+    var replyText by remember { mutableStateOf(TextFieldValue("")) }
     var selectedReply by remember { mutableStateOf<Reply?>(null) }
     var showReplySheet by remember { mutableStateOf(false) }
     var quotedReply by remember { mutableStateOf<Reply?>(null) }
@@ -273,8 +276,8 @@ fun TopicDetailContent(
         },
         bottomBar = {
             BottomReplyInput(
-                text = replyText,
-                onTextChange = { replyText = it },
+                value = replyText,
+                onValueChange = { replyText = it },
                 onSend = { content ->
                     viewModel.postReply(content)
                 },
@@ -299,6 +302,43 @@ fun TopicDetailContent(
                     state = listState,
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    if (uiState.filterType != FilterType.None) {
+                        item {
+                            Surface(
+                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                modifier = Modifier.fillMaxWidth().clickable { viewModel.clearFilter() }
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = if (uiState.filterType == FilterType.User) Icons.Default.Person else Icons.Default.Forum,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp),
+                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text(
+                                        text = when (uiState.filterType) {
+                                            FilterType.User -> "正在查看 ${uiState.filterTarget} 的全部回复"
+                                            FilterType.Conversation -> "正在查看对话列表"
+                                            else -> ""
+                                        },
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.close),
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+                        }
+                    }
                     // Header (Topic Content) - styled like TopicItem
                     item {
                         uiState.topic?.let { topic ->
@@ -411,8 +451,12 @@ fun TopicDetailContent(
                             reply = reply,
                             onMemberClick = { onMemberClick(it ?: "") },
                             onReplyClick = {
-                                selectedReply = it
-                                showReplySheet = true
+                                val text = "@${it.member?.username} "
+                                replyText = TextFieldValue(
+                                    text = text,
+                                    selection = TextRange(text.length)
+                                )
+                                focusRequester.requestFocus()
                             },
                             onThankClick = {
                                 if (!it.isThanked) {
@@ -500,7 +544,11 @@ fun TopicDetailContent(
                         leadingContent = { Icon(Icons.AutoMirrored.Filled.Reply, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         modifier = Modifier.clickable {
                             selectedReply?.let {
-                                 replyText = "@${it.member?.username} "
+                                 val text = "@${it.member?.username} "
+                                 replyText = TextFieldValue(
+                                     text = text,
+                                     selection = TextRange(text.length)
+                                 )
                             }
                             showReplySheet = false
                         }
@@ -517,8 +565,8 @@ fun TopicDetailContent(
                             showReplySheet = false
                         }
                     )
-                    ListItem(
-                        headlineContent = { Text("Thank") },
+                     ListItem(
+                        headlineContent = { Text(stringResource(R.string.thanks)) },
                         leadingContent = {
                             Icon(
                                 imageVector = if (selectedReply?.isThanked == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -533,6 +581,42 @@ fun TopicDetailContent(
                                 }
                             }
                             showReplySheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.hide_reply)) },
+                        leadingContent = { Icon(Icons.Default.VisibilityOff, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        modifier = Modifier.clickable {
+                            selectedReply?.let { viewModel.ignoreReply(it.id) }
+                            showReplySheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.show_user_all_reply)) },
+                        leadingContent = { Icon(Icons.Default.PersonSearch, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        modifier = Modifier.clickable {
+                            selectedReply?.member?.username?.let { viewModel.filterByUser(it) }
+                            showReplySheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.show_conversation)) },
+                        leadingContent = { Icon(Icons.Default.Forum, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        modifier = Modifier.clickable {
+                            selectedReply?.let { viewModel.showConversation(it.id) }
+                            showReplySheet = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text(stringResource(R.string.report_abuse)) },
+                        leadingContent = { Icon(Icons.Default.Report, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        modifier = Modifier.clickable {
+                            selectedReply?.let { reply ->
+                                showReplySheet = false
+                                val reportTitle = "报告回复：${reply.content?.take(20)}..."
+                                val reportContent = "回复ID：${reply.id}\n发布者：${reply.member?.username}\n主题链接：$topicUrl"
+                                onReportClick(reportTitle, reportContent)
+                            }
                         }
                     )
                 }
@@ -618,8 +702,8 @@ fun TopicDetailContent(
 
 @Composable
 fun BottomReplyInput(
-    text: String,
-    onTextChange: (String) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     onSend: (String) -> Unit,
     focusRequester: FocusRequester,
     onFocusChanged: (Boolean) -> Unit
@@ -642,8 +726,8 @@ fun BottomReplyInput(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
-                    value = text,
-                    onValueChange = onTextChange,
+                    value = value,
+                    onValueChange = onValueChange,
                     modifier = Modifier
                         .weight(1f)
                         .focusRequester(focusRequester)
@@ -662,12 +746,12 @@ fun BottomReplyInput(
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(
                     onClick = {
-                        if (text.isNotBlank()) {
-                            onSend(text)
-                            onTextChange("")
+                        if (value.text.isNotBlank()) {
+                            onSend(value.text)
+                            onValueChange(TextFieldValue(""))
                         }
                     },
-                    enabled = text.isNotBlank()
+                    enabled = value.text.isNotBlank()
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Send,
