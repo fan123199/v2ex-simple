@@ -514,12 +514,17 @@ class Parser(private val htmlStr: String) {
 
 
     fun parseDailyOnce(): String? {
+        // location.href = '/mission/daily/redeem?once=12345';
+        val onceElement = doc.select("input[onclick*=/mission/daily/redeem]").first()
+        val onceOriginal = onceElement?.attr("onclick")
+        return onceOriginal?.getNum()
+    }
 
-        val onceElement = doc.getElementsByAttributeValue("value", "领取 X 铜币").first()
-                ?: return null
-//        location.href = '/mission/daily/redeem?once=83270';
-        val onceOriginal = onceElement.attr("onClick")
-        return onceOriginal.getNum()
+    fun getDailyCheckStatus(): String {
+        // 已连续登录 X 天
+        return doc.getElementsByClass("cell").firstOrNull { it.text().contains("已连续登录") }?.text() 
+            ?: doc.getElementsByClass("cell").firstOrNull { it.text().contains("Daily Mission") }?.text()
+            ?: ""
     }
 
 

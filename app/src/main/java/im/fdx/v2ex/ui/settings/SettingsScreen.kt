@@ -252,6 +252,35 @@ fun SettingsScreen(
                     }
                 }
             )
+
+            SettingsItem(
+                title = "Share App",
+                onClick = {
+                     val sendIntent: Intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, "Check out V2EX Simple: https://play.google.com/store/apps/details?id=im.fdx.v2ex")
+                        type = "text/plain"
+                    }
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    context.startActivity(shareIntent)
+                }
+            )
+
+            SettingsItem(
+                title = "Contact Author",
+                onClick = {
+                    val intent = Intent(Intent.ACTION_SENDTO).apply {
+                        data = Uri.parse("mailto:") // only email apps should handle this
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf("fan123199@gmail.com"))
+                        putExtra(Intent.EXTRA_SUBJECT, "V2EX Simple Feedback")
+                    }
+                    try {
+                        context.startActivity(intent)
+                    } catch (e: Exception) {
+                        context.toast("No email client found")
+                    }
+                }
+            )
             
         }
 
