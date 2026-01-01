@@ -41,7 +41,7 @@ import im.fdx.v2ex.ui.common.WebViewScreen
 import im.fdx.v2ex.ui.login.LoginScreen
 import im.fdx.v2ex.ui.login.LoginScreen
 import im.fdx.v2ex.ui.main.NewTopicScreen
-import im.fdx.v2ex.ui.main.DailyScreen
+import im.fdx.v2ex.ui.main.DailyViewModel
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -60,7 +60,6 @@ sealed class Screen(val route: String) {
     object Search : Screen("search")
     object Favorites : Screen("favorites")
     object Notifications : Screen("notifications")
-    object Daily : Screen("daily")
     object Login : Screen("login")
     object Photo : Screen("photo?url={url}") {
         fun createRoute(url: String) = "photo?url=${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}"
@@ -92,6 +91,14 @@ fun AppNavigation(
     intent: Intent? = null
 ) {
     val context = LocalContext.current
+    val dailyViewModel: DailyViewModel = viewModel()
+    
+    // Observer for daily check messages
+    LaunchedEffect(Unit) {
+        dailyViewModel.toastMsg.collect { msg ->
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+        }
+    }
 
     LaunchedEffect(intent) {
         intent?.let {
@@ -124,8 +131,7 @@ fun AppNavigation(
                         "favorites" -> navController.navigate(Screen.Favorites.route)
                         "notifications" -> navController.navigate(Screen.Notifications.route)
                         "login" -> navController.navigate(Screen.Login.route)
-                        "login" -> navController.navigate(Screen.Login.route)
-                        "daily" -> navController.navigate(Screen.Daily.route)
+                        "daily" -> dailyViewModel.startDailyCheck()
                     }
                 }
             )
@@ -261,11 +267,7 @@ fun AppNavigation(
 
         }
 
-        composable(Screen.Daily.route) {
-            DailyScreen(
-                onBackClick = { navController.popBackStack() }
-            )
-        }
+
 
         composable(Screen.Login.route) {
             val loginViewModel: LoginViewModel = viewModel()
