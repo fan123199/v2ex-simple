@@ -33,6 +33,10 @@ object UserStore {
     }
 
     fun logout() {
+        pref.edit {
+            remove(Keys.PREF_USERNAME)
+            remove(Keys.PREF_AVATAR)
+        }
         _user.value = null
     }
 }

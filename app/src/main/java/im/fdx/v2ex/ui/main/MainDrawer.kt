@@ -39,7 +39,9 @@ fun MainDrawer(
     val context = LocalContext.current
     val user by user.collectAsState()
     
-    ModalDrawerSheet {
+    ModalDrawerSheet(
+        modifier = Modifier.fillMaxWidth(0.75f)
+    ) {
         // Header
         // Header
         Row(

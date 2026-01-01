@@ -147,13 +147,17 @@ class SettingsViewModel : ViewModel() {
     // For now we persist changes.
     
     fun logout(context: Context, activity: android.app.Activity) {
-         HttpHelper.myCookieJar.clear()
-          im.fdx.v2ex.setLogin(false)
-          pref.edit {
+        HttpHelper.myCookieJar.clear()
+        im.fdx.v2ex.setLogin(false)
+        im.fdx.v2ex.utils.UserStore.logout()
+        pref.edit {
             remove(Keys.PREF_TEXT_SIZE)
             remove(Keys.PREF_TAB)
-          }
-          context.toast(context.getString(R.string.logout_success))
+            remove(Keys.PREF_USERNAME)
+            remove(Keys.PREF_AVATAR)
+        }
+        loadSettings()
+        context.toast(context.getString(R.string.logout_success))
     }
 }
 
