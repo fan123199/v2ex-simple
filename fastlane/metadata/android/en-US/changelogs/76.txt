@@ -1,0 +1,4 @@
+[Major Update]
+- Complete architectural refactor to Jetpack Compose using AI.
+- Brand new UI design with smoother transitions and improved UX.
+- Improved internationalization support.
