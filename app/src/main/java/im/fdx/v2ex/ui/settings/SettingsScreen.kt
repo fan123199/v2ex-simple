@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -47,7 +48,9 @@ data class SettingsUiState(
     val backgroundMsg: Boolean = false,
     val msgPeriod: String = "15",
     val textSize: String = "0",
-    val viewPager: Boolean = false
+    val textSize: String = "0",
+    val viewPager: Boolean = false,
+    val language: String = "default"
 )
 
 class SettingsViewModel : ViewModel() {
@@ -65,7 +68,21 @@ class SettingsViewModel : ViewModel() {
         val showPageNum = pref.getBoolean("pref_page_num", false)
         val receiveMsg = pref.getBoolean("pref_msg", false)
         val backgroundMsg = pref.getBoolean("pref_background_msg", false)
+        val backgroundMsg = pref.getBoolean("pref_background_msg", false)
         val msgPeriod = pref.getString("pref_msg_period", "15") ?: "15"
+
+        val currentAppLocales = AppCompatDelegate.getApplicationLocales()
+        val language = if (currentAppLocales.isEmpty) {
+            "default"
+        } else {
+             val locale = currentAppLocales.get(0)
+             when {
+                 locale?.language == "zh" && locale.country == "CN" -> "zh_CN"
+                 locale?.language == "zh" && locale.country == "TW" -> "zh_TW"
+                 locale?.language == "en" -> "en"
+                 else -> "default"
+             }
+        }
 
         _uiState.update {
             it.copy(
@@ -77,7 +94,9 @@ class SettingsViewModel : ViewModel() {
                 backgroundMsg = backgroundMsg,
                 msgPeriod = msgPeriod,
                 textSize = pref.getString(Keys.PREF_TEXT_SIZE, "0") ?: "0",
-                viewPager = pref.getBoolean("pref_viewpager", false)
+                textSize = pref.getString(Keys.PREF_TEXT_SIZE, "0") ?: "0",
+                viewPager = pref.getBoolean("pref_viewpager", false),
+                language = language
             )
         }
     }
@@ -112,6 +131,19 @@ class SettingsViewModel : ViewModel() {
         pref.edit { putBoolean("pref_background_msg", enable) }
          _uiState.update { it.copy(backgroundMsg = enable) }
     }
+
+    fun setLanguage(code: String) {
+        val localeList = when (code) {
+            "en" -> LocaleListCompat.forLanguageTags("en")
+            "zh_CN" -> LocaleListCompat.forLanguageTags("zh-CN")
+            "zh_TW" -> LocaleListCompat.forLanguageTags("zh-TW")
+            else -> LocaleListCompat.getEmptyLocaleList()
+        }
+        AppCompatDelegate.setApplicationLocales(localeList)
+        // No need to update state manually as activity recreation usually happens, 
+        // but for immediate UI feedback if not recreated (unlikely for locale change):
+        _uiState.update { it.copy(language = code) }
+    }
     
     // Simplification: Not implementing full worker logic here, assuming existing logic handles shared pref changes elsewhere or needs porting. 
     // The original activity used OnSharedPreferenceChangeListener.
@@ -138,9 +170,12 @@ fun SettingsScreen(
     val viewModel: SettingsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
     var showNightModeSheet by remember { mutableStateOf(false) }
+    var showNightModeSheet by remember { mutableStateOf(false) }
     var showTextSizeSheet by remember { mutableStateOf(false) }
+    var showLanguageSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
     val textSizeSheetState = rememberModalBottomSheetState()
+    val languageSheetState = rememberModalBottomSheetState()
     
     Scaffold(
         topBar = {
@@ -206,6 +241,19 @@ fun SettingsScreen(
                 subtitle = context.resources.getStringArray(R.array.text_size_string).getOrElse(uiState.textSize.toInt()) { "Follow System" },
                 onClick = {
                     showTextSizeSheet = true
+                }
+            )
+
+            SettingsItem(
+                title = stringResource(R.string.language),
+                subtitle = when(uiState.language) {
+                    "en" -> "English"
+                    "zh_CN" -> "简体中文"
+                    "zh_TW" -> "繁體中文"
+                    else -> stringResource(R.string.follow_system)
+                },
+                onClick = {
+                    showLanguageSheet = true
                 }
             )
 
