@@ -218,4 +218,12 @@
         <item>RELAX</item>
     </string-array>
 
+    <string name="search_sort_time">Time</string>
+    <string name="search_sort_relevance">Relevance</string>
+    <string name="search_order_newest_first">Newest First</string>
+    <string name="search_order_oldest_first">Oldest First</string>
+    <string name="no_content_placeholder">No content</string>
+    <!-- Previously hardcoded "Search V2EX" in SearchScreen -->
+    <string name="search_v2ex_hint">Search V2EX</string>
+
 </resources>

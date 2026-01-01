@@ -81,7 +81,7 @@ fun TopicListScreen(
             }
             if (uiState.topics.isEmpty() && !uiState.isLoading && header == null) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("暂无内容")
+                    Text(androidx.compose.ui.res.stringResource(im.fdx.v2ex.R.string.no_content_placeholder))
                 }
             } else {
             LazyColumn(

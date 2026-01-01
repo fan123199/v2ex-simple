@@ -51,7 +51,7 @@ fun SearchScreen(
                     TextField(
                         value = query,
                         onValueChange = { query = it },
-                        placeholder = { Text("Search V2EX") },
+                        placeholder = { Text(stringResource(im.fdx.v2ex.R.string.search_v2ex_hint)) },
                         singleLine = true,
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
@@ -105,7 +105,7 @@ fun SearchScreen(
                             viewModel.updateSearchFilter(sort = im.fdx.v2ex.data.model.CREATED) 
                         }
                     },
-                    label = { Text("按时间") }
+                    label = { Text(stringResource(im.fdx.v2ex.R.string.search_sort_time)) }
                 )
                 
                FilterChip(
@@ -115,7 +115,7 @@ fun SearchScreen(
                             viewModel.updateSearchFilter(sort = im.fdx.v2ex.data.model.SUMUP) 
                         }
                     },
-                    label = { Text("按相关度") }
+                    label = { Text(stringResource(im.fdx.v2ex.R.string.search_sort_relevance)) }
                 )
                 
                 // Order Toggle
@@ -126,7 +126,14 @@ fun SearchScreen(
                             val newOrder = if (searchOption?.order == im.fdx.v2ex.data.model.NEW_FIRST) im.fdx.v2ex.data.model.OLD_FIRST else im.fdx.v2ex.data.model.NEW_FIRST
                             viewModel.updateSearchFilter(order = newOrder) 
                         },
-                        label = { Text(if (searchOption?.order == im.fdx.v2ex.data.model.NEW_FIRST) "从新到旧" else "从旧到新") },
+                        label = { 
+                            Text(
+                                if (searchOption?.order == im.fdx.v2ex.data.model.NEW_FIRST) 
+                                    stringResource(im.fdx.v2ex.R.string.search_order_newest_first) 
+                                else 
+                                    stringResource(im.fdx.v2ex.R.string.search_order_oldest_first)
+                            ) 
+                        },
                         trailingIcon = {
                             // Optional arrow icon
                         }

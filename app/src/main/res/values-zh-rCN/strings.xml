@@ -160,4 +160,11 @@
     <string name="lte">结束时间</string>
     <string name="newest">最新</string>
     <string name="hot">热门</string>
+
+    <string name="search_sort_time">按时间</string>
+    <string name="search_sort_relevance">按相关度</string>
+    <string name="search_order_newest_first">从新到旧</string>
+    <string name="search_order_oldest_first">从旧到新</string>
+    <string name="no_content_placeholder">暂无内容</string>
+    <string name="search_v2ex_hint">搜索 V2EX</string>
 </resources>
