@@ -20,10 +20,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import im.fdx.v2ex.R
 import androidx.compose.ui.util.fastForEach
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import im.fdx.v2ex.data.model.NotificationModel
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.utils.Keys
@@ -42,7 +44,7 @@ fun NotificationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Notifications") },
+                title = { Text(stringResource(R.string.notification)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(

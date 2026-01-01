@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import im.fdx.v2ex.R
@@ -76,7 +77,7 @@ fun MainDrawer(
              }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = user?.username ?: "Click to Login",
+                text = user?.username ?: stringResource(R.string.drawer_click_to_login),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface // Change to onSurface since no primary background
             )
@@ -85,31 +86,31 @@ fun MainDrawer(
         Spacer(modifier = Modifier.height(8.dp))
 
         NavigationDrawerItem(
-            label = { Text("Daily Check") },
+            label = { Text(stringResource(R.string.drawer_daily_check)) },
             icon = { Icon(painterResource(id = R.drawable.ic_daily_check), contentDescription = null) },
             selected = false,
             onClick = { onItemClick("daily") }
         )
         NavigationDrawerItem(
-            label = { Text("All Nodes") },
+            label = { Text(stringResource(R.string.drawer_all_nodes)) },
             icon = { Icon(painterResource(id = R.drawable.ic_all_node), contentDescription = null) },
             selected = false,
             onClick = { onItemClick("all_nodes") }
         )
         NavigationDrawerItem(
-            label = { Text("Favorites") },
+            label = { Text(stringResource(R.string.drawer_favorites)) },
             icon = { Icon(Icons.Default.Favorite, contentDescription = null) },
             selected = false,
             onClick = { onItemClick("favorites") }
         )
         NavigationDrawerItem(
-            label = { Text("Notifications") },
+            label = { Text(stringResource(R.string.drawer_notifications)) },
             icon = { Icon(Icons.Default.Notifications, contentDescription = null) },
             selected = false,
             onClick = { onItemClick("notifications") }
         )
         NavigationDrawerItem(
-            label = { Text("Settings") },
+            label = { Text(stringResource(R.string.drawer_settings)) },
             icon = { Icon(Icons.Default.Settings, contentDescription = null) },
             selected = false,
             onClick = { onItemClick("settings") }

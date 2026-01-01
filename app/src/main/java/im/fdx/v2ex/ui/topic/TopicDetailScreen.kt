@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import im.fdx.v2ex.data.network.NetManager
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
@@ -173,7 +174,7 @@ fun TopicDetailContent(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.close),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -182,7 +183,7 @@ fun TopicDetailContent(
                     IconButton(onClick = { showMoreActions = true }) {
                         Icon(
                             imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More",
+                            contentDescription = stringResource(R.string.more),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -192,7 +193,7 @@ fun TopicDetailContent(
                         onDismissRequest = { showMoreActions = false }
                     ) {
                         DropdownMenuItem(
-                            text = { Text(if (uiState.isFavored) "取消收藏" else "收藏") },
+                            text = { Text(if (uiState.isFavored) stringResource(R.string.unFavor) else stringResource(R.string.favor)) },
                             leadingIcon = {
                                 Icon(
                                     imageVector = if (uiState.isFavored) Icons.Default.Star else Icons.Default.StarBorder,
@@ -206,7 +207,7 @@ fun TopicDetailContent(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("感谢") },
+                            text = { Text(stringResource(R.string.thanks)) },
                             leadingIcon = {
                                 Icon(
                                     imageVector = if (uiState.isThanked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -221,7 +222,7 @@ fun TopicDetailContent(
                             enabled = !uiState.isThanked
                         )
                         DropdownMenuItem(
-                            text = { Text("忽略") },
+                            text = { Text(stringResource(R.string.ignore)) },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Default.Block,
@@ -235,19 +236,19 @@ fun TopicDetailContent(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("分享") },
+                            text = { Text(stringResource(R.string.menu_share)) },
                             leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
                             onClick = {
                                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                     type = "text/plain"
                                     putExtra(Intent.EXTRA_TEXT, topicUrl)
                                 }
-                                context.startActivity(Intent.createChooser(shareIntent, "Share topic"))
+                                context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_to)))
                                 showMoreActions = false
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("在浏览器打开") },
+                            text = { Text(stringResource(R.string.menu_open_in_browser)) },
                             leadingIcon = { Icon(painterResource(id = R.drawable.ic_website), contentDescription = null) },
                             onClick = {
                                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(topicUrl)))
@@ -255,12 +256,12 @@ fun TopicDetailContent(
                             }
                         )
                         DropdownMenuItem(
-                            text = { Text("报告问题") },
+                            text = { Text(stringResource(R.string.report_abuse)) },
                             leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                             onClick = {
                                 showMoreActions = false
                                 if (!im.fdx.v2ex.myApp.isLogin) {
-                                    android.widget.Toast.makeText(context, "请先登录", android.widget.Toast.LENGTH_SHORT).show()
+                                    android.widget.Toast.makeText(context, context.getString(R.string.not_login_tips), android.widget.Toast.LENGTH_SHORT).show()
                                 } else {
                                     showReportSheet = true
                                 }
@@ -350,7 +351,7 @@ fun TopicDetailContent(
                                      // Avatar
                                      AsyncImage(
                                          model = topic.member?.avatarNormalUrl,
-                                         contentDescription = "Avatar",
+                                         contentDescription = stringResource(R.string.it_is_avatar),
                                          contentScale = ContentScale.Crop,
                                          modifier = Modifier
                                              .size(24.dp)
@@ -495,7 +496,7 @@ fun TopicDetailContent(
                 ) {
                     val scope = rememberCoroutineScope()
                     ListItem(
-                        headlineContent = { Text("Reply") },
+                        headlineContent = { Text(stringResource(R.string.reply)) },
                         leadingContent = { Icon(Icons.AutoMirrored.Filled.Reply, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         modifier = Modifier.clickable {
                             selectedReply?.let {
@@ -647,7 +648,6 @@ fun BottomReplyInput(
                         .weight(1f)
                         .focusRequester(focusRequester)
                         .onFocusChanged { onFocusChanged(it.isFocused) },
-                    placeholder = { Text("Post a reply...") },
                     maxLines = 3,
                     shape = RoundedCornerShape(24.dp),
                     colors = TextFieldDefaults.colors(
@@ -656,7 +656,8 @@ fun BottomReplyInput(
                         disabledContainerColor = Color(0xFFF5F5F5),
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                    )
+                    ),
+                    placeholder = { Text(stringResource(R.string.post_reply_hint)) }
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(

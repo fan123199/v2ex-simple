@@ -16,6 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import im.fdx.v2ex.ui.settings.tabPaths
 import im.fdx.v2ex.ui.settings.tabTitles
+import im.fdx.v2ex.ui.settings.getTabTitleRes
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
 import im.fdx.v2ex.utils.Keys
@@ -112,8 +114,10 @@ fun MainScreen(
                                 }
                             },
                             text = { 
+                                val resId = getTabTitleRes(tabPaths[index])
+                                val displayTitle = if (resId != null) stringResource(resId) else title
                                 Text(
-                                    text = title,
+                                    text = displayTitle,
                                     style = MaterialTheme.typography.labelLarge
                                 ) 
                             }

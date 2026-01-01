@@ -48,7 +48,6 @@ data class SettingsUiState(
     val backgroundMsg: Boolean = false,
     val msgPeriod: String = "15",
     val textSize: String = "0",
-    val textSize: String = "0",
     val viewPager: Boolean = false,
     val language: String = "default"
 )
@@ -67,7 +66,6 @@ class SettingsViewModel : ViewModel() {
         val nightMode = pref.getString(Keys.PREF_NIGHT_MODE, AppCompatDelegate.MODE_NIGHT_NO.toString()) ?: AppCompatDelegate.MODE_NIGHT_NO.toString()
         val showPageNum = pref.getBoolean("pref_page_num", false)
         val receiveMsg = pref.getBoolean("pref_msg", false)
-        val backgroundMsg = pref.getBoolean("pref_background_msg", false)
         val backgroundMsg = pref.getBoolean("pref_background_msg", false)
         val msgPeriod = pref.getString("pref_msg_period", "15") ?: "15"
 
@@ -93,7 +91,6 @@ class SettingsViewModel : ViewModel() {
                 receiveMsg = receiveMsg,
                 backgroundMsg = backgroundMsg,
                 msgPeriod = msgPeriod,
-                textSize = pref.getString(Keys.PREF_TEXT_SIZE, "0") ?: "0",
                 textSize = pref.getString(Keys.PREF_TEXT_SIZE, "0") ?: "0",
                 viewPager = pref.getBoolean("pref_viewpager", false),
                 language = language
@@ -156,7 +153,7 @@ class SettingsViewModel : ViewModel() {
             remove(Keys.PREF_TEXT_SIZE)
             remove(Keys.PREF_TAB)
           }
-          context.toast("已退出登录")
+          context.toast(context.getString(R.string.logout_success))
     }
 }
 
@@ -169,7 +166,6 @@ fun SettingsScreen(
     val context = LocalContext.current
     val viewModel: SettingsViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    var showNightModeSheet by remember { mutableStateOf(false) }
     var showNightModeSheet by remember { mutableStateOf(false) }
     var showTextSizeSheet by remember { mutableStateOf(false) }
     var showLanguageSheet by remember { mutableStateOf(false) }
@@ -232,7 +228,7 @@ fun SettingsScreen(
             SettingsCategory(stringResource(R.string.general))
             
             SettingsItem(
-                title = "Tab Settings",
+                title = stringResource(R.string.tab_setting),
                 onClick = onTabSettingClick
             )
 
@@ -282,9 +278,18 @@ fun SettingsScreen(
 
             HorizontalDivider()
             SettingsCategory(stringResource(R.string.other))
+            var easterEggCount by remember { mutableIntStateOf(7) }
              SettingsItem(
                 title = stringResource(R.string.version),
-                subtitle = BuildConfig.VERSION_NAME
+                subtitle = BuildConfig.VERSION_NAME,
+                onClick = {
+                    if (easterEggCount < 0) {
+                        easterEggCount = 3
+                        val ha = context.resources.getStringArray(R.array.j)
+                        context.toast(ha[(System.currentTimeMillis() / 100 % ha.size).toInt()])
+                    }
+                    easterEggCount--
+                }
             )
             val noappstore = stringResource(R.string.there_is_no_app_store)
             SettingsItem(
@@ -302,7 +307,7 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = "Share App",
+                title = stringResource(R.string.share_app),
                 onClick = {
                      val sendIntent: Intent = Intent().apply {
                         action = Intent.ACTION_SEND
@@ -315,17 +320,17 @@ fun SettingsScreen(
             )
 
             SettingsItem(
-                title = "Contact Author",
+                title = stringResource(R.string.contact_author),
                 onClick = {
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
                         data = Uri.parse("mailto:") // only email apps should handle this
                         putExtra(Intent.EXTRA_EMAIL, arrayOf("fan123199@gmail.com"))
-                        putExtra(Intent.EXTRA_SUBJECT, "V2EX Simple Feedback")
+                        putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.email_subject_feedback))
                     }
                     try {
                         context.startActivity(intent)
                     } catch (e: Exception) {
-                        context.toast("No email client found")
+                        context.toast(context.getString(R.string.no_email_client))
                     }
                 }
             )
@@ -398,6 +403,33 @@ fun SettingsScreen(
                         )
                     }
                 }
+            }
+        }
+
+        if (showLanguageSheet) {
+             ModalBottomSheet(
+                onDismissRequest = { showLanguageSheet = false },
+                sheetState = languageSheetState
+            ) {
+                 Column(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(bottom = 16.dp)
+                 ) {
+                     val languageLabels = context.resources.getStringArray(R.array.language_string)
+                     val languageValues = context.resources.getStringArray(R.array.language_value)
+                     
+                     languageValues.forEachIndexed { index, value ->
+                         ListItem(
+                            headlineContent = { Text(languageLabels[index]) },
+                            trailingContent = if (uiState.language == value) { { Icon(Icons.Default.Check, null) } } else null,
+                            modifier = Modifier.clickable {
+                                viewModel.setLanguage(value)
+                                showLanguageSheet = false
+                            }
+                        )
+                     }
+                 }
             }
         }
     }

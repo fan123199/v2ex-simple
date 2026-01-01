@@ -46,6 +46,7 @@ import okhttp3.Response
 import java.io.IOException
 import im.fdx.v2ex.data.network.HttpHelper
 import android.app.Activity
+import androidx.compose.ui.res.stringResource
 
 const val TAB_TYPE = 0
 const val NODE_TYPE = 1
@@ -53,22 +54,6 @@ const val NODE_TYPE = 1
 @Keep
 data class MyTab(var title: String, var path: String, var type: Int = TAB_TYPE)
 
-val tabTitles = listOf(
-    "最热",
-    "最近",
-    "全部",
-    "热议",
-    "技术",
-    "创意",
-    "好玩",
-    "Apple",
-    "酷工作",
-    "交易",
-    "城市",
-    "问与答",
-    "R2",
-    "关注"
-)
 val tabPaths = listOf(
     "hot",
     "recent",
@@ -85,6 +70,29 @@ val tabPaths = listOf(
     "r2",
     "members"
 )
+
+fun getTabTitleRes(path: String): Int? {
+    return when (path) {
+        "hot" -> R.string.tab_hot
+        "recent" -> R.string.tab_recent
+        "all" -> R.string.tab_all
+        "heated" -> R.string.tab_heated
+        "tech" -> R.string.tab_tech
+        "creative" -> R.string.tab_creative
+        "play" -> R.string.tab_play
+        "apple" -> R.string.tab_apple
+        "jobs" -> R.string.tab_jobs
+        "deals" -> R.string.tab_deals
+        "city" -> R.string.tab_city
+        "qna" -> R.string.tab_qna
+        "r2" -> R.string.tab_r2
+        "members" -> R.string.tab_members
+        else -> null
+    }
+}
+
+val tabTitles = tabPaths // We'll resolve these dynamically
+
 
 class TabSettingViewModel : ViewModel() {
 
@@ -243,10 +251,10 @@ fun TabSettingScreen(
                 },
                 actions = {
                     TextButton(onClick = { viewModel.reset() }) {
-                        Text("Reset")
+                        Text(stringResource(R.string.menu_reset))
                     }
                     TextButton(onClick = { viewModel.save(context) }) {
-                        Text("Save")
+                        Text(stringResource(R.string.menu_save))
                     }
                 }
             )
@@ -257,7 +265,7 @@ fun TabSettingScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            Text("Current Tabs", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
+            Text(stringResource(R.string.show_area), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
             
             LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 itemsIndexed(uiState.currentTabs) { index, tab ->
@@ -269,7 +277,8 @@ fun TabSettingScreen(
                              .padding(8.dp),
                          verticalAlignment = Alignment.CenterVertically
                      ) {
-                         Text(tab.title, modifier = Modifier.weight(1f))
+                         val displayTitle = getTabTitleRes(tab.path)?.let { stringResource(it) } ?: tab.title
+                         Text(displayTitle, modifier = Modifier.weight(1f))
                          
                          IconButton(onClick = { viewModel.moveUp(index) }, enabled = index > 0) {
                              Icon(Icons.Default.KeyboardArrowUp, contentDescription = "Up")
@@ -286,7 +295,7 @@ fun TabSettingScreen(
             
             HorizontalDivider()
             
-            Text("Available Tabs", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
+            Text(stringResource(R.string.hide_area), style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(16.dp))
             LazyColumn(modifier = Modifier.weight(1f).fillMaxWidth()) {
                 items(uiState.availableTabs) { tab ->
                     Row(
@@ -297,7 +306,8 @@ fun TabSettingScreen(
                              .padding(8.dp),
                          verticalAlignment = Alignment.CenterVertically
                      ) {
-                         Text(tab.title, modifier = Modifier.weight(1f))
+                         val displayTitle = getTabTitleRes(tab.path)?.let { stringResource(it) } ?: tab.title
+                         Text(displayTitle, modifier = Modifier.weight(1f))
                          IconButton(onClick = { viewModel.addTab(tab) }) {
                              Icon(Icons.Default.AddCircle, contentDescription = "Add", tint = MaterialTheme.colorScheme.primary)
                          }

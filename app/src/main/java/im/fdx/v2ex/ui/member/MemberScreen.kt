@@ -47,6 +47,7 @@ import im.fdx.v2ex.data.model.MemberReplyModel
 import im.fdx.v2ex.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,12 +78,12 @@ fun MemberScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(username) },
+                title = { Text("") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.close),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -107,18 +108,18 @@ fun MemberScreen(
                     }
                     Box {
                         IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More", tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more), tint = MaterialTheme.colorScheme.primary)
                         }
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("举报该用户") },
+                                text = { Text(stringResource(R.string.report_user)) },
                                 onClick = {
                                     showMenu = false
                                     if (!myApp.isLogin) {
-                                        Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, context.getString(R.string.not_login_tips), Toast.LENGTH_SHORT).show()
                                     } else {
                                         showReportSheet = true
                                     }
@@ -133,19 +134,19 @@ fun MemberScreen(
         if (showBlockDialog) {
             AlertDialog(
                 onDismissRequest = { showBlockDialog = false },
-                title = { Text(if (uiState.isBlocked) "取消屏蔽" else "屏蔽用户") },
-                text = { Text(if (uiState.isBlocked) "确定要取消对该用户的屏蔽吗？" else "确定要屏蔽该用户吗？屏蔽后你将不会看到该用户发布的主题和回复。") },
+                title = { Text(if (uiState.isBlocked) stringResource(R.string.unblock_user) else stringResource(R.string.block_user)) },
+                text = { Text(if (uiState.isBlocked) stringResource(R.string.unblock_confirm_msg) else stringResource(R.string.block_confirm_msg)) },
                 confirmButton = {
                     TextButton(onClick = {
                         viewModel.toggleBlock()
                         showBlockDialog = false
                     }) {
-                        Text("确定")
+                        Text(stringResource(R.string.ok))
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showBlockDialog = false }) {
-                        Text("取消")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             )
@@ -158,17 +159,17 @@ fun MemberScreen(
             ) {
                 Column(modifier = Modifier.padding(bottom = 32.dp)) {
                     Text(
-                        text = "请选择举报的理由",
+                        text = stringResource(R.string.report_reason_title),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(16.dp)
                     )
-                    listOf("大量发布广告", "冒充他人", "疑似机器帐号", "儿童安全", "其他").forEach { reason ->
+                    context.resources.getStringArray(R.array.report_reason_member).forEach { reason ->
                         ListItem(
                             headlineContent = { Text(reason) },
                             modifier = Modifier.clickable {
                                 showReportSheet = false
-                                val reportTitle = "报告用户 ${username}"
-                                val reportContent = "用户首页：https://www.v2ex.com/member/$username \n 该用户涉及 $reason，请站长处理。"
+                                val reportTitle = context.getString(R.string.report_user_title, username)
+                                val reportContent = context.getString(R.string.report_user_content, username, reason)
                                 onReportClick(reportTitle, reportContent)
                             }
                         )
@@ -196,12 +197,12 @@ fun MemberScreen(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text("Topics" + (uiState.topicCount?.let { " ($it)" } ?: "")) }
+                    text = { Text(stringResource(R.string.member_topics, uiState.topicCount ?: 0)) }
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text("Replies" + (uiState.replyCount?.let { " ($it)" } ?: "")) }
+                    text = { Text(stringResource(R.string.member_replies, uiState.replyCount ?: 0)) }
                 )
             }
 
@@ -243,7 +244,7 @@ fun MemberHeader(member: Member) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = member.avatarLargeUrl,
-                contentDescription = "Member Avatar",
+                contentDescription = stringResource(id = R.string.it_is_avatar),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(72.dp)
@@ -266,14 +267,14 @@ fun MemberHeader(member: Member) {
                 Spacer(modifier = Modifier.height(4.dp))
                 if (member.id.isNotEmpty()) {
                     Text(
-                        text = "V2EX 第 ${member.id} 号会员",
+                        text = stringResource(R.string.the_n_member, member.id),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
                 }
                 if (member.created.isNotEmpty()) {
                     Text(
-                        text = "加入于 ${member.created}",
+                        text = stringResource(R.string.created_on) + " " + member.created,
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
@@ -367,7 +368,7 @@ fun MemberRepliesList(
                  colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
             ) {
                 Column(modifier = Modifier.padding(12.dp)) {
-                     Text(text = "Replied to: ${reply.topic.title}", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
+                     Text(text = stringResource(R.string.replied_to_label, reply.topic.title), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.primary)
                      Spacer(modifier = Modifier.height(4.dp))
                      
                       SelectionContainer {

@@ -167,4 +167,67 @@
     <string name="search_order_oldest_first">从旧到新</string>
     <string name="no_content_placeholder">暂无内容</string>
     <string name="search_v2ex_hint">搜索 V2EX</string>
+    <string name="contact_author">联系作者</string>
+    <string name="email_subject_feedback">V2EX Simple 反馈</string>
+    <string name="no_email_client">未找到邮件客户端</string>
+    <string name="logout_success">已退出登录</string>
+    <string name="report_reason_title">请选择举报的理由</string>
+    <string-array name="report_reasons">
+        <item>大量发布广告</item>
+        <item>恶意骚扰</item>
+        <item>侵权内容</item>
+        <item>不友善内容</item>
+        <item>其他</item>
+    </string-array>
+    <string name="post_reply_hint">发表回复…</string>
+    <string name="more">更多</string>
+
+    <!-- Drawer Strings -->
+    <string name="drawer_click_to_login">点击登录</string>
+    <string name="drawer_daily_check">每日签到</string>
+    <string name="drawer_all_nodes">全部节点</string>
+    <string name="drawer_favorites">我的收藏</string>
+    <string name="drawer_notifications">我的通知</string>
+    <string name="drawer_settings">设置</string>
+
+    <!-- Tab Strings -->
+    <string name="tab_hot">最热</string>
+    <string name="tab_recent">最近</string>
+    <string name="tab_all">全部</string>
+    <string name="tab_heated">热议</string>
+    <string name="tab_tech">技术</string>
+    <string name="tab_creative">创意</string>
+    <string name="tab_play">好玩</string>
+    <string name="tab_apple">Apple</string>
+    <string name="tab_jobs">酷工作</string>
+    <string name="tab_deals">交易</string>
+    <string name="tab_city">城市</string>
+    <string name="tab_qna">问与答</string>
+    <string name="tab_r2">R2</string>
+    <string name="tab_members">关注</string>
+
+    <!-- Favorite Screen -->
+    <string name="favorite_title">我的收藏</string>
+    <string name="tab_topic">主题</string>
+    <string name="tab_nodes">节点</string>
+    <string name="no_favorite_nodes">暂无收藏节点</string>
+
+    <!-- Member Screen -->
+    <string name="report_user">举报该用户</string>
+    <string name="member_topics">主题 (%d)</string>
+    <string name="member_replies">回复 (%d)</string>
+    <string name="replied_to_label">回复了: %s</string>
+    <string name="report_user_title">报告用户 %s</string>
+    <string name="report_user_content">用户首页：https://www.v2ex.com/member/%1$s \n 该用户涉及 %2$s，请站长处理。</string>
+    <string-array name="report_reason_member">
+        <item>大量发布广告</item>
+        <item>冒充他人</item>
+        <item>疑似机器帐号</item>
+        <item>儿童安全</item>
+        <item>其他</item>
+    </string-array>
+    <string name="block_user">屏蔽用户</string>
+    <string name="unblock_user">取消屏蔽</string>
+    <string name="block_confirm_msg">确定要屏蔽该用户吗？屏蔽后你将不会看到该用户发布的主题和回复。</string>
+    <string name="unblock_confirm_msg">确定要取消对该用户的屏蔽吗？</string>
 </resources>

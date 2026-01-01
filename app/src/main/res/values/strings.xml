@@ -225,5 +225,68 @@
     <string name="no_content_placeholder">No content</string>
     <!-- Previously hardcoded "Search V2EX" in SearchScreen -->
     <string name="search_v2ex_hint">Search V2EX</string>
+    <string name="contact_author">Contact Author</string>
+    <string name="email_subject_feedback">V2EX Simple Feedback</string>
+    <string name="no_email_client">No email client found</string>
+    <string name="logout_success">Logged out successfully</string>
+    <string name="report_reason_title">Please select a reason for reporting</string>
+    <string-array name="report_reasons">
+        <item>Spam/Ads</item>
+        <item>Harassment</item>
+        <item>Copyright infringement</item>
+        <item>Unfriendly content</item>
+        <item>Other</item>
+    </string-array>
+    <string name="post_reply_hint">Post a reply…</string>
+    <string name="more">More</string>
+
+    <!-- Drawer Strings -->
+    <string name="drawer_click_to_login">Click to Login</string>
+    <string name="drawer_daily_check">Daily Check</string>
+    <string name="drawer_all_nodes">All Nodes</string>
+    <string name="drawer_favorites">Favorites</string>
+    <string name="drawer_notifications">Notifications</string>
+    <string name="drawer_settings">Settings</string>
+
+    <!-- Tab Strings -->
+    <string name="tab_hot">Hot</string>
+    <string name="tab_recent">Recent</string>
+    <string name="tab_all">All</string>
+    <string name="tab_heated">Heated</string>
+    <string name="tab_tech">Tech</string>
+    <string name="tab_creative">Creative</string>
+    <string name="tab_play">Play</string>
+    <string name="tab_apple">Apple</string>
+    <string name="tab_jobs">Jobs</string>
+    <string name="tab_deals">Deals</string>
+    <string name="tab_city">City</string>
+    <string name="tab_qna">Q&amp;A</string>
+    <string name="tab_r2">R2</string>
+    <string name="tab_members">Follows</string>
+
+    <!-- Favorite Screen -->
+    <string name="favorite_title">My Favorites</string>
+    <string name="tab_topic">Topic</string>
+    <string name="tab_nodes">Nodes</string>
+    <string name="no_favorite_nodes">No favorite nodes</string>
+
+    <!-- Member Screen -->
+    <string name="report_user">Report User</string>
+    <string name="member_topics">Topics (%d)</string>
+    <string name="member_replies">Replies (%d)</string>
+    <string name="replied_to_label">Replied to: %s</string>
+    <string name="report_user_title">Report user %s</string>
+    <string name="report_user_content">Member page: https://www.v2ex.com/member/%1$s \n This user is involved in %2$s, please handle it.</string>
+    <string-array name="report_reason_member">
+        <item>Spam/Ads</item>
+        <item>Impersonation</item>
+        <item>Bot account</item>
+        <item>Child safety</item>
+        <item>Other</item>
+    </string-array>
+    <string name="block_user">Block User</string>
+    <string name="unblock_user">Unblock User</string>
+    <string name="block_confirm_msg">Are you sure you want to block this user? You will not see topics and replies from this user after blocking.</string>
+    <string name="unblock_confirm_msg">Are you sure you want to unblock this user?</string>
 
 </resources>

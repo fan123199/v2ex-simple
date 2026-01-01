@@ -24,6 +24,8 @@ import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.data.model.Topic
 import im.fdx.v2ex.data.model.Node
+import im.fdx.v2ex.R
+import androidx.compose.ui.res.stringResource
 
 import kotlinx.coroutines.launch
 
@@ -42,12 +44,12 @@ fun FavoriteScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("My Favorites") },
+                title = { Text(stringResource(R.string.favorite_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.close),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -69,12 +71,12 @@ fun FavoriteScreen(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text("Topic") }
+                    text = { Text(stringResource(R.string.tab_topic)) }
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text("Nodes") }
+                    text = { Text(stringResource(R.string.tab_nodes)) }
                 )
             }
 
@@ -118,7 +120,7 @@ fun FavoriteNodeList(
         }
         if (!uiState.isLoading && uiState.nodes.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text("No favorite nodes")
+                Text(stringResource(R.string.no_favorite_nodes))
             }
         } else if (!uiState.isLoading) {
             LazyVerticalGrid(
@@ -136,7 +138,7 @@ fun FavoriteNodeList(
                     ) {
                         AsyncImage(
                             model = node.avatarLargeUrl,
-                            contentDescription = "Node Avatar",
+                            contentDescription = stringResource(R.string.it_is_avatar),
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.size(48.dp)
                         )
