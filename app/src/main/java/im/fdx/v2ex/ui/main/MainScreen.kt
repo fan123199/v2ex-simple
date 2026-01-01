@@ -100,7 +100,8 @@ fun MainScreen(
                 
                 HorizontalPager(
                     state = pagerState,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    beyondViewportPageCount = 1
                 ) { page ->
                      val tabPath = tabPaths[page]
                      TopicListScreen(

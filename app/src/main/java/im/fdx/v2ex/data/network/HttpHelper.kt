@@ -29,7 +29,7 @@ object HttpHelper {
 //                        .addInterceptor(HttpLoggingInterceptor())
         .connectTimeout(10, TimeUnit.SECONDS)
         .writeTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(20, TimeUnit.SECONDS)
         .followRedirects(false)  //禁止重定向
         .addNetworkInterceptor(
             HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {

@@ -36,14 +36,16 @@ fun TopicListScreen(
     type: Int? = null,
     username: String? = null,
     nodeName: String? = null,
-    viewModel: TopicListViewModel = viewModel(),
+    viewModel: TopicListViewModel = viewModel(
+        key = "TopicList_${tab}_${type}_${username}_${nodeName}"
+    ),
     onTopicClick: (Topic) -> Unit,
-                onMemberClick: (String?) -> Unit,
+    onMemberClick: (String?) -> Unit,
     onNodeClick: (String?) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     header: (@Composable () -> Unit)? = null
 ) {
-    LaunchedEffect(Unit) {
+    LaunchedEffect(tab, type, username, nodeName) {
         viewModel.init(tab, type, username, nodeName)
     }
 
