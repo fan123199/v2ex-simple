@@ -88,19 +88,22 @@ fun MemberScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.toggleFollow() }) {
-                        Icon(
-                            painter = painterResource(id = if (uiState.isFollowed) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp),
-                            contentDescription = if (uiState.isFollowed) "Unfollow" else "Follow",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                    IconButton(onClick = { showBlockDialog = true }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_block_primary_24dp),
-                            contentDescription = if (uiState.isBlocked) "Unblock" else "Block",
-                            tint = if (uiState.isBlocked) Color.Red else MaterialTheme.colorScheme.primary
-                        )
+                    val currentUser by im.fdx.v2ex.utils.UserStore.user.collectAsState()
+                    if (currentUser?.username != username) {
+                        IconButton(onClick = { viewModel.toggleFollow() }) {
+                            Icon(
+                                painter = painterResource(id = if (uiState.isFollowed) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp),
+                                contentDescription = if (uiState.isFollowed) "Unfollow" else "Follow",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        IconButton(onClick = { showBlockDialog = true }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_block_primary_24dp),
+                                contentDescription = if (uiState.isBlocked) "Unblock" else "Block",
+                                tint = if (uiState.isBlocked) Color.Red else MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                     Box {
                         IconButton(onClick = { showMenu = true }) {

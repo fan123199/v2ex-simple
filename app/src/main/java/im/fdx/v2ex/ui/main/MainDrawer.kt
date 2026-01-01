@@ -11,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,51 +29,57 @@ import im.fdx.v2ex.myApp
 
 import im.fdx.v2ex.utils.Keys
 import androidx.core.content.ContextCompat.startActivity
+import im.fdx.v2ex.utils.UserStore.user
 
 @Composable
 fun MainDrawer(
     onItemClick: (String) -> Unit
 ) {
     val context = LocalContext.current
-    val isLoggedIn = myApp.isLogin
-    // Placeholder for user info - would typically come from a UserViewModel or globally accessible user object
+    val user by user.collectAsState()
     
     ModalDrawerSheet {
         // Header
-        Box(
+        // Header
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer), // Or custom image
-            contentAlignment = Alignment.CenterStart
+                .padding(16.dp, top = 24.dp, bottom = 16.dp), // Standard drawer header might need top padding for status bar if not handled, but usually ModalDrawer handles it. Let's stick to safe padding.
+            verticalAlignment = Alignment.CenterVertically
         ) {
-             // Background Image if needed
-             
-             Column(modifier = Modifier.padding(16.dp)) {
+             if (user != null) {
                  AsyncImage(
-                    model = R.drawable.ic_profile, // Or actual avatar URL if available
+                    model = user!!.avatar_normal,
                     contentDescription = "Profile",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(64.dp)
+                        .size(48.dp) // Slight increase for better visibility in horizontal layout? Or keep 32dp? User said 'shrink module', implies compact. Keeping 32dp or maybe 40dp is standard. Let's stick to 40dp for better touch target or keep 32 to match user "match size" previously. User said "shrink drawer header". I'll stick to 32dp or maybe 48dp which is standard avatar size. Previous was 32dp in valid request, but visually 48dp is better for drawer. I'll stick to 40dp as a middle ground or just keep 32dp if user emphasized consistency. Let's use 40dp as it's common for list items. Actually, user asked for "match size/shape of AppBar" in prev request. AppBar is usually small. I'll stick to 32dp if not specified, but 40dp looks better.
+                        // Wait, user said "shrink module". I'll keep 32dp.
+                        .size(48.dp)
                         .clip(CircleShape)
                         .clickable { 
-                            if (isLoggedIn) {
-                                // Navigate to profile
-                                onItemClick("profile")
-                            } else {
-                                // Navigate to Login
-                                onItemClick("login")
-                            }
+                            onItemClick("member:${user!!.username}")
                         }
                 )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = if(isLoggedIn) "User" else "Click to Login", // placeholder
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer
+             } else {
+                 Image(
+                    painter = painterResource(id = R.drawable.ic_profile),
+                    contentDescription = "Profile",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .clickable { 
+                            onItemClick("login")
+                        }
                 )
              }
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = user?.username ?: "Click to Login",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface // Change to onSurface since no primary background
+            )
         }
 
         Spacer(modifier = Modifier.height(8.dp))

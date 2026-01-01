@@ -181,6 +181,15 @@ class TopicListViewModel : ViewModel() {
                             topicCount = totalTopics ?: currentState.topicCount
                         )
                     }
+                    
+                    try {
+                         val member = parser.getMember()
+                         if (!member.username.isNullOrEmpty()) {
+                             im.fdx.v2ex.utils.UserStore.updateUser(member)
+                         }
+                    } catch (e: Exception) {
+                        // ignore
+                    }
                 } catch (e: Exception) {
                      _uiState.update { it.copy(isLoading = false, error = "Parse Error: ${e.message}") }
                 }
