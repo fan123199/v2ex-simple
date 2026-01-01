@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import im.fdx.v2ex.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,10 +47,14 @@ fun NewTopicScreen(
     onUploadClick: (() -> Unit)?,
     onBackClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val snackbarHostState = androidx.compose.runtime.remember { androidx.compose.material3.SnackbarHostState() }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "R.string.new_topic") }, // We should use string resource
+                title = { Text(text = androidx.compose.ui.res.stringResource(id = R.string.new_topic)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -69,7 +74,11 @@ fun NewTopicScreen(
                              )
                          }
                     }
-                    IconButton(onClick = onSendClick, enabled = !isLoading) {
+                    IconButton(onClick = {
+                        if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = { })) {
+                            onSendClick()
+                        }
+                    }, enabled = !isLoading) {
                         Icon(
                             imageVector = Icons.Default.Send,
                             contentDescription = "Send",
@@ -84,7 +93,8 @@ fun NewTopicScreen(
                     actionIconContentColor = MaterialTheme.colorScheme.primary
                 )
             )
-        }
+        },
+        snackbarHost = { androidx.compose.material3.SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         Column(
             modifier = Modifier

@@ -73,7 +73,8 @@ fun TopicDetailScreen(
     initialTopic: Topic?,
     onBackClick: () -> Unit,
     onMemberClick: (String?) -> Unit,
-    onReportClick: (String, String) -> Unit
+    onReportClick: (String, String) -> Unit,
+    onLoginClick: () -> Unit
 ) {
     val enableSwipe = im.fdx.v2ex.pref.getBoolean("pref_viewpager", false)
     val topicList = TopicListStore.currentTopics
@@ -91,7 +92,8 @@ fun TopicDetailScreen(
                 initialTopic = topic,
                 onBackClick = onBackClick,
                 onMemberClick = onMemberClick,
-                onReportClick = onReportClick
+                onReportClick = onReportClick,
+                onLoginClick = onLoginClick
             )
         }
     } else {
@@ -100,7 +102,8 @@ fun TopicDetailScreen(
             initialTopic = initialTopic,
             onBackClick = onBackClick,
             onMemberClick = onMemberClick,
-            onReportClick = onReportClick
+            onReportClick = onReportClick,
+            onLoginClick = onLoginClick
         )
     }
 }
@@ -112,7 +115,8 @@ fun TopicDetailContent(
     initialTopic: Topic?,
     onBackClick: () -> Unit,
     onMemberClick: (String?) -> Unit,
-    onReportClick: (String, String) -> Unit
+    onReportClick: (String, String) -> Unit,
+    onLoginClick: () -> Unit
 ) {
     val viewModel: TopicDetailViewModel = viewModel(key = "topic_$topicId")
     var replyText by remember { mutableStateOf(TextFieldValue("")) }
@@ -148,6 +152,8 @@ fun TopicDetailContent(
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val isImeVisible = WindowInsets.ime.asPaddingValues().calculateBottomPadding() > 0.dp
 
     // Infinite Scroll
     LaunchedEffect(listState) {
@@ -205,7 +211,9 @@ fun TopicDetailContent(
                                 )
                             },
                             onClick = {
-                                viewModel.favorTopic()
+                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                    viewModel.favorTopic()
+                                }
                                 showMoreActions = false
                             }
                         )
@@ -219,7 +227,9 @@ fun TopicDetailContent(
                                 )
                             },
                             onClick = {
-                                viewModel.thankTopic()
+                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                    viewModel.thankTopic()
+                                }
                                 showMoreActions = false
                             },
                             enabled = !uiState.isThanked
@@ -234,7 +244,9 @@ fun TopicDetailContent(
                                 )
                             },
                             onClick = {
-                                viewModel.ignoreTopic()
+                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                    viewModel.ignoreTopic()
+                                }
                                 showMoreActions = false
                             }
                         )
@@ -274,12 +286,15 @@ fun TopicDetailContent(
                 }
             )
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         bottomBar = {
             BottomReplyInput(
                 value = replyText,
                 onValueChange = { replyText = it },
                 onSend = { content ->
-                    viewModel.postReply(content)
+                    if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                        viewModel.postReply(content)
+                    }
                 },
                 focusRequester = focusRequester,
                 onFocusChanged = { isInputFocused = it }
@@ -459,9 +474,11 @@ fun TopicDetailContent(
                                 focusRequester.requestFocus()
                             },
                             onThankClick = {
-                                if (!it.isThanked) {
-                                    replyToThank = it
-                                    showThankDialog = true
+                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                    if (!it.isThanked) {
+                                        replyToThank = it
+                                        showThankDialog = true
+                                    }
                                 }
                             },
                             onLongClick = {
@@ -511,7 +528,7 @@ fun TopicDetailContent(
             }
 
             // Dimming Overlay
-            if (isInputFocused) {
+            if (isImeVisible) {
                Box(
                    modifier = Modifier
                        .fillMaxSize()
@@ -575,9 +592,11 @@ fun TopicDetailContent(
                             )
                         },
                         modifier = Modifier.clickable {
-                            selectedReply?.let { it ->
-                                if (!it.isThanked) {
-                                    viewModel.thankReply(it.id)
+                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                selectedReply?.let { it ->
+                                    if (!it.isThanked) {
+                                        viewModel.thankReply(it.id)
+                                    }
                                 }
                             }
                             showReplySheet = false
@@ -587,7 +606,9 @@ fun TopicDetailContent(
                         headlineContent = { Text(stringResource(R.string.hide_reply)) },
                         leadingContent = { Icon(Icons.Default.VisibilityOff, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
                         modifier = Modifier.clickable {
-                            selectedReply?.let { viewModel.ignoreReply(it.id) }
+                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                selectedReply?.let { viewModel.ignoreReply(it.id) }
+                            }
                             showReplySheet = false
                         }
                     )

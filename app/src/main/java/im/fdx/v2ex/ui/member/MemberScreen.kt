@@ -57,7 +57,8 @@ fun MemberScreen(
     onTopicClick: (Topic) -> Unit,
     onMemberClick: (String?) -> Unit = {},
     onNodeClick: (String?) -> Unit = {},
-    onReportClick: (String, String) -> Unit = { _, _ -> }
+    onReportClick: (String, String) -> Unit = { _, _ -> },
+    onLoginClick: () -> Unit = {}
 ) {
     val viewModel: MemberViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -74,6 +75,7 @@ fun MemberScreen(
     var showReportSheet by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()
+    val snackbarHostState = remember { SnackbarHostState() }
     
     Scaffold(
         topBar = {
@@ -91,14 +93,22 @@ fun MemberScreen(
                 actions = {
                     val currentUser by im.fdx.v2ex.utils.UserStore.user.collectAsState()
                     if (currentUser?.username != username) {
-                        IconButton(onClick = { viewModel.toggleFollow() }) {
+                        IconButton(onClick = {
+                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                viewModel.toggleFollow()
+                            }
+                        }) {
                             Icon(
                                 painter = painterResource(id = if (uiState.isFollowed) R.drawable.ic_favorite_black_24dp else R.drawable.ic_favorite_border_black_24dp),
                                 contentDescription = if (uiState.isFollowed) "Unfollow" else "Follow",
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
-                        IconButton(onClick = { showBlockDialog = true }) {
+                        IconButton(onClick = {
+                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                showBlockDialog = true
+                            }
+                        }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_block_primary_24dp),
                                 contentDescription = if (uiState.isBlocked) "Unblock" else "Block",
@@ -118,8 +128,8 @@ fun MemberScreen(
                                 text = { Text(stringResource(R.string.report_user)) },
                                 onClick = {
                                     showMenu = false
-                                    if (!myApp.isLogin) {
-                                        Toast.makeText(context, context.getString(R.string.not_login_tips), Toast.LENGTH_SHORT).show()
+                                    if (!im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                        // Reminder shown
                                     } else {
                                         showReportSheet = true
                                     }
@@ -129,7 +139,8 @@ fun MemberScreen(
                     }
                 }
             )
-        }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         if (showBlockDialog) {
             AlertDialog(

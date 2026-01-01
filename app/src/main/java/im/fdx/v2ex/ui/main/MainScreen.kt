@@ -42,6 +42,8 @@ fun MainScreen(
     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
     // val context = LocalContext.current // Context no longer needed for navigation (ideally)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
@@ -49,6 +51,17 @@ fun MainScreen(
         drawerState = drawerState,
         drawerContent = {
             MainDrawer(onItemClick = { route ->
+                if (route == "favorites" || route == "notifications" || route == "daily") {
+                    if (!im.fdx.v2ex.utils.verifyLogin(
+                            context = context,
+                            snackbarHostState = snackbarHostState,
+                            scope = coroutineScope,
+                            onLoginClick = { onMenuClick("login") }
+                        )) {
+                        coroutineScope.launch { drawerState.close() }
+                        return@MainDrawer
+                    }
+                }
                 coroutineScope.launch { drawerState.close() }
                 if (route.startsWith("member:")) {
                     onMemberClick(route.removePrefix("member:"))
@@ -59,6 +72,7 @@ fun MainScreen(
         }
     ) {
         Scaffold(
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             topBar = {
                 CenterAlignedTopAppBar(
                     title = { Text("V2EX") },

@@ -155,7 +155,8 @@ fun AppNavigation(
                 onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) },
                 onReportClick = { title, content ->
                     navController.navigate(Screen.NewTopic.createRoute(title = title, content = content))
-                }
+                },
+                onLoginClick = { navController.navigate(Screen.Login.route) }
             )
         }
 
@@ -178,7 +179,8 @@ fun AppNavigation(
                 onNodeClick = { n -> if(n!=null) navController.navigate(Screen.Node.createRoute(n)) },
                 onReportClick = { title, content -> 
                     navController.navigate(Screen.NewTopic.createRoute(title = title, content = content))
-                }
+                },
+                onLoginClick = { navController.navigate(Screen.Login.route) }
             )
         }
 
