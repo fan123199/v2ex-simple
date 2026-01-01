@@ -37,14 +37,14 @@ fun MainScreen(
     onMemberClick: (String) -> Unit,
     onNodeClick: (String) -> Unit,
     onSearchClick: () -> Unit,
-    onMenuClick: (String) -> Unit // Route string ?? Or separate callbacks
+    onMenuClick: (String) -> Unit,
+    onNewTopicClick: () -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    // val context = LocalContext.current // Context no longer needed for navigation (ideally)
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     ModalNavigationDrawer(
@@ -104,13 +104,27 @@ fun MainScreen(
                     actions = {
                         IconButton(onClick = onSearchClick) {
                              Icon(
-                                 imageVector = Icons.Default.Search,
-                                 contentDescription = "Search",
-                                 tint = MaterialTheme.colorScheme.primary
+                                  imageVector = Icons.Default.Search,
+                                  contentDescription = "Search",
+                                  tint = MaterialTheme.colorScheme.primary
                              )
                         }
                     },
                     scrollBehavior = scrollBehavior
+                )
+            },
+            floatingActionButton = {
+                im.fdx.v2ex.ui.common.PostTopicFAB(
+                    onClick = {
+                        if (im.fdx.v2ex.utils.verifyLogin(
+                                context = context,
+                                snackbarHostState = snackbarHostState,
+                                scope = coroutineScope,
+                                onLoginClick = { onMenuClick("login") }
+                            )) {
+                            onNewTopicClick()
+                        }
+                    }
                 )
             }
         ) { innerPadding ->

@@ -133,6 +133,9 @@ fun AppNavigation(
                         "login" -> navController.navigate(Screen.Login.route)
                         "daily" -> dailyViewModel.startDailyCheck()
                     }
+                },
+                onNewTopicClick = {
+                    navController.navigate(Screen.NewTopic.createRoute())
                 }
             )
         }
@@ -199,7 +202,11 @@ fun AppNavigation(
                  nodeName = nodeName,
                  onBackClick = { navController.popBackStack() },
                  onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
-                 onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) }
+                 onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) },
+                 onNewTopicClick = { node ->
+                     navController.navigate(Screen.NewTopic.createRoute(node = node))
+                 },
+                 onLoginClick = { navController.navigate(Screen.Login.route) }
              )
         }
         
@@ -422,12 +429,6 @@ fun AppNavigation(
                  },
                  isLoading = isLoading,
                  onSendClick = viewModel::send,
-                 onUploadClick = {
-                      // Image picker logic requires Activity Result API which is tricky in pure Compose without wrapper
-                      // or custom ActivityResultLauncher.
-                      // For now, simpler to leave unimplemented or use a library that supports Compose.
-                      Toast.makeText(context, "暂不支持图片上传", Toast.LENGTH_SHORT).show()
-                 },
                  onBackClick = { navController.popBackStack() }
             )
         }

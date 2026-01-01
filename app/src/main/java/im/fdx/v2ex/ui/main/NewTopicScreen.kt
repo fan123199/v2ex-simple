@@ -44,7 +44,6 @@ fun NewTopicScreen(
     onNodeClick: () -> Unit,
     isLoading: Boolean,
     onSendClick: () -> Unit,
-    onUploadClick: (() -> Unit)?,
     onBackClick: () -> Unit
 ) {
     val context = LocalContext.current
@@ -65,15 +64,6 @@ fun NewTopicScreen(
                     }
                 },
                 actions = {
-                    if (onUploadClick != null) {
-                         IconButton(onClick = onUploadClick) {
-                             Icon(
-                                 painter = painterResource(id = R.drawable.ic_image),
-                                 contentDescription = "Upload Image",
-                                 tint = MaterialTheme.colorScheme.primary
-                             )
-                         }
-                    }
                     IconButton(onClick = {
                         if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = { })) {
                             onSendClick()

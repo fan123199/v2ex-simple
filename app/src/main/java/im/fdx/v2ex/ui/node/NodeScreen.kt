@@ -30,13 +30,18 @@ fun NodeScreen(
     nodeName: String,
     onBackClick: () -> Unit,
     onTopicClick: (Topic) -> Unit,
-    onMemberClick: (String?) -> Unit
+    onMemberClick: (String?) -> Unit,
+    onNewTopicClick: (String?) -> Unit,
+    onLoginClick: () -> Unit
 ) {
     val viewModel: TopicListViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    // val context = LocalContext.current
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(uiState.node?.title ?: nodeName) },
@@ -47,6 +52,20 @@ fun NodeScreen(
                             contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.primary
                         )
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            im.fdx.v2ex.ui.common.PostTopicFAB(
+                onClick = {
+                    if (im.fdx.v2ex.utils.verifyLogin(
+                            context = context,
+                            snackbarHostState = snackbarHostState,
+                            scope = coroutineScope,
+                            onLoginClick = onLoginClick
+                        )) {
+                        onNewTopicClick(nodeName)
                     }
                 }
             )

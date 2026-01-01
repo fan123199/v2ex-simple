@@ -47,9 +47,9 @@ class NewTopicViewModel(application: Application) : AndroidViewModel(application
     fun onNodeNameChange(value: String) { _nodeName.value = value }
     
     fun setInitialData(t: String?, c: String?, n: String?) {
-        if (t != null) _title.value = t
-        if (c != null) _content.value = c
-        if (n != null) _nodeName.value = n
+        if (t != null && t != "{title}") _title.value = t
+        if (c != null && c != "{content}") _content.value = c
+        if (n != null && n != "{node}") _nodeName.value = n
         // Report logic ignored for simplicity, can be re-added
     }
 
