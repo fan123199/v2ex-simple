@@ -120,6 +120,11 @@ class TopicListViewModel : ViewModel() {
             fetchSearch(page, isRefresh)
             return
         }
+        if (currentMode != FROM_SEARCH && requestUrl.isEmpty()) {
+            _uiState.update { it.copy(isLoading = false) }
+            return
+        }
+
         if (requestUrl == API_HEATED) {
              fetchHeated(isRefresh)
              return
@@ -216,16 +221,39 @@ class TopicListViewModel : ViewModel() {
     }
 
     // Search Logic
-    private var searchOption: SearchOption? = null
+    // Search Logic
+    private val _searchOption = MutableStateFlow<SearchOption?>(SearchOption(q = ""))
+    val searchOption: StateFlow<SearchOption?> = _searchOption.asStateFlow()
 
     fun search(query: String) {
         currentMode = FROM_SEARCH
-        searchOption = SearchOption(q = query)
+        _searchOption.update {
+            it?.copy(q = query) ?: SearchOption(q = query)
+        }
         refresh()
+    }
+    
+    fun updateSearchFilter(sort: String? = null, order: String? = null) {
+        val current = _searchOption.value ?: SearchOption(q = "")
+        val newOption = current.copy(
+            sort = sort ?: current.sort,
+            order = order ?: current.order
+        )
+        if (newOption != current) {
+             _searchOption.value = newOption
+             if (newOption.q.isNotEmpty()) {
+                 refresh()
+             }
+        }
     }
 
     private fun fetchSearch(page: Int, isRefresh: Boolean) {
-        val option = searchOption ?: return
+        val option = _searchOption.value ?: return
+        if (option.q.isEmpty()) {
+            _uiState.update { it.copy(isLoading = false) }
+            return
+        }
+
         val nextIndex = (page - 1) * 10
         val url = HttpUrl.Builder()
             .scheme("https")

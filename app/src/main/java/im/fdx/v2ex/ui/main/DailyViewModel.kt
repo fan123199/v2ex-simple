@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import im.fdx.v2ex.data.network.HttpHelper
 import im.fdx.v2ex.data.network.NetManager
 import im.fdx.v2ex.data.network.Parser
-import im.fdx.v2ex.utils.extensions.await
 import im.fdx.v2ex.utils.extensions.logd
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,7 +23,7 @@ class DailyViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
-                    HttpHelper.OK_CLIENT.newCall(Request.Builder().url(NetManager.DAILY_CHECK).build()).await()
+                    HttpHelper.OK_CLIENT.newCall(Request.Builder().url(NetManager.DAILY_CHECK).build()).execute()
                 }
                 if (response.code == 302) {
                     _toastMsg.emit("Need Login first")
@@ -58,7 +57,7 @@ class DailyViewModel : ViewModel() {
             withContext(Dispatchers.IO) {
                 HttpHelper.OK_CLIENT.newCall(Request.Builder().url(url)
                     .header("Referer", NetManager.DAILY_CHECK)
-                    .build()).await()
+                    .build()).execute()
             }
             _toastMsg.emit("每日登录奖励领取成功")
         } catch (e: Exception) {

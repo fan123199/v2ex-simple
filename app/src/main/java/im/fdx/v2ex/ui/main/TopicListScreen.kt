@@ -44,10 +44,13 @@ fun TopicListScreen(
     onNodeClick: (String?) -> Unit,
     onTopicCountObtained: (Int) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp),
-    header: (@Composable () -> Unit)? = null
+    header: (@Composable () -> Unit)? = null,
+    enableAutoInit: Boolean = true
 ) {
     LaunchedEffect(tab, type, username, nodeName) {
-        viewModel.init(tab, type, username, nodeName)
+        if (enableAutoInit) {
+            viewModel.init(tab, type, username, nodeName)
+        }
     }
 
     val uiState by viewModel.uiState.collectAsState()

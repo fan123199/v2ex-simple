@@ -88,7 +88,7 @@ fun MainScreen(
                     actions = {
                         IconButton(onClick = onSearchClick) {
                              Icon(
-                                 imageVector = TopicListScreenDefaults.SearchIcon,
+                                 imageVector = Icons.Default.Search,
                                  contentDescription = "Search",
                                  tint = MaterialTheme.colorScheme.primary
                              )
@@ -140,9 +140,7 @@ fun MainScreen(
     }
 }
 
-object TopicListScreenDefaults {
-     val SearchIcon = Icons.Default.Search
-}
+
 
 
 

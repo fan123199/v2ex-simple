@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +56,9 @@ fun SearchScreen(
                         colors = TextFieldDefaults.colors(
                             focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent,
-                            disabledContainerColor = Color.Transparent
+                            disabledContainerColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
                         ),
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         keyboardActions = KeyboardActions(onSearch = {
@@ -88,12 +91,55 @@ fun SearchScreen(
             )
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Column(modifier = Modifier.padding(innerPadding)) {
+            val searchOption by viewModel.searchOption.collectAsState()
+            
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                FilterChip(
+                    selected = searchOption?.sort == im.fdx.v2ex.data.model.CREATED,
+                    onClick = { 
+                        if(searchOption?.sort != im.fdx.v2ex.data.model.CREATED) {
+                            viewModel.updateSearchFilter(sort = im.fdx.v2ex.data.model.CREATED) 
+                        }
+                    },
+                    label = { Text("按时间") }
+                )
+                
+               FilterChip(
+                    selected = searchOption?.sort == im.fdx.v2ex.data.model.SUMUP,
+                    onClick = { 
+                        if(searchOption?.sort != im.fdx.v2ex.data.model.SUMUP) {
+                            viewModel.updateSearchFilter(sort = im.fdx.v2ex.data.model.SUMUP) 
+                        }
+                    },
+                    label = { Text("按相关度") }
+                )
+                
+                // Order Toggle
+                if (searchOption?.sort == im.fdx.v2ex.data.model.CREATED) {
+                     FilterChip(
+                        selected = searchOption?.order == im.fdx.v2ex.data.model.NEW_FIRST,
+                        onClick = { 
+                            val newOrder = if (searchOption?.order == im.fdx.v2ex.data.model.NEW_FIRST) im.fdx.v2ex.data.model.OLD_FIRST else im.fdx.v2ex.data.model.NEW_FIRST
+                            viewModel.updateSearchFilter(order = newOrder) 
+                        },
+                        label = { Text(if (searchOption?.order == im.fdx.v2ex.data.model.NEW_FIRST) "从新到旧" else "从旧到新") },
+                        trailingIcon = {
+                            // Optional arrow icon
+                        }
+                    )
+                }
+            }
+            
             TopicListScreen(
                 viewModel = viewModel,
                 onTopicClick = onTopicClick,
                 onMemberClick = onMemberClick,
-                onNodeClick = onNodeClick
+                onNodeClick = onNodeClick,
+                enableAutoInit = false
             )
         }
     }
