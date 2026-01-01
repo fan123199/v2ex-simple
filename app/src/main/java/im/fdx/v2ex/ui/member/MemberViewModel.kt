@@ -31,7 +31,9 @@ data class MemberUiState(
     val repliesTotalPage: Int = 1,
     val onceToken: String? = null,
     val isFollowed: Boolean = false,
-    val isBlocked: Boolean = false
+    val isBlocked: Boolean = false,
+    val topicCount: Int? = null,
+    val replyCount: Int? = null
 )
 
 class MemberViewModel : ViewModel() {
@@ -171,20 +173,25 @@ class MemberViewModel : ViewModel() {
                  val body = response.body?.string() ?: ""
                  val parser = Parser(body)
                  val replies = parser.getUserReplies()
-                  val (totalPage, _) = parser.getTotalPageInMember()
+                  val (totalPage, repliesNum) = parser.getTotalPageInMember()
                  
                  _uiState.update { state ->
                      val newReplies = if(page == 1) replies else state.replies + replies
                      state.copy(
                          replies = newReplies,
                          isRepliesLoading = false,
-                         isRepliesEnd = page >= totalPage,
+                         isRepliesEnd = page >= totalPage || (page > 1 && replies.isEmpty()),
                          repliesPage = page,
-                         repliesTotalPage = totalPage
+                         repliesTotalPage = totalPage,
+                         replyCount = if (page == 1) repliesNum else state.replyCount
                      )
                  }
              }
          })
+    }
+
+    fun updateTopicCount(count: Int) {
+        _uiState.update { it.copy(topicCount = count) }
     }
 }
 

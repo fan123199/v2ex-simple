@@ -14,6 +14,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
+import androidx.compose.material.icons.filled.MoreVert
+import im.fdx.v2ex.myApp
+import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +46,7 @@ import im.fdx.v2ex.data.model.Member
 import im.fdx.v2ex.data.model.MemberReplyModel
 import im.fdx.v2ex.R
 import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.layout.FlowRow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +55,8 @@ fun MemberScreen(
     onBackClick: () -> Unit,
     onTopicClick: (Topic) -> Unit,
     onMemberClick: (String?) -> Unit = {},
-    onNodeClick: (String?) -> Unit = {}
+    onNodeClick: (String?) -> Unit = {},
+    onReportClick: (String, String) -> Unit = { _, _ -> }
 ) {
     val viewModel: MemberViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
@@ -63,6 +68,11 @@ fun MemberScreen(
     }
 
     val pagerState = rememberPagerState(pageCount = { 2 })
+    
+    var showBlockDialog by remember { mutableStateOf(false) }
+    var showReportSheet by remember { mutableStateOf(false) }
+    var showMenu by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
     
     Scaffold(
         topBar = {
@@ -85,17 +95,84 @@ fun MemberScreen(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
-                    IconButton(onClick = { viewModel.toggleBlock() }) {
+                    IconButton(onClick = { showBlockDialog = true }) {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_block_primary_24dp),
                             contentDescription = if (uiState.isBlocked) "Unblock" else "Block",
                             tint = if (uiState.isBlocked) Color.Red else MaterialTheme.colorScheme.primary
                         )
                     }
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More", tint = MaterialTheme.colorScheme.primary)
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("举报该用户") },
+                                onClick = {
+                                    showMenu = false
+                                    if (!myApp.isLogin) {
+                                        Toast.makeText(context, "请先登录", Toast.LENGTH_SHORT).show()
+                                    } else {
+                                        showReportSheet = true
+                                    }
+                                }
+                            )
+                        }
+                    }
                 }
             )
         }
     ) { innerPadding ->
+        if (showBlockDialog) {
+            AlertDialog(
+                onDismissRequest = { showBlockDialog = false },
+                title = { Text(if (uiState.isBlocked) "取消屏蔽" else "屏蔽用户") },
+                text = { Text(if (uiState.isBlocked) "确定要取消对该用户的屏蔽吗？" else "确定要屏蔽该用户吗？屏蔽后你将不会看到该用户发布的主题和回复。") },
+                confirmButton = {
+                    TextButton(onClick = {
+                        viewModel.toggleBlock()
+                        showBlockDialog = false
+                    }) {
+                        Text("确定")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showBlockDialog = false }) {
+                        Text("取消")
+                    }
+                }
+            )
+        }
+
+        if (showReportSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { showReportSheet = false },
+                sheetState = sheetState
+            ) {
+                Column(modifier = Modifier.padding(bottom = 32.dp)) {
+                    Text(
+                        text = "请选择举报的理由",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                    listOf("大量发布广告", "冒充他人", "疑似机器帐号", "儿童安全", "其他").forEach { reason ->
+                        ListItem(
+                            headlineContent = { Text(reason) },
+                            modifier = Modifier.clickable {
+                                showReportSheet = false
+                                val reportTitle = "报告用户 ${username}"
+                                val reportContent = "用户首页：https://www.v2ex.com/member/$username \n 该用户涉及 $reason，请站长处理。"
+                                onReportClick(reportTitle, reportContent)
+                            }
+                        )
+                    }
+                }
+            }
+        }
         Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
             // Member Header
             uiState.member?.let { member ->
@@ -116,12 +193,12 @@ fun MemberScreen(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text("Topics") }
+                    text = { Text("Topics" + (uiState.topicCount?.let { " ($it)" } ?: "")) }
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text("Replies") }
+                    text = { Text("Replies" + (uiState.replyCount?.let { " ($it)" } ?: "")) }
                 )
             }
 
@@ -136,6 +213,7 @@ fun MemberScreen(
                         onTopicClick = onTopicClick,
                         onMemberClick = onMemberClick,
                         onNodeClick = onNodeClick,
+                        onTopicCountObtained = { viewModel.updateTopicCount(it) },
                         contentPadding = PaddingValues(bottom = innerPadding.calculateBottomPadding())
                     )
                     1 -> MemberRepliesList(
@@ -206,23 +284,24 @@ fun MemberHeader(member: Member) {
         }
 
         // Social Links
-        Row(
+        FlowRow(
             modifier = Modifier
                 .padding(vertical = 12.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            member.website?.let {
-                SocialIcon(iconId = R.drawable.ic_website, url = it)
+            if (!member.website.isNullOrEmpty()) {
+                SocialIcon(iconId = R.drawable.ic_website, url = member.website)
             }
-            member.twitter?.let {
-                SocialIcon(iconId = R.drawable.ic_twitter, url = it)
+            if (!member.twitter.isNullOrEmpty()) {
+                SocialIcon(iconId = R.drawable.ic_twitter, url = member.twitter)
             }
-            member.github?.let {
-                SocialIcon(iconId = R.drawable.ic_github, url = it)
+            if (!member.github.isNullOrEmpty()) {
+                SocialIcon(iconId = R.drawable.ic_github, url = member.github)
             }
-            member.location?.let {
-                SocialIcon(iconId = R.drawable.ic_location, label = it)
+            if (!member.location.isNullOrEmpty()) {
+                SocialIcon(iconId = R.drawable.ic_location, label = member.location)
             }
         }
     }
@@ -231,14 +310,17 @@ fun MemberHeader(member: Member) {
 @Composable
 fun SocialIcon(iconId: Int, url: String? = null, label: String? = null) {
     val context = LocalContext.current
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
-        url?.let {
-             try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+    val clickableModifier = if (!url.isNullOrEmpty()) {
+        Modifier.clickable {
+            val finalUrl = if (url.startsWith("http")) url else "https://$url"
+            try {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(finalUrl))
                 context.startActivity(intent)
             } catch (e: Exception) {}
         }
-    }.padding(4.dp)) {
+    } else Modifier
+
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = clickableModifier.padding(4.dp)) {
         Icon(
             painter = painterResource(id = iconId),
             contentDescription = null,

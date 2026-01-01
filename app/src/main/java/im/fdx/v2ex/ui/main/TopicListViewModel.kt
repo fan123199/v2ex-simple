@@ -39,7 +39,8 @@ data class TopicListUiState(
     val totalPage: Int = 0,
     val isEndless: Boolean = true,
     val isEnd: Boolean = false,
-    val node: Node? = null
+    val node: Node? = null,
+    val topicCount: Int? = null
 )
 
 class TopicListViewModel : ViewModel() {
@@ -166,6 +167,8 @@ class TopicListViewModel : ViewModel() {
                         }
                     } else null
                     
+                    val totalTopics = if (currentMode == FROM_MEMBER) parser.getTotalTopics() else null
+
                     _uiState.update { currentState ->
                         val combinedList = if (isRefresh) newTopics else (currentState.topics + newTopics).distinctBy { it.id }
                         currentState.copy(
@@ -173,8 +176,9 @@ class TopicListViewModel : ViewModel() {
                             isLoading = false,
                             page = page,
                             totalPage = if(totalPage > 0) totalPage else currentState.totalPage,
-                            isEnd = (totalPage > 0 && page >= totalPage) || (newTopics.isEmpty() && !isRefresh),
-                            node = nodeInfo ?: currentState.node
+                            isEnd = (totalPage in 1..page) || (newTopics.isEmpty() && !isRefresh) || (combinedList.size == currentState.topics.size && !isRefresh),
+                            node = nodeInfo ?: currentState.node,
+                            topicCount = totalTopics ?: currentState.topicCount
                         )
                     }
                 } catch (e: Exception) {

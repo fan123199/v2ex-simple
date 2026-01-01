@@ -170,7 +170,10 @@ fun AppNavigation(
                 onBackClick = { navController.popBackStack() },
                 onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
                 onMemberClick = { u -> if(u!=null) navController.navigate(Screen.Member.createRoute(u)) },
-                onNodeClick = { n -> if(n!=null) navController.navigate(Screen.Node.createRoute(n)) }
+                onNodeClick = { n -> if(n!=null) navController.navigate(Screen.Node.createRoute(n)) },
+                onReportClick = { title, content -> 
+                    navController.navigate(Screen.NewTopic.createRoute(title = title, content = content))
+                }
             )
         }
 

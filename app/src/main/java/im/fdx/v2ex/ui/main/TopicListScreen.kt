@@ -42,6 +42,7 @@ fun TopicListScreen(
     onTopicClick: (Topic) -> Unit,
     onMemberClick: (String?) -> Unit,
     onNodeClick: (String?) -> Unit,
+    onTopicCountObtained: (Int) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp),
     header: (@Composable () -> Unit)? = null
 ) {
@@ -61,6 +62,10 @@ fun TopicListScreen(
             .collect {
                 viewModel.loadMore()
             }
+    }
+
+    LaunchedEffect(uiState.topicCount) {
+        uiState.topicCount?.let { onTopicCountObtained(it) }
     }
 
     PullToRefreshBox(
