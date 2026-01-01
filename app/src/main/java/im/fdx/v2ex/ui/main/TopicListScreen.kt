@@ -92,7 +92,10 @@ fun TopicListScreen(
                 items(uiState.topics, key = { it.id }) { topic ->
                     TopicItem(
                         topic = topic,
-                        onClick = { onTopicClick(topic) },
+                        onClick = { 
+                            im.fdx.v2ex.ui.topic.TopicListStore.setTopics(uiState.topics)
+                            onTopicClick(topic) 
+                        },
                         onNodeClick = onNodeClick,
                         onMemberClick = onMemberClick
                     )

@@ -46,7 +46,8 @@ data class SettingsUiState(
     val receiveMsg: Boolean = false,
     val backgroundMsg: Boolean = false,
     val msgPeriod: String = "15",
-    val textSize: String = "0"
+    val textSize: String = "0",
+    val viewPager: Boolean = false
 )
 
 class SettingsViewModel : ViewModel() {
@@ -75,9 +76,15 @@ class SettingsViewModel : ViewModel() {
                 receiveMsg = receiveMsg,
                 backgroundMsg = backgroundMsg,
                 msgPeriod = msgPeriod,
-                textSize = pref.getString(Keys.PREF_TEXT_SIZE, "0") ?: "0"
+                textSize = pref.getString(Keys.PREF_TEXT_SIZE, "0") ?: "0",
+                viewPager = pref.getBoolean("pref_viewpager", false)
             )
         }
+    }
+
+    fun setViewPager(enable: Boolean) {
+        pref.edit { putBoolean("pref_viewpager", enable) }
+        _uiState.update { it.copy(viewPager = enable) }
     }
 
     fun setTextSize(size: String) {
@@ -201,6 +208,15 @@ fun SettingsScreen(
                     showTextSizeSheet = true
                 }
             )
+
+            SwitchSettingsItem(
+                title = stringResource(R.string.swipe_to_switch_topic),
+                checked = uiState.viewPager,
+                onCheckedChange = { 
+                    viewModel.setViewPager(it)
+                }
+            )
+            
             
             // Night Mode Logic - simplifed dialog or dropdown
              SettingsItem(

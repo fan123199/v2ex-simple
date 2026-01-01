@@ -3,6 +3,8 @@ package im.fdx.v2ex.ui.topic
 import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import im.fdx.v2ex.data.model.Reply
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -60,16 +62,55 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun TopicDetailScreen(
     topicId: String,
     initialTopic: Topic?,
-    viewModel: TopicDetailViewModel = viewModel(),
     onBackClick: () -> Unit,
     onMemberClick: (String?) -> Unit,
     onReportClick: (String, String) -> Unit
 ) {
+    val enableSwipe = im.fdx.v2ex.pref.getBoolean("pref_viewpager", false)
+    val topicList = TopicListStore.currentTopics
+    val initialIndex = topicList.indexOfFirst { it.id == topicId }
+
+    if (enableSwipe && initialIndex != -1) {
+        val pagerState = rememberPagerState(initialPage = initialIndex) { topicList.size }
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxSize()
+        ) { page ->
+            val topic = topicList[page]
+            TopicDetailContent(
+                topicId = topic.id,
+                initialTopic = topic,
+                onBackClick = onBackClick,
+                onMemberClick = onMemberClick,
+                onReportClick = onReportClick
+            )
+        }
+    } else {
+        TopicDetailContent(
+            topicId = topicId,
+            initialTopic = initialTopic,
+            onBackClick = onBackClick,
+            onMemberClick = onMemberClick,
+            onReportClick = onReportClick
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopicDetailContent(
+    topicId: String,
+    initialTopic: Topic?,
+    onBackClick: () -> Unit,
+    onMemberClick: (String?) -> Unit,
+    onReportClick: (String, String) -> Unit
+) {
+    val viewModel: TopicDetailViewModel = viewModel(key = "topic_$topicId")
     var replyText by remember { mutableStateOf("") }
     var selectedReply by remember { mutableStateOf<Reply?>(null) }
     var showReplySheet by remember { mutableStateOf(false) }
