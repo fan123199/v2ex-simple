@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import im.fdx.v2ex.R
@@ -58,7 +59,7 @@ fun NewTopicScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(R.string.close),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -71,7 +72,7 @@ fun NewTopicScreen(
                     }, enabled = !isLoading) {
                         Icon(
                             imageVector = Icons.Default.Send,
-                            contentDescription = "Send",
+                            contentDescription = stringResource(R.string.post_reply),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -104,7 +105,7 @@ fun NewTopicScreen(
                     .padding(vertical = 8.dp)
             ) {
                 Text(
-                    text = if (!nodeName.isNullOrEmpty()) "$nodeName | $nodeTitle" else "选择节点",
+                    text = if (!nodeName.isNullOrEmpty()) "$nodeName | $nodeTitle" else stringResource(R.string.choose_node),
                     style = MaterialTheme.typography.titleMedium,
                     color = if (!nodeName.isNullOrEmpty()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -114,7 +115,7 @@ fun NewTopicScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = onTitleChange,
-                label = { Text("标题") },
+                label = { Text(stringResource(R.string.topic_title)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -125,7 +126,7 @@ fun NewTopicScreen(
             OutlinedTextField(
                 value = content,
                 onValueChange = onContentChange,
-                label = { Text("内容") },
+                label = { Text(stringResource(R.string.content)) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)

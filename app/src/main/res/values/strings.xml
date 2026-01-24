@@ -209,6 +209,24 @@
     <string name="normal_dark">Normal Dark</string>
     <string name="super_dark">Super Dark</string>
 
+    <!-- Extraction from Kotlin code -->
+    <string name="two_step_verification">Two-step Verification</string>
+    <string name="input_two_step_code">Please enter your two-step verification code</string>
+    <string name="verify">Verify</string>
+    <string name="username_or_email">Username / Email</string>
+    <string name="no_account_signup">No account? Sign up</string>
+    <string name="login_success">Login success</string>
+    <string name="publish_success">Publish success</string>
+    <string name="report_reply_title">Report reply: %s</string>
+    <string name="report_reply_content">Reply ID: %1$s\nAuthor: %2$s\nTopic: %3$s</string>
+    <string name="report_topic_title">Report topic: %s</string>
+    <string name="report_topic_content">Topic: %1$s\nAuthor: %2$s\nReason: %3$s</string>
+    <string name="checkin_success">Daily check-in success</string>
+    <string name="checkin_already">Already checked in, come back tomorrow</string>
+    <string name="parsing_error_once">Parsing error, cannot find \'once\'</string>
+    <string name="checkin_failed">Check-in failed: %s</string>
+    <string name="need_login_first">Need login first</string>
+
     <string-array name="j" translatable="false">
         <item>天</item>
         <item>无</item>
@@ -289,4 +307,11 @@
     <string name="block_confirm_msg">Are you sure you want to block this user? You will not see topics and replies from this user after blocking.</string>
     <string name="unblock_confirm_msg">Are you sure you want to unblock this user?</string>
 
+    <string name="toast_post_reply_success">Reply success</string>
+    <string name="toast_favor_success">Favor success</string>
+    <string name="toast_unfavor_success">Unfavor success</string>
+    <string name="toast_ignore_topic_success">Ignore topic success</string>
+    <string name="toast_ignore_reply_success">Ignore reply success</string>
+    <string name="filtering_by_user">Viewing all replies from %s</string>
+    <string name="viewing_conversation">Viewing conversation</string>
 </resources>

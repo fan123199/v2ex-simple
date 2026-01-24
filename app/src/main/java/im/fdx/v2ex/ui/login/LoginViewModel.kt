@@ -22,6 +22,7 @@ import okhttp3.*
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.jsoup.Jsoup
 import java.io.IOException
+import im.fdx.v2ex.R
 
 data class CaptchaInfo(val url: String, val headers: Map<String, String>)
 
@@ -106,15 +107,15 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun isValidated(): Boolean {
         if (username.value.isEmpty()) {
-            _loginResult.value = LoginResult.Error("名字不能为空")
+            _loginResult.value = LoginResult.Error(getApplication<Application>().getString(R.string.username_or_email))
             return false
         }
         if (password.value.isEmpty()) {
-            _loginResult.value = LoginResult.Error("密码不能为空")
+            _loginResult.value = LoginResult.Error(getApplication<Application>().getString(R.string.password))
             return false
         }
         if (captcha.value.isEmpty()) {
-            _loginResult.value = LoginResult.Error("验证码不能为空")
+            _loginResult.value = LoginResult.Error(getApplication<Application>().getString(R.string.verify_code))
             return false
         }
         return true
@@ -252,7 +253,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         setLogin(true)
                         _loginResult.value = LoginResult.Success
                     } else {
-                        _loginResult.value = LoginResult.Error("两步验证失败")
+                        _loginResult.value = LoginResult.Error(getApplication<Application>().getString(R.string.error_auth_failure))
                     }
                 } else {
                     _isLoading.value = false

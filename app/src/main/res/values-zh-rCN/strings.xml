@@ -160,6 +160,27 @@
     <string name="lte">结束时间</string>
     <string name="newest">最新</string>
     <string name="hot">热门</string>
+    <string name="dark_mode_darker">极黑模式</string>
+    <string name="normal_dark">普通深色</string>
+    <string name="super_dark">强力深色</string>
+
+    <!-- Extraction from Kotlin code -->
+    <string name="two_step_verification">两步验证</string>
+    <string name="input_two_step_code">请输入您的两步验证码</string>
+    <string name="verify">验证</string>
+    <string name="username_or_email">用户名 / 邮箱</string>
+    <string name="no_account_signup">没有账号？去注册</string>
+    <string name="login_success">登录成功</string>
+    <string name="publish_success">发布成功</string>
+    <string name="report_reply_title">报告回复：%s</string>
+    <string name="report_reply_content">回复ID：%1$s\n发布者：%2$s\n主题链接：%3$s</string>
+    <string name="report_topic_title">报告主题：%s</string>
+    <string name="report_topic_content">主题链接：%1$s\n发布者：%2$s\n举报理由：%3$s</string>
+    <string name="checkin_success">每日登录奖励领取成功</string>
+    <string name="checkin_already">已领取, 明日再来</string>
+    <string name="parsing_error_once">解析错误，无法找到 \'once\'</string>
+    <string name="checkin_failed">签到失败：%s</string>
+    <string name="need_login_first">请先登录</string>
 
     <string name="search_sort_time">按时间</string>
     <string name="search_sort_relevance">按相关度</string>
@@ -230,4 +251,11 @@
     <string name="unblock_user">取消屏蔽</string>
     <string name="block_confirm_msg">确定要屏蔽该用户吗？屏蔽后你将不会看到该用户发布的主题和回复。</string>
     <string name="unblock_confirm_msg">确定要取消对该用户的屏蔽吗？</string>
+    <string name="toast_post_reply_success">回复成功</string>
+    <string name="toast_favor_success">收藏成功</string>
+    <string name="toast_unfavor_success">取消收藏成功</string>
+    <string name="toast_ignore_topic_success">已忽略该主题</string>
+    <string name="toast_ignore_reply_success">已隐藏该回复</string>
+    <string name="filtering_by_user">正在查看 %s 的全部回复</string>
+    <string name="viewing_conversation">正在查看对话列表</string>
 </resources>

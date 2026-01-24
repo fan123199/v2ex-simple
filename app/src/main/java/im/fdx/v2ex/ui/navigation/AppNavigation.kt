@@ -1,6 +1,13 @@
 package im.fdx.v2ex.ui.navigation
 
 import im.fdx.v2ex.data.model.Member
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -42,6 +49,7 @@ import im.fdx.v2ex.ui.login.LoginScreen
 import im.fdx.v2ex.ui.login.LoginScreen
 import im.fdx.v2ex.ui.main.NewTopicScreen
 import im.fdx.v2ex.ui.main.DailyViewModel
+import im.fdx.v2ex.R
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -114,7 +122,23 @@ fun AppNavigation(
         }
     }
     
-    NavHost(navController = navController, startDestination = Screen.Home.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Home.route,
+        modifier = Modifier.fillMaxSize(),
+        enterTransition = { 
+            slideInHorizontally(initialOffsetX = { it }, animationSpec = tween(400)) + fadeIn(animationSpec = tween(400)) 
+        },
+        exitTransition = { 
+            slideOutHorizontally(targetOffsetX = { -it / 3 }, animationSpec = tween(400)) + fadeOut(animationSpec = tween(400)) 
+        },
+        popEnterTransition = { 
+            slideInHorizontally(initialOffsetX = { -it / 3 }, animationSpec = tween(400)) + fadeIn(animationSpec = tween(400)) 
+        },
+        popExitTransition = { 
+            slideOutHorizontally(targetOffsetX = { it }, animationSpec = tween(400)) + fadeOut(animationSpec = tween(400)) 
+        }
+    ) {
         
         composable(Screen.Home.route) {
             MainScreen(
@@ -296,7 +320,7 @@ fun AppNavigation(
                 when (val result = uiState) {
                     is LoginResult.Success -> {
                         showTwoStepDialog = false
-                        Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     }
                     is LoginResult.TwoStep -> {
@@ -406,7 +430,7 @@ fun AppNavigation(
             LaunchedEffect(uiState) {
                 when(val result = uiState) {
                     is SendResult.Success -> {
-                        Toast.makeText(context, "发布成功", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, context.getString(R.string.publish_success), Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     }
                     is SendResult.Error -> {

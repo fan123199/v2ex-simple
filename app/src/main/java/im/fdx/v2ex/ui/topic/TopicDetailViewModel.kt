@@ -7,8 +7,10 @@ import im.fdx.v2ex.data.network.NetManager
 import im.fdx.v2ex.data.network.Parser
 import im.fdx.v2ex.data.network.vCall
 import im.fdx.v2ex.data.model.Topic
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,6 +24,7 @@ import im.fdx.v2ex.data.network.HttpHelper
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.loge
 import org.json.JSONObject
+import im.fdx.v2ex.R
 
 data class TopicDetailUiState(
     val topic: Topic? = null,
@@ -47,6 +50,9 @@ class TopicDetailViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(TopicDetailUiState())
     val uiState: StateFlow<TopicDetailUiState> = _uiState.asStateFlow()
+
+    private val _events = MutableSharedFlow<Int>()
+    val events = _events.asSharedFlow()
 
     private val allReplies = mutableListOf<Reply>()
 
@@ -95,6 +101,7 @@ class TopicDetailViewModel : ViewModel() {
 
             override fun onResponse(call: Call, response: Response) {
                  if (response.isSuccessful) {
+                     viewModelScope.launch { _events.emit(R.string.toast_post_reply_success) }
                      // Refresh to show new reply
                      refresh()
                  } else {
@@ -141,6 +148,8 @@ class TopicDetailViewModel : ViewModel() {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
+                    val resId = if (isFavored) R.string.toast_unfavor_success else R.string.toast_favor_success
+                    viewModelScope.launch { _events.emit(resId) }
                     _uiState.update { it.copy(isFavored = !isFavored) }
                 }
             }
@@ -172,6 +181,7 @@ class TopicDetailViewModel : ViewModel() {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
+                    viewModelScope.launch { _events.emit(R.string.toast_ignore_topic_success) }
                     _uiState.update { it.copy(isIgnored = true) }
                 }
             }
@@ -283,6 +293,7 @@ class TopicDetailViewModel : ViewModel() {
 
     fun ignoreReply(replyId: String) {
         allReplies.removeAll { it.id == replyId }
+        viewModelScope.launch { _events.emit(R.string.toast_ignore_reply_success) }
         applyCurrentFilter()
     }
 

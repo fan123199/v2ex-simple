@@ -10,8 +10,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import im.fdx.v2ex.R
 
 @Composable
 fun LoginScreen(
@@ -38,15 +40,15 @@ fun LoginScreen(
     if (showTwoStepDialog) {
         AlertDialog(
             onDismissRequest = onTwoStepDismiss,
-            title = { Text("两步验证") },
+            title = { Text(stringResource(R.string.two_step_verification)) },
             text = {
                 Column {
-                    Text("请输入您的两步验证码")
+                    Text(stringResource(R.string.input_two_step_code))
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
                         value = twoStepCode,
                         onValueChange = onTwoStepCodeChange,
-                        label = { Text("验证码") },
+                        label = { Text(stringResource(R.string.verify_code)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -63,13 +65,13 @@ fun LoginScreen(
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text("验证")
+                        Text(stringResource(R.string.verify))
                     }
                 }
             },
             dismissButton = {
                 TextButton(onClick = onTwoStepDismiss) {
-                    Text("取消")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         )
@@ -88,7 +90,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "登录 V2EX",
+                text = stringResource(R.string.log_in_v2ex),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -98,7 +100,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = onUsernameChange,
-                label = { Text("用户名 / 邮箱") },
+                label = { Text(stringResource(R.string.username_or_email)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -108,7 +110,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text("密码") },
+                label = { Text(stringResource(R.string.password)) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
@@ -123,7 +125,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = captcha,
                     onValueChange = onCaptchaChange,
-                    label = { Text("验证码") },
+                    label = { Text(stringResource(R.string.verify_code)) },
                     singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
@@ -158,7 +160,7 @@ fun LoginScreen(
                              .clickable { onCaptchaClick() },
                          contentAlignment = Alignment.Center
                      ) {
-                         Text("点击刷新")
+                         Text(stringResource(R.string.menu_refresh))
                      }
                 }
             }
@@ -176,14 +178,14 @@ fun LoginScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text("登录")
+                    Text(stringResource(R.string.login))
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onSignUpClick) {
-                Text("没有账号？去注册")
+                Text(stringResource(R.string.no_account_signup))
             }
         }
     }

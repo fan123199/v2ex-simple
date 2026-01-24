@@ -138,6 +138,12 @@ fun TopicDetailContent(
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { resId ->
+            android.widget.Toast.makeText(context, context.getString(resId), android.widget.Toast.LENGTH_SHORT).show()
+        }
+    }
     var showMoreActions by remember { mutableStateOf(false) }
 
     val topicUrl = "${NetManager.HTTPS_V2EX_BASE}/t/$topicId"
@@ -377,8 +383,8 @@ fun TopicDetailContent(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                             text = when (uiState.filterType) {
-                                                FilterType.User -> "正在查看 ${uiState.filterTarget} 的全部回复"
-                                                FilterType.Conversation -> "正在查看对话列表"
+                                                FilterType.User -> stringResource(R.string.filtering_by_user, uiState.filterTarget ?: "")
+                                                FilterType.Conversation -> stringResource(R.string.viewing_conversation)
                                                 else -> ""
                                             },
                                             style = MaterialTheme.typography.labelLarge,
@@ -645,7 +651,7 @@ fun TopicDetailContent(
                         }
                     )
                     ListItem(
-                        headlineContent = { Text("Copy content") },
+                        headlineContent = { Text(stringResource(R.string.copy_content)) },
                         leadingContent = {
                             Icon(
                                 Icons.Default.ContentCopy,
@@ -757,9 +763,8 @@ fun TopicDetailContent(
                         modifier = Modifier.clickable {
                             selectedReply?.let { reply ->
                                 showReplySheet = false
-                                val reportTitle = "报告回复：${reply.content?.take(20)}..."
-                                val reportContent =
-                                    "回复ID：${reply.id}\n发布者：${reply.member?.username}\n主题链接：$topicUrl"
+                                val reportTitle = context.getString(R.string.report_reply_title, reply.content?.take(20) ?: "")
+                                val reportContent = context.getString(R.string.report_reply_content, reply.id, reply.member?.username, topicUrl)
                                 onReportClick(reportTitle, reportContent)
                             }
                         }
@@ -775,18 +780,18 @@ fun TopicDetailContent(
             ) {
                 Column(modifier = Modifier.padding(bottom = 32.dp)) {
                     Text(
-                        text = "请选择举报的理由",
+                        text = stringResource(R.string.report_reason_title),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(16.dp)
                     )
-                    listOf("大量发布广告", "恶意骚扰", "侵权内容", "不友善内容", "其他").forEach { reason ->
+                    val reasons = context.resources.getStringArray(R.array.report_reasons)
+                    reasons.forEach { reason ->
                         ListItem(
                             headlineContent = { Text(reason) },
                             modifier = Modifier.clickable {
                                 showReportSheet = false
-                                val reportTitle = "报告主题：${uiState.topic?.title}"
-                                val reportContent =
-                                    "主题链接：$topicUrl\n发布者：${uiState.topic?.member?.username}\n举报理由：$reason"
+                                val reportTitle = context.getString(R.string.report_topic_title, uiState.topic?.title ?: "")
+                                val reportContent = context.getString(R.string.report_topic_content, topicUrl, uiState.topic?.member?.username, reason)
                                 onReportClick(reportTitle, reportContent)
                             }
                         )

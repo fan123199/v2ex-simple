@@ -45,7 +45,7 @@ private val LightColorScheme = lightColorScheme(
     onPrimary = Color.White,
     onSecondary = Color.White,
     onBackground = Color.Black,
-    onSurface = Color.Black,
+    onSurface = Color(0xDE000000), // 87% Black to match traditional view
     onSurfaceVariant = Primary
 )
 
