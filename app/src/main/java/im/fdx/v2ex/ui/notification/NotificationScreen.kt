@@ -57,10 +57,7 @@ fun NotificationScreen(
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
-            if (uiState.isLoading) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
+        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(16.dp),
@@ -80,6 +77,9 @@ fun NotificationScreen(
                    }
                    HorizontalDivider()
                }
+            }
+            if (uiState.isLoading) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter))
             }
         }
     }

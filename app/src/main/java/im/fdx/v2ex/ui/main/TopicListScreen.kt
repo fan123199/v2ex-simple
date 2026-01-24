@@ -75,46 +75,49 @@ fun TopicListScreen(
         isRefreshing = false,
         onRefresh = { viewModel.refresh() }
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            if (uiState.isLoading && uiState.page == 1) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
+        Box(modifier = Modifier.fillMaxSize()) {
             if (uiState.topics.isEmpty() && !uiState.isLoading && header == null) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(androidx.compose.ui.res.stringResource(im.fdx.v2ex.R.string.no_content_placeholder))
                 }
             } else {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = contentPadding
-            ) {
-                if (header != null) {
-                    item { header() }
-                }
-                items(uiState.topics, key = { it.id }) { topic ->
-                    TopicItem(
-                        topic = topic,
-                        onClick = { 
-                            im.fdx.v2ex.ui.topic.TopicListStore.setTopics(uiState.topics)
-                            onTopicClick(topic) 
-                        },
-                        onNodeClick = onNodeClick,
-                        onMemberClick = onMemberClick
-                    )
-                }
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = contentPadding
+                ) {
+                    if (header != null) {
+                        item { header() }
+                    }
+                    items(uiState.topics, key = { it.id }) { topic ->
+                        TopicItem(
+                            topic = topic,
+                            onClick = {
+                                im.fdx.v2ex.ui.topic.TopicListStore.setTopics(uiState.topics)
+                                onTopicClick(topic)
+                            },
+                            onNodeClick = onNodeClick,
+                            onMemberClick = onMemberClick
+                        )
+                    }
 
-                if (uiState.isLoading && uiState.page > 1) {
-                    item {
-                        Box(
-                            modifier = Modifier.fillMaxSize().padding(16.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
+                    if (uiState.isLoading && uiState.page > 1) {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
             }
+
+            if (uiState.isLoading && uiState.page == 1) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter))
             }
         }
     }

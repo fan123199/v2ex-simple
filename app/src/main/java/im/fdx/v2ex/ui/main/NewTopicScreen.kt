@@ -86,14 +86,11 @@ fun NewTopicScreen(
         },
         snackbarHost = { androidx.compose.material3.SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            if (isLoading) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-            }
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -139,6 +136,10 @@ fun NewTopicScreen(
                     disabledContainerColor = Color.Transparent,
                 )
             )
+            }
+
+            if (isLoading) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter))
             }
         }
     }

@@ -10,6 +10,7 @@ import android.webkit.*
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -28,6 +29,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import im.fdx.v2ex.data.network.HttpHelper
@@ -135,7 +137,7 @@ fun WebViewScreen(
             if (progress < 1f) {
                 LinearProgressIndicator(
                     progress = { progress },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter)
                 )
             }
         }

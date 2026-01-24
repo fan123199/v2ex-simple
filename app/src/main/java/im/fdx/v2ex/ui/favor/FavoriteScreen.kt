@@ -114,10 +114,7 @@ fun FavoriteNodeList(
     val viewModel: FavoriteNodeViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        if (uiState.isLoading) {
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
         if (!uiState.isLoading && uiState.nodes.isEmpty()) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(stringResource(R.string.no_favorite_nodes))
@@ -152,6 +149,10 @@ fun FavoriteNodeList(
                     }
                 }
             }
+        }
+        
+        if (uiState.isLoading) {
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter))
         }
     }
 }

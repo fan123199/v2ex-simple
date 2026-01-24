@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -50,6 +49,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
@@ -134,7 +134,7 @@ fun TopicDetailContent(
     LaunchedEffect(topicId) {
         viewModel.init(topicId, initialTopic)
     }
-    
+
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
     val context = LocalContext.current
@@ -196,7 +196,7 @@ fun TopicDetailContent(
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
-                    
+
                     DropdownMenu(
                         expanded = showMoreActions,
                         onDismissRequest = { showMoreActions = false }
@@ -211,7 +211,13 @@ fun TopicDetailContent(
                                 )
                             },
                             onClick = {
-                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                if (im.fdx.v2ex.utils.verifyLogin(
+                                        context,
+                                        snackbarHostState,
+                                        scope,
+                                        onLoginClick = onLoginClick
+                                    )
+                                ) {
                                     viewModel.favorTopic()
                                 }
                                 showMoreActions = false
@@ -227,7 +233,13 @@ fun TopicDetailContent(
                                 )
                             },
                             onClick = {
-                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                if (im.fdx.v2ex.utils.verifyLogin(
+                                        context,
+                                        snackbarHostState,
+                                        scope,
+                                        onLoginClick = onLoginClick
+                                    )
+                                ) {
                                     viewModel.thankTopic()
                                 }
                                 showMoreActions = false
@@ -244,12 +256,20 @@ fun TopicDetailContent(
                                 )
                             },
                             onClick = {
-                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                if (im.fdx.v2ex.utils.verifyLogin(
+                                        context,
+                                        snackbarHostState,
+                                        scope,
+                                        onLoginClick = onLoginClick
+                                    )
+                                ) {
                                     viewModel.ignoreTopic()
                                 }
                                 showMoreActions = false
                             }
                         )
+
+                        val shareToStr = stringResource(R.string.share_to)
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.menu_share)) },
                             leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
@@ -258,25 +278,46 @@ fun TopicDetailContent(
                                     type = "text/plain"
                                     putExtra(Intent.EXTRA_TEXT, topicUrl)
                                 }
-                                context.startActivity(Intent.createChooser(shareIntent, context.getString(R.string.share_to)))
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        shareIntent,
+                                        shareToStr
+                                    )
+                                )
                                 showMoreActions = false
                             }
                         )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.menu_open_in_browser)) },
-                            leadingIcon = { Icon(painterResource(id = R.drawable.ic_website), contentDescription = null) },
+                            leadingIcon = {
+                                Icon(
+                                    painterResource(id = R.drawable.ic_website),
+                                    contentDescription = null
+                                )
+                            },
                             onClick = {
                                 context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(topicUrl)))
                                 showMoreActions = false
                             }
                         )
+                        val str3 = stringResource(R.string.not_login_tips)
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.report_abuse)) },
-                            leadingIcon = { Icon(Icons.Default.Info, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                            leadingIcon = {
+                                Icon(
+                                    Icons.Default.Info,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
                             onClick = {
                                 showMoreActions = false
                                 if (!im.fdx.v2ex.myApp.isLogin) {
-                                    android.widget.Toast.makeText(context, context.getString(R.string.not_login_tips), android.widget.Toast.LENGTH_SHORT).show()
+                                    android.widget.Toast.makeText(
+                                        context,
+                                        str3,
+                                        android.widget.Toast.LENGTH_SHORT
+                                    ).show()
                                 } else {
                                     showReportSheet = true
                                 }
@@ -303,243 +344,270 @@ fun TopicDetailContent(
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
-                modifier = Modifier.padding(top = innerPadding.calculateTopPadding(), bottom = innerPadding.calculateBottomPadding())
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding()
+                )
             ) {
-                if (uiState.isLoading && uiState.page == 1) {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
                 PullToRefreshBox(
                     isRefreshing = false,
                     onRefresh = { viewModel.refresh() },
                     modifier = Modifier.fillMaxSize()
                 ) {
-                  LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    if (uiState.filterType != FilterType.None) {
-                        item {
-                            Surface(
-                                color = MaterialTheme.colorScheme.secondaryContainer,
-                                modifier = Modifier.fillMaxWidth().clickable { viewModel.clearFilter() }
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(12.dp)
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        if (uiState.filterType != FilterType.None) {
+                            item {
+                                Surface(
+                                    color = MaterialTheme.colorScheme.secondaryContainer,
+                                    modifier = Modifier.fillMaxWidth().clickable { viewModel.clearFilter() }
                                 ) {
-                                    Icon(
-                                        imageVector = if (uiState.filterType == FilterType.User) Icons.Default.Person else Icons.Default.Forum,
-                                        contentDescription = null,
-                                        modifier = Modifier.size(20.dp),
-                                        tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = when (uiState.filterType) {
-                                            FilterType.User -> "正在查看 ${uiState.filterTarget} 的全部回复"
-                                            FilterType.Conversation -> "正在查看对话列表"
-                                            else -> ""
-                                        },
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Text(
-                                        text = stringResource(R.string.close),
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = MaterialTheme.colorScheme.primary,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                }
-                            }
-                        }
-                    }
-                    // Header (Topic Content) - styled like TopicItem
-                    item {
-                        uiState.topic?.let { topic ->
-                             Column(
-                                 modifier = Modifier
-                                     .fillMaxWidth()
-                                     .padding(start = 16.dp, end = 16.dp, top = 12.dp)
-                             ) {
-                                 // Title row with reply count (unlimited lines)
-                                 Row(
-                                     modifier = Modifier.fillMaxWidth(),
-                                     horizontalArrangement = Arrangement.SpaceBetween,
-                                     verticalAlignment = Alignment.Top
-                                 ) {
-                                     Text(
-                                         text = topic.title,
-                                         style = MaterialTheme.typography.titleMedium,
-                                         color = MaterialTheme.colorScheme.onSurface,
-                                         modifier = Modifier.weight(1f).padding(end = 8.dp)
-                                     )
-
-                                     if ((topic.replies ?: 0) > 0) {
-                                         Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            modifier = Modifier.padding(start = 4.dp)
-                                         ) {
-                                             Icon(
-                                                 painter = painterResource(id = R.drawable.ic_message_black_24dp),
-                                                 contentDescription = null,
-                                                 modifier = Modifier.size(14.dp),
-                                                 tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                             )
-                                             Spacer(modifier = Modifier.width(2.dp))
-                                             Text(
-                                                 text = topic.replies.toString(),
-                                                 style = MaterialTheme.typography.labelSmall,
-                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
-                                             )
-                                         }
-                                     }
-                                 }
-
-                                 Spacer(modifier = Modifier.height(8.dp))
-
-                                 // Author info row (avatar, username, time, node)
-                                 Row(
-                                     modifier = Modifier.fillMaxWidth(),
-                                     verticalAlignment = Alignment.CenterVertically
-                                 ) {
-                                     // Avatar
-                                     AsyncImage(
-                                         model = topic.member?.avatarNormalUrl,
-                                         contentDescription = stringResource(R.string.it_is_avatar),
-                                         contentScale = ContentScale.Crop,
-                                         modifier = Modifier
-                                             .size(24.dp)
-                                             .clip(CircleShape)
-                                             .clickable { onMemberClick(topic.member?.username ?: "") }
-                                     )
-
-                                     Spacer(modifier = Modifier.width(8.dp))
-
-                                     Text(
-                                         text = topic.member?.username ?: "",
-                                         style = MaterialTheme.typography.labelSmall,
-                                         color = MaterialTheme.colorScheme.secondary,
-                                         modifier = Modifier.clickable { onMemberClick(topic.member?.username ?: "") }
-                                     )
-
-                                     Spacer(modifier = Modifier.width(8.dp))
-
-                                     Text(
-                                         text = topic.showCreated(),
-                                         style = MaterialTheme.typography.labelSmall,
-                                         color = MaterialTheme.colorScheme.onSurfaceVariant
-                                     )
-
-                                     Spacer(modifier = Modifier.weight(1f))
-
-                                     if (!topic.node?.title.isNullOrEmpty()) {
-                                         Text(
-                                             text = topic.node?.title ?: "",
-                                             style = MaterialTheme.typography.labelSmall,
-                                             color = MaterialTheme.colorScheme.tertiary,
-                                             modifier = Modifier
-                                                 .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))
-                                                 .padding(horizontal = 4.dp, vertical = 2.dp)
-                                         )
-                                     }
-                                 }
-
-                                 Spacer(modifier = Modifier.height(16.dp))
-                                 
-                                 // Topic Content
-                                 SelectionContainer {
-                                     Text(
-                                         text = AnnotatedString.fromHtml(topic.content_rendered ?: ""),
-                                         style = MaterialTheme.typography.bodyLarge
-                                     )
-                                 }
-                                 
-                                 HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
-                             }
-                        }
-                    }
-
-                    // Replies
-                    items(uiState.replies) { reply ->
-                        ReplyItem(
-                            reply = reply,
-                            onMemberClick = { onMemberClick(it ?: "") },
-                            onReplyClick = {
-                                val text = "@${it.member?.username} "
-                                replyText = TextFieldValue(
-                                    text = text,
-                                    selection = TextRange(text.length)
-                                )
-                                focusRequester.requestFocus()
-                            },
-                            onThankClick = {
-                                if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
-                                    if (!it.isThanked) {
-                                        replyToThank = it
-                                        showThankDialog = true
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = if (uiState.filterType == FilterType.User) Icons.Default.Person else Icons.Default.Forum,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(20.dp),
+                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = when (uiState.filterType) {
+                                                FilterType.User -> "正在查看 ${uiState.filterTarget} 的全部回复"
+                                                FilterType.Conversation -> "正在查看对话列表"
+                                                else -> ""
+                                            },
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Text(
+                                            text = stringResource(R.string.close),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
-                            },
-                            onLongClick = {
-                                selectedReply = it
-                                showReplySheet = true
-                            },
-                            onQuoteClick = { username, replyNum, offset ->
-                                // Find the quoted reply by username and reply number
-                                var foundReply = viewModel.findReplyByFloor(username, replyNum)
-                                if (foundReply == null) {
-                                    foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
-                                }
-                                
-                                if (foundReply != null) {
-                                    quotedReply = foundReply
-                                    clickOffset = offset
-                                    showQuoteDialog = true
-                                } else {
-                                    onMemberClick(username)
-                                }
-                            },
-                            onMentionClick = { username, offset ->
-                                val foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
-                                if (foundReply != null) {
-                                    quotedReply = foundReply
-                                    clickOffset = offset
-                                    showQuoteDialog = true
-                                } else {
-                                    onMemberClick(username)
+                            }
+                        }
+                        // Header (Topic Content) - styled like TopicItem
+                        item {
+                            uiState.topic?.let { topic ->
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(start = 16.dp, end = 16.dp, top = 12.dp)
+                                ) {
+                                    // Title row with reply count (unlimited lines)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        Text(
+                                            text = topic.title,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = MaterialTheme.colorScheme.onSurface,
+                                            modifier = Modifier.weight(1f).padding(end = 8.dp)
+                                        )
+
+                                        if ((topic.replies ?: 0) > 0) {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                modifier = Modifier.padding(start = 4.dp)
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.ic_message_black_24dp),
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(14.dp),
+                                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                                Spacer(modifier = Modifier.width(2.dp))
+                                                Text(
+                                                    text = topic.replies.toString(),
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.height(8.dp))
+
+                                    // Author info row (avatar, username, time, node)
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        // Avatar
+                                        AsyncImage(
+                                            model = topic.member?.avatarNormalUrl,
+                                            contentDescription = stringResource(R.string.it_is_avatar),
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(24.dp)
+                                                .clip(CircleShape)
+                                                .clickable { onMemberClick(topic.member?.username ?: "") }
+                                        )
+
+                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                        Text(
+                                            text = topic.member?.username ?: "",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.secondary,
+                                            modifier = Modifier.clickable {
+                                                onMemberClick(
+                                                    topic.member?.username ?: ""
+                                                )
+                                            }
+                                        )
+
+                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                        Text(
+                                            text = topic.showCreated(),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+
+                                        Spacer(modifier = Modifier.weight(1f))
+
+                                        if (!topic.node?.title.isNullOrEmpty()) {
+                                            Text(
+                                                text = topic.node?.title ?: "",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.tertiary,
+                                                modifier = Modifier
+                                                    .background(
+                                                        MaterialTheme.colorScheme.surfaceVariant,
+                                                        RoundedCornerShape(4.dp)
+                                                    )
+                                                    .padding(horizontal = 4.dp, vertical = 2.dp)
+                                            )
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.height(16.dp))
+
+                                    // Topic Content
+                                    SelectionContainer {
+                                        Text(
+                                            text = AnnotatedString.fromHtml(topic.content_rendered ?: ""),
+                                            style = MaterialTheme.typography.bodyLarge
+                                        )
+                                    }
+
+                                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                                 }
                             }
-                        )
-                    }
-                    
-                    if (uiState.isLoading && uiState.page > 1) {
-                         item {
-                            Box(
-                                modifier = Modifier.fillMaxWidth().padding(16.dp),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                CircularProgressIndicator()
+                        }
+
+                        // Replies
+                        items(uiState.replies) { reply ->
+                            ReplyItem(
+                                reply = reply,
+                                onMemberClick = { onMemberClick(it ?: "") },
+                                onReplyClick = {
+                                    val text = "@${it.member?.username} "
+                                    replyText = TextFieldValue(
+                                        text = text,
+                                        selection = TextRange(text.length)
+                                    )
+                                    focusRequester.requestFocus()
+                                },
+                                onThankClick = {
+                                    if (im.fdx.v2ex.utils.verifyLogin(
+                                            context,
+                                            snackbarHostState,
+                                            scope,
+                                            onLoginClick = onLoginClick
+                                        )
+                                    ) {
+                                        if (!it.isThanked) {
+                                            replyToThank = it
+                                            showThankDialog = true
+                                        }
+                                    }
+                                },
+                                onLongClick = {
+                                    selectedReply = it
+                                    showReplySheet = true
+                                },
+                                onQuoteClick = { username, replyNum, offset ->
+                                    // Find the quoted reply by username and reply number
+                                    var foundReply = viewModel.findReplyByFloor(username, replyNum)
+                                    if (foundReply == null) {
+                                        foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
+                                    }
+
+                                    if (foundReply != null) {
+                                        quotedReply = foundReply
+                                        clickOffset = offset
+                                        showQuoteDialog = true
+                                    } else {
+                                        onMemberClick(username)
+                                    }
+                                },
+                                onMentionClick = { username, offset ->
+                                    val foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
+                                    if (foundReply != null) {
+                                        quotedReply = foundReply
+                                        clickOffset = offset
+                                        showQuoteDialog = true
+                                    } else {
+                                        onMemberClick(username)
+                                    }
+                                }
+                            )
+                        }
+
+                        if (uiState.isLoading && uiState.page > 1) {
+                            item {
+                                Box(
+                                    modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator()
+                                }
                             }
                         }
                     }
                 }
             }
+
+            if (uiState.isLoading && uiState.page == 1) {
+                LinearProgressIndicator(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = innerPadding.calculateTopPadding())
+                            .align(Alignment.TopCenter)
+                )
             }
 
             // Dimming Overlay
             if (isImeVisible) {
-               Box(
-                   modifier = Modifier
-                       .fillMaxSize()
-                       .background(Color.Black.copy(alpha = 0.4f))
-                       .clickable(
-                           interactionSource = remember { MutableInteractionSource() },
-                           indication = null
-                       ) {
-                           focusManager.clearFocus()
-                       }
-               )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            top = innerPadding.calculateTopPadding(),
+                            bottom = innerPadding.calculateBottomPadding()
+                        )
+                        .background(Color.Black.copy(alpha = 0.4f))
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) {
+                            focusManager.clearFocus()
+                        }
+                )
             }
         }
 
@@ -558,31 +626,50 @@ fun TopicDetailContent(
                     val scope = rememberCoroutineScope()
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.reply)) },
-                        leadingContent = { Icon(Icons.AutoMirrored.Filled.Reply, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        leadingContent = {
+                            Icon(
+                                Icons.AutoMirrored.Filled.Reply,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         modifier = Modifier.clickable {
                             selectedReply?.let {
-                                 val text = "@${it.member?.username} "
-                                 replyText = TextFieldValue(
-                                     text = text,
-                                     selection = TextRange(text.length)
-                                 )
+                                val text = "@${it.member?.username} "
+                                replyText = TextFieldValue(
+                                    text = text,
+                                    selection = TextRange(text.length)
+                                )
                             }
                             showReplySheet = false
                         }
                     )
                     ListItem(
                         headlineContent = { Text("Copy content") },
-                        leadingContent = { Icon(Icons.Default.ContentCopy, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.ContentCopy,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         modifier = Modifier.clickable {
                             selectedReply?.let {
                                 scope.launch {
-                                    clipboardManager.setClipEntry(ClipEntry(ClipData.newPlainText("reply", AnnotatedString(it.content))))
+                                    clipboardManager.setClipEntry(
+                                        ClipEntry(
+                                            ClipData.newPlainText(
+                                                "reply",
+                                                AnnotatedString(it.content)
+                                            )
+                                        )
+                                    )
                                 }
                             }
                             showReplySheet = false
                         }
                     )
-                     ListItem(
+                    ListItem(
                         headlineContent = { Text(stringResource(R.string.thanks)) },
                         leadingContent = {
                             Icon(
@@ -592,7 +679,13 @@ fun TopicDetailContent(
                             )
                         },
                         modifier = Modifier.clickable {
-                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                            if (im.fdx.v2ex.utils.verifyLogin(
+                                    context,
+                                    snackbarHostState,
+                                    scope,
+                                    onLoginClick = onLoginClick
+                                )
+                            ) {
                                 selectedReply?.let { it ->
                                     if (!it.isThanked) {
                                         viewModel.thankReply(it.id)
@@ -604,9 +697,21 @@ fun TopicDetailContent(
                     )
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.hide_reply)) },
-                        leadingContent = { Icon(Icons.Default.VisibilityOff, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.VisibilityOff,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         modifier = Modifier.clickable {
-                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                            if (im.fdx.v2ex.utils.verifyLogin(
+                                    context,
+                                    snackbarHostState,
+                                    scope,
+                                    onLoginClick = onLoginClick
+                                )
+                            ) {
                                 selectedReply?.let { viewModel.ignoreReply(it.id) }
                             }
                             showReplySheet = false
@@ -614,7 +719,13 @@ fun TopicDetailContent(
                     )
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.show_user_all_reply)) },
-                        leadingContent = { Icon(Icons.Default.PersonSearch, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.PersonSearch,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         modifier = Modifier.clickable {
                             selectedReply?.member?.username?.let { viewModel.filterByUser(it) }
                             showReplySheet = false
@@ -622,7 +733,13 @@ fun TopicDetailContent(
                     )
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.show_conversation)) },
-                        leadingContent = { Icon(Icons.Default.Forum, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.Forum,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         modifier = Modifier.clickable {
                             selectedReply?.let { viewModel.showConversation(it.id) }
                             showReplySheet = false
@@ -630,12 +747,19 @@ fun TopicDetailContent(
                     )
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.report_abuse)) },
-                        leadingContent = { Icon(Icons.Default.Report, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                        leadingContent = {
+                            Icon(
+                                Icons.Default.Report,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        },
                         modifier = Modifier.clickable {
                             selectedReply?.let { reply ->
                                 showReplySheet = false
                                 val reportTitle = "报告回复：${reply.content?.take(20)}..."
-                                val reportContent = "回复ID：${reply.id}\n发布者：${reply.member?.username}\n主题链接：$topicUrl"
+                                val reportContent =
+                                    "回复ID：${reply.id}\n发布者：${reply.member?.username}\n主题链接：$topicUrl"
                                 onReportClick(reportTitle, reportContent)
                             }
                         }
@@ -661,7 +785,8 @@ fun TopicDetailContent(
                             modifier = Modifier.clickable {
                                 showReportSheet = false
                                 val reportTitle = "报告主题：${uiState.topic?.title}"
-                                val reportContent = "主题链接：$topicUrl\n发布者：${uiState.topic?.member?.username}\n举报理由：$reason"
+                                val reportContent =
+                                    "主题链接：$topicUrl\n发布者：${uiState.topic?.member?.username}\n举报理由：$reason"
                                 onReportClick(reportTitle, reportContent)
                             }
                         )
@@ -669,7 +794,7 @@ fun TopicDetailContent(
                 }
             }
         }
-        
+
         // Quote Dialog to show referenced reply
         if (showQuoteDialog && quotedReply != null) {
             Popup(
