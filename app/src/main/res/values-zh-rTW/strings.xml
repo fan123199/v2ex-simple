@@ -212,20 +212,20 @@
     <string name="drawer_settings">設置</string>
 
     <!-- Tab Strings -->
-    <string name="tab_hot">最熱</string>
+    <string name="tab_hot">最热</string>
     <string name="tab_recent">最近</string>
     <string name="tab_all">全部</string>
-    <string name="tab_heated">熱議</string>
-    <string name="tab_tech">技術</string>
-    <string name="tab_creative">創意</string>
+    <string name="tab_heated">热议</string>
+    <string name="tab_tech">技术</string>
+    <string name="tab_creative">创意</string>
     <string name="tab_play">好玩</string>
     <string name="tab_apple">Apple</string>
     <string name="tab_jobs">酷工作</string>
     <string name="tab_deals">交易</string>
     <string name="tab_city">城市</string>
-    <string name="tab_qna">問與答</string>
+    <string name="tab_qna">问与答</string>
     <string name="tab_r2">R2</string>
-    <string name="tab_members">關注</string>
+    <string name="tab_members">关注</string>
 
     <!-- Favorite Screen -->
     <string name="favorite_title">我的收藏</string>
