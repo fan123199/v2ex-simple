@@ -406,43 +406,6 @@ fun TopicDetailContent(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        if (uiState.filterType != FilterType.None) {
-                            item {
-                                Surface(
-                                    color = MaterialTheme.colorScheme.secondaryContainer,
-                                    modifier = Modifier.fillMaxWidth().clickable { viewModel.clearFilter() }
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.padding(12.dp)
-                                    ) {
-                                        Icon(
-                                            imageVector = if (uiState.filterType == FilterType.User) Icons.Default.Person else Icons.Default.Forum,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(20.dp),
-                                            tint = MaterialTheme.colorScheme.onSecondaryContainer
-                                        )
-                                        Spacer(modifier = Modifier.width(8.dp))
-                                        Text(
-                                            text = when (uiState.filterType) {
-                                                FilterType.User -> stringResource(R.string.filtering_by_user, uiState.filterTarget ?: "")
-                                                FilterType.Conversation -> stringResource(R.string.viewing_conversation)
-                                                else -> ""
-                                            },
-                                            style = MaterialTheme.typography.labelLarge,
-                                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        Text(
-                                            text = stringResource(R.string.close),
-                                            style = MaterialTheme.typography.labelLarge,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
-                            }
-                        }
                         // Header (Topic Content) - styled like TopicItem
                         item {
                             uiState.topic?.let { topic ->
@@ -557,7 +520,7 @@ fun TopicDetailContent(
                         }
 
                         // Replies
-                        items(uiState.replies) { reply ->
+                        items(uiState.replies, key = { it.id }) { reply ->
                             ReplyItem(
                                 reply = reply,
                                 onMemberClick = { onMemberClick(it ?: "") },
@@ -868,57 +831,30 @@ fun TopicDetailContent(
                              .fillMaxWidth()
                              .padding(bottom = 32.dp)
                      ) {
-                         Text(
-                             text = if (uiState.filterType == FilterType.User) 
-                                 stringResource(R.string.all_replies_of_user, uiState.filterTarget ?: "")
-                             else if (uiState.filterType == FilterType.Conversation)
-                                 stringResource(R.string.viewing_conversation)
-                             else "",
-                             style = MaterialTheme.typography.titleMedium,
-                             modifier = Modifier.padding(16.dp)
-                         )
+                          if (uiState.filterType == FilterType.User) {
+                              Text(
+                                  text = stringResource(R.string.all_replies_of_user, uiState.filterTarget ?: ""),
+                                  style = MaterialTheme.typography.titleMedium,
+                                  modifier = Modifier.padding(16.dp)
+                              )
+                          }
                          
                          LazyColumn(
                              modifier = Modifier
                                  .fillMaxWidth()
                                  .weight(1f, fill = false)
                          ) {
-                             items(uiState.filteredReplies) { reply ->
-                                 ReplyItem(
-                                     reply = reply,
-                                     onMemberClick = { onMemberClick(it ?: "") },
-                                     onReplyClick = {
-                                         val text = "@${it.member?.username} "
-                                         replyText = TextFieldValue(
-                                             text = text,
-                                             selection = TextRange(text.length)
-                                         )
-                                         showUserRepliesSheet = false
-                                         viewModel.clearFilter()
-                                         focusRequester.requestFocus()
-                                     },
-                                     onThankClick = {
-                                         if (im.fdx.v2ex.utils.verifyLogin(
-                                                 context,
-                                                 snackbarHostState,
-                                                 scope,
-                                                 actionLabel = loginActionStr,
-                                                 onLoginClick = onLoginClick
-                                             )
-                                         ) {
-                                             if (!it.isThanked) {
-                                                 replyToThank = it
-                                                 showThankDialog = true
-                                             }
-                                         }
-                                     },
-                                     onLongClick = {
-                                         selectedReply = it
-                                         showReplySheet = true
-                                     },
-                                     onQuoteClick = { _, _, _ -> },
-                                     onMentionClick = { _, _ -> }
-                                 )
+                             items(uiState.filteredReplies, key = { it.id }) { reply ->
+                                  ReplyItem(
+                                      reply = reply,
+                                      onMemberClick = { },
+                                      onReplyClick = { },
+                                      onThankClick = { },
+                                      onLongClick = { },
+                                      onQuoteClick = { _, _, _ -> },
+                                      onMentionClick = { _, _ -> },
+                                      enabled = false
+                                  )
                                  HorizontalDivider()
                              }
                          }

@@ -57,16 +57,34 @@ fun ReplyItem(
     onThankClick: (Reply) -> Unit,
     onLongClick: (Reply) -> Unit,
     onQuoteClick: (String, Int, Offset) -> Unit,
-    onMentionClick: (String, Offset) -> Unit
+    onMentionClick: (String, Offset) -> Unit,
+    enabled: Boolean = true
 ) {
+    val interactionModifier = if (enabled) {
+        Modifier.combinedClickable(
+            onClick = { onReplyClick(reply) },
+            onLongClick = { onLongClick(reply) }
+        )
+    } else Modifier
+
+    val avatarModifier = if (enabled) {
+        Modifier
+            .size(32.dp)
+            .clip(CircleShape)
+            .combinedClickable(
+                onClick = { onMemberClick(reply.member?.username) },
+                onLongClick = { onLongClick(reply) }
+            )
+    } else {
+        Modifier
+            .size(32.dp)
+            .clip(CircleShape)
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
-            .combinedClickable(
-                onClick = { onReplyClick(reply) },
-                onLongClick = { onLongClick(reply) }
-            )
+            .then(interactionModifier)
     ) {
         Column(
             modifier = Modifier
@@ -83,13 +101,7 @@ fun ReplyItem(
                     model = reply.member?.avatarNormalUrl,
                     contentDescription = "Avatar",
                     contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(CircleShape)
-                        .combinedClickable(
-                            onClick = { onMemberClick(reply.member?.username) },
-                            onLongClick = { onLongClick(reply) }
-                        )
+                    modifier = avatarModifier
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -151,7 +163,8 @@ fun ReplyItem(
                                 style = SpanStyle(color = MaterialTheme.colorScheme.primary)
                             ),
                             linkInteractionListener = { annotation ->
-                                if (annotation is androidx.compose.ui.text.LinkAnnotation.Url) {
+                            if (!enabled) return@fromHtml
+                            if (annotation is androidx.compose.ui.text.LinkAnnotation.Url) {
                                     val url = annotation.url
                                     val globalOffset =
                                         textCoordinates?.let { it.localToWindow(lastTapOffset) } ?: lastTapOffset
@@ -186,7 +199,8 @@ fun ReplyItem(
                         ),
                         modifier = Modifier
                             .onGloballyPositioned { textCoordinates = it }
-                            .pointerInput(Unit) {
+                            .pointerInput(enabled) {
+                                if (!enabled) return@pointerInput
                                 detectTapGestures(
                                     onTap = { offset ->
                                         lastTapOffset = offset
@@ -205,8 +219,7 @@ fun ReplyItem(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Row(
-                            modifier = Modifier
-                                .clickable { onThankClick(reply) }
+                            modifier = (if (enabled) Modifier.clickable { onThankClick(reply) } else Modifier)
                                 .padding(4.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {

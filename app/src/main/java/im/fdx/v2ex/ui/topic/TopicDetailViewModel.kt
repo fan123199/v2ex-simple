@@ -355,7 +355,6 @@ class TopicDetailViewModel : ViewModel() {
         _uiState.update { it.copy(filterType = FilterType.Conversation, filterTarget = replyId) }
         _uiState.update { currentState ->
             currentState.copy(
-                replies = allReplies.toList(),
                 filteredReplies = allReplies.filter { it.id in conversationIds }.sortedBy { it.getRowNum() }
             )
         }
@@ -373,10 +372,7 @@ class TopicDetailViewModel : ViewModel() {
                 FilterType.User -> allReplies.filter { it.member?.username == currentState.filterTarget }
                 FilterType.Conversation -> currentState.filteredReplies
             }
-            currentState.copy(replies = allReplies.toList(), filteredReplies = filtered)
+            currentState.copy(filteredReplies = filtered)
         }
     }
 }
-
-
-
