@@ -416,6 +416,7 @@ fun AppNavigation(
             LaunchedEffect(selectedNode) {
                  selectedNode?.let {
                      viewModel.onNodeNameChange(it.name)
+                     viewModel.onNodeTitleChange(it.title)
                      savedStateHandle.remove<Node>("selected_node")
                  }
             }
@@ -425,6 +426,7 @@ fun AppNavigation(
             val mTitle by viewModel.title.collectAsState()
             val mContent by viewModel.content.collectAsState()
             val mNodeName by viewModel.nodeName.collectAsState()
+            val mNodeTitle by viewModel.nodeTitle.collectAsState()
             
             LaunchedEffect(uiState) {
                 when(val result = uiState) {
@@ -446,7 +448,7 @@ fun AppNavigation(
                  content = mContent,
                  onContentChange = viewModel::onContentChange,
                  nodeName = mNodeName,
-                 nodeTitle = mNodeName, // Temporary mapper or can be extracted from a map/DB if needed
+                 nodeTitle = mNodeTitle,
                  onNodeClick = { 
                       navController.navigate(Screen.AllNodes.route)
                  },

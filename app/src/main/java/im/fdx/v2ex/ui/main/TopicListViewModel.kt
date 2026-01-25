@@ -263,7 +263,7 @@ class TopicListViewModel : ViewModel() {
         val token = _uiState.value.token ?: return
         val isIgnored = _uiState.value.isIgnored
         val action = if (isIgnored) "unignore" else "ignore"
-        val url = "$HTTPS_V2EX_BASE/$action/node/${node.id}?once=$token"
+        val url = "$HTTPS_V2EX_BASE/settings/$action/node/${node.id}?once=$token"
 
         vCall(url).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

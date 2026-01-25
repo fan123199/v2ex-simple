@@ -251,13 +251,13 @@ class Parser(private val htmlStr: String) {
     fun getOnceNum() = doc.getElementsByAttributeValue("name", "once").first()?.attr("value") ?: "0"
     fun getOnceNum2() = Regex("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)").find(htmlStr)?.value
 
-    fun isNodeIgnored() = Regex("unignore/node/\\d{1,8}\\?once=").containsMatchIn(htmlStr)
+    fun isNodeIgnored() = Regex("settings/unignore/node/\\d{1,8}\\?once=").containsMatchIn(htmlStr)
 
 
     fun isTopicFavored(): Boolean {
        return Regex("un(?=favorite/topic/\\d{1,10}\\?once=)").containsMatchIn(htmlStr)
     }
-
+    
     fun isTopicThanked(): Boolean {
         return !Regex("thankTopic\\(\\d{1,10}").containsMatchIn(htmlStr)
     }

@@ -105,7 +105,6 @@ fun NewTopicScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-            // Node Selector
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,7 +112,7 @@ fun NewTopicScreen(
                     .padding(vertical = 8.dp)
             ) {
                 Text(
-                    text = if (!nodeName.isNullOrEmpty()) "$nodeName | $nodeTitle" else chooseNodeStr,
+                    text = if (!nodeName.isNullOrEmpty()) "$nodeTitle / $nodeName" else chooseNodeStr,
                     style = MaterialTheme.typography.titleMedium,
                     color = if (!nodeName.isNullOrEmpty()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )

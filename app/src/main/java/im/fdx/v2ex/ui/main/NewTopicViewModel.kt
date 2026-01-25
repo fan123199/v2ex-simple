@@ -31,6 +31,9 @@ class NewTopicViewModel(application: Application) : AndroidViewModel(application
     private val _nodeName = MutableStateFlow("")
     val nodeName = _nodeName.asStateFlow()
 
+    private val _nodeTitle = MutableStateFlow("")
+    val nodeTitle = _nodeTitle.asStateFlow()
+
     private val _isLoading = MutableStateFlow(false)
     val isLoading = _isLoading.asStateFlow()
     
@@ -45,11 +48,15 @@ class NewTopicViewModel(application: Application) : AndroidViewModel(application
     fun onTitleChange(value: String) { _title.value = value }
     fun onContentChange(value: String) { _content.value = value }
     fun onNodeNameChange(value: String) { _nodeName.value = value }
+    fun onNodeTitleChange(value: String) { _nodeTitle.value = value }
     
     fun setInitialData(t: String?, c: String?, n: String?) {
         if (t != null && t != "{title}") _title.value = t
         if (c != null && c != "{content}") _content.value = c
-        if (n != null && n != "{node}") _nodeName.value = n
+        if (n != null && n != "{node}") {
+            _nodeName.value = n
+            _nodeTitle.value = n // Fallback to name if title is not provided initially
+        }
         // Report logic ignored for simplicity, can be re-added
     }
 
