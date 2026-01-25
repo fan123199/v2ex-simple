@@ -47,7 +47,14 @@ fun MainDrawer(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp, top = 24.dp, bottom = 16.dp), // Standard drawer header might need top padding for status bar if not handled, but usually ModalDrawer handles it. Let's stick to safe padding.
+                .clickable {
+                    if (user != null) {
+                        onItemClick("member:${user!!.username}")
+                    } else {
+                        onItemClick("login")
+                    }
+                }
+                .padding(16.dp, top = 24.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
              if (user != null) {
@@ -56,13 +63,8 @@ fun MainDrawer(
                     contentDescription = "Profile",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .size(48.dp) // Slight increase for better visibility in horizontal layout? Or keep 32dp? User said 'shrink module', implies compact. Keeping 32dp or maybe 40dp is standard. Let's stick to 40dp for better touch target or keep 32 to match user "match size" previously. User said "shrink drawer header". I'll stick to 32dp or maybe 48dp which is standard avatar size. Previous was 32dp in valid request, but visually 48dp is better for drawer. I'll stick to 40dp as a middle ground or just keep 32dp if user emphasized consistency. Let's use 40dp as it's common for list items. Actually, user asked for "match size/shape of AppBar" in prev request. AppBar is usually small. I'll stick to 32dp if not specified, but 40dp looks better.
-                        // Wait, user said "shrink module". I'll keep 32dp.
                         .size(48.dp)
                         .clip(CircleShape)
-                        .clickable { 
-                            onItemClick("member:${user!!.username}")
-                        }
                 )
              } else {
                  Image(
@@ -72,16 +74,13 @@ fun MainDrawer(
                     modifier = Modifier
                         .size(48.dp)
                         .clip(CircleShape)
-                        .clickable { 
-                            onItemClick("login")
-                        }
                 )
              }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
                 text = user?.username ?: stringResource(R.string.drawer_click_to_login),
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface // Change to onSurface since no primary background
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 

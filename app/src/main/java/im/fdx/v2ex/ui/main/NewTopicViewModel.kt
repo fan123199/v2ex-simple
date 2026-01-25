@@ -9,6 +9,7 @@ import im.fdx.v2ex.data.network.NetManager
 import im.fdx.v2ex.data.network.Parser
 import im.fdx.v2ex.data.network.vCall
 import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,11 +63,11 @@ class NewTopicViewModel(application: Application) : AndroidViewModel(application
 
     fun send() {
         if (_title.value.isEmpty() || _content.value.isEmpty()) {
-            _sendResult.value = SendResult.Error("标题和内容不能为空")
+            _sendResult.value = SendResult.Error(getApplication<android.app.Application>().getString(R.string.error_empty_title_content))
             return
         }
         if (_nodeName.value.isEmpty()) {
-             _sendResult.value = SendResult.Error("请选择节点")
+             _sendResult.value = SendResult.Error(getApplication<android.app.Application>().getString(R.string.error_choose_node))
              return
         }
 
@@ -89,7 +90,7 @@ class NewTopicViewModel(application: Application) : AndroidViewModel(application
              val once = Parser(bodyString).getOnceNum2()
              if (once == null) {
                  _isLoading.value = false
-                 _sendResult.value = SendResult.Error("发布失败，无法获取once")
+                 _sendResult.value = SendResult.Error(getApplication<android.app.Application>().getString(R.string.error_post_failed_once))
                  return
              }
              

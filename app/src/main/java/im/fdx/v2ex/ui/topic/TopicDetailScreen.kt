@@ -415,8 +415,8 @@ fun TopicDetailContent(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                             text = when (uiState.filterType) {
-                                                FilterType.User -> "正在查看 ${uiState.filterTarget} 的全部回复"
-                                                FilterType.Conversation -> "正在查看对话列表"
+                                                FilterType.User -> stringResource(R.string.filtering_by_user, uiState.filterTarget ?: "")
+                                                FilterType.Conversation -> stringResource(R.string.viewing_conversation)
                                                 else -> ""
                                             },
                                             style = MaterialTheme.typography.labelLarge,

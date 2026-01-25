@@ -347,6 +347,7 @@ fun AppNavigation(
                  onSignUpClick = {
                       navController.navigate(Screen.WebView.createRoute("https://www.v2ex.com/signup"))
                  },
+                 onBackClick = { navController.popBackStack() },
                  showTwoStepDialog = showTwoStepDialog,
                  twoStepCode = twoStepCode,
                  onTwoStepCodeChange = { twoStepCode = it },

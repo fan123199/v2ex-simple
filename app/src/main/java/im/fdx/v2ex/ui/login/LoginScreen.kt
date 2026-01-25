@@ -2,6 +2,8 @@ package im.fdx.v2ex.ui.login
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +17,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import im.fdx.v2ex.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     username: String,
@@ -28,6 +31,7 @@ fun LoginScreen(
     onLoginClick: () -> Unit,
     onCaptchaClick: () -> Unit,
     onSignUpClick: () -> Unit,
+    onBackClick: () -> Unit,
     showTwoStepDialog: Boolean = false,
     twoStepCode: String = "",
     onTwoStepCodeChange: (String) -> Unit = {},
@@ -47,6 +51,7 @@ fun LoginScreen(
     val menuRefreshStr = stringResource(R.string.menu_refresh)
     val loginStr = stringResource(R.string.login)
     val noAccountSignUpStr = stringResource(R.string.no_account_signup)
+    val backStr = stringResource(R.string.navigation_drawer_close) // Better than nothing if "back" is missing, but usually "close" or custom is used.
     
     // 2FA Dialog
     if (showTwoStepDialog) {
@@ -91,12 +96,24 @@ fun LoginScreen(
     
     Scaffold(
         topBar = {
+            TopAppBar(
+                title = { Text(text = "") },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            )
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center

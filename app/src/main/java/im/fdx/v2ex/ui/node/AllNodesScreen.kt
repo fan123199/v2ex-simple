@@ -14,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -51,7 +52,7 @@ fun AllNodesScreen(
                                 searchQuery = it
                                 viewModel.search(it)
                             },
-                            placeholder = { Text("Search nodes...") },
+                            placeholder = { Text(stringResource(im.fdx.v2ex.R.string.search_nodes_placeholder)) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .focusRequester(focusRequester),
@@ -66,7 +67,7 @@ fun AllNodesScreen(
                             textStyle = MaterialTheme.typography.bodyLarge
                         )
                     } else {
-                        Text("All Nodes")
+                        Text(stringResource(im.fdx.v2ex.R.string.all_nodes))
                     }
                 },
                 navigationIcon = {

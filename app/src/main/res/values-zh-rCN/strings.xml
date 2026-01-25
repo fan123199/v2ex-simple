@@ -181,6 +181,14 @@
     <string name="parsing_error_once">解析错误，无法找到 \'once\'</string>
     <string name="checkin_failed">签到失败：%s</string>
     <string name="need_login_first">请先登录</string>
+    <string-array name="j" translatable="false">
+        <item>天</item>
+        <item>无</item>
+        <item>身</item>
+        <item>ChatGPT</item>
+        <item>AI</item>
+        <item>RELAX</item>
+    </string-array>
 
     <string name="search_sort_time">按时间</string>
     <string name="search_sort_relevance">按相关度</string>
@@ -192,6 +200,10 @@
     <string name="email_subject_feedback">V2EX Simple 反馈</string>
     <string name="no_email_client">未找到邮件客户端</string>
     <string name="logout_success">已退出登录</string>
+    <string name="error_empty_title_content">标题和内容不能为空</string>
+    <string name="error_choose_node">请选择节点</string>
+    <string name="error_post_failed_once">发布失败，无法获取once</string>
+    <string name="search_nodes_placeholder">搜索节点...</string>
     <string name="report_reason_title">请选择举报的理由</string>
     <string-array name="report_reasons">
         <item>大量发布广告</item>
