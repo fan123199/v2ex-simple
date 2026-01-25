@@ -47,6 +47,7 @@ import im.fdx.v2ex.data.model.MemberReplyModel
 import im.fdx.v2ex.R
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,6 +78,18 @@ fun MemberScreen(
     val sheetState = rememberModalBottomSheetState()
     val snackbarHostState = remember { SnackbarHostState() }
     
+    val closeStr = stringResource(R.string.close)
+    val moreStr = stringResource(R.string.more)
+    val reportUserStr = stringResource(R.string.report_user)
+    val unblockUserStr = stringResource(R.string.unblock_user)
+    val blockUserStr = stringResource(R.string.block_user)
+    val unblockConfirmMsgStr = stringResource(R.string.unblock_confirm_msg)
+    val blockConfirmMsgStr = stringResource(R.string.block_confirm_msg)
+    val okStr = stringResource(R.string.ok)
+    val cancelStr = stringResource(R.string.cancel)
+    val reportReasonTitleStr = stringResource(R.string.report_reason_title)
+    val loginActionStr = stringResource(R.string.login)
+    
     Scaffold(
         topBar = {
             TopAppBar(
@@ -85,7 +98,7 @@ fun MemberScreen(
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.close),
+                            contentDescription = closeStr,
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -94,7 +107,7 @@ fun MemberScreen(
                     val currentUser by im.fdx.v2ex.utils.UserStore.user.collectAsState()
                     if (currentUser?.username != username) {
                         IconButton(onClick = {
-                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, loginActionStr, onLoginClick = onLoginClick)) {
                                 viewModel.toggleFollow()
                             }
                         }) {
@@ -105,7 +118,7 @@ fun MemberScreen(
                             )
                         }
                         IconButton(onClick = {
-                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                            if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, loginActionStr, onLoginClick = onLoginClick)) {
                                 showBlockDialog = true
                             }
                         }) {
@@ -118,17 +131,17 @@ fun MemberScreen(
                     }
                     Box {
                         IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more), tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Default.MoreVert, contentDescription = moreStr, tint = MaterialTheme.colorScheme.primary)
                         }
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text(stringResource(R.string.report_user)) },
+                                text = { Text(reportUserStr) },
                                 onClick = {
                                     showMenu = false
-                                    if (!im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                                    if (!im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, loginActionStr, onLoginClick = onLoginClick)) {
                                         // Reminder shown
                                     } else {
                                         showReportSheet = true
@@ -145,19 +158,19 @@ fun MemberScreen(
         if (showBlockDialog) {
             AlertDialog(
                 onDismissRequest = { showBlockDialog = false },
-                title = { Text(if (uiState.isBlocked) stringResource(R.string.unblock_user) else stringResource(R.string.block_user)) },
-                text = { Text(if (uiState.isBlocked) stringResource(R.string.unblock_confirm_msg) else stringResource(R.string.block_confirm_msg)) },
+                title = { Text(if (uiState.isBlocked) unblockUserStr else blockUserStr) },
+                text = { Text(if (uiState.isBlocked) unblockConfirmMsgStr else blockConfirmMsgStr) },
                 confirmButton = {
                     TextButton(onClick = {
                         viewModel.toggleBlock()
                         showBlockDialog = false
                     }) {
-                        Text(stringResource(R.string.ok))
+                        Text(okStr)
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showBlockDialog = false }) {
-                        Text(stringResource(R.string.cancel))
+                        Text(cancelStr)
                     }
                 }
             )
@@ -170,17 +183,18 @@ fun MemberScreen(
             ) {
                 Column(modifier = Modifier.padding(bottom = 32.dp)) {
                     Text(
-                        text = stringResource(R.string.report_reason_title),
+                        text = reportReasonTitleStr,
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(16.dp)
                     )
-                    context.resources.getStringArray(R.array.report_reason_member).forEach { reason ->
+                    val reasons = stringArrayResource(R.array.report_reason_member)
+                    reasons.forEach { reason ->
+                        val reportTitle = stringResource(R.string.report_user_title, username)
+                        val reportContent = stringResource(R.string.report_user_content, username, reason)
                         ListItem(
                             headlineContent = { Text(reason) },
                             modifier = Modifier.clickable {
                                 showReportSheet = false
-                                val reportTitle = context.getString(R.string.report_user_title, username)
-                                val reportContent = context.getString(R.string.report_user_content, username, reason)
                                 onReportClick(reportTitle, reportContent)
                             }
                         )

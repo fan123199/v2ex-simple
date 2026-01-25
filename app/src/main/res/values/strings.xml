@@ -312,6 +312,9 @@
     <string name="toast_unfavor_success">Unfavor success</string>
     <string name="toast_ignore_topic_success">Ignore topic success</string>
     <string name="toast_ignore_reply_success">Ignore reply success</string>
+    <string name="toast_thank_topic_success">Thank topic success</string>
+    <string name="toast_thank_reply_success">Thank reply success</string>
     <string name="filtering_by_user">Viewing all replies from %s</string>
     <string name="viewing_conversation">Viewing conversation</string>
+    <string name="menu">Menu</string>
 </resources>

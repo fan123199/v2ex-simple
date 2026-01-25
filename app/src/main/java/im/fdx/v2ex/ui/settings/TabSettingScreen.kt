@@ -211,10 +211,6 @@ class TabSettingViewModel : ViewModel() {
 
     fun save(context: Context) {
         val current = _uiState.value.currentTabs
-        if (current.isEmpty()) {
-            context.toast(context.getString(R.string.need_at_least_one))
-            return
-        }
         val savedList = Gson().toJson(current)
         pref.edit { putString(Keys.PREF_TAB, savedList) }
         LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Keys.ACTION_TAB_SETTING))
@@ -236,10 +232,13 @@ fun TabSettingScreen(
     val viewModel: TabSettingViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
 
+    val tabSettingStr = stringResource(R.string.tab_setting)
+    val needAtLeastOneStr = stringResource(R.string.need_at_least_one)
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(context.getString(R.string.tab_setting)) },
+                title = { Text(tabSettingStr) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -253,7 +252,13 @@ fun TabSettingScreen(
                     TextButton(onClick = { viewModel.reset() }) {
                         Text(stringResource(R.string.menu_reset))
                     }
-                    TextButton(onClick = { viewModel.save(context) }) {
+                    TextButton(onClick = { 
+                        if (uiState.currentTabs.isEmpty()) {
+                            context.toast(needAtLeastOneStr)
+                        } else {
+                            viewModel.save(context) 
+                        }
+                    }) {
                         Text(stringResource(R.string.menu_save))
                     }
                 }

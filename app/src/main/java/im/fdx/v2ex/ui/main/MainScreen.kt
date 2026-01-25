@@ -20,6 +20,7 @@ import im.fdx.v2ex.ui.settings.getTabTitleRes
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
+import im.fdx.v2ex.R
 import im.fdx.v2ex.utils.Keys
 import androidx.core.os.bundleOf
 import androidx.compose.material.icons.Icons
@@ -46,6 +47,10 @@ fun MainScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    
+    val loginActionStr = stringResource(R.string.login)
+    val menuStr = stringResource(R.string.menu)
+    val searchStr = stringResource(R.string.search)
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -56,6 +61,7 @@ fun MainScreen(
                             context = context,
                             snackbarHostState = snackbarHostState,
                             scope = coroutineScope,
+                            actionLabel = loginActionStr,
                             onLoginClick = { onMenuClick("login") }
                         )) {
                         coroutineScope.launch { drawerState.close() }
@@ -95,7 +101,7 @@ fun MainScreen(
                             IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
                                 Icon(
                                     imageVector = Icons.Default.Menu,
-                                    contentDescription = "Menu",
+                                    contentDescription = menuStr,
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                             }
@@ -105,7 +111,7 @@ fun MainScreen(
                         IconButton(onClick = onSearchClick) {
                              Icon(
                                   imageVector = Icons.Default.Search,
-                                  contentDescription = "Search",
+                                  contentDescription = searchStr,
                                   tint = MaterialTheme.colorScheme.primary
                              )
                         }
@@ -120,6 +126,7 @@ fun MainScreen(
                                 context = context,
                                 snackbarHostState = snackbarHostState,
                                 scope = coroutineScope,
+                                actionLabel = loginActionStr,
                                 onLoginClick = { onMenuClick("login") }
                             )) {
                             onNewTopicClick()

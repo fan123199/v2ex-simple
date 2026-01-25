@@ -18,11 +18,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import im.fdx.v2ex.ui.main.TopicListScreen
 import im.fdx.v2ex.ui.main.TopicListViewModel
 import im.fdx.v2ex.data.model.Topic
+import im.fdx.v2ex.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,12 +59,14 @@ fun NodeScreen(
             )
         },
         floatingActionButton = {
+            val loginLabel = stringResource(id = R.string.login)
             im.fdx.v2ex.ui.common.PostTopicFAB(
                 onClick = {
                     if (im.fdx.v2ex.utils.verifyLogin(
                             context = context,
                             snackbarHostState = snackbarHostState,
                             scope = coroutineScope,
+                            actionLabel = loginLabel,
                             onLoginClick = onLoginClick
                         )) {
                         onNewTopicClick(nodeName)

@@ -1,0 +1,116 @@
+
+> Configure project :app
+WARNING: The option setting 'android.defaults.buildfeatures.buildconfig=true' is deprecated.
+The current default is 'false'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+To keep using this feature, add the following to your module-level build.gradle files:
+    android.buildFeatures.buildConfig = true
+or from Android Studio, click: `Refactor` > `Migrate BuildConfig to Gradle Build Files`.
+
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:dataBindingMergeDependencyArtifactsDebug UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:injectCrashlyticsMappingFileIdDebug UP-TO-DATE
+> Task :app:injectCrashlyticsVersionControlInfoDebug UP-TO-DATE
+> Task :app:processDebugGoogleServices UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:dataBindingGenBaseClassesDebug UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:processDebugNavigationResources UP-TO-DATE
+> Task :app:compileDebugNavigationResources UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:stripDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:kspDebugKotlin
+
+> Task :app:compileDebugKotlin
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/local/DbHelper.kt:10:8 'fun fallbackToDestructiveMigration(): RoomDatabase.Builder<AppDatabase>' is deprecated. Replace by overloaded version with parameter to indicate if all tables should be dropped or not.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Api.kt:44:44 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Api.kt:68:40 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/GetMoreRepliesWorker.kt:43:50 Unnecessary non-null assertion (!!) on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/GetMsgWorker.kt:44:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:43:66 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:45:74 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:56:72 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:57:71 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:65:79 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:91:68 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:102:78 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:322:71 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:472:69 Unnecessary safe call on a non-null receiver of type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:511:57 Elvis operator (?:) always returns the left operand of non-nullable type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/data/network/Parser.kt:533:74 Elvis operator (?:) always returns the left operand of non-nullable type 'Elements'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/BaseActivity.kt:84:21 'fun updateConfiguration(p0: Configuration!, p1: DisplayMetrics!): Unit' is deprecated. Deprecated in Java.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/common/WebViewScreen.kt:62:57 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/favor/FavoriteNodeViewModel.kt:46:46 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/favor/FavoriteScreen.kt:61:13 'fun TabRow(selectedTabIndex: Int, modifier: Modifier = ..., containerColor: Color = ..., contentColor: Color = ..., indicator: ComposableFunction1<List<TabPosition>, Unit> = ..., divider: ComposableFunction0<Unit> = ..., tabs: ComposableFunction0<Unit>): Unit' is deprecated. Replaced with PrimaryTabRow and SecondaryTabRow.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/favor/FavoriteScreen.kt:67:34 'fun Modifier.tabIndicatorOffset(currentTabPosition: TabPosition): Modifier' is deprecated. Solely for use alongside deprecated TabRowDefaults.Indicator method. For recommended PrimaryIndicator and SecondaryIndicator methods, please use TabIndicatorScope.tabIndicatorOffset method.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/login/LoginViewModel.kt:72:51 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/login/LoginViewModel.kt:144:43 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/login/LoginViewModel.kt:230:51 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/DailyViewModel.kt:33:41 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/NewTopicScreen.kt:69:57 'val Icons.Filled.ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/NewTopicScreen.kt:82:57 'val Icons.Filled.Send: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Send.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/NewTopicViewModel.kt:81:44 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/NewTopicViewModel.kt:108:57 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/TopicListViewModel.kt:156:41 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/TopicListViewModel.kt:212:41 Unnecessary non-null assertion (!!) on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/main/TopicListViewModel.kt:276:42 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/member/MemberViewModel.kt:62:46 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/member/MemberViewModel.kt:86:45 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/member/MemberViewModel.kt:173:42 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/node/AllNodesScreen.kt:35:17 'fun SearchBar(query: String, onQueryChange: (String) -> Unit, onSearch: (String) -> Unit, active: Boolean, onActiveChange: (Boolean) -> Unit, modifier: Modifier = ..., enabled: Boolean = ..., placeholder: ComposableFunction0<Unit>? = ..., leadingIcon: ComposableFunction0<Unit>? = ..., trailingIcon: ComposableFunction0<Unit>? = ..., shape: Shape = ..., colors: SearchBarColors = ..., tonalElevation: Dp = ..., shadowElevation: Dp = ..., windowInsets: WindowInsets = ..., interactionSource: MutableInteractionSource? = ..., content: ComposableFunction1<ColumnScope, Unit>): Unit' is deprecated. Use overload which takes inputField as a parameter.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/node/AllNodesViewModel.kt:65:44 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/notification/NotificationViewModel.kt:47:46 Unnecessary safe call on a non-null receiver of type 'ResponseBody'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/settings/TabSettingScreen.kt:144:55 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/topic/ReplyItem.kt:143:66 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/topic/ReplyItem.kt:166:69 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/topic/TopicDetailScreen.kt:667:111 Unnecessary safe call on a non-null receiver of type 'String'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/ui/topic/TopicDetailViewModel.kt:338:43 Elvis operator (?:) always returns the left operand of non-nullable type 'String'.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/utils/ImageUtil.kt:14:8 'class SimpleTarget<Z : Any!> : BaseTarget<Z!>' is deprecated. Deprecated in Java.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/utils/ImageUtil.kt:48:32 'class SimpleTarget<Z : Any!> : BaseTarget<Z!>' is deprecated. Deprecated in Java.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/utils/extensions/ViewExt.kt:85:44 'fun onBackPressed(): Unit' is deprecated. This method has been deprecated in favor of using the
+      {@link OnBackPressedDispatcher} via {@link #getOnBackPressedDispatcher()}.
+      The OnBackPressedDispatcher controls how back button events are dispatched
+      to one or more {@link OnBackPressedCallback} objects.
+w: file:///Users/fdx4bw/Desktop/proj/frontend/fdx/v2ex-simple/app/src/main/java/im/fdx/v2ex/utils/extensions/ViewExt.kt:95:12 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:copyRoomSchemas NO-SOURCE
+> Task :app:processDebugJavaRes UP-TO-DATE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:transformDebugClassesWithAsm
+> Task :app:dexBuilderDebug
+> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
+> Task :app:mergeProjectDexDebug
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleDebug
+
+BUILD SUCCESSFUL in 10s
+44 actionable tasks: 6 executed, 38 up-to-date

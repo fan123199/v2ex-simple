@@ -43,6 +43,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.navDeepLink
 import android.content.Intent
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
 import im.fdx.v2ex.ui.common.PhotoScreen
 import im.fdx.v2ex.ui.common.WebViewScreen
 import im.fdx.v2ex.ui.login.LoginScreen
@@ -100,6 +101,9 @@ fun AppNavigation(
 ) {
     val context = LocalContext.current
     val dailyViewModel: DailyViewModel = viewModel()
+    
+    val loginSuccessStr = stringResource(R.string.login_success)
+    val publishSuccessStr = stringResource(R.string.publish_success)
     
     // Observer for daily check messages
     LaunchedEffect(Unit) {
@@ -320,7 +324,7 @@ fun AppNavigation(
                 when (val result = uiState) {
                     is LoginResult.Success -> {
                         showTwoStepDialog = false
-                        Toast.makeText(context, context.getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, loginSuccessStr, Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     }
                     is LoginResult.TwoStep -> {
@@ -430,7 +434,7 @@ fun AppNavigation(
             LaunchedEffect(uiState) {
                 when(val result = uiState) {
                     is SendResult.Success -> {
-                        Toast.makeText(context, context.getString(R.string.publish_success), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, publishSuccessStr, Toast.LENGTH_SHORT).show()
                         navController.popBackStack()
                     }
                     is SendResult.Error -> {

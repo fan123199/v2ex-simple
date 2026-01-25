@@ -24,7 +24,6 @@ import im.fdx.v2ex.data.network.HttpHelper
 import im.fdx.v2ex.utils.extensions.logd
 import im.fdx.v2ex.utils.extensions.loge
 import org.json.JSONObject
-import im.fdx.v2ex.R
 
 data class TopicDetailUiState(
     val topic: Topic? = null,
@@ -46,12 +45,25 @@ enum class FilterType {
     None, User, Conversation
 }
 
+sealed class TopicDetailEvent {
+    object PostReplySuccess : TopicDetailEvent()
+    object FavorTopicSuccess : TopicDetailEvent()
+    object UnfavorTopicSuccess : TopicDetailEvent()
+    object ThankTopicSuccess : TopicDetailEvent()
+    object IgnoreTopicSuccess : TopicDetailEvent()
+    object IgnoreReplySuccess : TopicDetailEvent()
+    object ThankReplySuccess : TopicDetailEvent()
+    data class ShowErrorMessage(val error: String) : TopicDetailEvent()
+    data class RequestReportTopic(val reason: String) : TopicDetailEvent()
+    data class RequestReportReply(val reply: Reply) : TopicDetailEvent()
+}
+
 class TopicDetailViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(TopicDetailUiState())
     val uiState: StateFlow<TopicDetailUiState> = _uiState.asStateFlow()
 
-    private val _events = MutableSharedFlow<Int>()
+    private val _events = MutableSharedFlow<TopicDetailEvent>()
     val events = _events.asSharedFlow()
 
     private val allReplies = mutableListOf<Reply>()
@@ -101,7 +113,7 @@ class TopicDetailViewModel : ViewModel() {
 
             override fun onResponse(call: Call, response: Response) {
                  if (response.isSuccessful) {
-                     viewModelScope.launch { _events.emit(R.string.toast_post_reply_success) }
+                     viewModelScope.launch { _events.emit(TopicDetailEvent.PostReplySuccess) }
                      // Refresh to show new reply
                      refresh()
                  } else {
@@ -128,6 +140,7 @@ class TopicDetailViewModel : ViewModel() {
                      val body = response.body.string()
                      val json = JSONObject(body)
                      if(json.optBoolean("success")) {
+                         viewModelScope.launch { _events.emit(TopicDetailEvent.ThankReplySuccess) }
                          refresh()
                      }
                  } else {
@@ -148,8 +161,9 @@ class TopicDetailViewModel : ViewModel() {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    val resId = if (isFavored) R.string.toast_unfavor_success else R.string.toast_favor_success
-                    viewModelScope.launch { _events.emit(resId) }
+                    viewModelScope.launch { 
+                        _events.emit(if (isFavored) TopicDetailEvent.UnfavorTopicSuccess else TopicDetailEvent.FavorTopicSuccess) 
+                    }
                     _uiState.update { it.copy(isFavored = !isFavored) }
                 }
             }
@@ -166,6 +180,7 @@ class TopicDetailViewModel : ViewModel() {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
+                    viewModelScope.launch { _events.emit(TopicDetailEvent.ThankTopicSuccess) }
                     _uiState.update { it.copy(isThanked = true) }
                 }
             }
@@ -181,11 +196,23 @@ class TopicDetailViewModel : ViewModel() {
             override fun onFailure(call: Call, e: IOException) {}
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    viewModelScope.launch { _events.emit(R.string.toast_ignore_topic_success) }
+                    viewModelScope.launch { _events.emit(TopicDetailEvent.IgnoreTopicSuccess) }
                     _uiState.update { it.copy(isIgnored = true) }
                 }
             }
         })
+    }
+
+    fun reportTopic(reason: String) {
+        viewModelScope.launch {
+            _events.emit(TopicDetailEvent.RequestReportTopic(reason))
+        }
+    }
+
+    fun reportReply(reply: Reply) {
+        viewModelScope.launch {
+            _events.emit(TopicDetailEvent.RequestReportReply(reply))
+        }
     }
 
     private fun fetchReplies(page: Int, isRefresh: Boolean) {
@@ -199,7 +226,7 @@ class TopicDetailViewModel : ViewModel() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                 val body = response.body.string() ?: ""
+                 val body = response.body.string()
                  logd("fetchReplies onResponse: code=${response.code}, bodyLength=${body.length}")
                  if (!response.isSuccessful) {
                      _uiState.update { it.copy(isLoading = false, error = "Error: ${response.code}") }
@@ -293,7 +320,7 @@ class TopicDetailViewModel : ViewModel() {
 
     fun ignoreReply(replyId: String) {
         allReplies.removeAll { it.id == replyId }
-        viewModelScope.launch { _events.emit(R.string.toast_ignore_reply_success) }
+        viewModelScope.launch { _events.emit(TopicDetailEvent.IgnoreReplySuccess) }
         applyCurrentFilter()
     }
 

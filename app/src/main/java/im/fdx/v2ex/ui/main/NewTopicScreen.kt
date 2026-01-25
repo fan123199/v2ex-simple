@@ -51,28 +51,36 @@ fun NewTopicScreen(
     val scope = androidx.compose.runtime.rememberCoroutineScope()
     val snackbarHostState = androidx.compose.runtime.remember { androidx.compose.material3.SnackbarHostState() }
 
+    val newTopicStr = stringResource(R.string.new_topic)
+    val closeStr = stringResource(R.string.close)
+    val postReplyStr = stringResource(R.string.post_reply)
+    val chooseNodeStr = stringResource(R.string.choose_node)
+    val topicTitleStr = stringResource(R.string.topic_title)
+    val contentStr = stringResource(R.string.content)
+    val loginActionStr = stringResource(R.string.login) // For the snackbar action
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = androidx.compose.ui.res.stringResource(id = R.string.new_topic)) },
+                title = { Text(text = newTopicStr) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
-                            contentDescription = stringResource(R.string.close),
+                            contentDescription = closeStr,
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 actions = {
                     IconButton(onClick = {
-                        if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = { })) {
+                        if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, loginActionStr, onLoginClick = { })) {
                             onSendClick()
                         }
                     }, enabled = !isLoading) {
                         Icon(
                             imageVector = Icons.Default.Send,
-                            contentDescription = stringResource(R.string.post_reply),
+                            contentDescription = postReplyStr,
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -105,7 +113,7 @@ fun NewTopicScreen(
                     .padding(vertical = 8.dp)
             ) {
                 Text(
-                    text = if (!nodeName.isNullOrEmpty()) "$nodeName | $nodeTitle" else stringResource(R.string.choose_node),
+                    text = if (!nodeName.isNullOrEmpty()) "$nodeName | $nodeTitle" else chooseNodeStr,
                     style = MaterialTheme.typography.titleMedium,
                     color = if (!nodeName.isNullOrEmpty()) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                 )
@@ -115,7 +123,7 @@ fun NewTopicScreen(
             OutlinedTextField(
                 value = title,
                 onValueChange = onTitleChange,
-                label = { Text(stringResource(R.string.topic_title)) },
+                label = { Text(topicTitleStr) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
@@ -126,7 +134,7 @@ fun NewTopicScreen(
             OutlinedTextField(
                 value = content,
                 onValueChange = onContentChange,
-                label = { Text(stringResource(R.string.content)) },
+                label = { Text(contentStr) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)

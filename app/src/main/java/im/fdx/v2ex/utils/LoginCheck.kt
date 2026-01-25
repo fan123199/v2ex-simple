@@ -21,6 +21,7 @@ fun verifyLogin(
     context: Context,
     snackbarHostState: SnackbarHostState,
     scope: CoroutineScope,
+    actionLabel: String,
     onLoginClick: () -> Unit
 ): Boolean {
     return if (myApp.isLogin) {
@@ -29,7 +30,7 @@ fun verifyLogin(
         scope.launch {
             val result = snackbarHostState.showSnackbar(
                 message = context.getString(R.string.not_login_tips),
-                actionLabel = "登录",
+                actionLabel = actionLabel,
                 withDismissAction = true
             )
             if (result == SnackbarResult.ActionPerformed) {

@@ -36,19 +36,31 @@ fun LoginScreen(
 ) {
     val context = LocalContext.current
     
+    val twoStepVerificationStr = stringResource(R.string.two_step_verification)
+    val inputTwoStepCodeStr = stringResource(R.string.input_two_step_code)
+    val verifyCodeStr = stringResource(R.string.verify_code)
+    val verifyStr = stringResource(R.string.verify)
+    val cancelStr = stringResource(R.string.cancel)
+    val logInV2EXStr = stringResource(R.string.log_in_v2ex)
+    val usernameOrEmailStr = stringResource(R.string.username_or_email)
+    val passwordStr = stringResource(R.string.password)
+    val menuRefreshStr = stringResource(R.string.menu_refresh)
+    val loginStr = stringResource(R.string.login)
+    val noAccountSignUpStr = stringResource(R.string.no_account_signup)
+    
     // 2FA Dialog
     if (showTwoStepDialog) {
         AlertDialog(
             onDismissRequest = onTwoStepDismiss,
-            title = { Text(stringResource(R.string.two_step_verification)) },
+            title = { Text(twoStepVerificationStr) },
             text = {
                 Column {
-                    Text(stringResource(R.string.input_two_step_code))
+                    Text(inputTwoStepCodeStr)
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
                         value = twoStepCode,
                         onValueChange = onTwoStepCodeChange,
-                        label = { Text(stringResource(R.string.verify_code)) },
+                        label = { Text(verifyCodeStr) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -65,13 +77,13 @@ fun LoginScreen(
                             strokeWidth = 2.dp
                         )
                     } else {
-                        Text(stringResource(R.string.verify))
+                        Text(verifyStr)
                     }
                 }
             },
             dismissButton = {
                 TextButton(onClick = onTwoStepDismiss) {
-                    Text(stringResource(R.string.cancel))
+                    Text(cancelStr)
                 }
             }
         )
@@ -90,7 +102,7 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = stringResource(R.string.log_in_v2ex),
+                text = logInV2EXStr,
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -100,7 +112,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = onUsernameChange,
-                label = { Text(stringResource(R.string.username_or_email)) },
+                label = { Text(usernameOrEmailStr) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -110,7 +122,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = password,
                 onValueChange = onPasswordChange,
-                label = { Text(stringResource(R.string.password)) },
+                label = { Text(passwordStr) },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
@@ -125,7 +137,7 @@ fun LoginScreen(
                 OutlinedTextField(
                     value = captcha,
                     onValueChange = onCaptchaChange,
-                    label = { Text(stringResource(R.string.verify_code)) },
+                    label = { Text(verifyCodeStr) },
                     singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
@@ -160,7 +172,7 @@ fun LoginScreen(
                              .clickable { onCaptchaClick() },
                          contentAlignment = Alignment.Center
                      ) {
-                         Text(stringResource(R.string.menu_refresh))
+                         Text(menuRefreshStr)
                      }
                 }
             }
@@ -178,14 +190,14 @@ fun LoginScreen(
                         color = MaterialTheme.colorScheme.onPrimary
                     )
                 } else {
-                    Text(stringResource(R.string.login))
+                    Text(loginStr)
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             TextButton(onClick = onSignUpClick) {
-                Text(stringResource(R.string.no_account_signup))
+                Text(noAccountSignUpStr)
             }
         }
     }

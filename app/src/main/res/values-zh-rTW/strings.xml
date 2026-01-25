@@ -256,6 +256,8 @@
     <string name="toast_unfavor_success">取消收藏成功</string>
     <string name="toast_ignore_topic_success">已忽略該主題</string>
     <string name="toast_ignore_reply_success">已隱藏該回覆</string>
+    <string name="toast_thank_topic_success">感謝成功</string>
+    <string name="toast_thank_reply_success">感謝回覆成功</string>
     <string name="filtering_by_user">正在查看 %s 的全部回覆</string>
     <string name="viewing_conversation">正在查看對話列表</string>
 </resources>

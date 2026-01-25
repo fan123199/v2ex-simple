@@ -57,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import im.fdx.v2ex.data.network.NetManager
@@ -139,9 +140,33 @@ fun TopicDetailContent(
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
+    val loginActionStr = stringResource(R.string.login)
+    
+    val toastPostReplySuccess = stringResource(R.string.toast_post_reply_success)
+    val toastFavorSuccess = stringResource(R.string.toast_favor_success)
+    val toastUnfavorSuccess = stringResource(R.string.toast_unfavor_success)
+    val toastThankTopicSuccess = stringResource(R.string.toast_thank_topic_success)
+    val toastIgnoreTopicSuccess = stringResource(R.string.toast_ignore_topic_success)
+    val toastIgnoreReplySuccess = stringResource(R.string.toast_ignore_reply_success)
+    val toastThankReplySuccess = stringResource(R.string.toast_thank_reply_success)
+    
     LaunchedEffect(Unit) {
-        viewModel.events.collect { resId ->
-            android.widget.Toast.makeText(context, context.getString(resId), android.widget.Toast.LENGTH_SHORT).show()
+        viewModel.events.collect { event ->
+            val message = when (event) {
+                TopicDetailEvent.PostReplySuccess -> toastPostReplySuccess
+                TopicDetailEvent.FavorTopicSuccess -> toastFavorSuccess
+                TopicDetailEvent.UnfavorTopicSuccess -> toastUnfavorSuccess
+                TopicDetailEvent.ThankTopicSuccess -> toastThankTopicSuccess
+                TopicDetailEvent.IgnoreTopicSuccess -> toastIgnoreTopicSuccess
+                TopicDetailEvent.IgnoreReplySuccess -> toastIgnoreReplySuccess
+                TopicDetailEvent.ThankReplySuccess -> toastThankReplySuccess
+                is TopicDetailEvent.RequestReportTopic -> null
+                is TopicDetailEvent.RequestReportReply -> null
+                is TopicDetailEvent.ShowErrorMessage -> event.error
+            }
+            if (message != null) {
+                android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
+            }
         }
     }
     var showMoreActions by remember { mutableStateOf(false) }
@@ -221,6 +246,7 @@ fun TopicDetailContent(
                                         context,
                                         snackbarHostState,
                                         scope,
+                                        loginActionStr,
                                         onLoginClick = onLoginClick
                                     )
                                 ) {
@@ -243,6 +269,7 @@ fun TopicDetailContent(
                                         context,
                                         snackbarHostState,
                                         scope,
+                                        loginActionStr,
                                         onLoginClick = onLoginClick
                                     )
                                 ) {
@@ -266,6 +293,7 @@ fun TopicDetailContent(
                                         context,
                                         snackbarHostState,
                                         scope,
+                                        loginActionStr,
                                         onLoginClick = onLoginClick
                                     )
                                 ) {
@@ -339,7 +367,11 @@ fun TopicDetailContent(
                 value = replyText,
                 onValueChange = { replyText = it },
                 onSend = { content ->
-                    if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope, onLoginClick = onLoginClick)) {
+                    if (im.fdx.v2ex.utils.verifyLogin(context, snackbarHostState, scope,
+                            actionLabel = loginActionStr,
+                            onLoginClick = onLoginClick)) {
+
+
                         viewModel.postReply(content)
                     }
                 },
@@ -383,8 +415,8 @@ fun TopicDetailContent(
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
                                             text = when (uiState.filterType) {
-                                                FilterType.User -> stringResource(R.string.filtering_by_user, uiState.filterTarget ?: "")
-                                                FilterType.Conversation -> stringResource(R.string.viewing_conversation)
+                                                FilterType.User -> "正在查看 ${uiState.filterTarget} 的全部回复"
+                                                FilterType.Conversation -> "正在查看对话列表"
                                                 else -> ""
                                             },
                                             style = MaterialTheme.typography.labelLarge,
@@ -532,6 +564,7 @@ fun TopicDetailContent(
                                             context,
                                             snackbarHostState,
                                             scope,
+                                            actionLabel = loginActionStr,
                                             onLoginClick = onLoginClick
                                         )
                                     ) {
@@ -630,6 +663,10 @@ fun TopicDetailContent(
                         .padding(bottom = 32.dp)
                 ) {
                     val scope = rememberCoroutineScope()
+                    val reply = selectedReply
+                    val reportReplyTitle = reply?.let { stringResource(R.string.report_reply_title, it.content?.take(20) ?: "") } ?: ""
+                    val reportReplyContent = reply?.let { stringResource(R.string.report_reply_content, it.id, it.member?.username ?: "", topicUrl) } ?: ""
+                    
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.reply)) },
                         leadingContent = {
@@ -689,6 +726,7 @@ fun TopicDetailContent(
                                     context,
                                     snackbarHostState,
                                     scope,
+                                    actionLabel = loginActionStr,
                                     onLoginClick = onLoginClick
                                 )
                             ) {
@@ -708,148 +746,146 @@ fun TopicDetailContent(
                                 Icons.Default.VisibilityOff,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            if (im.fdx.v2ex.utils.verifyLogin(
-                                    context,
-                                    snackbarHostState,
-                                    scope,
-                                    onLoginClick = onLoginClick
                                 )
-                            ) {
-                                selectedReply?.let { viewModel.ignoreReply(it.id) }
-                            }
-                            showReplySheet = false
-                        }
-                    )
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.show_user_all_reply)) },
-                        leadingContent = {
-                            Icon(
-                                Icons.Default.PersonSearch,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            selectedReply?.member?.username?.let { viewModel.filterByUser(it) }
-                            showReplySheet = false
-                        }
-                    )
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.show_conversation)) },
-                        leadingContent = {
-                            Icon(
-                                Icons.Default.Forum,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            selectedReply?.let { viewModel.showConversation(it.id) }
-                            showReplySheet = false
-                        }
-                    )
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.report_abuse)) },
-                        leadingContent = {
-                            Icon(
-                                Icons.Default.Report,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            selectedReply?.let { reply ->
-                                showReplySheet = false
-                                val reportTitle = context.getString(R.string.report_reply_title, reply.content?.take(20) ?: "")
-                                val reportContent = context.getString(R.string.report_reply_content, reply.id, reply.member?.username, topicUrl)
-                                onReportClick(reportTitle, reportContent)
-                            }
-                        }
-                    )
-                }
-            }
-        }
-
-        if (showReportSheet) {
-            ModalBottomSheet(
-                onDismissRequest = { showReportSheet = false },
-                sheetState = reportSheetState
-            ) {
-                Column(modifier = Modifier.padding(bottom = 32.dp)) {
-                    Text(
-                        text = stringResource(R.string.report_reason_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                    val reasons = context.resources.getStringArray(R.array.report_reasons)
-                    reasons.forEach { reason ->
-                        ListItem(
-                            headlineContent = { Text(reason) },
+                            },
                             modifier = Modifier.clickable {
-                                showReportSheet = false
-                                val reportTitle = context.getString(R.string.report_topic_title, uiState.topic?.title ?: "")
-                                val reportContent = context.getString(R.string.report_topic_content, topicUrl, uiState.topic?.member?.username, reason)
-                                onReportClick(reportTitle, reportContent)
+                                if (im.fdx.v2ex.utils.verifyLogin(
+                                        context,
+                                        snackbarHostState,
+                                        scope,
+                                        actionLabel = loginActionStr,
+                                        onLoginClick = onLoginClick
+                                    )
+                                ) {
+                                    selectedReply?.let { viewModel.ignoreReply(it.id) }
+                                }
+                                showReplySheet = false
+                            }
+                        )
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.show_user_all_reply)) },
+                            leadingContent = {
+                                Icon(
+                                    Icons.Default.PersonSearch,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                selectedReply?.member?.username?.let { viewModel.filterByUser(it) }
+                                showReplySheet = false
+                            }
+                        )
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.show_conversation)) },
+                            leadingContent = {
+                                Icon(
+                                    Icons.Default.Forum,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                selectedReply?.let { viewModel.showConversation(it.id) }
+                                showReplySheet = false
+                            }
+                        )
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.report_abuse)) },
+                            leadingContent = {
+                                Icon(
+                                    Icons.Default.Report,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                showReplySheet = false
+                                onReportClick(reportReplyTitle, reportReplyContent)
                             }
                         )
                     }
                 }
             }
-        }
 
-        // Quote Dialog to show referenced reply
-        if (showQuoteDialog && quotedReply != null) {
-            Popup(
-                onDismissRequest = { showQuoteDialog = false },
-                offset = IntOffset(
-                    clickOffset.x.toInt(),
-                    clickOffset.y.toInt()
-                ),
-                properties = PopupProperties(
-                    focusable = true,
-                    dismissOnBackPress = true,
-                    dismissOnClickOutside = true
-                )
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
-                        .padding(16.dp)
-                        .clickable {
-                            val targetReply = quotedReply
-                            showQuoteDialog = false
-                            if (targetReply != null) {
-                                val index = uiState.replies.indexOf(targetReply)
-                                if (index != -1) {
-                                    scope.launch {
-                                        listState.animateScrollToItem(index + 1)
+            if (showReportSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showReportSheet = false },
+                    sheetState = reportSheetState
+                ) {
+                    Column(modifier = Modifier.padding(bottom = 32.dp)) {
+                        Text(
+                            text = stringResource(R.string.report_reason_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                        val reasons = stringArrayResource(R.array.report_reasons)
+                        reasons.forEach { reason ->
+                            val reportTitle = stringResource(R.string.report_topic_title, uiState.topic?.title ?: "")
+                            val reportContent = stringResource(R.string.report_topic_content, topicUrl, uiState.topic?.member?.username ?: "", reason)
+                            ListItem(
+                                headlineContent = { Text(reason) },
+                                modifier = Modifier.clickable {
+                                    showReportSheet = false
+                                    onReportClick(reportTitle, reportContent)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Quote Dialog to show referenced reply
+            if (showQuoteDialog && quotedReply != null) {
+                Popup(
+                    onDismissRequest = { showQuoteDialog = false },
+                    offset = IntOffset(
+                        clickOffset.x.toInt(),
+                        clickOffset.y.toInt()
+                    ),
+                    properties = PopupProperties(
+                        focusable = true,
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true
+                    )
+                ) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(0.8f)
+                            .padding(16.dp)
+                            .clickable {
+                                val targetReply = quotedReply
+                                showQuoteDialog = false
+                                if (targetReply != null) {
+                                    val index = uiState.replies.indexOf(targetReply)
+                                    if (index != -1) {
+                                        scope.launch {
+                                            listState.animateScrollToItem(index + 1)
+                                        }
                                     }
                                 }
-                            }
-                        },
-                    elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = if (quotedReply?.getRowNum() ?: 0 > 0) "@${quotedReply?.member?.username} #${quotedReply?.getRowNum()}" else "@${quotedReply?.member?.username}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = AnnotatedString.fromHtml(quotedReply?.content_rendered ?: ""),
-                            style = MaterialTheme.typography.bodyMedium
-                        )
+                            },
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
+                            Text(
+                                text = if (quotedReply?.getRowNum() ?: 0 > 0) "@${quotedReply?.member?.username} #${quotedReply?.getRowNum()}" else "@${quotedReply?.member?.username}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = AnnotatedString.fromHtml(quotedReply?.content_rendered ?: ""),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     }
                 }
             }
         }
     }
-}
+
 
 @Composable
 fun BottomReplyInput(

@@ -19,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
@@ -157,7 +158,6 @@ class SettingsViewModel : ViewModel() {
             remove(Keys.PREF_AVATAR)
         }
         loadSettings()
-        context.toast(context.getString(R.string.logout_success))
     }
 }
 
@@ -177,6 +177,14 @@ fun SettingsScreen(
     val textSizeSheetState = rememberModalBottomSheetState()
     val languageSheetState = rememberModalBottomSheetState()
     
+    val logoutSuccessStr = stringResource(R.string.logout_success)
+    val feedbackSubject = stringResource(R.string.email_subject_feedback)
+    val noEmailClientStr = stringResource(R.string.no_email_client)
+    val textSizeStrings = stringArrayResource(R.array.text_size_string)
+    val languageLabelsArr = stringArrayResource(R.array.language_string)
+    val languageValuesArr = stringArrayResource(R.array.language_value)
+    val nightModeLabelsArr = stringArrayResource(R.array.night_mode_string)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -207,8 +215,8 @@ fun SettingsScreen(
                  SettingsItem(
                     title = stringResource(R.string.logout),
                     onClick = {
-                         // Show dialog
                          viewModel.logout(context, context as android.app.Activity)
+                         context.toast(logoutSuccessStr)
                     }
                 )
                 
@@ -238,7 +246,7 @@ fun SettingsScreen(
 
             SettingsItem(
                 title = stringResource(R.string.font_size),
-                subtitle = context.resources.getStringArray(R.array.text_size_string).getOrElse(uiState.textSize.toInt()) { "Follow System" },
+                subtitle = textSizeStrings.getOrElse(uiState.textSize.toInt()) { stringResource(R.string.follow_system) },
                 onClick = {
                     showTextSizeSheet = true
                 }
@@ -329,12 +337,12 @@ fun SettingsScreen(
                     val intent = Intent(Intent.ACTION_SENDTO).apply {
                         data = Uri.parse("mailto:") // only email apps should handle this
                         putExtra(Intent.EXTRA_EMAIL, arrayOf("fan123199@gmail.com"))
-                        putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.email_subject_feedback))
+                        putExtra(Intent.EXTRA_SUBJECT, feedbackSubject)
                     }
                     try {
                         context.startActivity(intent)
                     } catch (e: Exception) {
-                        context.toast(context.getString(R.string.no_email_client))
+                        context.toast(noEmailClientStr)
                     }
                 }
             )
@@ -352,7 +360,6 @@ fun SettingsScreen(
                         .padding(bottom = 16.dp)
                 ) {
                     val currentMode = uiState.nightMode.toInt()
-                    val nightModeLabels = context.resources.getStringArray(R.array.night_mode_string)
                     // night_mode array maps to: 2 (Dark), 1 (Light), -1 (System)
                     
                     ListItem(
@@ -393,12 +400,11 @@ fun SettingsScreen(
                         .navigationBarsPadding()
                         .padding(bottom = 16.dp)
                 ) {
-                    val fontLabels = context.resources.getStringArray(R.array.text_size_string)
                     val fontValues = listOf("0", "1", "2", "3", "4")
                     
                     fontValues.forEachIndexed { index, value ->
                         ListItem(
-                            headlineContent = { Text(fontLabels[index]) },
+                            headlineContent = { Text(textSizeStrings[index]) },
                             trailingContent = if (uiState.textSize == value) { { Icon(Icons.Default.Check, null) } } else null,
                             modifier = Modifier.clickable {
                                 viewModel.setTextSize(value)
@@ -420,12 +426,12 @@ fun SettingsScreen(
                         .navigationBarsPadding()
                         .padding(bottom = 16.dp)
                  ) {
-                     val languageLabels = context.resources.getStringArray(R.array.language_string)
-                     val languageValues = context.resources.getStringArray(R.array.language_value)
+                     val languageLabelsArr = stringArrayResource(R.array.language_string)
+                     val languageValuesArr = stringArrayResource(R.array.language_value)
                      
-                     languageValues.forEachIndexed { index, value ->
+                     languageValuesArr.forEachIndexed { index, value ->
                          ListItem(
-                            headlineContent = { Text(languageLabels[index]) },
+                            headlineContent = { Text(languageLabelsArr[index]) },
                             trailingContent = if (uiState.language == value) { { Icon(Icons.Default.Check, null) } } else null,
                             modifier = Modifier.clickable {
                                 viewModel.setLanguage(value)
