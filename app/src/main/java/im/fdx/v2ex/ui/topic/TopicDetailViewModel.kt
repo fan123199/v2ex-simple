@@ -38,7 +38,8 @@ data class TopicDetailUiState(
     val isIgnored: Boolean = false,
     val isEnd: Boolean = false,
     val filterType: FilterType = FilterType.None,
-    val filterTarget: String? = null
+    val filterTarget: String? = null,
+    val filteredReplies: List<Reply> = emptyList()
 )
 
 enum class FilterType {
@@ -233,63 +234,58 @@ class TopicDetailViewModel : ViewModel() {
                      return
                  }
 
-                 try {
-                     val parser = Parser(body)
-                     val topicHeader = parser.parseResponseToTopic(topicId)
-                     logd("fetchReplies parsed: title=${topicHeader.title}, contentLen=${topicHeader.content?.length}, replies=${topicHeader.replies}")
-                     
-                     val replies = parser.getReplies()
-                     val totalPageArr = parser.getPageValue()
-                     val totalPage = if(totalPageArr.size >= 2) totalPageArr[1] else 1
-                     val token = parser.getOnceNum()
-                     
-                     val isFavored = parser.isTopicFavored()
-                     val isThanked = parser.isTopicThanked()
-                     val isIgnored = parser.isIgnored()
+                  try {
+                      val parser = Parser(body)
+                      val topicHeader = parser.parseResponseToTopic(topicId)
+                      logd("fetchReplies parsed: title=${topicHeader.title}, contentLen=${topicHeader.content?.length}, replies=${topicHeader.replies}")
+                      
+                      val replies = parser.getReplies()
+                      val totalPageArr = parser.getPageValue()
+                      val totalPage = if(totalPageArr.size >= 2) totalPageArr[1] else 1
+                      val token = parser.getOnceNum()
+                      
+                      val isFavored = parser.isTopicFavored()
+                      val isThanked = parser.isTopicThanked()
+                      val isIgnored = parser.isIgnored()
 
-                      _uiState.update { currentState ->
-                         if (isRefresh) {
-                             allReplies.clear()
-                         }
-                         
-                         replies.forEach { r ->
-                             r.isLouzu = r.member?.username == topicHeader.member?.username
-                         }
-                         
-                         // Deduplicate based on ID when adding to allReplies
-                         val existingIds = allReplies.map { it.id }.toSet()
-                         allReplies.addAll(replies.filter { it.id !in existingIds })
+                       _uiState.update { currentState ->
+                          if (isRefresh) {
+                              allReplies.clear()
+                          }
+                          
+                          replies.forEach { r ->
+                              r.isLouzu = r.member?.username == topicHeader.member?.username
+                          }
+                          
+                          // Deduplicate based on ID when adding to allReplies
+                          val existingIds = allReplies.map { it.id }.toSet()
+                          allReplies.addAll(replies.filter { it.id !in existingIds })
 
-                         val displayReplies = when (currentState.filterType) {
-                             FilterType.None -> allReplies.toList()
-                             FilterType.User -> allReplies.filter { it.member?.username == currentState.filterTarget }
-                             FilterType.Conversation -> {
-                                 // Simple conversation reconstruction would be hard here without more context,
-                                 // usually it's better to reset filter when loading more if in filtered view
-                                 allReplies.toList()
-                             }
-                         }
-
-                         currentState.copy(
-                             topic = topicHeader,
-                             replies = displayReplies,
-                             isLoading = false,
-                             page = page,
-                             totalPage = totalPage,
-                             token = token,
-                             isFavored = isFavored,
-                             isThanked = isThanked,
-                             isIgnored = isIgnored,
-                             isEnd = page >= totalPage || (replies.isEmpty() && !isRefresh)
-                         )
-                     }
-                 } catch (e: Exception) {
-                      loge("fetchReplies parse error: ${e.message}")
-                      e.printStackTrace()
-                      _uiState.update { it.copy(isLoading = false, error = "Parse Error: ${e.message}") }
-                 }
-            }
-        })
+                          currentState.copy(
+                              topic = topicHeader,
+                              replies = allReplies.toList(),
+                              isLoading = false,
+                              page = page,
+                              totalPage = totalPage,
+                              token = token,
+                              isFavored = isFavored,
+                              isThanked = isThanked,
+                              isIgnored = isIgnored,
+                              isEnd = page >= totalPage || (replies.isEmpty() && !isRefresh),
+                              filteredReplies = when (currentState.filterType) {
+                                  FilterType.User -> allReplies.filter { it.member?.username == currentState.filterTarget }
+                                  FilterType.Conversation -> currentState.filteredReplies
+                                  else -> emptyList()
+                              }
+                          )
+                      }
+                  } catch (e: Exception) {
+                       loge("fetchReplies parse error: ${e.message}")
+                       e.printStackTrace()
+                       _uiState.update { it.copy(isLoading = false, error = "Parse Error: ${e.message}") }
+                  }
+             }
+         })
     }
 
     fun findReplyByFloor(username: String, floor: Int): Reply? {
@@ -358,7 +354,10 @@ class TopicDetailViewModel : ViewModel() {
         
         _uiState.update { it.copy(filterType = FilterType.Conversation, filterTarget = replyId) }
         _uiState.update { currentState ->
-            currentState.copy(replies = allReplies.filter { it.id in conversationIds }.sortedBy { it.getRowNum() })
+            currentState.copy(
+                replies = allReplies.toList(),
+                filteredReplies = allReplies.filter { it.id in conversationIds }.sortedBy { it.getRowNum() }
+            )
         }
     }
 
@@ -370,11 +369,11 @@ class TopicDetailViewModel : ViewModel() {
     private fun applyCurrentFilter() {
         _uiState.update { currentState ->
             val filtered = when (currentState.filterType) {
-                FilterType.None -> allReplies.toList()
+                FilterType.None -> emptyList()
                 FilterType.User -> allReplies.filter { it.member?.username == currentState.filterTarget }
-                FilterType.Conversation -> currentState.replies // Already set in showConversation
+                FilterType.Conversation -> currentState.filteredReplies
             }
-            currentState.copy(replies = filtered)
+            currentState.copy(replies = allReplies.toList(), filteredReplies = filtered)
         }
     }
 }

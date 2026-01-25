@@ -81,14 +81,14 @@ fun NodeScreen(
                         Icon(
                             imageVector = if (uiState.isFavored) Icons.Default.Star else Icons.Default.StarBorder,
                             contentDescription = "Favorite",
-                            tint = if (uiState.isFavored) Color(0xFFFFD700) else MaterialTheme.colorScheme.onSurface
+                            tint = if (uiState.isFavored) Color(0xFFFFD700) else MaterialTheme.colorScheme.primary
                         )
                     }
 
                     // More Menu for Ignore
                     Box {
                         IconButton(onClick = { showMenu = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                            Icon(Icons.Default.MoreVert, contentDescription = "More", tint = MaterialTheme.colorScheme.primary)
                         }
                         DropdownMenu(
                             expanded = showMenu,

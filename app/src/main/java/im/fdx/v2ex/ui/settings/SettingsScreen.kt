@@ -18,6 +18,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -352,7 +353,9 @@ fun SettingsScreen(
         if (showNightModeSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showNightModeSheet = false },
-                sheetState = sheetState
+                sheetState = sheetState,
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 0.dp
             ) {
                 Column(
                     modifier = Modifier
@@ -393,7 +396,9 @@ fun SettingsScreen(
         if (showTextSizeSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showTextSizeSheet = false },
-                sheetState = textSizeSheetState
+                sheetState = textSizeSheetState,
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 0.dp
             ) {
                 Column(
                     modifier = Modifier
@@ -419,7 +424,9 @@ fun SettingsScreen(
         if (showLanguageSheet) {
              ModalBottomSheet(
                 onDismissRequest = { showLanguageSheet = false },
-                sheetState = languageSheetState
+                sheetState = languageSheetState,
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 0.dp
             ) {
                  Column(
                     modifier = Modifier

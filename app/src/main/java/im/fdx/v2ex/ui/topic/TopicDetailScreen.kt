@@ -1,5 +1,7 @@
 package im.fdx.v2ex.ui.topic
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -53,7 +56,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalFocusManager
@@ -123,6 +125,7 @@ fun TopicDetailContent(
     var replyText by remember { mutableStateOf(TextFieldValue("")) }
     var selectedReply by remember { mutableStateOf<Reply?>(null) }
     var showReplySheet by remember { mutableStateOf(false) }
+    var showUserRepliesSheet by remember { mutableStateOf(false) }
     var quotedReply by remember { mutableStateOf<Reply?>(null) }
     var clickOffset by remember { mutableStateOf(Offset.Zero) }
     var showQuoteDialog by remember { mutableStateOf(false) }
@@ -306,7 +309,13 @@ fun TopicDetailContent(
                         val shareToStr = stringResource(R.string.share_to)
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.menu_share)) },
-                            leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            },
                             onClick = {
                                 val shareIntent = Intent(Intent.ACTION_SEND).apply {
                                     type = "text/plain"
@@ -326,7 +335,8 @@ fun TopicDetailContent(
                             leadingIcon = {
                                 Icon(
                                     painterResource(id = R.drawable.ic_website),
-                                    contentDescription = null
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary
                                 )
                             },
                             onClick = {
@@ -772,7 +782,10 @@ fun TopicDetailContent(
                                 )
                             },
                             modifier = Modifier.clickable {
-                                selectedReply?.member?.username?.let { viewModel.filterByUser(it) }
+                                selectedReply?.let {
+                                    viewModel.filterByUser(it.member?.username ?: "")
+                                    showUserRepliesSheet = true
+                                }
                                 showReplySheet = false
                             }
                         )
@@ -786,7 +799,10 @@ fun TopicDetailContent(
                                 )
                             },
                             modifier = Modifier.clickable {
-                                selectedReply?.let { viewModel.showConversation(it.id) }
+                                selectedReply?.let {
+                                    viewModel.showConversation(it.id)
+                                    showUserRepliesSheet = true
+                                }
                                 showReplySheet = false
                             }
                         )
@@ -811,7 +827,9 @@ fun TopicDetailContent(
             if (showReportSheet) {
                 ModalBottomSheet(
                     onDismissRequest = { showReportSheet = false },
-                    sheetState = reportSheetState
+                    sheetState = reportSheetState,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 0.dp
                 ) {
                     Column(modifier = Modifier.padding(bottom = 32.dp)) {
                         Text(
@@ -827,13 +845,86 @@ fun TopicDetailContent(
                                 headlineContent = { Text(reason) },
                                 modifier = Modifier.clickable {
                                     showReportSheet = false
-                                    onReportClick(reportTitle, reportContent)
-                                }
-                            )
-                        }
-                    }
-                }
-            }
+                                     onReportClick(reportTitle, reportContent)
+                                 }
+                             )
+                         }
+                     }
+                 }
+             }
+
+             if (showUserRepliesSheet) {
+                 ModalBottomSheet(
+                     onDismissRequest = { 
+                         showUserRepliesSheet = false
+                         viewModel.clearFilter()
+                     },
+                     sheetState = rememberModalBottomSheetState(),
+                     containerColor = MaterialTheme.colorScheme.surface,
+                     tonalElevation = 0.dp
+                 ) {
+                     Column(
+                         modifier = Modifier
+                             .fillMaxWidth()
+                             .padding(bottom = 32.dp)
+                     ) {
+                         Text(
+                             text = if (uiState.filterType == FilterType.User) 
+                                 stringResource(R.string.all_replies_of_user, uiState.filterTarget ?: "")
+                             else if (uiState.filterType == FilterType.Conversation)
+                                 stringResource(R.string.viewing_conversation)
+                             else "",
+                             style = MaterialTheme.typography.titleMedium,
+                             modifier = Modifier.padding(16.dp)
+                         )
+                         
+                         LazyColumn(
+                             modifier = Modifier
+                                 .fillMaxWidth()
+                                 .weight(1f, fill = false)
+                         ) {
+                             items(uiState.filteredReplies) { reply ->
+                                 ReplyItem(
+                                     reply = reply,
+                                     onMemberClick = { onMemberClick(it ?: "") },
+                                     onReplyClick = {
+                                         val text = "@${it.member?.username} "
+                                         replyText = TextFieldValue(
+                                             text = text,
+                                             selection = TextRange(text.length)
+                                         )
+                                         showUserRepliesSheet = false
+                                         viewModel.clearFilter()
+                                         focusRequester.requestFocus()
+                                     },
+                                     onThankClick = {
+                                         if (im.fdx.v2ex.utils.verifyLogin(
+                                                 context,
+                                                 snackbarHostState,
+                                                 scope,
+                                                 actionLabel = loginActionStr,
+                                                 onLoginClick = onLoginClick
+                                             )
+                                         ) {
+                                             if (!it.isThanked) {
+                                                 replyToThank = it
+                                                 showThankDialog = true
+                                             }
+                                         }
+                                     },
+                                     onLongClick = {
+                                         selectedReply = it
+                                         showReplySheet = true
+                                     },
+                                     onQuoteClick = { _, _, _ -> },
+                                     onMentionClick = { _, _ -> }
+                                 )
+                                 HorizontalDivider()
+                             }
+                         }
+                     }
+                 }
+             }
 
             // Quote Dialog to show referenced reply
             if (showQuoteDialog && quotedReply != null) {
@@ -849,36 +940,47 @@ fun TopicDetailContent(
                         dismissOnClickOutside = true
                     )
                 ) {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth(0.8f)
-                            .padding(16.dp)
-                            .clickable {
-                                val targetReply = quotedReply
-                                showQuoteDialog = false
-                                if (targetReply != null) {
-                                    val index = uiState.replies.indexOf(targetReply)
-                                    if (index != -1) {
-                                        scope.launch {
-                                            listState.animateScrollToItem(index + 1)
+                    var visible by remember { mutableStateOf(false) }
+                    LaunchedEffect(Unit) {
+                        visible = true
+                    }
+                    
+                    AnimatedVisibility(
+                        visible = visible,
+                        enter = fadeIn(tween(300)),
+                        exit = fadeOut(tween(300))
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth(0.8f)
+                                .padding(16.dp)
+                                .clickable {
+                                    val targetReply = quotedReply
+                                    showQuoteDialog = false
+                                    if (targetReply != null) {
+                                        val index = uiState.replies.indexOf(targetReply)
+                                        if (index != -1) {
+                                            scope.launch {
+                                                listState.animateScrollToItem(index + 1)
+                                            }
                                         }
                                     }
-                                }
-                            },
-                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(
-                                text = if (quotedReply?.getRowNum() ?: 0 > 0) "@${quotedReply?.member?.username} #${quotedReply?.getRowNum()}" else "@${quotedReply?.member?.username}",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = AnnotatedString.fromHtml(quotedReply?.content_rendered ?: ""),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                                },
+                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                Text(
+                                    text = if (quotedReply?.getRowNum() ?: 0 > 0) "@${quotedReply?.member?.username} #${quotedReply?.getRowNum()}" else "@${quotedReply?.member?.username}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = AnnotatedString.fromHtml(quotedReply?.content_rendered ?: ""),
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
                         }
                     }
                 }
@@ -922,9 +1024,9 @@ fun BottomReplyInput(
                     maxLines = 3,
                     shape = RoundedCornerShape(24.dp),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color(0xFFF5F5F5),
-                        unfocusedContainerColor = Color(0xFFF5F5F5),
-                        disabledContainerColor = Color(0xFFF5F5F5),
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                     ),

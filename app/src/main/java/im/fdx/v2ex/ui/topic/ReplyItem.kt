@@ -213,7 +213,7 @@ fun ReplyItem(
                             Icon(
                                 imageVector = if (reply.isThanked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = "Thanks",
-                                tint = if (reply.isThanked) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = if (reply.isThanked) Color.Red else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(16.dp)
                             )
                             if (reply.thanks > 0) {

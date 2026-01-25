@@ -19,6 +19,7 @@
     <string name="title_activity_settings">Settings</string>
     <string name="reply_time">Reply time</string>
     <string name="row">Floor</string>
+    <string name="all_replies_of_user">All replies of %s</string>
 
     <string name="reply">Reply</string>
     <string name="title_activity_login">Login</string>

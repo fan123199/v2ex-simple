@@ -13,6 +13,7 @@
     <string name="reply">回复</string>
     <string name="reply_time">回复时间</string>
     <string name="row">楼</string>
+    <string name="all_replies_of_user">%s 的全部回复</string>
     <string name="title_activity_settings">设置</string>
     <string name="username">用户名</string>
     <string name="title_activity_login">登录</string>

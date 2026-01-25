@@ -179,7 +179,9 @@ fun MemberScreen(
         if (showReportSheet) {
             ModalBottomSheet(
                 onDismissRequest = { showReportSheet = false },
-                sheetState = sheetState
+                sheetState = sheetState,
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 0.dp
             ) {
                 Column(modifier = Modifier.padding(bottom = 32.dp)) {
                     Text(
