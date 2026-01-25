@@ -40,7 +40,10 @@ data class TopicListUiState(
     val isEndless: Boolean = true,
     val isEnd: Boolean = false,
     val node: Node? = null,
-    val topicCount: Int? = null
+    val topicCount: Int? = null,
+    val isFavored: Boolean = false,
+    val isIgnored: Boolean = false,
+    val token: String? = null
 )
 
 class TopicListViewModel : ViewModel() {
@@ -173,6 +176,8 @@ class TopicListViewModel : ViewModel() {
                     } else null
                     
                     val totalTopics = if (currentMode == FROM_MEMBER) parser.getTotalTopics() else null
+                    val isFavored = if (currentMode == FROM_NODE) parser.isNodeFollowed() else false
+                    val onceNum = if (currentMode == FROM_NODE) parser.getOnceNum() else null
 
                     _uiState.update { currentState ->
                         val combinedList = if (isRefresh) newTopics else (currentState.topics + newTopics).distinctBy { it.id }
@@ -183,7 +188,9 @@ class TopicListViewModel : ViewModel() {
                             totalPage = if(totalPage > 0) totalPage else currentState.totalPage,
                             isEnd = (totalPage in 1..page) || (newTopics.isEmpty() && !isRefresh) || (combinedList.size == currentState.topics.size && !isRefresh),
                             node = nodeInfo ?: currentState.node,
-                            topicCount = totalTopics ?: currentState.topicCount
+                            topicCount = totalTopics ?: currentState.topicCount,
+                            isFavored = isFavored,
+                            token = onceNum
                         )
                     }
                     
@@ -219,6 +226,41 @@ class TopicListViewModel : ViewModel() {
             }
          })
     }
+    fun favorNode() {
+        val node = _uiState.value.node ?: return
+        val token = _uiState.value.token ?: return
+        val isFavored = _uiState.value.isFavored
+        val action = if (isFavored) "unfavorite" else "favorite"
+        val url = "$HTTPS_V2EX_BASE/$action/node/${node.id}?once=$token"
+
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    _uiState.update { it.copy(isFavored = !isFavored) }
+                }
+            }
+        })
+    }
+
+    fun ignoreNode() {
+        // V2EX does not have a public API for ignoring nodes via simple GET usually, 
+        // but typically it's similar to ignore/topic. 
+        // We will implement the skeleton as requested.
+        val node = _uiState.value.node ?: return
+        val token = _uiState.value.token ?: return
+        val isIgnored = _uiState.value.isIgnored
+        val url = "$HTTPS_V2EX_BASE/ignore/node/${node.id}?once=$token"
+
+        vCall(url).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {}
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    _uiState.update { it.copy(isIgnored = !isIgnored) }
+                }
+            }
+        })
+    }
 
     // Search Logic
     // Search Logic
@@ -233,11 +275,22 @@ class TopicListViewModel : ViewModel() {
         refresh()
     }
     
-    fun updateSearchFilter(sort: String? = null, order: String? = null) {
+    fun updateSearchFilter(
+        sort: String? = null,
+        order: String? = null,
+        gte: String? = null,
+        lte: String? = null,
+        node: String? = null,
+        nodeTitle: String? = null
+    ) {
         val current = _searchOption.value ?: SearchOption(q = "")
         val newOption = current.copy(
             sort = sort ?: current.sort,
-            order = order ?: current.order
+            order = order ?: current.order,
+            gte = if (gte == "CLEAR") null else (gte ?: current.gte),
+            lte = if (lte == "CLEAR") null else (lte ?: current.lte),
+            node = if (node == "CLEAR") null else (node ?: current.node),
+            nodeTitle = if (nodeTitle == "CLEAR") null else (nodeTitle ?: current.nodeTitle)
         )
         if (newOption != current) {
              _searchOption.value = newOption
@@ -255,7 +308,7 @@ class TopicListViewModel : ViewModel() {
         }
 
         val nextIndex = (page - 1) * 10
-        val url = HttpUrl.Builder()
+        val urlBuilder = HttpUrl.Builder()
             .scheme("https")
             .host(NetManager.API_SEARCH_HOST)
             .addEncodedPathSegments("api/search")
@@ -264,8 +317,12 @@ class TopicListViewModel : ViewModel() {
             .addEncodedQueryParameter("size", "10")
             .addEncodedQueryParameter("sort", option.sort)
             .addEncodedQueryParameter("order", option.order)
-            .build()
-            .toString()
+
+        option.gte?.let { urlBuilder.addEncodedQueryParameter("gte", it) }
+        option.lte?.let { urlBuilder.addEncodedQueryParameter("lte", it) }
+        option.node?.let { urlBuilder.addEncodedQueryParameter("node", it) }
+
+        val url = urlBuilder.build().toString()
 
         vCall(url).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {

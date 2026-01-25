@@ -13,6 +13,7 @@ data class SearchOption(
     val gte: String? = null,
     val lte: String? = null,
     val node: String? = null,
+    val nodeTitle: String? = null,
     val username: String? = null
 )
 

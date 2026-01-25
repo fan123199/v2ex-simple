@@ -148,6 +148,8 @@ fun MainScreen(
                                     pagerState.animateScrollToPage(index)
                                 }
                             },
+                            selectedContentColor = MaterialTheme.colorScheme.primary,
+                            unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             text = { 
                                 val resId = getTabTitleRes(tabPaths[index])
                                 val displayTitle = if (resId != null) stringResource(resId) else title

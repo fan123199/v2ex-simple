@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -42,11 +45,17 @@ fun NodeScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
+    var showMenu by remember { mutableStateOf(false) }
+
     Scaffold(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
-                title = { Text(uiState.node?.title ?: nodeName) },
+                title = { 
+                    // Only show title in top bar if we have it and it's not the first entry
+                    // User says "two titles", so we remove this one.
+                    // Text(uiState.node?.title ?: "") 
+                },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -54,6 +63,55 @@ fun NodeScreen(
                             contentDescription = "Back",
                             tint = MaterialTheme.colorScheme.primary
                         )
+                    }
+                },
+                actions = {
+                    // Favorite Toggle
+                    IconButton(onClick = { 
+                        if (im.fdx.v2ex.utils.verifyLogin(
+                                context = context,
+                                snackbarHostState = snackbarHostState,
+                                scope = coroutineScope,
+                                actionLabel = "Login",
+                                onLoginClick = onLoginClick
+                            )) {
+                            viewModel.favorNode()
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (uiState.isFavored) Icons.Default.Star else Icons.Default.StarBorder,
+                            contentDescription = "Favorite",
+                            tint = if (uiState.isFavored) Color(0xFFFFD700) else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+
+                    // More Menu for Ignore
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                        }
+                        DropdownMenu(
+                            expanded = showMenu,
+                            onDismissRequest = { showMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { 
+                                    Text(if (uiState.isIgnored) stringResource(R.string.already_ignore_node) else stringResource(R.string.ignore_node)) 
+                                },
+                                onClick = {
+                                    showMenu = false
+                                    if (im.fdx.v2ex.utils.verifyLogin(
+                                            context = context,
+                                            snackbarHostState = snackbarHostState,
+                                            scope = coroutineScope,
+                                            actionLabel = "Login",
+                                            onLoginClick = onLoginClick
+                                        )) {
+                                        viewModel.ignoreNode()
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             )

@@ -1,8 +1,11 @@
 ---
-trigger: glob
+trigger: always_on
 globs: *.kt
 ---
 
-1. 总是在 Text 中使用 stringResource
 
-2. imports are only allowed in the beginning of file.
+* When writing Android Jetpack Compose code, ALWAYS use the `context7` tool to verify the latest API changes on developer.android.com before generating code.
+
+* 总是在 Text 中使用 stringResource
+
+* imports are only allowed in the beginning of file.

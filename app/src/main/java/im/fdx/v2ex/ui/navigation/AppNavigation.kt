@@ -255,20 +255,9 @@ fun AppNavigation(
             AllNodesScreen(
                 onBackClick = { navController.popBackStack() },
                 onNodeClick = { node ->
-                    // Check if we came from NewTopic? 
-                    // To simplify, we can always set result. If caller doesn't define it, no harm.
                     navController.previousBackStackEntry?.savedStateHandle?.set("selected_node", node)
-                    
-                    // If we want to navigate like "AllNodesActivity", we can check
-                    // But here we might just want to return if we are picking.
-                    // How to know if picking? Route params or Logic.
-                    // For now, let's assume if "selected_node" is consumed, it's fine.
-                    // But if we are in "Browser Mode", clicking a node should go to Node Detail.
-                    // This creates a conflict since AllNodes logic was split in Activity.
-                    // Let's pass a mode to AllNodes screen?
-                    
-                    // Simplified: Check if previous entry is NewTopic?
-                    if (navController.previousBackStackEntry?.destination?.route?.startsWith("new_topic") == true) {
+                    val prevRoute = navController.previousBackStackEntry?.destination?.route
+                    if (prevRoute?.startsWith("new_topic") == true || prevRoute?.startsWith("search") == true) {
                          navController.popBackStack()
                     } else {
                          navController.navigate(Screen.Node.createRoute(node.name))
@@ -277,8 +266,14 @@ fun AppNavigation(
             )
         }
         
-        composable(Screen.Search.route) {
+        composable(Screen.Search.route) { backStackEntry ->
+            val savedStateHandle = backStackEntry.savedStateHandle
+            val selectedNode by savedStateHandle.getStateFlow<Node?>("selected_node", null).collectAsState()
+
             SearchScreen(
+                selectedNode = selectedNode,
+                onNodeClear = { savedStateHandle.remove<Node>("selected_node") },
+                onChooseNodeClick = { navController.navigate(Screen.AllNodes.route) },
                 onBackClick = { navController.popBackStack() },
                 onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
                 onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) },
