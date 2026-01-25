@@ -28,6 +28,8 @@ import com.google.gson.reflect.TypeToken
 import im.fdx.v2ex.data.model.Topic
 import okhttp3.HttpUrl
 import im.fdx.v2ex.data.model.SearchResult
+import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.utils.extensions.loge
 import im.fdx.v2ex.utils.TimeUtil
 import im.fdx.v2ex.data.model.Member
 
@@ -151,14 +153,16 @@ class TopicListViewModel : ViewModel() {
         
         vCall(url, userAgent).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                _uiState.update { it.copy(isLoading = false, error = e.message) }
+                loge("fetchTopics onFailure (Network Error): ${e.message}")
+                _uiState.update { it.copy(isLoading = false, error = "Network Error: ${e.message}") }
             }
 
             override fun onResponse(call: Call, response: Response) {
-                // Parse Logic
                 val body = response.body?.string() ?: ""
                 if (!response.isSuccessful) {
-                     _uiState.update { it.copy(isLoading = false, error = "Error: ${response.code}") }
+                     val errorMsg = "HTTP Error: ${response.code}"
+                     loge("fetchTopics onResponse (HTTP Error): $errorMsg, url: $url")
+                     _uiState.update { it.copy(isLoading = false, error = errorMsg) }
                      return
                 }
 
@@ -171,12 +175,14 @@ class TopicListViewModel : ViewModel() {
                         try {
                             parser.getNodeInfo(nodeName!!)
                         } catch (e: Exception) {
+                            loge("fetchTopics getNodeInfo error: ${e.message}")
                             null
                         }
                     } else null
                     
                     val totalTopics = if (currentMode == FROM_MEMBER) parser.getTotalTopics() else null
                     val isFavored = if (currentMode == FROM_NODE) parser.isNodeFollowed() else false
+                    val isIgnored = if (currentMode == FROM_NODE) parser.isNodeIgnored() else false
                     val onceNum = if (currentMode == FROM_NODE) parser.getOnceNum() else null
 
                     _uiState.update { currentState ->
@@ -190,6 +196,7 @@ class TopicListViewModel : ViewModel() {
                             node = nodeInfo ?: currentState.node,
                             topicCount = totalTopics ?: currentState.topicCount,
                             isFavored = isFavored,
+                            isIgnored = isIgnored,
                             token = onceNum
                         )
                     }
@@ -203,7 +210,9 @@ class TopicListViewModel : ViewModel() {
                         // ignore
                     }
                 } catch (e: Exception) {
-                     _uiState.update { it.copy(isLoading = false, error = "Parse Error: ${e.message}") }
+                     val errorMsg = "Parsing Error: ${e.message}"
+                     loge("fetchTopics onResponse (Parsing Error): $errorMsg, url: $url")
+                     _uiState.update { it.copy(isLoading = false, error = errorMsg) }
                 }
             }
         })
@@ -234,29 +243,38 @@ class TopicListViewModel : ViewModel() {
         val url = "$HTTPS_V2EX_BASE/$action/node/${node.id}?once=$token"
 
         vCall(url).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
+            override fun onFailure(call: Call, e: IOException) {
+                loge("favorNode onFailure: ${e.message}")
+            }
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    _uiState.update { it.copy(isFavored = !isFavored) }
+                logd("favorNode onResponse: ${response.code}, url: $url")
+                // V2EX redirects (302) on successful favorite/unfavorite
+                if (response.isSuccessful || response.code == 302 || response.code == 303) {
+                    refresh()
+                } else {
+                    loge("favorNode failed with code: ${response.code}")
                 }
             }
         })
     }
 
     fun ignoreNode() {
-        // V2EX does not have a public API for ignoring nodes via simple GET usually, 
-        // but typically it's similar to ignore/topic. 
-        // We will implement the skeleton as requested.
         val node = _uiState.value.node ?: return
         val token = _uiState.value.token ?: return
         val isIgnored = _uiState.value.isIgnored
-        val url = "$HTTPS_V2EX_BASE/ignore/node/${node.id}?once=$token"
+        val action = if (isIgnored) "unignore" else "ignore"
+        val url = "$HTTPS_V2EX_BASE/$action/node/${node.id}?once=$token"
 
         vCall(url).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {}
+            override fun onFailure(call: Call, e: IOException) {
+                loge("ignoreNode onFailure: ${e.message}")
+            }
             override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    _uiState.update { it.copy(isIgnored = !isIgnored) }
+                logd("ignoreNode onResponse: ${response.code}, url: $url")
+                if (response.isSuccessful || response.code == 302 || response.code == 303) {
+                    refresh()
+                } else {
+                    loge("ignoreNode failed with code: ${response.code}")
                 }
             }
         })

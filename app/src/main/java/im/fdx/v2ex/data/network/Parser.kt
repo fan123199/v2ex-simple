@@ -233,9 +233,11 @@ class Parser(private val htmlStr: String) {
         val number = header?.getElementsByTag("strong")?.first()?.text()
         val content = header?.getElementsByClass("intro")?.first()?.text()?:""
         val strTitle = header?.getElementsByClass("node-breadcrumb")?.first()?.ownText()?.trim()?:""
+        val nodeId = Regex("(?<=(un)?favorite/node/)\\d+").find(htmlStr)?.value ?: ""
+        nodeModel.id = nodeId
         nodeModel.name = nodeName
         nodeModel.title = strTitle
-        nodeModel.topics = number?.toIntOrNull()?:0
+        nodeModel.topics = number?.replace(",", "")?.toIntOrNull()?:0
         nodeModel.header = content
 
         return nodeModel
@@ -248,6 +250,8 @@ class Parser(private val htmlStr: String) {
 
     fun getOnceNum() = doc.getElementsByAttributeValue("name", "once").first()?.attr("value") ?: "0"
     fun getOnceNum2() = Regex("(?<=<input type=\"hidden\" name=\"once\" value=\")(\\d+)").find(htmlStr)?.value
+
+    fun isNodeIgnored() = Regex("unignore/node/\\d{1,8}\\?once=").containsMatchIn(htmlStr)
 
 
     fun isTopicFavored(): Boolean {
