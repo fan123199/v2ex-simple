@@ -130,7 +130,6 @@ fun TopicDetailContent(
     var clickOffset by remember { mutableStateOf(Offset.Zero) }
     var showQuoteDialog by remember { mutableStateOf(false) }
     var showReportSheet by remember { mutableStateOf(false) }
-    var showThankDialog by remember { mutableStateOf(false) }
     var replyToThank by remember { mutableStateOf<Reply?>(null) }
     val sheetState = rememberModalBottomSheetState()
     val reportSheetState = rememberModalBottomSheetState()
@@ -142,6 +141,10 @@ fun TopicDetailContent(
     val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val focusRequester = remember { FocusRequester() }
 
     val loginActionStr = stringResource(R.string.login)
     
@@ -167,6 +170,9 @@ fun TopicDetailContent(
                 is TopicDetailEvent.RequestReportReply -> null
                 is TopicDetailEvent.ShowErrorMessage -> event.error
             }
+            if (event == TopicDetailEvent.PostReplySuccess) {
+                focusManager.clearFocus()
+            }
             if (message != null) {
                 android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
             }
@@ -183,10 +189,6 @@ fun TopicDetailContent(
     }
 
     var isInputFocused by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
-    val focusManager = LocalFocusManager.current
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
     val isImeVisible = WindowInsets.ime.asPaddingValues().calculateBottomPadding() > 0.dp
 
     // Infinite Scroll
@@ -542,8 +544,7 @@ fun TopicDetailContent(
                                         )
                                     ) {
                                         if (!it.isThanked) {
-                                            replyToThank = it
-                                            showThankDialog = true
+                                            viewModel.thankReply(it.id)
                                         }
                                     }
                                 },
@@ -921,6 +922,7 @@ fun TopicDetailContent(
                     }
                 }
             }
+
         }
     }
 
