@@ -637,9 +637,9 @@ fun TopicDetailContent(
                         .padding(bottom = 32.dp)
                 ) {
                     val scope = rememberCoroutineScope()
-                    val reply = selectedReply
-                    val reportReplyTitle = reply?.let { stringResource(R.string.report_reply_title, it.content?.take(20) ?: "") } ?: ""
-                    val reportReplyContent = reply?.let { stringResource(R.string.report_reply_content, it.id, it.member?.username ?: "", topicUrl) } ?: ""
+                    val currentReply = uiState.replies.find { it.id == selectedReply?.id } ?: selectedReply
+                    val reportReplyTitle = currentReply?.let { stringResource(R.string.report_reply_title, it.content?.take(20) ?: "") } ?: ""
+                    val reportReplyContent = currentReply?.let { stringResource(R.string.report_reply_content, it.id, it.member?.username ?: "", topicUrl) } ?: ""
                     
                     ListItem(
                         headlineContent = { Text(stringResource(R.string.reply)) },
@@ -651,7 +651,7 @@ fun TopicDetailContent(
                             )
                         },
                         modifier = Modifier.clickable {
-                            selectedReply?.let {
+                            currentReply?.let {
                                 val text = "@${it.member?.username} "
                                 replyText = TextFieldValue(
                                     text = text,
@@ -690,12 +690,12 @@ fun TopicDetailContent(
                         headlineContent = { Text(stringResource(R.string.thanks)) },
                         leadingContent = {
                             Icon(
-                                imageVector = if (selectedReply?.isThanked == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                imageVector = if (currentReply?.isThanked == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = null,
-                                tint = if (selectedReply?.isThanked == true) Color.Red else MaterialTheme.colorScheme.primary
+                                tint = if (currentReply?.isThanked == true) Color.Red else MaterialTheme.colorScheme.primary
                             )
                         },
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.clickable(enabled = currentReply?.isThanked == false) {
                             if (im.fdx.v2ex.utils.verifyLogin(
                                     context,
                                     snackbarHostState,
@@ -704,10 +704,8 @@ fun TopicDetailContent(
                                     onLoginClick = onLoginClick
                                 )
                             ) {
-                                selectedReply?.let { it ->
-                                    if (!it.isThanked) {
-                                        viewModel.thankReply(it.id)
-                                    }
+                                currentReply?.let { it ->
+                                    viewModel.thankReply(it.id)
                                 }
                             }
                             showReplySheet = false
@@ -746,7 +744,7 @@ fun TopicDetailContent(
                                 )
                             },
                             modifier = Modifier.clickable {
-                                selectedReply?.let {
+                                currentReply?.let {
                                     viewModel.filterByUser(it.member?.username ?: "")
                                     showUserRepliesSheet = true
                                 }
@@ -763,7 +761,7 @@ fun TopicDetailContent(
                                 )
                             },
                             modifier = Modifier.clickable {
-                                selectedReply?.let {
+                                currentReply?.let {
                                     viewModel.showConversation(it.id)
                                     showUserRepliesSheet = true
                                 }
