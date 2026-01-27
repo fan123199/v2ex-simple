@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -93,37 +96,44 @@ fun PhotoScreen(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // Buttons
+                // Floating Buttons in Bottom Right
                 Column(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(innerPadding)
-                        .padding(16.dp)
+                        .padding(bottom = 32.dp, end = 24.dp)
                 ) {
-                    IconButton(
+                    Surface(
                         onClick = { ImageUtil.downloadImage(context, imageUrl) },
-                        modifier = Modifier
-                            .padding(bottom = 16.dp)
-                            .clip(CircleShape)
-                            .background(Color.Gray.copy(alpha = 0.5f))
+                        shape = CircleShape,
+                        color = Color.Black.copy(alpha = 0.4f),
+                        modifier = Modifier.size(56.dp)
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_baseline_arrow_downward_24),
-                            contentDescription = "Save",
-                            tint = Color.White
-                        )
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_arrow_downward_24),
+                                contentDescription = "Save",
+                                tint = Color.White,
+                                modifier = Modifier.size(28.dp)
+                            )
+                        }
                     }
-                    IconButton(
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Surface(
                         onClick = { ImageUtil.shareImage(context, imageUrl) },
-                        modifier = Modifier
-                            .clip(CircleShape)
-                            .background(Color.Gray.copy(alpha = 0.5f))
+                        shape = CircleShape,
+                        color = Color.Black.copy(alpha = 0.4f),
+                        modifier = Modifier.size(56.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share",
-                            tint = Color.White
-                        )
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Share",
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                     }
                 }
             }

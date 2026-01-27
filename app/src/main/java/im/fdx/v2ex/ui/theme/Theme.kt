@@ -51,7 +51,6 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun V2ExTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
@@ -59,11 +58,26 @@ fun V2ExTheme(
     var textSizeMode by remember { 
         mutableIntStateOf(pref.getString(Keys.PREF_TEXT_SIZE, "0")?.toInt() ?: 0) 
     }
+    var themeMode by remember {
+        mutableIntStateOf(pref.getString(Keys.PREF_THEME_MODE, "0")?.toInt() ?: 0)
+    }
+    
+    val isSystemDark = isSystemInDarkTheme()
+    val darkTheme = when (themeMode) {
+        1 -> false
+        2 -> true
+        else -> isSystemDark
+    }
 
     DisposableEffect(Unit) {
         val listener = SharedPreferences.OnSharedPreferenceChangeListener { p, key ->
-            if (key == Keys.PREF_TEXT_SIZE) {
-                textSizeMode = p.getString(key, "0")?.toInt() ?: 0
+            when (key) {
+                Keys.PREF_TEXT_SIZE -> {
+                    textSizeMode = p.getString(key, "0")?.toInt() ?: 0
+                }
+                Keys.PREF_THEME_MODE -> {
+                    themeMode = p.getString(key, "0")?.toInt() ?: 0
+                }
             }
         }
         pref.registerOnSharedPreferenceChangeListener(listener)

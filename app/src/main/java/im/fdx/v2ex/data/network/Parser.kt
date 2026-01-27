@@ -615,7 +615,7 @@ class Parser(private val htmlStr: String) {
 }
 
 // 1小时 23 分钟前  via iphone
-private fun String.removeVia(): String {
+fun String.removeVia(): String {
 
     return if (this.contains("via")) {
         this.substring(0, this.indexOf("via")).trim()

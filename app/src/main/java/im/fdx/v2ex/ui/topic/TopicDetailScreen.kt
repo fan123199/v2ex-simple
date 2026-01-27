@@ -63,10 +63,12 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import im.fdx.v2ex.data.network.NetManager
+import im.fdx.v2ex.data.network.removeVia
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.TextRange
+import im.fdx.v2ex.ui.common.HtmlText
 
 
 
@@ -77,7 +79,8 @@ fun TopicDetailScreen(
     onBackClick: () -> Unit,
     onMemberClick: (String?) -> Unit,
     onReportClick: (String, String) -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onImageClick: (List<String>, Int) -> Unit
 ) {
     val enableSwipe = im.fdx.v2ex.pref.getBoolean("pref_viewpager", false)
     val topicList = TopicListStore.currentTopics
@@ -96,7 +99,8 @@ fun TopicDetailScreen(
                 onBackClick = onBackClick,
                 onMemberClick = onMemberClick,
                 onReportClick = onReportClick,
-                onLoginClick = onLoginClick
+                onLoginClick = onLoginClick,
+                onImageClick = onImageClick
             )
         }
     } else {
@@ -106,7 +110,8 @@ fun TopicDetailScreen(
             onBackClick = onBackClick,
             onMemberClick = onMemberClick,
             onReportClick = onReportClick,
-            onLoginClick = onLoginClick
+            onLoginClick = onLoginClick,
+            onImageClick = onImageClick
         )
     }
 }
@@ -119,7 +124,8 @@ fun TopicDetailContent(
     onBackClick: () -> Unit,
     onMemberClick: (String?) -> Unit,
     onReportClick: (String, String) -> Unit,
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
+    onImageClick: (List<String>, Int) -> Unit
 ) {
     val viewModel: TopicDetailViewModel = viewModel(key = "topic_$topicId")
     var replyText by remember { mutableStateOf(TextFieldValue("")) }
@@ -266,19 +272,21 @@ fun TopicDetailContent(
                                 Icon(
                                     imageVector = if (uiState.isThanked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                     contentDescription = null,
-                                    tint = if (uiState.isThanked) Color.Red else MaterialTheme.colorScheme.primary
+                                    tint = if (uiState.isThanked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary
                                 )
                             },
                             onClick = {
-                                if (im.fdx.v2ex.utils.verifyLogin(
-                                        context,
-                                        snackbarHostState,
-                                        scope,
-                                        loginActionStr,
-                                        onLoginClick = onLoginClick
-                                    )
-                                ) {
-                                    viewModel.thankTopic()
+                                if (!uiState.isThanked) {
+                                    if (im.fdx.v2ex.utils.verifyLogin(
+                                            context,
+                                            snackbarHostState,
+                                            scope,
+                                            actionLabel = loginActionStr,
+                                            onLoginClick = onLoginClick
+                                        )
+                                    ) {
+                                        viewModel.thankTopic()
+                                    }
                                 }
                                 showMoreActions = false
                             },
@@ -510,10 +518,31 @@ fun TopicDetailContent(
 
                                     // Topic Content
                                     SelectionContainer {
-                                        Text(
-                                            text = AnnotatedString.fromHtml(topic.content_rendered ?: ""),
-                                            style = MaterialTheme.typography.bodyLarge
-                                        )
+                                        Column {
+                                            HtmlText(
+                                                html = topic.content_rendered ?: "",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                                onImageClick = onImageClick
+                                            )
+
+                                            // Appendices (附言)
+                                            topic.comments.forEachIndexed { index, comment ->
+                                                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+                                                Column(modifier = Modifier.fillMaxWidth()) {
+                                                    Text(
+                                                        text = "第 ${index + 1} 条附言  ·  ${comment.createdOriginal.removeVia()}",
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                                                        modifier = Modifier.padding(bottom = 8.dp)
+                                                    )
+                                                    HtmlText(
+                                                        html = comment.content,
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        onImageClick = onImageClick
+                                                    )
+                                                }
+                                            }
+                                        }
                                     }
 
                                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
@@ -576,7 +605,8 @@ fun TopicDetailContent(
                                     } else {
                                         onMemberClick(username)
                                     }
-                                }
+                                },
+                                onImageClick = onImageClick
                             )
                         }
 
@@ -692,7 +722,7 @@ fun TopicDetailContent(
                             Icon(
                                 imageVector = if (currentReply?.isThanked == true) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = null,
-                                tint = if (currentReply?.isThanked == true) Color.Red else MaterialTheme.colorScheme.primary
+                                tint = if (currentReply?.isThanked == true) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary
                             )
                         },
                         modifier = Modifier.clickable(enabled = currentReply?.isThanked == false) {
@@ -911,9 +941,11 @@ fun TopicDetailContent(
                                     color = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = AnnotatedString.fromHtml(quotedReply?.content_rendered ?: ""),
-                                    style = MaterialTheme.typography.bodyMedium
+                                HtmlText(
+                                    html = quotedReply?.content_rendered ?: "",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    onImageClick = onImageClick
                                 )
                             }
                         }

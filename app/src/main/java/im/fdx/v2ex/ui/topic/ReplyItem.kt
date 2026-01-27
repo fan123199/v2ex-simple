@@ -45,6 +45,7 @@ import androidx.compose.ui.layout.ContentScale
 import im.fdx.v2ex.R
 import im.fdx.v2ex.data.model.Reply
 import im.fdx.v2ex.utils.extensions.logd
+import im.fdx.v2ex.ui.common.HtmlText
 
 // import im.fdx.v2ex.ui.helper.GoodTextView // Assuming we might use AndroidView for content for now
 
@@ -58,6 +59,7 @@ fun ReplyItem(
     onLongClick: (Reply) -> Unit,
     onQuoteClick: (String, Int, Offset) -> Unit,
     onMentionClick: (String, Offset) -> Unit,
+    onImageClick: (List<String>, Int) -> Unit = { _, _ -> },
     enabled: Boolean = true
 ) {
     val interactionModifier = if (enabled) {
@@ -151,64 +153,21 @@ fun ReplyItem(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Content - Using Text with modern LinkAnnotation support
-                    val contentRendered = reply.content_rendered ?: ""
-                    var lastTapOffset by remember { mutableStateOf(Offset.Zero) }
-                    var textCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
-
-                    val annotatedString =
-                        AnnotatedString.fromHtml(
-                            htmlString = contentRendered,
-                            linkStyles = TextLinkStyles(
-                                style = SpanStyle(color = MaterialTheme.colorScheme.primary)
-                            ),
-                            linkInteractionListener = { annotation ->
-                            if (!enabled) return@fromHtml
-                            if (annotation is androidx.compose.ui.text.LinkAnnotation.Url) {
-                                    val url = annotation.url
-                                    val globalOffset =
-                                        textCoordinates?.let { it.localToWindow(lastTapOffset) } ?: lastTapOffset
-                                    logd("LinkInteractionListener Clicked: $url at $globalOffset")
-                                    if (url.contains("/member/")) {
-                                        var username = url.substringAfterLast("/")
-                                        if (username.isEmpty() || username.contains("?")) {
-                                            username = url.removeSuffix("/").substringAfterLast("/")
-                                        }
-                                        logd("Extracted username: $username")
-
-                                        val content = reply.content ?: ""
-                                        val floorRegex = """@$username\s*#(\d+)""".toRegex()
-                                        val floorMatch = floorRegex.find(content)
-                                        if (floorMatch != null) {
-                                            val replyNum = floorMatch.groupValues[1].toIntOrNull() ?: -1
-                                            if (replyNum > 0) {
-                                                onQuoteClick(username, replyNum, globalOffset)
-                                                return@fromHtml
-                                            }
-                                        }
-                                        onMentionClick(username, globalOffset)
-                                    }
-                                }
-                            }
-                        )
-
-                    Text(
-                        text = annotatedString,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = MaterialTheme.colorScheme.onSurface
-                        ),
+                    HtmlText(
+                        html = reply.content_rendered ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
-                            .onGloballyPositioned { textCoordinates = it }
+                            .fillMaxWidth()
                             .pointerInput(enabled) {
                                 if (!enabled) return@pointerInput
                                 detectTapGestures(
                                     onTap = { offset ->
-                                        lastTapOffset = offset
                                         onReplyClick(reply)
                                     },
                                     onLongPress = { onLongClick(reply) }
                                 )
-                            }
+                            },
+                        onImageClick = onImageClick
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -226,14 +185,14 @@ fun ReplyItem(
                             Icon(
                                 imageVector = if (reply.isThanked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                 contentDescription = "Thanks",
-                                tint = if (reply.isThanked) Color.Red else MaterialTheme.colorScheme.primary,
+                                tint = if (reply.isThanked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(16.dp)
                             )
                             if (reply.thanks > 0) {
                                 Text(
                                     text = reply.thanks.toString(),
                                     style = MaterialTheme.typography.labelSmall,
-                                    color = if (reply.isThanked) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    color = if (reply.isThanked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(start = 2.dp)
                                 )
                             }

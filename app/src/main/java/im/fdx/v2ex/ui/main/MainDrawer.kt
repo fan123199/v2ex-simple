@@ -86,36 +86,119 @@ fun MainDrawer(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        NavigationDrawerItem(
-            label = { Text(stringResource(R.string.drawer_daily_check)) },
-            icon = { Icon(painterResource(id = R.drawable.ic_daily_check), contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            selected = false,
-            onClick = { onItemClick("daily") }
-        )
-        NavigationDrawerItem(
-            label = { Text(stringResource(R.string.drawer_all_nodes)) },
-            icon = { Icon(painterResource(id = R.drawable.ic_all_node), contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            selected = false,
-            onClick = { onItemClick("all_nodes") }
-        )
-        NavigationDrawerItem(
-            label = { Text(stringResource(R.string.drawer_favorites)) },
-            icon = { Icon(Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            selected = false,
-            onClick = { onItemClick("favorites") }
-        )
-        NavigationDrawerItem(
-            label = { Text(stringResource(R.string.drawer_notifications)) },
-            icon = { Icon(Icons.Default.Notifications, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            selected = false,
-            onClick = { onItemClick("notifications") }
-        )
-        NavigationDrawerItem(
-            label = { Text(stringResource(R.string.drawer_settings)) },
-            icon = { Icon(Icons.Default.Settings, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
-            selected = false,
-            onClick = { onItemClick("settings") }
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(bottom = 16.dp)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.drawer_daily_check)) },
+                    icon = { Icon(painterResource(id = R.drawable.ic_daily_check), contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    selected = false,
+                    onClick = { onItemClick("daily") }
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.drawer_all_nodes)) },
+                    icon = { Icon(painterResource(id = R.drawable.ic_all_node), contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    selected = false,
+                    onClick = { onItemClick("all_nodes") }
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.drawer_favorites)) },
+                    icon = { Icon(Icons.Default.Favorite, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    selected = false,
+                    onClick = { onItemClick("favorites") }
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.drawer_notifications)) },
+                    icon = { Icon(Icons.Default.Notifications, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    selected = false,
+                    onClick = { onItemClick("notifications") }
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(R.string.drawer_settings)) },
+                    icon = { Icon(Icons.Default.Settings, contentDescription = null, tint = MaterialTheme.colorScheme.primary) },
+                    selected = false,
+                    onClick = { onItemClick("settings") }
+                )
+            }
+
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+
+            val themeModeStr = im.fdx.v2ex.pref.getString(Keys.PREF_THEME_MODE, "0") ?: "0"
+            val themeMode = themeModeStr.toInt()
+            var showMenu by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+            ) {
+                val currentIcon = when (themeMode) {
+                    1 -> Icons.Default.LightMode
+                    2 -> Icons.Default.DarkMode
+                    else -> Icons.Default.BrightnessAuto
+                }
+                
+                val currentText = when (themeMode) {
+                    1 -> stringResource(R.string.light_mode)
+                    2 -> stringResource(R.string.dark_mode)
+                    else -> stringResource(R.string.use_device_setting)
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showMenu = true }
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = currentIcon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(
+                        text = currentText,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.light_mode)) },
+                        leadingIcon = { Icon(Icons.Default.LightMode, contentDescription = null) },
+                        onClick = {
+                            im.fdx.v2ex.pref.edit().putString(Keys.PREF_THEME_MODE, "1").apply()
+                            showMenu = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.dark_mode)) },
+                        leadingIcon = { Icon(Icons.Default.DarkMode, contentDescription = null) },
+                        onClick = {
+                            im.fdx.v2ex.pref.edit().putString(Keys.PREF_THEME_MODE, "2").apply()
+                            showMenu = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.use_device_setting)) },
+                        leadingIcon = { Icon(Icons.Default.BrightnessAuto, contentDescription = null) },
+                        onClick = {
+                            im.fdx.v2ex.pref.edit().putString(Keys.PREF_THEME_MODE, "0").apply()
+                            showMenu = false
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 

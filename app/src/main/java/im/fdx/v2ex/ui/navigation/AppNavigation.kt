@@ -70,8 +70,11 @@ sealed class Screen(val route: String) {
     object Favorites : Screen("favorites")
     object Notifications : Screen("notifications")
     object Login : Screen("login")
-    object Photo : Screen("photo?url={url}") {
-        fun createRoute(url: String) = "photo?url=${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}"
+    object Photo : Screen("photo?urls={urls}&position={position}") {
+        fun createRoute(urls: List<String>, position: Int = 0): String {
+            val jsonUrls = Gson().toJson(urls)
+            return "photo?urls=${URLEncoder.encode(jsonUrls, StandardCharsets.UTF_8)}&position=$position"
+        }
     }
     object WebView : Screen("webview?url={url}") {
         fun createRoute(url: String) = "webview?url=${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}"
@@ -187,7 +190,10 @@ fun AppNavigation(
                 onReportClick = { title, content ->
                     navController.navigate(Screen.NewTopic.createRoute(title = title, content = content))
                 },
-                onLoginClick = { navController.navigate(Screen.Login.route) }
+                onLoginClick = { navController.navigate(Screen.Login.route) },
+                onImageClick = { photos, position ->
+                    navController.navigate(Screen.Photo.createRoute(photos, position))
+                }
             )
         }
 
@@ -362,13 +368,18 @@ fun AppNavigation(
 
         composable(
             route = Screen.Photo.route,
-            arguments = listOf(navArgument("url") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("urls") { type = NavType.StringType },
+                navArgument("position") { type = NavType.IntType; defaultValue = 0 }
+            )
         ) { backStackEntry ->
-            val url = backStackEntry.arguments?.getString("url")
-            if (url != null) {
+            val jsonUrls = backStackEntry.arguments?.getString("urls")
+            val position = backStackEntry.arguments?.getInt("position") ?: 0
+            if (jsonUrls != null) {
+                val urls = Gson().fromJson(jsonUrls, Array<String>::class.java).toList()
                 PhotoScreen(
-                    photos = listOf(url),
-                    initialPage = 0,
+                    photos = urls,
+                    initialPage = position,
                     onBackClick = { navController.popBackStack() }
                 )
             }

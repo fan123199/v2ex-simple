@@ -66,6 +66,8 @@ object Keys {
     const val PREF_ALL_NODE_DATA_TIME = "pref_all_node_data_time"
 
     const val PREF_AMOLED = "pref_amoled";   //boolean
+    const val PREF_THEME_MODE = "pref_theme_mode" // 0: auto, 1: light, 2: dark
+
     //------------------------------------------------
 
 
