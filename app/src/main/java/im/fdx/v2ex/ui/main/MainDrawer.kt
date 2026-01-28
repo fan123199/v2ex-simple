@@ -13,6 +13,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +40,7 @@ fun MainDrawer(
     onItemClick: (String) -> Unit
 ) {
     val context = LocalContext.current
-    val user by user.collectAsState()
+    val userData = user.collectAsState(initial = null).value
     
     ModalDrawerSheet(
         modifier = Modifier.fillMaxWidth(0.75f)
@@ -48,8 +51,8 @@ fun MainDrawer(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    if (user != null) {
-                        onItemClick("member:${user!!.username}")
+                    if (userData != null) {
+                        onItemClick("member:${userData.username}")
                     } else {
                         onItemClick("login")
                     }
@@ -57,9 +60,9 @@ fun MainDrawer(
                 .padding(16.dp, top = 24.dp, bottom = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-             if (user != null) {
+             if (userData != null) {
                  AsyncImage(
-                    model = user!!.avatar_normal,
+                    model = userData.avatar_normal,
                     contentDescription = "Profile",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -78,7 +81,7 @@ fun MainDrawer(
              }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = user?.username ?: stringResource(R.string.drawer_click_to_login),
+                text = userData?.username ?: stringResource(R.string.drawer_click_to_login),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -128,7 +131,7 @@ fun MainDrawer(
 
             val themeModeStr = im.fdx.v2ex.pref.getString(Keys.PREF_THEME_MODE, "0") ?: "0"
             val themeMode = themeModeStr.toInt()
-            var showMenu by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+            var showMenu by remember { mutableStateOf(false) }
 
             Box(
                 modifier = Modifier
