@@ -157,16 +157,7 @@ fun ReplyItem(
                         html = reply.content_rendered ?: "",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .pointerInput(enabled) {
-                                if (!enabled) return@pointerInput
-                                detectTapGestures(
-                                    onTap = { offset ->
-                                        onReplyClick(reply)
-                                    },
-                                    onLongPress = { onLongClick(reply) }
-                                )
-                            },
+                            .fillMaxWidth(),
                         onImageClick = onImageClick
                     )
 

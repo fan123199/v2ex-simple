@@ -7,6 +7,8 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.text.Html
 import android.text.TextUtils
+import android.view.MotionEvent
+import android.text.Selection
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.widget.TextView
@@ -43,12 +45,10 @@ fun HtmlText(
         modifier = modifier,
         factory = { ctx ->
             TextView(ctx).apply {
-                movementMethod = LinkMovementMethod.getInstance()
+                movementMethod = ClickableMovementMethod
                 setTextColor(textColor)
                 setLinkTextColor(linkColor)
                 textSize = style.fontSize.value
-                // Apply line height if needed
-                // setLineSpacing(0f, 1.2f)
             }
         },
         update = { textView ->
@@ -135,5 +135,38 @@ class CoilImageGetter(private val textView: TextView) : Html.ImageGetter {
         override fun draw(canvas: Canvas) {
             actualDrawable?.draw(canvas)
         }
+    }
+}
+
+object ClickableMovementMethod : LinkMovementMethod() {
+    override fun onTouchEvent(widget: TextView, buffer: Spannable, event: MotionEvent): Boolean {
+        val action = event.action
+        if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_DOWN) {
+            var x = event.x.toInt()
+            var y = event.y.toInt()
+            x -= widget.totalPaddingLeft
+            y -= widget.totalPaddingTop
+            x += widget.scrollX
+            y += widget.scrollY
+            val layout = widget.layout
+            val line = layout.getLineForVertical(y)
+            val off = layout.getOffsetForHorizontal(line, x.toFloat())
+            val link = buffer.getSpans(off, off, ClickableSpan::class.java)
+            if (link.isNotEmpty()) {
+                if (action == MotionEvent.ACTION_UP) {
+                    link[0].onClick(widget)
+                } else {
+                    Selection.setSelection(
+                        buffer,
+                        buffer.getSpanStart(link[0]),
+                        buffer.getSpanEnd(link[0])
+                    )
+                }
+                return true
+            } else {
+                Selection.removeSelection(buffer)
+            }
+        }
+        return false
     }
 }
