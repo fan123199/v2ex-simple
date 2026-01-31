@@ -28,7 +28,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.WorkManager
-import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.R
 import im.fdx.v2ex.myApp
 import im.fdx.v2ex.data.network.HttpHelper
@@ -40,6 +39,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import androidx.core.net.toUri
+import im.fdx.v2ex.BuildConfig
 
 data class SettingsUiState(
     val isLogin: Boolean = false,

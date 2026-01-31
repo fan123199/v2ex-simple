@@ -1,6 +1,5 @@
 package im.fdx.v2ex.ui.favor
 
-import im.fdx.v2ex.data.model.Data
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -11,22 +10,19 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import androidx.compose.ui.layout.ContentScale
-import im.fdx.v2ex.ui.main.TopicListScreen
-import im.fdx.v2ex.data.model.Topic
-import im.fdx.v2ex.data.model.Node
 import im.fdx.v2ex.R
-import androidx.compose.ui.res.stringResource
-
+import im.fdx.v2ex.data.model.Node
+import im.fdx.v2ex.data.model.Topic
+import im.fdx.v2ex.ui.main.TopicListScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +33,6 @@ fun FavoriteScreen(
     onMemberClick: (String?) -> Unit,
     onNodeClick: (String?) -> Unit
 ) {
-    // val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(pageCount = { 2 })
 
@@ -58,15 +53,10 @@ fun FavoriteScreen(
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            TabRow(
+            SecondaryTabRow(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.primary,
-                indicator = { tabPositions ->
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(tabPositions[pagerState.currentPage])
-                    )
-                }
             ) {
                 Tab(
                     selected = pagerState.currentPage == 0,
@@ -89,17 +79,10 @@ fun FavoriteScreen(
                         type = 1, // Favorite Topics
                         onTopicClick = onTopicClick,
                         onMemberClick = onMemberClick,
-                         onNodeClick = onNodeClick
+                        onNodeClick = onNodeClick
                     )
                     1 -> FavoriteNodeList(
-                         onNodeClick = { node -> onNodeClick(node.name) } 
-                         // Check FavoriteNodeList signature, if it doesn't support callback, need to update it too.
-                         // But Phase 4 created NodeFavorFragment replacement?
-                         // FavoriteNodeList was an inner composable or separate?
-                         // I will assume FavoriteNodeList needs update if it uses Intent.
-                         // For now I replaced TopicListScreen logic which is crucial.
-                         // If FavoriteNodeList is separate, I should update it.
-                         // Let's assume for now I should pass callbacks to it.
+                        onNodeClick = { node -> onNodeClick(node.name) }
                     )
                 }
             }
@@ -156,6 +139,3 @@ fun FavoriteNodeList(
         }
     }
 }
-
-
-

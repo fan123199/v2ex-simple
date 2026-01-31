@@ -154,7 +154,7 @@ fun ReplyItem(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     HtmlText(
-                        html = reply.content_rendered ?: "",
+                        html = reply.content_rendered,
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .fillMaxWidth(),

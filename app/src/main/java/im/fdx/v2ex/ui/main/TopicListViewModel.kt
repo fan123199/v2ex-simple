@@ -158,7 +158,7 @@ class TopicListViewModel : ViewModel() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string() ?: ""
+                val body = response.body.string()
                 if (!response.isSuccessful) {
                      val errorMsg = "HTTP Error: ${response.code}"
                      loge("fetchTopics onResponse (HTTP Error): $errorMsg, url: $url")
@@ -225,7 +225,7 @@ class TopicListViewModel : ViewModel() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                 val str = response.body!!.string()
+                 val str = response.body.string()
                  val type = object : TypeToken<List<Topic>>() {}.type
                  val topicList = Gson().fromJson<List<Topic>>(str, type)
                  
@@ -348,7 +348,7 @@ class TopicListViewModel : ViewModel() {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                 val body = response.body?.string()
+                 val body = response.body.string()
                  try {
                      // Need SearchResult model. using generic parsing for now if model is not easily accessible or use existing model
                      val result = Gson().fromJson(body, SearchResult::class.java)

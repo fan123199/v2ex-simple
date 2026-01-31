@@ -44,7 +44,7 @@ class NotificationViewModel : ViewModel() {
                  if (response.code == 302) {
                      _uiState.update { it.copy(isLoading = false, error = "Login Required") }
                  } else if (response.code == 200) {
-                     val body = response.body?.string() ?: ""
+                     val body = response.body.string()
                      val list = Parser(body).parseToNotifications()
                      _uiState.update { it.copy(notifications = list, isLoading = false) }
                  } else {

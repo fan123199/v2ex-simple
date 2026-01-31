@@ -141,7 +141,7 @@ class TabSettingViewModel : ViewModel() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.code == 200) {
-                    val body = response.body.string() ?: return
+                    val body = response.body.string()
                     val nodeModels = Parser(body).parseToNode()
                     val nodes = nodeModels.map { MyTab(it.title, it.name, NODE_TYPE) }
                     initNodes.clear()

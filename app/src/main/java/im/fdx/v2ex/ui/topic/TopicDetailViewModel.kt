@@ -331,7 +331,7 @@ class TopicDetailViewModel : ViewModel() {
         
         while (current != null) {
             conversationIds.add(current.id)
-            val content = current.content ?: ""
+            val content = current.content
             // Simple logic: if content contains @username #floor, try to find that reply
             val match = """@(\w+)\s*#(\d+)""".toRegex().find(content)
             if (match != null) {

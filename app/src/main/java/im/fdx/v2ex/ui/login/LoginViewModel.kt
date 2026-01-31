@@ -69,7 +69,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 val response = HttpHelper.OK_CLIENT.newCall(requestToGetOnce).execute()
                 if (response.isSuccessful) {
-                    val htmlString = response.body?.string() ?: ""
+                    val htmlString = response.body.string()
                     val body = Jsoup.parse(htmlString).body()
                     nameKey = body.getElementsByAttributeValue("placeholder", "用户名或电子邮件地址").attr("name")
                     passwordKey = body.getElementsByAttributeValue("type", "password").attr("name")
@@ -141,7 +141,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             val response = HttpHelper.OK_CLIENT.newCall(request).execute()
             val httpcode = response.code
             // Note: response body must be consumed once
-            val bodyString = response.body?.string() ?: ""
+            val bodyString = response.body.string()
             val errorMsg = Parser(bodyString).getErrorMsg()
             logd("http code: $httpcode")
             logd("errorMsg: $errorMsg")
@@ -227,7 +227,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 ).execute()
                 
                 if (getResponse.code == 200) {
-                    val bodyStr = getResponse.body?.string() ?: ""
+                    val bodyStr = getResponse.body.string()
                     val once = Parser(bodyStr).getOnceNum()
                     
                     val postBody = FormBody.Builder()

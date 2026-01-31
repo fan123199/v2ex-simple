@@ -30,7 +30,7 @@ class DailyViewModel : ViewModel() {
                     _toastMsg.emit("Need Login first")
                     return@launch
                 }
-                val body = response.body?.string() ?: ""
+                val body = response.body.string()
 
                 if (body.contains("每日登录奖励已领取")) {
                     _toastMsg.emit("已领取, 明日再来")

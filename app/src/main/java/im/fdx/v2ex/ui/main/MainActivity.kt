@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import im.fdx.v2ex.BuildConfig
 import im.fdx.v2ex.ui.BaseActivity
 import im.fdx.v2ex.ui.theme.V2ExTheme
 

@@ -41,7 +41,7 @@ object Api {
                 }
 
                 override fun onResponse(call: Call, response: Response) {
-                    val str = response.body?.string() ?: "-"
+                    val str = response.body.string()
                     Log.e("fdx", str)
 
                     val res: Res = Gson().fromJson(str, Res::class.java)
@@ -65,7 +65,7 @@ object Api {
             }
 
             override fun onResponse(call: Call, response: Response) {
-                val str = response.body?.string() ?: "-"
+                val str = response.body.string()
                 val res: Res = Gson().fromJson(str, Res::class.java)
                 if (res.code == "success") {
                     callback(null, 0)

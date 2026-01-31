@@ -74,32 +74,6 @@ fun FrameLayout.hideNoContent() {
 }
 
 
-/**
- * 为每个Activity设置基本toolbar，简化代码
- */
-fun AppCompatActivity.setUpToolbar(title: String? = ""): Toolbar {
-    val toolbar: Toolbar = findViewById(R.id.toolbar)
-    toolbar.title = title
-    setSupportActionBar(toolbar)
-    supportActionBar?.setDisplayHomeAsUpEnabled(true)
-    toolbar.setNavigationOnClickListener { onBackPressed() }
-    return toolbar
-}
-
-
-fun Activity.setStatusBarColorInt(
-    @ColorInt colorInt: Int,
-    isLightColorThreshold: Float = 0.5f
-) {
-
-    window.statusBarColor = colorInt
-    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
-    val luminance = ColorUtils.calculateLuminance(colorInt)
-    insetsController.isAppearanceLightStatusBars = luminance > isLightColorThreshold
-    insetsController.isAppearanceLightNavigationBars = luminance > isLightColorThreshold
-}
-
-
 fun Context.toast(content:String) {
     Toast.makeText(this, content, Toast.LENGTH_SHORT).show()
 }

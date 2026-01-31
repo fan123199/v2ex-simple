@@ -2,10 +2,10 @@
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.*
+import com.android.build.gradle.AppExtension
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("kotlin-parcelize")
 
     id("com.google.gms.google-services")
@@ -23,6 +23,10 @@ kotlin {
     jvmToolchain(17)
 }
 
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
 android {
 
     compileSdk = 36
@@ -30,7 +34,7 @@ android {
         applicationId = "im.fdx.v2ex"
         minSdk = 24
         targetSdk = 36
-        versionCode = 76
+        versionCode = 78
         versionName = "3.0.0"
     }
     lint {
@@ -38,9 +42,7 @@ android {
         abortOnError =   false
     }
 
-    room {
-        schemaDirectory("$projectDir/schemas")
-    }
+
     signingConfigs {
 
         create("googlePlay") {
@@ -74,14 +76,14 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+//            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("googlePlay" )
         }
     }
 
     buildFeatures {
-        viewBinding = true
         compose = true
+        buildConfig = true
     }
     namespace = "im.fdx.v2ex"
 }
@@ -92,7 +94,10 @@ android {
 //    }
 //}
 
-android.applicationVariants.all { variant ->
+
+// ... inside your android block or at the top level
+val androidExtension = extensions.findByName("android") as? AppExtension
+androidExtension?.applicationVariants?.all { variant ->
     variant.outputs
         .map { it as com.android.build.gradle.internal.api.BaseVariantOutputImpl }
         .forEach { output ->
@@ -114,7 +119,7 @@ dependencies {
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.material:material:1.13.0")
 
-    implementation("androidx.work:work-runtime-ktx:2.11.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.1")
     implementation("androidx.constraintlayout:constraintlayout:2.2.1")
     implementation("androidx.preference:preference-ktx:1.2.1")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
@@ -132,10 +137,10 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.activity:activity-compose:1.12.2")
+    implementation("androidx.activity:activity-compose:1.12.3")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
-    implementation("androidx.navigation:navigation-compose:2.9.6")
+    implementation("androidx.navigation:navigation-compose:2.9.7")
     implementation("io.coil-kt:coil-compose:2.7.0")
 
     val roomVersion = "2.8.4"
@@ -143,7 +148,7 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp ("androidx.room:room-compiler:$roomVersion")
     //google end
-
+    implementation("com.google.re2j:re2j:1.8")
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("de.hdodenhof:circleimageview:3.1.0")
 
@@ -151,10 +156,10 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
-    debugImplementation("com.github.chuckerteam.chucker:library:4.2.0")
-    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.2.0")
+    debugImplementation("com.github.chuckerteam.chucker:library:4.3.0")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.3.0")
     implementation("com.elvishew:xlog:1.11.1")
-    implementation("org.jsoup:jsoup:1.21.2")
+    implementation("org.jsoup:jsoup:1.22.1")
     implementation("com.github.bumptech.glide:glide:5.0.5")
     ksp ("com.github.bumptech.glide:compiler:5.0.5")
     implementation("com.github.bumptech.glide:okhttp3-integration:5.0.5")
@@ -167,7 +172,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-android-extensions-runtime")
     }
 
-    implementation(platform("com.google.firebase:firebase-bom:34.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation ("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-analytics")

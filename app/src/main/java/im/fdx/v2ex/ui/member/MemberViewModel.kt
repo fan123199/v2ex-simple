@@ -59,7 +59,7 @@ class MemberViewModel : ViewModel() {
 
             override fun onResponse(call: Call, response: Response) {
                  if(response.isSuccessful) {
-                     val body = response.body?.string() ?: ""
+                     val body = response.body.string()
                      try {
                          val member = NetManager.myGson.fromJson(body, Member::class.java)
                          _uiState.update { it.copy(member = member) }
@@ -83,7 +83,7 @@ class MemberViewModel : ViewModel() {
 
             override fun onResponse(call: Call, response: Response) {
                 if (response.isSuccessful) {
-                    val body = response.body?.string() ?: ""
+                    val body = response.body.string()
                     val parser = Parser(body)
                     val enrichedMember = parser.parseMemberProfile(username)
                     val (isFollowed, isBlocked, once) = parser.getMemberStatus()
@@ -170,7 +170,7 @@ class MemberViewModel : ViewModel() {
              }
 
              override fun onResponse(call: Call, response: Response) {
-                 val body = response.body?.string() ?: ""
+                 val body = response.body.string()
                  val parser = Parser(body)
                  val replies = parser.getUserReplies()
                   val (totalPage, repliesNum) = parser.getTotalPageInMember()

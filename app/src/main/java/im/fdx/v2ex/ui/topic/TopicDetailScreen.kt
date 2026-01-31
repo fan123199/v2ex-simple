@@ -668,7 +668,7 @@ fun TopicDetailContent(
                 ) {
                     val scope = rememberCoroutineScope()
                     val currentReply = uiState.replies.find { it.id == selectedReply?.id } ?: selectedReply
-                    val reportReplyTitle = currentReply?.let { stringResource(R.string.report_reply_title, it.content?.take(20) ?: "") } ?: ""
+                    val reportReplyTitle = currentReply?.let { stringResource(R.string.report_reply_title, it.content.take(20) ) } ?: ""
                     val reportReplyContent = currentReply?.let { stringResource(R.string.report_reply_content, it.id, it.member?.username ?: "", topicUrl) } ?: ""
                     
                     ListItem(

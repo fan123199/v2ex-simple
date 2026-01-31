@@ -3,20 +3,21 @@ package im.fdx.v2ex.utils
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Environment
 import android.util.Base64
 import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
+import im.fdx.v2ex.BuildConfig
+import im.fdx.v2ex.myApp
+import im.fdx.v2ex.utils.extensions.toast
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
-import com.bumptech.glide.request.target.SimpleTarget
-import com.bumptech.glide.request.transition.Transition
-import im.fdx.v2ex.BuildConfig
-import com.bumptech.glide.Glide
-import im.fdx.v2ex.myApp
-import im.fdx.v2ex.utils.extensions.toast
 
 
 object ImageUtil {
@@ -45,10 +46,13 @@ object ImageUtil {
         Glide.with(myApp)
                 .asBitmap()
                 .load(url)
-                .into(object : SimpleTarget<Bitmap>() {
+                .into(object : CustomTarget<Bitmap>() {
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         val uri = saveBitmap(url,resource)
                         uri?.let { ready(it) }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
                     }
                 })
     }

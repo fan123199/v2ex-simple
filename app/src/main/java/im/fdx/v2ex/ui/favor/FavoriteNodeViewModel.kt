@@ -43,7 +43,7 @@ class FavoriteNodeViewModel : ViewModel() {
                  if (response.code != 200) {
                      _uiState.update { it.copy(isLoading = false, error = "Error ${response.code}") }
                  } else {
-                     val body = response.body?.string() ?: ""
+                     val body = response.body.string()
                      val nodes = Parser(body).parseToNode()
                      _uiState.update { it.copy(nodes = nodes, isLoading = false) }
                  }

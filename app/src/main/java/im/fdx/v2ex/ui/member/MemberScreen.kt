@@ -1,8 +1,9 @@
 package im.fdx.v2ex.ui.member
 
-import im.fdx.v2ex.data.model.Reply
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import android.content.Intent
+import android.net.Uri
+import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,13 +11,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
-import androidx.compose.material.icons.filled.MoreVert
-import im.fdx.v2ex.myApp
-import android.widget.Toast
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,31 +24,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.fromHtml
-import androidx.compose.foundation.text.selection.SelectionContainer
-import coil.compose.AsyncImage
-import im.fdx.v2ex.ui.main.TopicListScreen
-import im.fdx.v2ex.data.model.Topic
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import im.fdx.v2ex.utils.TimeUtil
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.clickable
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Modifier.Companion
-import im.fdx.v2ex.data.model.Member
-import im.fdx.v2ex.data.model.MemberReplyModel
-import im.fdx.v2ex.R
 import androidx.compose.ui.res.painterResource
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.fromHtml
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import im.fdx.v2ex.R
+import im.fdx.v2ex.data.model.Member
+import im.fdx.v2ex.data.model.MemberReplyModel
+import im.fdx.v2ex.data.model.Topic
+import im.fdx.v2ex.ui.main.TopicListScreen
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -215,11 +207,6 @@ fun MemberScreen(
                 selectedTabIndex = pagerState.currentPage,
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.primary,
-                indicator = {
-                    TabRowDefaults.SecondaryIndicator(
-                        Modifier.tabIndicatorOffset(pagerState.currentPage)
-                    )
-                }
             ) {
                 Tab(
                     selected = pagerState.currentPage == 0,
@@ -416,8 +403,3 @@ fun MemberRepliesList(
         }
     }
 }
-
-
-
-
-

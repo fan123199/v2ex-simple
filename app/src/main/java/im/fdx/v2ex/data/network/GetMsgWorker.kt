@@ -41,7 +41,7 @@ class GetMsgWorker(val context: Context, workerParameters: WorkerParameters) : W
                     return
                 }
 
-                val html = response.body!!.string()
+                val html = response.body.string()
                 //                <a href="/notifications" class="fade">0 条未读提醒</a>
                 val p = Regex("(?<=<a href=\"/notifications\".{0,20}>)\\d+")
                 val matcher = p.find(html)

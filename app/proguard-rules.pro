@@ -21,7 +21,7 @@
   *;
 }
 
--keep class * implements im.fdx.v2ex.model.VModel
+-keep class * implements im.fdx.v2ex.data.model.VModel
 
 #Glide
 -keep class com.bumptech.glide.*
@@ -103,3 +103,8 @@
 -keepattributes Signature
 # Retain declared checked exceptions for use by a Proxy instance.
 -keepattributes Exceptions
+
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn com.google.re2j.Matcher
+-dontwarn com.google.re2j.Pattern

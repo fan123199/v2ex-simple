@@ -86,7 +86,7 @@ class NewTopicViewModel(application: Application) : AndroidViewModel(application
                  return
              }
              
-             val bodyString = response.body?.string() ?: ""
+             val bodyString = response.body.string()
              val once = Parser(bodyString).getOnceNum2()
              if (once == null) {
                  _isLoading.value = false
@@ -113,7 +113,7 @@ class NewTopicViewModel(application: Application) : AndroidViewModel(application
                 // Success redirect
                  _sendResult.value = SendResult.Success
             } else {
-                 val errorMsg = Parser(postResponse.body?.string()?:"").getErrorMsg()
+                 val errorMsg = Parser(postResponse.body.string()).getErrorMsg()
                  _sendResult.value = SendResult.Error(errorMsg)
             }
              

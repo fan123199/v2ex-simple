@@ -20,6 +20,7 @@ import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
+import androidx.core.content.edit
 
 data class AllNodesUiState(
     val nodes: Map<String, List<Node>> = emptyMap(),
@@ -62,11 +63,13 @@ class AllNodesViewModel : ViewModel() {
                     _uiState.update { it.copy(isLoading = false, error = "Error: ${response.code}") }
                     return
                 }
-                val htmlStr = response.body?.string() ?: ""
+                val htmlStr = response.body.string()
                 val nodes = Parser(htmlStr).getAllNode()
                 if (nodes.isNotEmpty()) {
-                    pref.edit().putString(Keys.PREF_ALL_NODE_DATA, Gson().toJson(nodes))
-                        .putLong(Keys.PREF_ALL_NODE_DATA_TIME, System.currentTimeMillis()).apply()
+                    pref.edit {
+                        putString(Keys.PREF_ALL_NODE_DATA, Gson().toJson(nodes))
+                            .putLong(Keys.PREF_ALL_NODE_DATA_TIME, System.currentTimeMillis())
+                    }
                     updateNodes(nodes)
                 } else {
                      _uiState.update { it.copy(isLoading = false, error = "No nodes found") }

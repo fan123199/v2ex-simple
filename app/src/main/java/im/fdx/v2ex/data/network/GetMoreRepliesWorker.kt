@@ -40,7 +40,7 @@ class GetMoreRepliesWorker(val context: Context, workerParameters: WorkerParamet
         try {
             for (i in 2..totalPage) {
                 val response = vCall("${NetManager.HTTPS_V2EX_BASE}/t/$topicId?p=$i").execute()
-                val parser = Parser(response.body!!.string())
+                val parser = Parser(response.body.string())
                 val replies = parser.getReplies()
 
                 if (replies.isEmpty()) return
