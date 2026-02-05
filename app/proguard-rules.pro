@@ -3,7 +3,8 @@
 
 #gson and model
 
--keep class im.fdx.v2ex.ui.main.model.*
+-keep class im.fdx.v2ex.data.model.** { *; }
+-keepattributes SourceFile,LineNumberTable
 
 -dontwarn okio.**
 -dontwarn org.greenrobot.greendao.**

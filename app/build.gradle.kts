@@ -34,8 +34,8 @@ android {
         applicationId = "im.fdx.v2ex"
         minSdk = 24
         targetSdk = 36
-        versionCode = 79
-        versionName = "3.0.0"
+        versionCode = 80
+        versionName = "3.0.1"
     }
     lint {
         checkReleaseBuilds = false
@@ -76,7 +76,7 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = true
-//            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("googlePlay" )
         }
     }
