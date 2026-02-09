@@ -73,7 +73,7 @@ sealed class Screen(val route: String) {
     object Photo : Screen("photo?urls={urls}&position={position}") {
         fun createRoute(urls: List<String>, position: Int = 0): String {
             val jsonUrls = Gson().toJson(urls)
-            return "photo?urls=${URLEncoder.encode(jsonUrls, StandardCharsets.UTF_8)}&position=$position"
+            return "photo?urls=${URLEncoder.encode(jsonUrls, StandardCharsets.UTF_8.toString())}&position=$position"
         }
     }
     object WebView : Screen("webview?url={url}") {
