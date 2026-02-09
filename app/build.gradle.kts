@@ -34,7 +34,7 @@ android {
         applicationId = "im.fdx.v2ex"
         minSdk = 24
         targetSdk = 36
-        versionCode = 80
+        versionCode = 81
         versionName = "3.0.1"
     }
     lint {
