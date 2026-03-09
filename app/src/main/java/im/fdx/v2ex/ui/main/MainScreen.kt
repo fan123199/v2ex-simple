@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -56,6 +57,76 @@ fun MainScreen(
     val loginActionStr = stringResource(R.string.login)
     val menuStr = stringResource(R.string.menu)
     val searchStr = stringResource(R.string.search)
+
+    // 2FA Dialog state
+    val show2FADialog by TwoFAManager.showDialog.collectAsState()
+    val is2FAVerifying by TwoFAManager.isVerifying.collectAsState()
+    val twoFAError by TwoFAManager.errorMsg.collectAsState()
+    var twoFACode by remember { mutableStateOf("") }
+
+    val twoStepVerificationStr = stringResource(R.string.two_step_verification)
+    val inputTwoStepCodeStr = stringResource(R.string.input_two_step_code)
+    val verifyCodeStr = stringResource(R.string.verify_code)
+    val verifyStr = stringResource(R.string.verify)
+    val cancelStr = stringResource(R.string.cancel)
+
+    if (show2FADialog) {
+        AlertDialog(
+            onDismissRequest = {
+                twoFACode = ""
+                TwoFAManager.dismiss()
+            },
+            title = { Text(twoStepVerificationStr) },
+            text = {
+                Column {
+                    Text(inputTwoStepCodeStr)
+                    androidx.compose.foundation.layout.Spacer(modifier = Modifier.padding(top = 16.dp))
+                    OutlinedTextField(
+                        value = twoFACode,
+                        onValueChange = { twoFACode = it },
+                        label = { Text(verifyCodeStr) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        isError = twoFAError != null
+                    )
+                    if (twoFAError != null) {
+                        Text(
+                            text = twoFAError!!,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        TwoFAManager.submitCode(twoFACode)
+                        twoFACode = ""
+                    },
+                    enabled = twoFACode.isNotBlank() && !is2FAVerifying
+                ) {
+                    if (is2FAVerifying) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        Text(verifyStr)
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    twoFACode = ""
+                    TwoFAManager.dismiss()
+                }) {
+                    Text(cancelStr)
+                }
+            }
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,

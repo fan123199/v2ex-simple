@@ -160,6 +160,13 @@ class TopicListViewModel : ViewModel() {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body.string()
                 if (!response.isSuccessful) {
+                     if (response.code == 302 && response.header("Location")?.contains("2fa") == true) {
+                         // 需要两步验证，触发全局 2FA 对话框
+                         logd("fetchTopics: 302→/2fa detected, requesting 2FA dialog")
+                         TwoFAManager.requestTwoFA { refresh() }
+                         _uiState.update { it.copy(isLoading = false) }
+                         return
+                     }
                      val errorMsg = "HTTP Error: ${response.code}"
                      loge("fetchTopics onResponse (HTTP Error): $errorMsg, url: $url")
                      _uiState.update { it.copy(isLoading = false, error = errorMsg) }
