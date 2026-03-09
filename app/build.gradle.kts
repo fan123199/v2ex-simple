@@ -34,8 +34,8 @@ android {
         applicationId = "im.fdx.v2ex"
         minSdk = 24
         targetSdk = 36
-        versionCode = 81
-        versionName = "3.0.1"
+        versionCode = 83
+        versionName = "3.0.2"
     }
     lint {
         checkReleaseBuilds = false
@@ -137,7 +137,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.activity:activity-compose:1.12.3")
+    implementation("androidx.activity:activity-compose:1.12.4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     implementation("androidx.navigation:navigation-compose:2.9.7")
@@ -156,8 +156,8 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
 
-    debugImplementation("com.github.chuckerteam.chucker:library:4.3.0")
-    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.3.0")
+    debugImplementation("com.github.chuckerteam.chucker:library:4.3.1")
+    releaseImplementation("com.github.chuckerteam.chucker:library-no-op:4.3.1")
     implementation("com.elvishew:xlog:1.11.1")
     implementation("org.jsoup:jsoup:1.22.1")
     implementation("com.github.bumptech.glide:glide:5.0.5")
@@ -172,7 +172,7 @@ dependencies {
         exclude("org.jetbrains.kotlin", "kotlin-android-extensions-runtime")
     }
 
-    implementation(platform("com.google.firebase:firebase-bom:34.8.0"))
+    implementation(platform("com.google.firebase:firebase-bom:34.10.0"))
     implementation("com.google.firebase:firebase-crashlytics")
     implementation ("com.google.firebase:firebase-config")
     implementation("com.google.firebase:firebase-analytics")

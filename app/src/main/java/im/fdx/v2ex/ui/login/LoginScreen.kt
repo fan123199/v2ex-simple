@@ -30,7 +30,7 @@ fun LoginScreen(
     isLoading: Boolean,
     onLoginClick: () -> Unit,
     onCaptchaClick: () -> Unit,
-    onSignUpClick: () -> Unit,
+
     onBackClick: () -> Unit,
     showTwoStepDialog: Boolean = false,
     twoStepCode: String = "",
@@ -50,7 +50,7 @@ fun LoginScreen(
     val passwordStr = stringResource(R.string.password)
     val menuRefreshStr = stringResource(R.string.menu_refresh)
     val loginStr = stringResource(R.string.login)
-    val noAccountSignUpStr = stringResource(R.string.no_account_signup)
+
     val backStr = stringResource(R.string.navigation_drawer_close) // Better than nothing if "back" is missing, but usually "close" or custom is used.
     
     // 2FA Dialog
@@ -211,11 +211,7 @@ fun LoginScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
 
-            TextButton(onClick = onSignUpClick) {
-                Text(noAccountSignUpStr)
-            }
         }
     }
 }

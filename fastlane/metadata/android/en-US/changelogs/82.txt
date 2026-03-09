@@ -1,0 +1,2 @@
+- Added global two-step verification dialog
+- Bug fixes

@@ -350,9 +350,7 @@ fun AppNavigation(
                  isLoading = isLoading,
                  onLoginClick = loginViewModel::login,
                  onCaptchaClick = loginViewModel::getLoginElement,
-                 onSignUpClick = {
-                      navController.navigate(Screen.WebView.createRoute("https://www.v2ex.com/signup"))
-                 },
+
                  onBackClick = { navController.popBackStack() },
                  showTwoStepDialog = showTwoStepDialog,
                  twoStepCode = twoStepCode,
