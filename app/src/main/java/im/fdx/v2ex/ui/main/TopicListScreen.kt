@@ -89,7 +89,7 @@ fun TopicListScreen(
                     if (header != null) {
                         item { header() }
                     }
-                    items(uiState.topics, key = { it.id }) { topic ->
+                    items(uiState.topics, key = { it.id.ifEmpty { "empty_${it.title}_${it.created}" } }) { topic ->
                         TopicItem(
                             topic = topic,
                             onClick = {

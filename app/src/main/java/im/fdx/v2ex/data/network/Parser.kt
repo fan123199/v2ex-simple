@@ -44,10 +44,18 @@ class Parser(private val htmlStr: String) {
 
                 val linkWithReply = item.getElementsByClass("item_title")?.first()
                         ?.getElementsByTag("a")?.first()?.attr("href")?:""
-                val replies = Integer.parseInt(linkWithReply.split("reply".toRegex())[1])
+                val replies = if (linkWithReply.contains("reply")) {
+                    try {
+                        Integer.parseInt(linkWithReply.split("reply".toRegex())[1])
+                    } catch (e: Exception) {
+                        0
+                    }
+                } else {
+                    0
+                }
 
                 val regex = Regex("(?<=/t/)\\d+")
-                val id: String = regex.find(linkWithReply)?.value ?: return emptyList()
+                val id: String = regex.find(linkWithReply)?.value ?: continue
 
                 val nodeModel = Node()
                 when (source) {

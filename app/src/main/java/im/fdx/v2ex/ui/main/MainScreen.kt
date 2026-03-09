@@ -14,13 +14,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import im.fdx.v2ex.ui.settings.tabPaths
-import im.fdx.v2ex.ui.settings.tabTitles
-import im.fdx.v2ex.ui.settings.getTabTitleRes
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
 import im.fdx.v2ex.R
+import im.fdx.v2ex.ui.settings.MyTab
 import im.fdx.v2ex.utils.Keys
 import androidx.core.os.bundleOf
 import androidx.compose.material.icons.Icons
@@ -41,7 +39,14 @@ fun MainScreen(
     onMenuClick: (String) -> Unit,
     onNewTopicClick: () -> Unit
 ) {
-    val pagerState = rememberPagerState(pageCount = { tabTitles.size })
+    val tabs by TabStore.tabs.collectAsState()
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
+    if (pagerState.currentPage >= tabs.size) {
+        // Prevent out-of-bounds crash if tabs are removed
+        LaunchedEffect(tabs.size) {
+            pagerState.scrollToPage(maxOf(0, tabs.size - 1))
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -137,10 +142,10 @@ fun MainScreen(
         ) { innerPadding ->
             Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
                 SecondaryScrollableTabRow(
-                    selectedTabIndex = pagerState.currentPage,
+                    selectedTabIndex = minOf(pagerState.currentPage, maxOf(0, tabs.size - 1)),
                     edgePadding = 0.dp
                 ) {
-                    tabTitles.forEachIndexed { index, title ->
+                    tabs.forEachIndexed { index, myTab ->
                         Tab(
                             selected = pagerState.currentPage == index,
                             onClick = {
@@ -151,8 +156,8 @@ fun MainScreen(
                             selectedContentColor = MaterialTheme.colorScheme.primary,
                             unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                             text = { 
-                                val resId = getTabTitleRes(tabPaths[index])
-                                val displayTitle = if (resId != null) stringResource(resId) else title
+                                val resId = im.fdx.v2ex.ui.settings.getTabTitleRes(myTab.path)
+                                val displayTitle = if (resId != null) stringResource(resId) else myTab.title
                                 Text(
                                     text = displayTitle,
                                     style = MaterialTheme.typography.labelLarge
@@ -167,7 +172,8 @@ fun MainScreen(
                     modifier = Modifier.weight(1f),
                     beyondViewportPageCount = 1
                 ) { page ->
-                     val tabPath = tabPaths[page]
+                     val safePage = minOf(page, maxOf(0, tabs.size - 1))
+                     val tabPath = tabs[safePage].path
                      TopicListScreen(
                          tab = tabPath,
                          onTopicClick = onTopicClick,

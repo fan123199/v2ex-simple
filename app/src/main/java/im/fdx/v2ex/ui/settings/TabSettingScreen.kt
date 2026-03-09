@@ -211,10 +211,8 @@ class TabSettingViewModel : ViewModel() {
 
     fun save(context: Context) {
         val current = _uiState.value.currentTabs
-        val savedList = Gson().toJson(current)
-        pref.edit { putString(Keys.PREF_TAB, savedList) }
+        im.fdx.v2ex.ui.main.TabStore.setTabs(current)
         LocalBroadcastManager.getInstance(context).sendBroadcast(Intent(Keys.ACTION_TAB_SETTING))
-        (context as? Activity)?.finish()
     }
 }
 
@@ -257,6 +255,7 @@ fun TabSettingScreen(
                             context.toast(needAtLeastOneStr)
                         } else {
                             viewModel.save(context) 
+                            onBackClick()
                         }
                     }) {
                         Text(stringResource(R.string.menu_save))
