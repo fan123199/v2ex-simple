@@ -94,10 +94,6 @@ fun WebViewScreen(
                         
                         // Setup Cookie persistence login logic
                         webViewClient = object : WebViewClient() {
-                            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                                return false
-                            }
-
                             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                                 val cookie = CookieManager.getInstance().getCookie(url)
                                 if (cookie?.contains("A2=") == true && url != null) {
@@ -105,6 +101,20 @@ fun WebViewScreen(
                                     onLoginSuccess()
                                 }
                                 super.onPageStarted(view, url, favicon)
+                            }
+
+                            override fun onReceivedError(
+                                view: WebView?,
+                                request: WebResourceRequest?,
+                                error: WebResourceError?
+                            ) {
+                                super.onReceivedError(view, request, error)
+                                if (request?.isForMainFrame == true) {
+                                    val code = error?.errorCode ?: -1
+                                    val desc = error?.description ?: "unknown"
+                                    Log.w("WebViewScreen", "load error $code: $desc @ ${request.url}")
+                                    title = "加载失败: $desc"
+                                }
                             }
                         }
 
