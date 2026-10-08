@@ -137,7 +137,7 @@ fun MainDrawer(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 4.dp)
             ) {
                 val currentIcon = when (themeMode) {
                     1 -> Icons.Default.LightMode
@@ -153,9 +153,9 @@ fun MainDrawer(
 
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .clip(CircleShape)
                         .clickable { showMenu = true }
-                        .padding(vertical = 8.dp),
+                        .padding(horizontal = 12.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -164,7 +164,7 @@ fun MainDrawer(
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp)
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = currentText,
                         style = MaterialTheme.typography.labelLarge,
@@ -205,6 +205,5 @@ fun MainDrawer(
         }
     }
 }
-
 
 

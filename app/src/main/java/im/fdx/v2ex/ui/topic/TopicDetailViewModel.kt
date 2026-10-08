@@ -288,6 +288,9 @@ class TopicDetailViewModel : ViewModel() {
          })
     }
 
+    fun findMentionedReply(sourceId: String, username: String, floor: Int?): Reply? =
+        findMentionedReply(allReplies, sourceId, username, floor)
+
     fun findReplyByFloor(username: String, floor: Int): Reply? {
         logd("Searching for floor $floor by user $username")
         val found = _uiState.value.replies.find { r ->

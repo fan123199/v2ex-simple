@@ -57,8 +57,7 @@ fun ReplyItem(
     onReplyClick: (Reply) -> Unit,
     onThankClick: (Reply) -> Unit,
     onLongClick: (Reply) -> Unit,
-    onQuoteClick: (String, Int, Offset) -> Unit,
-    onMentionClick: (String, Offset) -> Unit,
+    onMentionClick: (String, Int?) -> Unit,
     onImageClick: (List<String>, Int) -> Unit = { _, _ -> },
     enabled: Boolean = true
 ) {
@@ -158,7 +157,9 @@ fun ReplyItem(
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .fillMaxWidth(),
-                        onImageClick = onImageClick
+                        onImageClick = onImageClick,
+                        onLongClick = if (enabled) ({ onLongClick(reply) }) else null,
+                        onMentionClick = onMentionClick
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -196,7 +197,5 @@ fun ReplyItem(
         }
     }
 }
-
-
 
 

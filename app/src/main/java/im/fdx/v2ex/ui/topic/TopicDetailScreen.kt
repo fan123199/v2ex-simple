@@ -27,10 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.window.Popup
-import androidx.compose.ui.window.PopupProperties
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -133,8 +129,7 @@ fun TopicDetailContent(
     var showReplySheet by remember { mutableStateOf(false) }
     var showUserRepliesSheet by remember { mutableStateOf(false) }
     var quotedReply by remember { mutableStateOf<Reply?>(null) }
-    var clickOffset by remember { mutableStateOf(Offset.Zero) }
-    var showQuoteDialog by remember { mutableStateOf(false) }
+    var showQuoteSheet by remember { mutableStateOf(false) }
     var showReportSheet by remember { mutableStateOf(false) }
     var replyToThank by remember { mutableStateOf<Reply?>(null) }
     val sheetState = rememberModalBottomSheetState()
@@ -153,6 +148,17 @@ fun TopicDetailContent(
     val focusRequester = remember { FocusRequester() }
 
     val loginActionStr = stringResource(R.string.login)
+    val missingReplyMessage = stringResource(R.string.referenced_reply_unavailable)
+    val openMention: (Reply, String, Int?) -> Unit = { source, username, floor ->
+        val found = viewModel.findMentionedReply(source.id, username, floor)
+        if (found != null) {
+            quotedReply = found
+            showQuoteSheet = true
+        } else {
+            scope.launch { snackbarHostState.showSnackbar(missingReplyMessage) }
+        }
+    }
+
     
     val toastPostReplySuccess = stringResource(R.string.toast_post_reply_success)
     val toastFavorSuccess = stringResource(R.string.toast_favor_success)
@@ -581,30 +587,8 @@ fun TopicDetailContent(
                                     selectedReply = it
                                     showReplySheet = true
                                 },
-                                onQuoteClick = { username, replyNum, offset ->
-                                    // Find the quoted reply by username and reply number
-                                    var foundReply = viewModel.findReplyByFloor(username, replyNum)
-                                    if (foundReply == null) {
-                                        foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
-                                    }
-
-                                    if (foundReply != null) {
-                                        quotedReply = foundReply
-                                        clickOffset = offset
-                                        showQuoteDialog = true
-                                    } else {
-                                        onMemberClick(username)
-                                    }
-                                },
-                                onMentionClick = { username, offset ->
-                                    val foundReply = viewModel.findRecentReplyByUsername(username, reply.id)
-                                    if (foundReply != null) {
-                                        quotedReply = foundReply
-                                        clickOffset = offset
-                                        showQuoteDialog = true
-                                    } else {
-                                        onMemberClick(username)
-                                    }
+                                onMentionClick = { username, floor ->
+                                    openMention(reply, username, floor)
                                 },
                                 onImageClick = onImageClick
                             )
@@ -880,8 +864,7 @@ fun TopicDetailContent(
                                       onReplyClick = { },
                                       onThankClick = { },
                                       onLongClick = { },
-                                      onQuoteClick = { _, _, _ -> },
-                                      onMentionClick = { _, _ -> },
+                                      onMentionClick = { username, floor -> openMention(reply, username, floor) },
                                       enabled = false
                                   )
                                  HorizontalDivider()
@@ -891,62 +874,42 @@ fun TopicDetailContent(
                  }
              }
 
-            // Quote Dialog to show referenced reply
-            if (showQuoteDialog && quotedReply != null) {
-                Popup(
-                    onDismissRequest = { showQuoteDialog = false },
-                    offset = IntOffset(
-                        clickOffset.x.toInt(),
-                        clickOffset.y.toInt()
-                    ),
-                    properties = PopupProperties(
-                        focusable = true,
-                        dismissOnBackPress = true,
-                        dismissOnClickOutside = true
-                    )
-                ) {
-                    var visible by remember { mutableStateOf(false) }
-                    LaunchedEffect(Unit) {
-                        visible = true
-                    }
-                    
-                    AnimatedVisibility(
-                        visible = visible,
-                        enter = fadeIn(tween(300)),
-                        exit = fadeOut(tween(300))
+            // Show the referenced comment without leaving the current topic.
+            if (showQuoteSheet) {
+                quotedReply?.let { reference ->
+                    ModalBottomSheet(
+                        onDismissRequest = { showQuoteSheet = false },
+                        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        tonalElevation = 0.dp
                     ) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth(0.8f)
-                                .padding(16.dp)
-                                .clickable {
-                                    val targetReply = quotedReply
-                                    showQuoteDialog = false
-                                    if (targetReply != null) {
-                                        val index = uiState.replies.indexOf(targetReply)
-                                        if (index != -1) {
-                                            scope.launch {
-                                                listState.animateScrollToItem(index + 1)
-                                            }
+                        LazyColumn(contentPadding = PaddingValues(bottom = 24.dp)) {
+                            item {
+                                ReplyItem(
+                                    reply = reference,
+                                    onMemberClick = {},
+                                    onReplyClick = {},
+                                    onThankClick = {},
+                                    onLongClick = {},
+                                    onMentionClick = { username, floor -> openMention(reference, username, floor) },
+                                    onImageClick = onImageClick,
+                                    enabled = false
+                                )
+                            }
+                            item {
+                                TextButton(
+                                    onClick = {
+                                        showQuoteSheet = false
+                                        val index = uiState.replies.indexOfFirst { it.id == reference.id }
+                                        if (index >= 0) {
+                                            scope.launch { listState.animateScrollToItem(index + 1) }
                                         }
-                                    }
-                                },
-                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                        ) {
-                            Column(modifier = Modifier.padding(16.dp)) {
-                                Text(
-                                    text = if (quotedReply?.getRowNum() ?: 0 > 0) "@${quotedReply?.member?.username} #${quotedReply?.getRowNum()}" else "@${quotedReply?.member?.username}",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                HtmlText(
-                                    html = quotedReply?.content_rendered ?: "",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    modifier = Modifier.padding(top = 8.dp),
-                                    onImageClick = onImageClick
-                                )
+                                    },
+                                    enabled = uiState.replies.any { it.id == reference.id },
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
+                                ) {
+                                    Text(stringResource(R.string.locate_referenced_reply))
+                                }
                             }
                         }
                     }

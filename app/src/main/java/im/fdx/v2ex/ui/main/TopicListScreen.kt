@@ -1,5 +1,6 @@
 package im.fdx.v2ex.ui.main
 
+import im.fdx.v2ex.ui.node.NodeTopicItem
 import im.fdx.v2ex.data.model.Topic
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -45,7 +47,8 @@ fun TopicListScreen(
     onTopicCountObtained: (Int) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(0.dp),
     header: (@Composable () -> Unit)? = null,
-    enableAutoInit: Boolean = true
+    enableAutoInit: Boolean = true,
+    listState: LazyListState = rememberLazyListState()
 ) {
     LaunchedEffect(tab, type, username, nodeName) {
         if (enableAutoInit) {
@@ -54,7 +57,6 @@ fun TopicListScreen(
     }
 
     val uiState by viewModel.uiState.collectAsState()
-    val listState = rememberLazyListState()
 
     // Infinite Scroll
     LaunchedEffect(listState) {
@@ -90,15 +92,24 @@ fun TopicListScreen(
                         item { header() }
                     }
                     items(uiState.topics, key = { it.id.ifEmpty { "empty_${it.title}_${it.created}" } }) { topic ->
-                        TopicItem(
-                            topic = topic,
-                            onClick = {
-                                im.fdx.v2ex.ui.topic.TopicListStore.setTopics(uiState.topics)
-                                onTopicClick(topic)
-                            },
-                            onNodeClick = onNodeClick,
-                            onMemberClick = onMemberClick
-                        )
+                        val openTopic = {
+                            im.fdx.v2ex.ui.topic.TopicListStore.setTopics(uiState.topics)
+                            onTopicClick(topic)
+                        }
+                        if (nodeName != null) {
+                            NodeTopicItem(
+                                topic = topic,
+                                onClick = openTopic,
+                                onMemberClick = onMemberClick
+                            )
+                        } else {
+                            TopicItem(
+                                topic = topic,
+                                onClick = openTopic,
+                                onNodeClick = onNodeClick,
+                                onMemberClick = onMemberClick
+                            )
+                        }
                     }
 
                     if (uiState.isLoading && uiState.page > 1) {
@@ -122,6 +133,5 @@ fun TopicListScreen(
         }
     }
 }
-
 
 

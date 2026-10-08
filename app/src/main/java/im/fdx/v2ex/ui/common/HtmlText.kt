@@ -1,12 +1,11 @@
 package im.fdx.v2ex.ui.common
 
-import android.graphics.Bitmap
+import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Rect
+import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.text.Html
-import android.text.TextUtils
 import android.view.MotionEvent
 import android.text.Selection
 import android.text.method.LinkMovementMethod
@@ -18,14 +17,13 @@ import android.view.View
 import android.text.Spannable
 import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
+import android.text.style.URLSpan
 import androidx.core.text.getSpans
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
-import im.fdx.v2ex.utils.extensions.logi
-import coil.ImageLoader
+import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import kotlinx.coroutines.*
@@ -35,16 +33,17 @@ fun HtmlText(
     html: String,
     modifier: Modifier = Modifier,
     style: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyMedium,
-    onImageClick: (List<String>, Int) -> Unit = { _, _ -> }
+    onImageClick: (List<String>, Int) -> Unit = { _, _ -> },
+    onLongClick: (() -> Unit)? = null,
+    onMentionClick: ((String, Int?) -> Unit)? = null
 ) {
-    val context = LocalContext.current
     val textColor = MaterialTheme.colorScheme.onSurface.toArgb()
     val linkColor = MaterialTheme.colorScheme.primary.toArgb()
 
     AndroidView(
         modifier = modifier,
         factory = { ctx ->
-            TextView(ctx).apply {
+            LongPressHtmlTextView(ctx).apply {
                 movementMethod = ClickableMovementMethod
                 setTextColor(textColor)
                 setLinkTextColor(linkColor)
@@ -52,7 +51,19 @@ fun HtmlText(
             }
         },
         update = { textView ->
+            textView.setTextColor(textColor)
+            textView.setLinkTextColor(linkColor)
+            textView.textSize = style.fontSize.value
+            textView.setOnLongClickListener(onLongClick?.let { callback ->
+                View.OnLongClickListener {
+                    callback()
+                    true
+                }
+            })
+            textView.isLongClickable = onLongClick != null
+            textView.imageGetter?.clear()
             val imageGetter = CoilImageGetter(textView)
+            textView.imageGetter = imageGetter
             val spanned = HtmlCompat.fromHtml(
                 html,
                 HtmlCompat.FROM_HTML_MODE_LEGACY,
@@ -61,13 +72,42 @@ fun HtmlText(
             )
             
             if (spanned is Spannable) {
-                val imageSpans = spanned.getSpans<ImageSpan>()
-                val photos = imageSpans.map { it.source ?: "" }
-                imageSpans.forEachIndexed { index, imageSpan ->
+                onMentionClick?.let { onMention ->
+                    spanned.getSpans<URLSpan>().forEach { link ->
+                        val start = spanned.getSpanStart(link)
+                        val end = spanned.getSpanEnd(link)
+                        val mention = parseReplyMention(link.url, spanned, start, end)
+                            ?: return@forEach
+                        spanned.removeSpan(link)
+                        spanned.setSpan(object : ClickableSpan() {
+                            override fun onClick(widget: View) {
+                                onMention(mention.username, mention.floor)
+                            }
+                        }, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                }
+                val imageSpans = spanned.getSpans<ImageSpan>().map { original ->
+                    val start = spanned.getSpanStart(original)
+                    val end = spanned.getSpanEnd(original)
+                    spanned.removeSpan(original)
+                    TextAlignedImageSpan(original.drawable, original.source).also {
+                        spanned.setSpan(it, start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    }
+                }
+                imageSpans.forEach { imageSpan ->
                     val start = spanned.getSpanStart(imageSpan)
                     val end = spanned.getSpanEnd(imageSpan)
+                    // A wrapping HTML link must not override the image's own interaction policy.
+                    spanned.getSpans<ClickableSpan>(start, end).forEach { spanned.removeSpan(it) }
                     val clickableSpan = object : ClickableSpan() {
                         override fun onClick(widget: View) {
+                            // Classify using decoded dimensions, not the URL or file extension.
+                            val photoSpans = imageSpans.filter {
+                                (it.drawable as? CoilImageGetter.UrlDrawable)?.isPreviewable == true
+                            }
+                            val index = photoSpans.indexOf(imageSpan)
+                            if (index < 0) return
+                            val photos = photoSpans.map { it.source.orEmpty() }
                             onImageClick(photos, index)
                         }
                     }
@@ -75,11 +115,48 @@ fun HtmlText(
                 }
             }
             textView.text = spanned
-        }
+        },
+        onRelease = { it.imageGetter?.clear() }
     )
 }
 
+/** Keeps native text/link handling while allowing the containing reply's long-press menu. */
+internal class LongPressHtmlTextView(context: Context) : TextView(context) {
+    private var longPressConsumed = false
+    var imageGetter: CoilImageGetter? = null
+
+    override fun performLongClick(): Boolean {
+        return super.performLongClick().also { longPressConsumed = it }
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            longPressConsumed = false
+        }
+        if (event.actionMasked == MotionEvent.ACTION_UP && longPressConsumed) {
+            // LinkMovementMethod otherwise opens the link/image when the finger is released.
+            val cancel = MotionEvent.obtain(event).apply { action = MotionEvent.ACTION_CANCEL }
+            try {
+                super.onTouchEvent(cancel)
+            } finally {
+                cancel.recycle()
+            }
+            (text as? Spannable)?.let { Selection.removeSelection(it) }
+            longPressConsumed = false
+            return true
+        }
+        if (event.actionMasked == MotionEvent.ACTION_CANCEL) {
+            longPressConsumed = false
+            (text as? Spannable)?.let { Selection.removeSelection(it) }
+        }
+        return super.onTouchEvent(event)
+    }
+}
+
 class CoilImageGetter(private val textView: TextView) : Html.ImageGetter {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+
+    fun clear() = scope.cancel()
 
     override fun getDrawable(source: String?): Drawable {
         Log.d("HtmlText", "getDrawable: $source")
@@ -88,8 +165,8 @@ class CoilImageGetter(private val textView: TextView) : Html.ImageGetter {
 
         if (source == null) return drawablePlaceholder
 
-        CoroutineScope(Dispatchers.Main).launch {
-            val loader = ImageLoader(context)
+        scope.launch {
+            val loader = context.imageLoader
             val request = ImageRequest.Builder(context)
                 .data(source)
                 .build()
@@ -108,19 +185,22 @@ class CoilImageGetter(private val textView: TextView) : Html.ImageGetter {
                 val width = bitmap.width
                 val height = bitmap.height
                 
-                // Scale to fit width if necessary
                 val maxWidth = textView.width - textView.paddingLeft - textView.paddingRight
-                if (maxWidth > 0 && width > maxWidth) {
-                    val scale = maxWidth.toFloat() / width.toFloat()
-                    val newHeight = (height * scale).toInt()
-                    drawable.setBounds(0, 0, maxWidth, newHeight)
-                    drawablePlaceholder.setBounds(0, 0, maxWidth, newHeight)
-                } else {
-                    drawable.setBounds(0, 0, width, height)
-                    drawablePlaceholder.setBounds(0, 0, width, height)
-                }
+                val metrics = textView.paint.fontMetricsInt
+                val size = htmlImageSize(width, height, metrics.descent - metrics.ascent, maxWidth)
+                drawable.setBounds(0, 0, size.width, size.height)
+                drawablePlaceholder.setBounds(0, 0, size.width, size.height)
+                drawablePlaceholder.inlineEmoji = size.inlineEmoji
 
                 drawablePlaceholder.actualDrawable = drawable
+                if (size.inlineEmoji) {
+                    (textView.text as? Spannable)?.let { text ->
+                        text.getSpans<ImageSpan>().filter { it.drawable === drawablePlaceholder }.forEach { span ->
+                            text.getSpans<ClickableSpan>(text.getSpanStart(span), text.getSpanEnd(span))
+                                .forEach { text.removeSpan(it) }
+                        }
+                    }
+                }
                 textView.text = textView.text // Trigger refresh
                 textView.invalidate()
             }
@@ -131,10 +211,36 @@ class CoilImageGetter(private val textView: TextView) : Html.ImageGetter {
 
     class UrlDrawable : BitmapDrawable() {
         var actualDrawable: Drawable? = null
+        var inlineEmoji: Boolean = false
+        val isPreviewable: Boolean get() = actualDrawable != null && !inlineEmoji
 
         override fun draw(canvas: Canvas) {
             actualDrawable?.draw(canvas)
         }
+    }
+}
+
+/** Emoji align with the surrounding font instead of sitting below its baseline. */
+private class TextAlignedImageSpan(drawable: Drawable, source: String?) : ImageSpan(drawable, source.orEmpty()) {
+    private val inlineEmoji: Boolean
+        get() = (drawable as? CoilImageGetter.UrlDrawable)?.inlineEmoji == true
+
+    override fun getSize(paint: Paint, text: CharSequence, start: Int, end: Int, fm: Paint.FontMetricsInt?): Int {
+        if (!inlineEmoji) return super.getSize(paint, text, start, end, fm)
+        fm?.let { paint.getFontMetricsInt(it) }
+        return drawable.bounds.width()
+    }
+
+    override fun draw(canvas: Canvas, text: CharSequence, start: Int, end: Int, x: Float, top: Int, y: Int, bottom: Int, paint: Paint) {
+        if (!inlineEmoji) {
+            super.draw(canvas, text, start, end, x, top, y, bottom, paint)
+            return
+        }
+        val metrics = paint.fontMetricsInt
+        canvas.save()
+        canvas.translate(x, y + (metrics.ascent + metrics.descent - drawable.bounds.height()) / 2f)
+        drawable.draw(canvas)
+        canvas.restore()
     }
 }
 

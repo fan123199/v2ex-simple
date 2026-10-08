@@ -91,8 +91,7 @@ fun TopicItem(
             Text(
                 text = topic.member?.username ?: "",
                 style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.clickable { onMemberClick(topic.member?.username) }
+                color = MaterialTheme.colorScheme.secondary
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -128,6 +127,5 @@ fun TopicItem(
         )
     }
 }
-
 
 

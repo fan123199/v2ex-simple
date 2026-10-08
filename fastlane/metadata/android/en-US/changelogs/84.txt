@@ -1,0 +1,3 @@
+- Improved member profile loading stability and reduced layout jumps.
+- Moved activity ranking text onto its own line on member profiles.
+- Reduced accidental member-page navigation from topic lists.

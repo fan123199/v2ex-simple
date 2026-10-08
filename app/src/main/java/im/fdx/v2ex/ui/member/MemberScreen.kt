@@ -3,6 +3,9 @@ package im.fdx.v2ex.ui.member
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -198,8 +202,10 @@ fun MemberScreen(
         }
         Column(modifier = Modifier.padding(top = innerPadding.calculateTopPadding())) {
             // Member Header
-            uiState.member?.let { member ->
-                MemberHeader(member)
+            if (uiState.member != null && !uiState.isLoadingProfile) {
+                MemberHeader(member = uiState.member!!)
+            } else {
+                MemberHeaderPlaceholder(username = username)
             }
 
             // Tabs
@@ -211,12 +217,22 @@ fun MemberScreen(
                 Tab(
                     selected = pagerState.currentPage == 0,
                     onClick = { scope.launch { pagerState.animateScrollToPage(0) } },
-                    text = { Text(stringResource(R.string.member_topics, uiState.topicCount ?: 0)) }
+                    text = {
+                        Text(
+                            uiState.topicCount?.let { stringResource(R.string.member_topics, it) }
+                                ?: stringResource(R.string.member_topics_pending)
+                        )
+                    }
                 )
                 Tab(
                     selected = pagerState.currentPage == 1,
                     onClick = { scope.launch { pagerState.animateScrollToPage(1) } },
-                    text = { Text(stringResource(R.string.member_replies, uiState.replyCount ?: 0)) }
+                    text = {
+                        Text(
+                            uiState.replyCount?.let { stringResource(R.string.member_replies, it) }
+                                ?: stringResource(R.string.member_replies_pending)
+                        )
+                    }
                 )
             }
 
@@ -253,17 +269,27 @@ fun MemberHeader(member: Member) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .animateContentSize(animationSpec = tween(durationMillis = 260))
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            AsyncImage(
-                model = member.avatarLargeUrl,
-                contentDescription = stringResource(id = R.string.it_is_avatar),
-                contentScale = ContentScale.Crop,
+            val avatarUrl = member.avatar_normal
+                .takeIf { it.isNotEmpty() }
+                ?.let { member.avatarLargeUrl }
+            Box(
                 modifier = Modifier
                     .size(72.dp)
                     .clip(CircleShape)
-            )
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+                contentAlignment = Alignment.Center
+            ) {
+                AsyncImage(
+                    model = avatarUrl,
+                    contentDescription = stringResource(id = R.string.it_is_avatar),
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(
@@ -273,7 +299,7 @@ fun MemberHeader(member: Member) {
                 )
                 if (!member.tagline.isNullOrEmpty()) {
                     Text(
-                        text = member.tagline!!,
+                        text = member.tagline!!.withActivityRankOnSeparateLine(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -288,7 +314,7 @@ fun MemberHeader(member: Member) {
                 }
                 if (member.created.isNotEmpty()) {
                     Text(
-                        text = stringResource(R.string.created_on) + " " + member.created,
+                        text = (stringResource(R.string.created_on) + " " + member.created).withActivityRankOnSeparateLine(),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.outline
                     )
@@ -301,28 +327,94 @@ fun MemberHeader(member: Member) {
             Text(text = member.bio!!, style = MaterialTheme.typography.bodyMedium)
         }
 
-        // Social Links
-        FlowRow(
-            modifier = Modifier
-                .padding(vertical = 12.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            if (!member.website.isNullOrEmpty()) {
-                SocialIcon(iconId = R.drawable.ic_website, url = member.website)
-            }
-            if (!member.twitter.isNullOrEmpty()) {
-                SocialIcon(iconId = R.drawable.ic_twitter, url = member.twitter)
-            }
-            if (!member.github.isNullOrEmpty()) {
-                SocialIcon(iconId = R.drawable.ic_github, url = member.github)
-            }
-            if (!member.location.isNullOrEmpty()) {
-                SocialIcon(iconId = R.drawable.ic_location, label = member.location)
+        val hasSocialInfo = !member.website.isNullOrEmpty() ||
+            !member.twitter.isNullOrEmpty() ||
+            !member.github.isNullOrEmpty() ||
+            !member.location.isNullOrEmpty()
+
+        if (hasSocialInfo) {
+            // Social Links
+            FlowRow(
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                if (!member.website.isNullOrEmpty()) {
+                    SocialIcon(iconId = R.drawable.ic_website, url = member.website)
+                }
+                if (!member.twitter.isNullOrEmpty()) {
+                    SocialIcon(iconId = R.drawable.ic_twitter, url = member.twitter)
+                }
+                if (!member.github.isNullOrEmpty()) {
+                    SocialIcon(iconId = R.drawable.ic_github, url = member.github)
+                }
+                if (!member.location.isNullOrEmpty()) {
+                    SocialIcon(iconId = R.drawable.ic_location, label = member.location)
+                }
             }
         }
     }
+}
+
+private fun String.withActivityRankOnSeparateLine(): String {
+    val markerIndex = indexOfActivityRank()
+    if (markerIndex <= 0) return this
+
+    val beforeRank = substring(0, markerIndex).trim().trimEnd('，', ',', '·', '•')
+    val rank = substring(markerIndex).trim()
+    return if (beforeRank.isEmpty()) rank else "$beforeRank\n$rank"
+}
+
+private fun String.indexOfActivityRank(): Int {
+    val markers = listOf("今日活跃度排名", "今日活躍度排名", "今日活跃", "今日活躍")
+    return markers
+        .map { indexOf(it) }
+        .filter { it >= 0 }
+        .minOrNull() ?: -1
+}
+
+@Composable
+private fun MemberHeaderPlaceholder(username: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(72.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = username,
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            MemberHeaderSkeletonLine(width = 128.dp, height = 16.dp)
+            Spacer(modifier = Modifier.height(3.dp))
+            MemberHeaderSkeletonLine(width = 92.dp, height = 12.dp)
+            Spacer(modifier = Modifier.height(3.dp))
+            MemberHeaderSkeletonLine(width = 156.dp, height = 12.dp)
+        }
+    }
+}
+
+@Composable
+private fun MemberHeaderSkeletonLine(width: androidx.compose.ui.unit.Dp, height: androidx.compose.ui.unit.Dp) {
+    Box(
+        modifier = Modifier
+            .width(width)
+            .height(height)
+            .clip(RoundedCornerShape(height / 2))
+            .background(MaterialTheme.colorScheme.surfaceVariant)
+    )
 }
 
 @Composable

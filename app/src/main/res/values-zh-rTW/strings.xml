@@ -171,6 +171,23 @@
     <string name="username_or_email">用戶名 / 郵箱</string>
     <string name="no_account_signup">沒有賬號？去註冊</string>
     <string name="login_success">登錄成功</string>
+    <string name="login_enter_username">請輸入用戶名或郵箱</string>
+    <string name="login_enter_password">請輸入密碼</string>
+    <string name="login_enter_captcha">請輸入驗證碼</string>
+    <string name="login_show_password">顯示密碼</string>
+    <string name="login_hide_password">隱藏密碼</string>
+    <string name="login_refresh_captcha">換一張</string>
+    <string name="login_captcha_image">驗證碼圖片</string>
+    <string name="login_captcha_loading">載入中…</string>
+    <string name="login_captcha_retry">點擊重試</string>
+    <string name="login_captcha_load_failed">驗證碼載入失敗，請重試</string>
+    <string name="login_in_progress">登錄中…</string>
+    <string name="login_verifying">驗證中…</string>
+    <string name="login_back">返回</string>
+    <string name="login_failed">登錄失敗，請檢查賬號、密碼和驗證碼</string>
+    <string name="login_status_check_failed">無法確認登錄狀態，請重試</string>
+    <string name="login_two_step_failed">驗證碼不正確，請重試</string>
+    <string name="login_two_step_load_failed">無法取得驗證頁面，請重試</string>
     <string name="publish_success">發布成功</string>
     <string name="report_reply_title">報告回覆：%s</string>
     <string name="report_reply_content">回覆ID：%1$s\n發佈者：%2$s\n主題鏈接：%3$s</string>
@@ -236,7 +253,9 @@
     <!-- Member Screen -->
     <string name="report_user">舉報該用戶</string>
     <string name="member_topics">主題 (%d)</string>
+    <string name="member_topics_pending">主題 (--)</string>
     <string name="member_replies">回覆 (%d)</string>
+    <string name="member_replies_pending">回覆 (--)</string>
     <string name="replied_to_label">回覆了: %s</string>
     <string name="report_user_title">報告用戶 %s</string>
     <string name="report_user_content">用戶首頁：https://www.v2ex.com/member/%1$s \n 該用戶涉及 %2$s，請站長處理。</string>
@@ -260,4 +279,13 @@
     <string name="toast_thank_reply_success">感謝回覆成功</string>
     <string name="filtering_by_user">正在查看 %s 的全部回覆</string>
     <string name="viewing_conversation">正在查看對話列表</string>
+    <string name="web_loading">正在載入…</string>
+    <string name="web_load_failed">網頁載入失敗，請檢查網絡後重試</string>
+    <string name="web_retry">重試</string>
+    <string name="web_checking_login">正在確認登錄…</string>
+    <string name="web_login_check_failed">無法確認登錄狀態，請重試</string>
+    <string name="node_topic_count">%1$s 個主題</string>
+    <string name="node_all_topics">全部主題</string>
+    <string name="referenced_reply_unavailable">對應評論尚未載入或已無法查看</string>
+    <string name="locate_referenced_reply">定位到這則評論</string>
 </resources>

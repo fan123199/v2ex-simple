@@ -47,10 +47,10 @@ import androidx.compose.ui.res.stringResource
 import im.fdx.v2ex.ui.common.PhotoScreen
 import im.fdx.v2ex.ui.common.WebViewScreen
 import im.fdx.v2ex.ui.login.LoginScreen
-import im.fdx.v2ex.ui.login.LoginScreen
 import im.fdx.v2ex.ui.main.NewTopicScreen
 import im.fdx.v2ex.ui.main.DailyViewModel
 import im.fdx.v2ex.R
+import im.fdx.v2ex.setLogin
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -76,8 +76,9 @@ sealed class Screen(val route: String) {
             return "photo?urls=${URLEncoder.encode(jsonUrls, StandardCharsets.UTF_8.toString())}&position=$position"
         }
     }
-    object WebView : Screen("webview?url={url}") {
-        fun createRoute(url: String) = "webview?url=${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}"
+    object WebView : Screen("webview?url={url}&googleSignIn={googleSignIn}") {
+        fun createRoute(url: String, googleSignIn: Boolean = false) =
+            "webview?url=${URLEncoder.encode(url, StandardCharsets.UTF_8.toString())}&googleSignIn=$googleSignIn"
     }
 
     object NewTopic : Screen("new_topic?title={title}&content={content}&node={node}") {
@@ -147,10 +148,10 @@ fun AppNavigation(
         }
     ) {
         
-        composable(Screen.Home.route) {
+        composable(Screen.Home.route) { backStackEntry ->
             MainScreen(
-                onTopicClick = { topic -> 
-                     navController.navigate(Screen.Topic.createRoute(topic.id)) 
+                onTopicClick = { topic ->
+                    navController.openTopic(backStackEntry, topic.id)
                 },
                 onMemberClick = { username -> navController.navigate(Screen.Member.createRoute(username)) },
                 onNodeClick = { nodeName -> navController.navigate(Screen.Node.createRoute(nodeName)) },
@@ -211,7 +212,7 @@ fun AppNavigation(
             MemberScreen(
                 username = username,
                 onBackClick = { navController.popBackStack() },
-                onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
+                onTopicClick = { topic -> navController.openTopic(backStackEntry, topic.id) },
                 onMemberClick = { u -> if(u!=null) navController.navigate(Screen.Member.createRoute(u)) },
                 onNodeClick = { n -> if(n!=null) navController.navigate(Screen.Node.createRoute(n)) },
                 onReportClick = { title, content -> 
@@ -235,7 +236,7 @@ fun AppNavigation(
              NodeScreen(
                  nodeName = nodeName,
                  onBackClick = { navController.popBackStack() },
-                 onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
+                 onTopicClick = { topic -> navController.openTopic(backStackEntry, topic.id) },
                  onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) },
                  onNewTopicClick = { node ->
                      navController.navigate(Screen.NewTopic.createRoute(node = node))
@@ -281,25 +282,25 @@ fun AppNavigation(
                 onNodeClear = { savedStateHandle.remove<Node>("selected_node") },
                 onChooseNodeClick = { navController.navigate(Screen.AllNodes.route) },
                 onBackClick = { navController.popBackStack() },
-                onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
+                onTopicClick = { topic -> navController.openTopic(backStackEntry, topic.id) },
                 onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) },
                 onNodeClick = { nodeName -> if(nodeName!=null) navController.navigate(Screen.Node.createRoute(nodeName)) }
             )
         }
         
-        composable(Screen.Favorites.route) {
+        composable(Screen.Favorites.route) { backStackEntry ->
             FavoriteScreen(
                 onBackClick = { navController.popBackStack() },
-                onTopicClick = { topic -> navController.navigate(Screen.Topic.createRoute(topic.id)) },
+                onTopicClick = { topic -> navController.openTopic(backStackEntry, topic.id) },
                 onMemberClick = { username -> if(username!=null) navController.navigate(Screen.Member.createRoute(username)) },
                 onNodeClick = { nodeName -> if(nodeName!=null) navController.navigate(Screen.Node.createRoute(nodeName)) }
             )
         }
         
-        composable(Screen.Notifications.route) {
+        composable(Screen.Notifications.route) { backStackEntry ->
             NotificationScreen(
                 onBackClick = { navController.popBackStack() },
-                onTopicClick = { id -> navController.navigate(Screen.Topic.createRoute(id)) },
+                onTopicClick = { id -> navController.openTopic(backStackEntry, id) },
                  onMemberClick = { username -> navController.navigate(Screen.Member.createRoute(username)) }
             )
 
@@ -316,9 +317,12 @@ fun AppNavigation(
             val captcha by loginViewModel.captcha.collectAsState()
             val captchaInfo by loginViewModel.captchaInfo.collectAsState()
             val isLoading by loginViewModel.isLoading.collectAsState()
+            val fieldErrors by loginViewModel.fieldErrors.collectAsState()
+            val isCaptchaLoading by loginViewModel.isCaptchaLoading.collectAsState()
+            val captchaError by loginViewModel.captchaError.collectAsState()
             
             // 2FA dialog state
-            var showTwoStepDialog by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf(false) }
+            var showTwoStepDialog by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf(false) }
             var twoStepCode by androidx.compose.runtime.remember { androidx.compose.runtime.mutableStateOf("") }
 
             LaunchedEffect(uiState) {
@@ -330,10 +334,6 @@ fun AppNavigation(
                     }
                     is LoginResult.TwoStep -> {
                         showTwoStepDialog = true
-                    }
-                    is LoginResult.Error -> {
-                         Toast.makeText(context, result.msg, Toast.LENGTH_SHORT).show()
-                         loginViewModel.resetResult()
                     }
                     else -> {}
                 }
@@ -348,13 +348,27 @@ fun AppNavigation(
                  onCaptchaChange = loginViewModel::onCaptchaChange,
                  captchaInfo = captchaInfo,
                  isLoading = isLoading,
+                 fieldErrors = fieldErrors,
+                 isCaptchaLoading = isCaptchaLoading,
+                 captchaError = captchaError,
+                 errorMessage = (uiState as? LoginResult.Error)?.msg,
                  onLoginClick = loginViewModel::login,
+                 onGoogleLoginClick = {
+                     navController.navigate(Screen.WebView.createRoute(loginViewModel.getGoogleSignInUrl(), googleSignIn = true)) {
+                         launchSingleTop = true
+                     }
+                 },
                  onCaptchaClick = loginViewModel::getLoginElement,
 
                  onBackClick = { navController.popBackStack() },
                  showTwoStepDialog = showTwoStepDialog,
                  twoStepCode = twoStepCode,
-                 onTwoStepCodeChange = { twoStepCode = it },
+                 onTwoStepCodeChange = {
+                     twoStepCode = it
+                     if (uiState is LoginResult.Error) {
+                         loginViewModel.resetResult()
+                     }
+                 },
                  onTwoStepSubmit = { loginViewModel.submitTwoStepCode(twoStepCode) },
                  onTwoStepDismiss = { 
                      showTwoStepDialog = false
@@ -385,16 +399,26 @@ fun AppNavigation(
 
         composable(
              route = Screen.WebView.route,
-             arguments = listOf(navArgument("url") { type = NavType.StringType })
+             arguments = listOf(
+                 navArgument("url") { type = NavType.StringType },
+                 navArgument("googleSignIn") { type = NavType.BoolType; defaultValue = false }
+             )
         ) { backStackEntry ->
              val url = backStackEntry.arguments?.getString("url")
              if (url != null) {
                   WebViewScreen(
                       url = url,
+                      googleSignIn = backStackEntry.arguments?.getBoolean("googleSignIn") == true,
                       onBackClick = { navController.popBackStack() },
                       onLoginSuccess = { 
-                          // Refresh global state if needed
-                          navController.popBackStack()
+                          setLogin(true)
+                          Toast.makeText(context, loginSuccessStr, Toast.LENGTH_SHORT).show()
+                          if (!navController.popBackStack(Screen.Login.route, inclusive = true)) {
+                              navController.navigate(Screen.Home.route) {
+                                  popUpTo(Screen.Home.route) { inclusive = true }
+                                  launchSingleTop = true
+                              }
+                          }
                       }
                   )
              }
@@ -469,8 +493,6 @@ fun AppNavigation(
         }
     }
 }
-
-
 
 
 

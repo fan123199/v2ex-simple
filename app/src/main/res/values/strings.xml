@@ -158,7 +158,7 @@
     <string name="already_thank">thanked</string>
     <string name="ignore">Ignore topic</string>
     <string name="already_ignore">Cancel ignore</string>
-    <string name="google_login">Sign in With Google</string>
+    <string name="google_login">Sign in with Google</string>
     <string name="tab_setting">HomePage tab setting</string>
     <string name="need_at_least_one">You need remain at least one tab</string>
     <string name="show_area">Show area</string>
@@ -219,6 +219,23 @@
     <string name="username_or_email">Username / Email</string>
     <string name="no_account_signup">No account? Sign up</string>
     <string name="login_success">Login success</string>
+    <string name="login_enter_username">Please enter your username or email</string>
+    <string name="login_enter_password">Please enter your password</string>
+    <string name="login_enter_captcha">Please enter the verification code</string>
+    <string name="login_show_password">Show password</string>
+    <string name="login_hide_password">Hide password</string>
+    <string name="login_refresh_captcha">Refresh image</string>
+    <string name="login_captcha_image">Verification code image</string>
+    <string name="login_captcha_loading">Loading…</string>
+    <string name="login_captcha_retry">Tap to retry</string>
+    <string name="login_captcha_load_failed">Unable to load the verification code. Please try again.</string>
+    <string name="login_in_progress">Logging in…</string>
+    <string name="login_verifying">Verifying…</string>
+    <string name="login_back">Back</string>
+    <string name="login_failed">Login failed. Please check your account, password, and verification code.</string>
+    <string name="login_status_check_failed">Unable to confirm your login status. Please try again.</string>
+    <string name="login_two_step_failed">Incorrect verification code. Please try again.</string>
+    <string name="login_two_step_load_failed">Unable to load the verification page. Please try again.</string>
     <string name="publish_success">Publish success</string>
     <string name="report_reply_title">Report reply: %s</string>
     <string name="report_reply_content">Reply ID: %1$s\nAuthor: %2$s\nTopic: %3$s</string>
@@ -298,7 +315,9 @@
     <!-- Member Screen -->
     <string name="report_user">Report User</string>
     <string name="member_topics">Topics (%d)</string>
+    <string name="member_topics_pending">Topics (--)</string>
     <string name="member_replies">Replies (%d)</string>
+    <string name="member_replies_pending">Replies (--)</string>
     <string name="replied_to_label">Replied to: %s</string>
     <string name="report_user_title">Report user %s</string>
     <string name="report_user_content">User profile: https://www.v2ex.com/member/%1$s \n This user involves %2$s, please handle it.</string>
@@ -324,4 +343,13 @@
     <string name="filtering_by_user">Viewing all replies from %s</string>
     <string name="viewing_conversation">Viewing conversation list</string>
     <string name="menu">Menu</string>
+    <string name="web_loading">Loading…</string>
+    <string name="web_load_failed">This page could not be loaded. Please check your connection and try again.</string>
+    <string name="web_retry">Retry</string>
+    <string name="web_checking_login">Completing sign-in…</string>
+    <string name="web_login_check_failed">Could not confirm your sign-in. Please try again.</string>
+    <string name="node_topic_count">%1$s topics</string>
+    <string name="node_all_topics">All topics</string>
+    <string name="referenced_reply_unavailable">The referenced reply is unavailable or has not loaded yet.</string>
+    <string name="locate_referenced_reply">Go to this reply</string>
 </resources>
