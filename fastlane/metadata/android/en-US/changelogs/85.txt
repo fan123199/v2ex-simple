@@ -1,0 +1,5 @@
+- Improved sign-in, web session verification and profile loading.
+- Refined drawer theme controls and node layouts; show node names in the toolbar when scrolling.
+- Prevented duplicate topic pages from repeated taps.
+- Restored long-press menus on reply text and bottom-sheet previews for @ mentions.
+- Matched small inline emoji to text height and disabled image preview for them.
